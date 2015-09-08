@@ -1,0 +1,12 @@
+.idea
+*.pyc
+*.pyo
+*.egg-ignore
+*.egg-info
+*.ipynb
+dist
+build
+docs/_build
+tests/doctests
+konfoo.egg-info
+.tox
