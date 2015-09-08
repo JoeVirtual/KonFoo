@@ -11,6 +11,8 @@
 import json
 from collections import OrderedDict
 
+from .enums import ItemClass
+
 
 class HexViewer:
     """A `HexViewer` writes or prints a source file or a byte stream
@@ -163,7 +165,7 @@ def d3json(blueprint, **options):
             "children": []
         }
 
-    :param dict blueprint: generated blue print from any `Structure`,
+    :param dict blueprint: blueprint generated  from a `Structure`,
         `Sequence`, `Array` or any `Field` instance.
 
     :keyword int indent: indentation for the JSON string. Default is *2*.
@@ -175,15 +177,16 @@ def d3json(blueprint, **options):
         dct['class'] = root.get('class', None)
         dct['name'] = root.get('name', None)
 
-        if field_type is 'Field':
+        if field_type is ItemClass.Field.name:
             dct['size'] = root.get('size', None)
             dct['content'] = root.get('value', None)
 
         children = root.get('member', None)
+        # Any containable class with children
         if children:
             dct['children'] = list()
             # Create pointer address field as child
-            if field_type is 'Pointer':
+            if field_type is ItemClass.Pointer.name:
                 field = OrderedDict()
                 field['class'] = dct['class']
                 field['name'] = '*' + dct['name']
@@ -193,7 +196,8 @@ def d3json(blueprint, **options):
             # Recursive function call map(fnc, args).
             for child in map(convert, children):
                 dct['children'].append(child)
-        elif field_type is 'Pointer':
+        # Null pointer (None pointer)
+        elif field_type is ItemClass.Pointer.name:
             dct['size'] = root.get('size', None)
             dct['content'] = root.get('value', None)
         return dct

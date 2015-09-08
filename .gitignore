@@ -1,4 +1,3 @@
-.idea
 *.pyc
 *.pyo
 *.egg-ignore
@@ -7,6 +6,8 @@
 dist
 build
 docs/_build
+tests
 tests/doctests
 konfoo.egg-info
 .tox
+.idea
