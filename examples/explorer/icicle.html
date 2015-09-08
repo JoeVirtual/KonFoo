@@ -1,0 +1,84 @@
+<!--
+Copyright (c) 2015, Jochen Gerhaeusser.
+Use of this source code is governed by a BSD-style license
+that can be found in the LICENSE file.
+-->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Icicle Viewer</title>
+
+<style>
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    margin: auto;
+    position: relative;
+  }
+
+  rect {
+    stroke: #fff;
+    fill-opacity: 1;
+  }
+</style>
+
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+<script>
+var margin = {top: 10, right: 10, bottom: 10, left: 10},
+    width = 1650 - margin.left - margin.right,
+    height = 900 - margin.top - margin.bottom;
+
+var x = d3.scale.linear()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([0, height]);
+
+// Create the Color Scale
+var color = d3.scale.category20c();
+
+// Create the Layout
+var partition = d3.layout.partition()
+    .value(function(d) { return d.size; });
+
+// Create the SVG Viewport
+var svg = d3.select("body").append("svg")
+    .style("position", "relative")
+    .style("width", (width + margin.left + margin.right) + "px")
+    .style("height", (height + margin.top + margin.bottom) + "px")
+    .style("left", margin.left + "px")
+    .style("top", margin.top + "px");
+
+var rect = svg.selectAll("rect");
+
+d3.json("file:///D:/workspace/PyProjects/konfoo/examples/explorer/data.json", function(error, root) {
+  if (error) throw error;
+
+  rect = svg.datum(root).selectAll("rect")
+      .data(partition.nodes)
+    .enter().append("rect")
+      .attr("x", function(d) { return x(d.x); })
+      .attr("y", function(d) { return y(d.y); })
+      .attr("width", function(d) { return x(d.dx); })
+      .attr("height", function(d) { return y(d.dy); })
+      .attr("fill", function(d) { return color((d.children ? d : d.parent).name); })
+      .on("click", clicked);
+
+  rect.append("title")
+      .text(function(d) { return d.name; });
+});
+
+
+function clicked(d) {
+  x.domain([d.x, d.x + d.dx]);
+  y.domain([d.y, 1]).range([d.y ? 20 : 0, height]);
+
+  rect.transition()
+      .duration(750)
+      .attr("x", function(d) { return x(d.x); })
+      .attr("y", function(d) { return y(d.y); })
+      .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
+      .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
+}
+</script>

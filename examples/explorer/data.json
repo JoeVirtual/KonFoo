@@ -1,0 +1,3534 @@
+{
+  "class": "NodeAttributesDictionary",
+  "name": "NodeAttributesDictionary",
+  "children": [
+    {
+      "class": "Decimal8",
+      "name": "inauguration_version",
+      "size": 8,
+      "content": 0
+    },
+    {
+      "class": "Decimal8",
+      "name": "r_telegram_version",
+      "size": 8,
+      "content": 0
+    },
+    {
+      "class": "Enum8",
+      "name": "state",
+      "size": 8,
+      "content": "current"
+    },
+    {
+      "class": "Decimal8",
+      "name": "counter",
+      "size": 8,
+      "content": 0
+    },
+    {
+      "class": "Decimal8",
+      "name": "num_nodes",
+      "size": 8,
+      "content": 0
+    },
+    {
+      "class": "Stream8",
+      "name": "unreachable_nodes",
+      "size": 64,
+      "content": "0000000000000000"
+    },
+    {
+      "class": "Info",
+      "name": "info",
+      "children": [
+        {
+          "class": "Enum1",
+          "name": "uic_orientation",
+          "size": 1,
+          "content": 0
+        },
+        {
+          "class": "Enum1",
+          "name": "node_added",
+          "size": 1,
+          "content": 0
+        },
+        {
+          "class": "Enum1",
+          "name": "node_missing",
+          "size": 1,
+          "content": 0
+        },
+        {
+          "class": "Decimal5",
+          "name": "reserve",
+          "size": 5,
+          "content": 0
+        }
+      ]
+    },
+    {
+      "class": "Array",
+      "name": "node",
+      "children": [
+        {
+          "class": "Node",
+          "name": "node[0]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[1]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[2]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[3]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[4]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[5]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[6]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[7]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[8]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[9]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[10]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[11]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[12]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[13]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[14]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[15]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[16]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[17]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[18]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[19]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[20]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[21]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[22]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[23]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[24]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[25]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[26]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[27]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[28]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[29]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[30]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "class": "Node",
+          "name": "node[31]",
+          "children": [
+            {
+              "class": "Decimal8",
+              "name": "tcn_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "num_vehicles",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "uic_address",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "operator",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "owner",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "telegram_version",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Decimal8",
+              "name": "application_id",
+              "size": 8,
+              "content": 0
+            },
+            {
+              "class": "Stream22",
+              "name": "properties_train_set",
+              "size": 176,
+              "content": "00000000000000000000000000000000000000000000"
+            },
+            {
+              "class": "Stream5",
+              "name": "uid_id",
+              "size": 40,
+              "content": "0000000000"
+            },
+            {
+              "class": "Stream7",
+              "name": "properties_vehicle",
+              "size": 56,
+              "content": "00000000000000"
+            },
+            {
+              "class": "Decimal16",
+              "name": "coach_number",
+              "size": 16,
+              "content": 0
+            },
+            {
+              "class": "Info",
+              "name": "info",
+              "children": [
+                {
+                  "class": "Enum1",
+                  "name": "tcn_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "uic_orientation",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "leading",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Enum1",
+                  "name": "request",
+                  "size": 1,
+                  "content": 0
+                },
+                {
+                  "class": "Decimal4",
+                  "name": "reserve",
+                  "size": 4,
+                  "content": 0
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
