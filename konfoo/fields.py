@@ -114,6 +114,17 @@ class Bool32(Bool):
         super().__init__(bit_size=32)
 
 
+class Antivalent(Enum):
+    class Validity(Enumeration):
+        error = 0
+        invalid = 1
+        valid = 2
+        undefined = 3
+
+    def __init__(self, align_to=None):
+        super().__init__(bit_size=2, align_to=align_to, enumeration=Antivalent.Validity)
+
+
 class Enum4(Enum):
     def __init__(self, align_to=None, enumeration=None):
         super().__init__(bit_size=4, align_to=align_to, enumeration=enumeration)
@@ -137,17 +148,6 @@ class Enum24(Enum):
 class Enum32(Enum):
     def __init__(self, enumeration=None):
         super().__init__(bit_size=32, enumeration=enumeration)
-
-
-class Antivalent(Enum):
-    class Validity(Enumeration):
-        error = 0
-        invalid = 1
-        valid = 2
-        undefined = 3
-
-    def __init__(self, align_to=None):
-        super().__init__(bit_size=2, align_to=align_to, enumeration=Antivalent.Validity)
 
 
 class Scaled8(Scaled):
@@ -221,6 +221,33 @@ class Pointer64(Pointer):
         self._bit_size = 64
 
 
+class StreamPointer8(StreamPointer):
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 1
+        # Field bit size
+        self._bit_size = 8
+
+
+class StreamPointer16(StreamPointer):
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 2
+        # Field bit size
+        self._bit_size = 16
+
+
+class StreamPointer32(StreamPointer):
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 4
+        # Field bit size
+        self._bit_size = 32
+
+
 class RelativePointer8(RelativePointer):
     def __init__(self, template=None, address=None, byte_order=Byteorder.default):
         super().__init__(template=template, address=address, byte_order=byte_order)
@@ -255,33 +282,6 @@ class RelativePointer64(RelativePointer):
         self._align_to_byte_size = 8
         # Field bit size
         self._bit_size = 64
-
-
-class StreamPointer8(StreamPointer):
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field alignment
-        self._align_to_byte_size = 1
-        # Field bit size
-        self._bit_size = 8
-
-
-class StreamPointer16(StreamPointer):
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field alignment
-        self._align_to_byte_size = 2
-        # Field bit size
-        self._bit_size = 16
-
-
-class StreamPointer32(StreamPointer):
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field alignment
-        self._align_to_byte_size = 4
-        # Field bit size
-        self._bit_size = 32
 
 
 class StreamRelativePointer8(StreamRelativePointer):

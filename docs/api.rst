@@ -72,6 +72,18 @@ Decimal
 .. autoclass:: Decimal
    :members:
 
+.. autoclass:: Decimal8
+   :members:
+
+.. autoclass:: Decimal16
+   :members:
+
+.. autoclass:: Decimal24
+   :members:
+
+.. autoclass:: Decimal32
+   :members:
+
 Bit
 ~~~
 
@@ -96,10 +108,34 @@ Signed
 .. autoclass:: Signed
    :members:
 
+.. autoclass:: Signed8
+   :members:
+
+.. autoclass:: Signed16
+   :members:
+
+.. autoclass:: Signed24
+   :members:
+
+.. autoclass:: Signed32
+   :members:
+
 Unsigned
 ~~~~~~~~
 
 .. autoclass:: Unsigned
+   :members:
+
+.. autoclass:: Unsigned8
+   :members:
+
+.. autoclass:: Unsigned16
+   :members:
+
+.. autoclass:: Unsigned24
+   :members:
+
+.. autoclass:: Unsigned32
    :members:
 
 Bitset
@@ -108,10 +144,34 @@ Bitset
 .. autoclass:: Bitset
    :members:
 
+.. autoclass:: Bitset8
+   :members:
+
+.. autoclass:: Bitset16
+   :members:
+
+.. autoclass:: Bitset24
+   :members:
+
+.. autoclass:: Bitset32
+   :members:
+
 Bool
 ~~~~
 
 .. autoclass:: Bool
+   :members:
+
+.. autoclass:: Bool8
+   :members:
+
+.. autoclass:: Bool16
+   :members:
+
+.. autoclass:: Bool24
+   :members:
+
+.. autoclass:: Bool32
    :members:
 
 Enum
@@ -120,10 +180,41 @@ Enum
 .. autoclass:: Enum
    :members:
 
+.. autoclass:: Antivalent
+   :members:
+
+.. autoclass:: Enum4
+   :members:
+
+.. autoclass:: Enum8
+   :members:
+
+.. autoclass:: Enum16
+   :members:
+
+.. autoclass:: Enum24
+   :members:
+
+.. autoclass:: Enum32
+   :members:
+
+
 Scaled
 ~~~~~~
 
 .. autoclass:: Scaled
+   :members:
+
+.. autoclass:: Scaled8
+   :members:
+
+.. autoclass:: Scaled16
+   :members:
+
+.. autoclass:: Scaled24
+   :members:
+
+.. autoclass:: Scaled32
    :members:
 
 Fraction
@@ -138,10 +229,19 @@ Bipolar
 .. autoclass:: Bipolar
    :members:
 
+.. autoclass:: Bipolar2
+   :members:
+
+.. autoclass:: Bipolar4
+   :members:
+
 Unipolar
 ~~~~~~~~
 
 .. autoclass:: Unipolar
+   :members:
+
+.. autoclass:: Unipolar2
    :members:
 
 Datetime
@@ -156,6 +256,17 @@ Pointer
 .. autoclass:: Pointer
    :members:
 
+.. autoclass:: Pointer8
+   :members:
+
+.. autoclass:: Pointer16
+   :members:
+
+.. autoclass:: Pointer32
+   :members:
+
+.. autoclass:: Pointer64
+   :members:
 
 Structure Pointer
 ~~~~~~~~~~~~~~~~~
@@ -181,6 +292,15 @@ Stream Pointer
 .. autoclass:: StreamPointer
    :members:
 
+.. autoclass:: StreamPointer8
+   :members:
+
+.. autoclass:: StreamPointer16
+   :members:
+
+.. autoclass:: StreamPointer32
+   :members:
+
 String Pointer
 ~~~~~~~~~~~~~~
 
@@ -193,10 +313,31 @@ Relative Pointer
 .. autoclass:: RelativePointer
    :members:
 
+.. autoclass:: RelativePointer8
+   :members:
+
+.. autoclass:: RelativePointer16
+   :members:
+
+.. autoclass:: RelativePointer32
+   :members:
+
+.. autoclass:: RelativePointer64
+   :members:
+
 Stream Relative Pointer
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: StreamRelativePointer
+   :members:
+
+.. autoclass:: StreamRelativePointer8
+   :members:
+
+.. autoclass:: StreamRelativePointer16
+   :members:
+
+.. autoclass:: StreamRelativePointer32
    :members:
 
 String Relative Pointer
@@ -244,8 +385,6 @@ Option
 Decorators
 ----------
 
-.. autofunction:: option
-
 .. autofunction:: byte_order_option
 
 .. autofunction:: field_types_option
@@ -272,9 +411,6 @@ Exceptions
 .. autoexception:: BadAligned
 
 .. autoexception:: BadOffset
-
-
-
 
 Utilities
 ---------

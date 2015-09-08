@@ -1738,9 +1738,7 @@ class Byte(Decimal):
         return self.field_type.name.capitalize()
 
     @property
-
     def value(self):
-        """Field value."""
         return hex(self._value)
 
     @value.setter
@@ -1763,7 +1761,6 @@ class Char(Decimal):
 
     @property
     def value(self):
-        """Field value."""
         return chr(self._value)
 
     @value.setter
@@ -1793,7 +1790,6 @@ class Unsigned(Decimal):
 
     @property
     def value(self):
-        """Field value."""
         return hex(self._value)
 
     @value.setter
@@ -1815,7 +1811,6 @@ class Bitset(Decimal):
 
     @property
     def value(self):
-        """Field value."""
         return '{0:#0{1}b}'.format(self._value, self.bit_size + 2)
 
     @value.setter
@@ -1834,7 +1829,6 @@ class Bool(Decimal):
 
     @property
     def value(self):
-        """Field value."""
         return bool(self._value)
 
     @value.setter
