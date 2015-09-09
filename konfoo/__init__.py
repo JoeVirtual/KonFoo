@@ -5,7 +5,8 @@
 
     KonFoo is a Python Package for creating byte stream mappers in a declarative
     way with as little code as necessary to help fighting the confusion with the
-    foo of the all too well-known memory dumps or binary data.
+    foo of the all too well-known memory dumps or hexadecimal views of binary
+    data.
 
     :copyright: (c) 2015 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details.

@@ -2,7 +2,7 @@
 """
     exceptions.py
     ~~~~~~~~~~~~~
-    <Add descritpion of the module here>.
+    <Add description of the module here>.
     
     :copyright: (c) 2015 by Jochen Gerhaeusser.
     :license: BSD-style, see LICENSE for details
