@@ -43,24 +43,27 @@ def limiter(value, minimum, maximum):
 
 
 def get_byte_order(options):
-    return options[Option.byteorder]
+    return options.get(Option.byteorder, Byteorder.default)
 
 
 def get_field_types(options):
-    return options[Option.field_types]
+    return options.get(Option.field_types, False)
 
 
 def get_nested(options):
-    return options[Option.nested]
+    return options.get(Option.nested, False)
 
 
 def verbose(options, message=None):
-    if options[Option.verbose] and message:
+    if options.get(Option.verbose, False) and message:
         print(message)
-
 
 def is_any(obj):
     return isinstance(obj, (Field, Structure, Sequence))
+
+
+def is_provider(obj):
+    return isinstance(obj, Provider)
 
 
 def is_field(obj):
@@ -103,8 +106,9 @@ def default_index():
 
 
 class Container(metaclass=abc.ABCMeta):
-    """The `Container` class is the meta class for all containable classes.
-    These classes are `Structures`, `Sequences`, `Arrays` and `Pointers`.
+    """The `Container` class is a meta class for all classes which can contain
+    `Field` items. Container classes are `Structures`, `Sequences`, `Arrays`
+    and `Pointers`.
     """
 
     def field_items(self, root=str(), **options):
@@ -193,7 +197,7 @@ class Container(metaclass=abc.ABCMeta):
     @nested_option()
     @field_types_option()
     @verbose_option(True)
-    def load(self, file, section=None, **options):
+    def load(self, file, section=str(), **options):
         """Loads the `Field` values of a `Container` from an *INI file*.
 
         .. code-block:: ini
@@ -262,7 +266,7 @@ class Container(metaclass=abc.ABCMeta):
     @nested_option()
     @field_types_option()
     @verbose_option(True)
-    def save(self, file, section=None, **options):
+    def save(self, file, section=str(), **options):
         """Saves the `Field` values of a `Container` to a *INI file*.
 
         >>> class Foo(Structure):
@@ -318,7 +322,8 @@ class Structure(OrderedDict, Container):
     <collections.OrderedDict>` from the Python standard module :mod:`collections`
     with the :class:`Container` class and attribute getter and setter for
     the `key`, `value` pairs to access the assigned member fields
-    of a `Structure` easier.
+    of a `Structure` easier, but this comes with the cost that the member name
+    must be a valid python variable name.
     """
     item_class = ItemClass.Structure
 
@@ -364,7 +369,7 @@ class Structure(OrderedDict, Container):
         key is equal to the *name*.
 
         If the attribute *name* is in the namespace of the `Ordered Dictionary`
-        base class then the base_address class is called instead.
+        base class then the base class is called instead.
         """
         if name.startswith('_OrderedDict__'):
             return super().__setattr__(name, field)
@@ -1173,6 +1178,41 @@ class Field(metaclass=abc.ABCMeta):
     def value(self, x):
         self._value = x
 
+    @staticmethod
+    def is_bit():
+        """Returns `False`."""
+        return False
+
+    @staticmethod
+    def is_bool():
+        """Returns `False`."""
+        return False
+
+    @staticmethod
+    def is_decimal():
+        """Returns `False`."""
+        return False
+
+    @staticmethod
+    def is_float():
+        """Returns `False`."""
+        return False
+
+    @staticmethod
+    def is_pointer():
+        """Returns `False`."""
+        return False
+
+    @staticmethod
+    def is_stream():
+        """Returns `False`."""
+        return False
+
+    @staticmethod
+    def is_string():
+        """Returns `False`."""
+        return False
+
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=default_index(), **options):
         """Unpacks the bytes and bits from a *buffer* starting at the given
@@ -1359,6 +1399,11 @@ class Stream(Field):
     def value(self, x):
         self._value = self.to_stream(x, encoding='hex')
 
+    @staticmethod
+    def is_stream():
+        """Returns `True`."""
+        return True
+
     def to_stream(self, value, encoding='hex'):
         if isinstance(value, str):
             if encoding == 'hex':
@@ -1433,6 +1478,11 @@ class String(Stream):
     def value(self, x):
         self._value = self.to_stream(x, encoding='ascii')
 
+    @staticmethod
+    def is_string():
+        """Returns `True`."""
+        return True
+
 
 class Float(Field):
     """A `Float` field is a :class:`Field` with a fix *size* of four bytes
@@ -1462,6 +1512,11 @@ class Float(Field):
     @value.setter
     def value(self, x):
         self._value = self.to_float(x)
+
+    @staticmethod
+    def is_float():
+        """Returns `True`."""
+        return True
 
     def to_float(self, value):
         return limiter(float(value), self.min(), self.max())
@@ -1564,6 +1619,11 @@ class Decimal(Field):
     @value.setter
     def value(self, x):
         self._value = self.to_decimal(x)
+
+    @staticmethod
+    def is_decimal():
+        """Returns `True`."""
+        return True
 
     def to_decimal(self, value, encoding=None):
         if isinstance(value, str):
@@ -1737,6 +1797,11 @@ class Bit(Decimal):
     def name(self):
         return self.field_type.name.capitalize()
 
+    @staticmethod
+    def is_bit():
+        """Returns `True`."""
+        return True
+
 
 class Byte(Decimal):
     """A `Byte` field is an unsigned :class:`Decimal` field with a *size* of
@@ -1848,6 +1913,11 @@ class Bool(Decimal):
     @value.setter
     def value(self, x):
         self._value = self.to_decimal(x)
+
+    @staticmethod
+    def is_bool():
+        """Returns `True`."""
+        return True
 
 
 class Enum(Decimal):
@@ -2163,6 +2233,11 @@ class Pointer(Decimal, Container):
     def value(self, x):
         self._value = self.to_decimal(x)
 
+    @staticmethod
+    def is_pointer():
+        """Returns `True`."""
+        return True
+
     def refresh(self):
         """Refresh the `Fields` of the `data` object with the internal `bytestream`
         and returns the `Index` of the `bytestream` after the last `Field` of the
@@ -2182,15 +2257,12 @@ class Pointer(Decimal, Container):
         return buffer
 
     @nested_option(True)
-    def read(self, provider, **options):
+    def read(self, provider, null_allowed=False, **options):
         """Reads from the data *provider* the necessary amount of bytes for
         the attached `data` object of a `Pointer` field.
 
         A `Pointer` field has its own `bytestream` to store the binary data
         from the data *provider*.
-
-        A `NotImplementedError` is raised if the data :class:`Provider`
-        is not supported.
 
         :param provider: data :class:`Provider`.
 
@@ -2198,49 +2270,26 @@ class Pointer(Decimal, Container):
             `Pointer` reads their *nested* `data` object fields.
             A `Pointer` field stores the bytes for the *nested* `data`
             object in its own `bytestream`.
-
         """
-        if self._data and provider is not None:
-            if isinstance(provider, (bytes, bytearray)):
-                # Analyse bytestream
-                self.bytestream = provider
-                provider = self._data_stream[self.size:]
-                self._data_stream = self._data_stream[:self.size]
-                index = self.refresh()
-                if index.bit != 0:
-                    raise IndexError(index)
-                if is_mixin(self._data) and get_nested(options):
-                    self._data.read(provider, **options)
-            elif isinstance(provider, str):
-                # Analyse file
-                start = options.get('start', False)
-                if self._value > 0 or not start:
-                    options['start'] = True
-                    file = open(provider, 'rb').read()
-                    self._data_stream = file[self.address:]
-                    index = self.refresh()
-                    if index.update:
-                        self.refresh()
-                    if is_mixin(self._data) and get_nested(options):
-                        self._data.read(provider, **options)
-                else:
-                    self._data_stream = bytes()
-                    self.refresh()
-            elif isinstance(provider, Provider):
-                # Analyse memory
-                if self._value > 0:
-                    self.bytestream = provider.read(self.address, self.size)
-                    index = self.refresh()
-                    if index.update:
+        if self._data is not None and provider is not None:
+            if is_provider(provider):
+                if self._value < 0:
+                    pass
+                elif null_allowed or self._value > 0:
+                    update = True
+                    while update:
                         self.bytestream = provider.read(self.address, self.size)
-                        self.refresh()
+                        index = self.refresh()
+                        if index.bit != 0:
+                            raise IndexError(index)
+                        update = index.update
                     if is_mixin(self._data) and get_nested(options):
-                        self._data.read(provider, **options)
+                        self._data.read(provider, False, **options)
                 else:
                     self._data_stream = bytes()
                     self.refresh()
             else:
-                raise NotImplementedError(provider)
+                raise TypeError(provider)
 
     def patch(self, item, byte_order=Byteorder.default):
         """Returns a memory :class:`Patch` for the *values* of the referenced

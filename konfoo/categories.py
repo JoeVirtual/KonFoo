@@ -200,3 +200,4 @@ class Option(Category):
     byteorder = 'byte_order'
     nested = 'nested'
     verbose = 'verbose'
+    null_allowed = 'null_allowed'
