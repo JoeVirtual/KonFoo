@@ -58,7 +58,6 @@ def verbose(options, message=None):
     if options.get(Option.verbose, False) and message:
         print(message)
 
-
 def is_any(obj):
     return isinstance(obj, (Field, Structure, Sequence))
 
