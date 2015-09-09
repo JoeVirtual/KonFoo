@@ -2424,7 +2424,7 @@ class Pointer(Decimal, Container):
 
     def field_indexes(self, index=default_index(), **options):
         """Returns a ordered dictionary which contains a ``['value']`` key
-        which contains the field *index* of a `Pointer` and a ``['data']` key
+        which contains the field *index* of a `Pointer` and a ``['data']`` key
         which contains the field *indexes* of the `data` object of a `Pointer`.
 
         :keyword bool nested: if `True` all `Pointer` fields of a `Pointer`
@@ -2455,7 +2455,7 @@ class Pointer(Decimal, Container):
     @nested_option()
     def field_types(self, **options):
         """Returns a ordered dictionary which contains a ``['value']`` key
-        which contains the field *type* of a `Pointer` and a ``['data']` key
+        which contains the field *type* of a `Pointer` and a ``['data']`` key
         which contains the field *types* of the `data` object of a `Pointer`.
 
         :keyword bool nested: if `True` all `Pointer` fields of a `Pointer`
@@ -2479,7 +2479,7 @@ class Pointer(Decimal, Container):
     @nested_option()
     def field_values(self, **options):
         """Returns a ordered dictionary which contains a ``['value']`` key
-        which contains the field *value* of a `Pointer` and a ``['data']` key
+        which contains the field *value* of a `Pointer` and a ``['data']`` key
         which contains the field *values* of the `data` object of a `Pointer`.
 
         :keyword bool nested: if `True` all `Pointer` fields of a `Pointer`

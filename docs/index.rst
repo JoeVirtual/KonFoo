@@ -3,7 +3,7 @@ Welcome to the KonF'00' Documentation
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the
-foo of the all well-known memory dumps or binary data.
+foo of the all well-known memory dumps or hexadecimal views of binary data.
 
 It's comes with sensible defaults out of the box.
 
@@ -13,7 +13,8 @@ writing binary data from and back to a data provider as easy as possible.
 KonFoo in points:
 
 -   declarative way to describe the mapping of binary data
--   declarative template classes to map, read, decode, encode and write binary data
+-   declarative template classes to map, read, decode, encode and write
+    binary data
 -   nesting of template classes
 -   adaptable template classes on the fly while decoding binary data
 -   easy syntax for accessing nested template fields
