@@ -58,6 +58,7 @@ def verbose(options, message=None):
     if options.get(Option.verbose, False) and message:
         print(message)
 
+
 def is_any(obj):
     return isinstance(obj, (Field, Structure, Sequence))
 
@@ -113,7 +114,7 @@ class Container(metaclass=abc.ABCMeta):
 
     def field_items(self, root=str(), **options):
         """Returns a flat list which contains tuples in the form of
-        ``(path, field)`` for each `Field` of a `Container`.
+        ``(path, item)`` for each `Field` of a `Container`.
 
         .. note::
 
@@ -165,7 +166,7 @@ class Container(metaclass=abc.ABCMeta):
     @field_types_option()
     def to_dict(self, name=str(), **options):
         """Returns a flat ordered dictionary which contains the
-        `path`, `value` pairs for each `Field` of the `Container`.
+        `path`, `value` pairs for each `Field` of a `Container`.
 
         Returns a flat ordered dictionary of all `Field` values of a
         `Container`.
@@ -177,7 +178,7 @@ class Container(metaclass=abc.ABCMeta):
             lists their *nested* `data` object as well.
 
         :keyword bool field_types: if `True` the type of the `Field` is
-            appended to its path string with the '|' sign as separator.
+            append to the end of path string with '|' as separator.
         """
         name = self.__class__.__name__ if name else name
 
@@ -218,7 +219,7 @@ class Container(metaclass=abc.ABCMeta):
             name of the instance is used.
 
         :keyword bool field_types: if `True` the type of the `Field` is
-            appended to its path string with the '|' sign as separator.
+            append to the end of path string with '|' as separator.
 
         :keyword bool verbose: if `True` the loading is executed in verbose mode.
         """
@@ -311,18 +312,55 @@ class Container(metaclass=abc.ABCMeta):
 
 
 class Structure(OrderedDict, Container):
-    """A `Structure` is a ordered dictionary whereby the dictionary `key`
-    describes the name of a member of the `Structure` and the `value` of
-    a dictionary `key` describes the type of a member of the `Structure`.
+    """A `Structure` is a :class:`ordered dictionary <collections.OrderedDict>`
+    whereby the dictionary `key` describes the name of a member of the
+    `Structure` and the `value` of a dictionary `key` describes the type of
+    a member of the `Structure`. Allowed members are `Structure`, `Sequence`,
+    `Array` or `Field` instances.
 
-    Allowed members are `Structure`, `Sequence`, `Array` or `Field` instances.
-
-    The `Structure` class extends the :class:`Ordered Dictionary
+    The `Structure` class extends the :class:`ordered dictionary
     <collections.OrderedDict>` from the Python standard module :mod:`collections`
-    with the :class:`Container` class and attribute getter and setter for
-    the `key`, `value` pairs to access the assigned member fields
-    of a `Structure` easier, but this comes with the cost that the member name
-    must be a valid python variable name.
+    with the :class:`Container` class and attribute getter and setter for the
+    `key`, `value` pairs to access and to assign  the members of a `Structure`
+    easier, but this comes with the cost that the dictionary `keys` must be valid
+    python attribute names.
+
+    A `Structure` provides the following additional features:
+
+    *   **Read** from a `Provider` the necessary bytes for each `data`
+        object referenced by the `Pointer` fields in a `Structure`
+        via :meth:`read()`.
+
+    *   **Decode** the *field values* of a `Structure` from a byte stream
+        via :meth:`decode()`.
+
+    *   **Encode** the *field values* of a `Structure` to a byte stream
+        via :meth:`encode()`.
+
+    *   Get the **next index** after the last *field* of a `Structure`
+        via :meth:`next_index()`.
+
+    *   Get the **first field** of a `Structure`
+        via :meth:`first_field()`.
+
+    *   Get the accumulated **length** of all *fields* in a `Structure`
+        via :meth:`field_length()`.
+
+    *   View the **index** for each *field* in a `Structure`
+        via :meth:`field_indexes()`.
+
+    *   View the **type** for each *field* in a `Structure`
+        via :meth:`field_types()`.
+
+    *   View the **value** for each *field* in a `Structure`
+        via :meth:`field_values()`.
+
+    *   List the **item** and its path for each *field* in a `Structure`
+        as a flat list via :meth:`field_items()`.
+
+    *   Get a **blueprint** of a `Structure` and its items
+        via :meth:`blueprint()`,
+
     """
     item_class = ItemClass.Structure
 
@@ -398,10 +436,13 @@ class Structure(OrderedDict, Container):
     @byte_order_option()
     @nested_option()
     def decode(self, buffer=bytes(), index=default_index(), **options):
-        """Decodes sequential the bytes from a *buffer* starting at the begin
+        """Decodes sequential bytes from a *buffer* starting at the begin
         of the *buffer* or with a given *index* by mapping the bytes to the
-        values of the `Fields` of a `Structure` by considering the decoding
-        `Byteorder` of the *buffer* and the `Fields`.
+        `Fields` of a `Structure` in accordance with the decoding `Byteorder`
+        of the *buffer* and the `Field`.
+
+        A specific coding byte order of a `Field` overrules the decoding
+        byte order of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the last `Field`
         of the `Structure`.
@@ -423,10 +464,13 @@ class Structure(OrderedDict, Container):
     @byte_order_option()
     @nested_option()
     def encode(self, buffer=bytearray(), index=default_index(), **options):
-        """Encodes sequential the bytes to a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the values of the
-        `Fields` of a `Structure` to the bytes by considering the encoding
-        `Byteorder` of the *buffer* and the `Fields`.
+        """Encodes sequential bytes to a *buffer* starting at the begin of
+        the *buffer* or with a given *index* by mapping the values of the
+        `Fields` of a `Structure` to the bytes in accordance with the
+        encoding `Byteorder` of the *buffer* and the `Field`.
+
+        A specific coding byte order of a `Field` overrules the encoding
+        byte order of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the last `Field`
         of the `Structure`.
@@ -470,7 +514,9 @@ class Structure(OrderedDict, Container):
         return index
 
     def first_field(self):
-        """Returns the first field of a `Structure`."""
+        """Returns the first field of a `Structure` or `None` for an empty
+        `Structure`.
+        """
         for item in self.values():
             # Container
             if is_container(item):
@@ -578,7 +624,7 @@ class Structure(OrderedDict, Container):
     @nested_option()
     def field_items(self, root=None, **options):
         """Returns a flat list which contains tuples in the form of
-        ``(path, field)`` for each `Field` of a `Structure`.
+        ``(path, item)`` for each `Field` of a `Structure`.
 
         :param str root: root path.
 
@@ -646,6 +692,63 @@ class Structure(OrderedDict, Container):
 
 class Sequence(MutableSequence, Container):
     """A `Sequence` contains
+
+    A `Sequence` provides the following features:
+
+    *   **Append** a item to a `Sequence`
+        via :meth:`append()`.
+
+    *   **Insert** a item before the *index* into a `Sequence`
+        via :meth:`insert()`.
+
+    *   **Extend** a `Sequence` with items
+        via :meth:`extend()`.
+
+    *   **Clear** a `Sequence`
+        via :meth:`clear()`.
+
+    *   **Pop** a item with the *index* from a `Sequence`
+        via :meth:`pop()`.
+
+    *   **Remove**  the first occurrence of an *item* from a `Sequence`
+        via :meth:`remove()`.
+
+    *   **Reverse** all items in a `Sequence`
+        via :meth:`reverse()`.
+
+    *   **Read** from a `Provider` the necessary bytes for each `data`
+        object referenced by the `Pointer` fields in a `Sequence`
+        via :meth:`read()`.
+
+    *   **Decode** the *field values* of a `Sequence` from a byte stream
+        via :meth:`decode()`.
+
+    *   **Encode** the *field values* of a `Sequence` to a byte stream
+        via :meth:`encode()`.
+
+    *   Get the **next index** after the last *field* of a `Sequence`
+        via :meth:`next_index()`.
+
+    *   Get the **first field** of a `Sequence`
+        via :meth:`first_field()`.
+
+    *   Get the accumulated **length** of all *fields* in a `Sequence`
+        via :meth:`field_length()`.
+
+    *   View the **index** for each *field* in a `Sequence`
+        via :meth:`field_indexes()`.
+
+    *   View the **type** for each *field* in a `Sequence`
+        via :meth:`field_types()`.
+
+    *   View the **value** for each *field* in a `Sequence`
+        via :meth:`field_values()`.
+
+    *   List the **item** and its path for each *field* in a `Sequence`
+        as a flat list via :meth:`field_items()`.
+
+    *   Get a **blueprint** of a `Sequence` and its items
+        via :meth:`blueprint()`,
 
     :param iterable: any *iterable* that contains items of `Structure`,
         `Sequence`, `Array` or `Field` instances. If the *iterable* is one
@@ -720,7 +823,7 @@ class Sequence(MutableSequence, Container):
         self._data.clear()
 
     def remove(self, item):
-        """Removes first occurrence of the *item*."""
+        """Removes the first occurrence of an *item* from the `Sequence`."""
         self._data.remove(item)
 
     def reverse(self):
@@ -761,10 +864,13 @@ class Sequence(MutableSequence, Container):
     @byte_order_option()
     @nested_option()
     def decode(self, buffer=bytes(), index=default_index(), **options):
-        """Decodes sequential the bytes from a *buffer* starting at the begin
+        """Decodes sequential bytes from a *buffer* starting at the begin
         of the *buffer* or with a given *index* by mapping the bytes to the
-        values of the `Fields` of a `Sequence` by considering the decoding
-        `Byteorder` of the *buffer* and the `Fields`.
+        `Fields` of a `Sequence` in accordance with the decoding `Byteorder`
+        of the *buffer* and the `Field`.
+
+        A specific coding byte order of a `Field` overrules the decoding
+        byte order of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the last `Field`
         of the `Sequence`.
@@ -786,10 +892,13 @@ class Sequence(MutableSequence, Container):
     @byte_order_option()
     @nested_option()
     def encode(self, buffer=bytearray(), index=default_index(), **options):
-        """Encodes sequential the bytes to a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the values of the
-        `Fields` of a `Sequence` to the bytes by considering the encoding
-        `Byteorder` of the *buffer* and the `Fields`.
+        """Encodes sequential bytes to a *buffer* starting at the begin of
+        the *buffer* or with a given *index* by mapping the values of the
+        `Fields` of a `Sequence` to the bytes in accordance with the
+        encoding `Byteorder` of the *buffer* and the `Field`.
+
+        A specific coding byte order of a `Field` overrules the encoding
+        byte order of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the last `Field`
         of the `Sequence`.
@@ -833,7 +942,9 @@ class Sequence(MutableSequence, Container):
         return index
 
     def first_field(self):
-        """Returns the first field of a `Sequence`."""
+        """Returns the first field of a `Sequence` or `None` for an empty
+        `Sequence`.
+        """
         for item in iter(self):
             # Container
             if is_container(item):
@@ -866,8 +977,8 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def field_indexes(self, index=default_index(), **options):
-        """Returns a list with contains ``(name, index)`` tuples for each `Field`
-        of a `Sequence`.
+        """Returns a list which contains ``(name, index)`` tuples for each
+        `Field` of a `Sequence`.
 
         :param index: optional start :class:`Index` of the `Sequence`.
 
@@ -894,8 +1005,8 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def field_types(self, **options):
-        """Returns a list with contains ``(name, type)`` tuples for each `Field`
-        of a `Sequence`.
+        """Returns a list which contains ``(name, type)`` tuples for each
+        `Field` of a `Sequence`.
 
         :keyword bool nested: if `True` all `Pointer` fields of a `Sequence`
             lists their *nested* `data` object fields as well.
@@ -917,8 +1028,8 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def field_values(self, **options):
-        """Returns a list with contains ``(name, value)`` tuples for each `Field`
-        of a `Sequence`.
+        """Returns a list which contains ``(name, value)`` tuples for each
+        `Field` of a `Sequence`.
 
         :keyword bool nested: if `True` all `Pointer` fields of a `Sequence`
             lists their *nested* `data` object as well.
@@ -1011,25 +1122,35 @@ class Sequence(MutableSequence, Container):
 
 class Array(Sequence):
     """A `Array` is a :class:`Sequence` which contains *elements* of one type.
-
     The *template* for the `Array` element can be any `Field` instance or a
     callable which returns a `Structure`, `Sequence`, `Array` or any `Field`
     instance.
 
-    A constructor method is necessary to ensure that the constructor of
-    the `Array` produces complete copies for each `Array` element including
-    the *nested* objects in the `Array` element *template*.
+    The constructor method is necessary to ensure that the internal constructor
+    for the `Array` element produces complete copies for each `Array` element
+    including the *nested* objects in the *template* for the `Array` element.
 
     A `Array` of `Pointer` should use a constructor method instead of assigning
-    the `Pointer` directly as the `Array` element *template* to ensure that the
-    *nested* `data` object of the `Pointer` is also copied for each `Array`
-    element.
+    a `Pointer` instance directly as the `Array` element *template* to ensure
+    that the *nested* `data` object of a `Pointer` is also complete copied for
+    each `Array` element.
+
+    A `Array` adapts and extends a `Sequence` with the following features:
+
+    *   **Append** a new `Array` element to a `Array`
+        via :meth:`append()`.
+
+    *   **Insert** a new `Array` element before the *index* into a `Array`
+        via :meth:`insert()`.
+
+    *   **Re-size** a `Array`
+        via :meth:`resize()`.
 
     :param template: template for the `Array` element.
         The *template* can be any `Field` instance or any *callable* that
         returns a `Structure`, `Sequence`, `Array` or any `Field` instance.
 
-    :param int size: is the size of the `Array` in number of `Array` elements.
+    :param int size: size of the `Array` in number of `Array` elements.
     """
     item_class = ItemClass.Array
 
@@ -1069,7 +1190,8 @@ class Array(Sequence):
         """Re-sizes the `Array` by appending  new `Array` elements or
         removing `Array` elements from the end.
 
-        :param int size: `Array` size in number of array elements.
+        :param int size: new size of the `Array` in number of `Array`
+            elements.
         """
         count = max(int(size), 0) - len(self)
 
@@ -1229,8 +1351,9 @@ class Field(metaclass=abc.ABCMeta):
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=default_index(), **options):
         """Unpacks the bytes and bits from a *buffer* starting at the given
-        *index* by mapping the bytes and bits to the `Field` value by
-        considering the encoding `Byteorder` of the *buffer* and the `Field`.
+        *index* by mapping the bytes and bits to the `Field` value in
+        accordance with the decoding `Byteorder` of the *buffer* and the
+        `Field`.
 
         A specific coding byte order of a `Field` overrules the decoding
         byte order of the *buffer*.
@@ -1248,8 +1371,9 @@ class Field(metaclass=abc.ABCMeta):
     @byte_order_option()
     def pack(self, buffer=bytearray(), **options):
         """Packs the bytes and bits for a *buffer* starting at the *index*
-        of the `Field` by mapping the value of the `Field` to bytes by
-        considering the encoding `Byteorder` of the *buffer* and the `Field`.
+        of the `Field` by mapping the value of the `Field` to bytes in
+        accordance with the encoding `Byteorder` of the *buffer* and the
+        `Field`.
 
         A specific coding byte order of a `Field` overrules the encoding
         byte order of the *buffer*.
@@ -1267,10 +1391,13 @@ class Field(metaclass=abc.ABCMeta):
     @byte_order_option()
     @nested_option()
     def decode(self, buffer=bytes(), index=default_index(), **options):
-        """Decodes sequential the bytes from a *buffer* starting at the begin
+        """Decodes sequential bytes from a *buffer* starting at the begin
         of the *buffer* or with a given *index* by mapping the bytes to the
-        value of the `Field` by considering the decoding `Byteorder` of the
-        *buffer* and the `Field`.
+        value of the `Field` in accordance with the decoding `Byteorder` of
+        the *buffer* and the `Field`.
+
+        A specific coding byte order of a `Field` overrules the decoding
+        byte order of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Field`.
 
@@ -1291,10 +1418,13 @@ class Field(metaclass=abc.ABCMeta):
     @byte_order_option()
     @nested_option()
     def encode(self, buffer=bytearray(), index=default_index(), **options):
-        """Encodes sequential the bytes to a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the value of the
-        `Field` to the bytes by considering the encoding `Byteorder` of the
-        *buffer* and the `Field`.
+        """Encodes sequential bytes to a *buffer* starting at the begin of
+        the *buffer* or with a given *index* by mapping the value of the
+        `Field` to the bytes in accordance with the encoding `Byteorder` of
+        the *buffer* and the `Field`.
+
+        A specific coding byte order of a `Field` overrules the encoding
+        byte order of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Field`.
 
@@ -1363,7 +1493,7 @@ class Field(metaclass=abc.ABCMeta):
 
 
 class Stream(Field):
-    """A `Stream` field is a  :class:`Field` with a variable *size* and
+    """A `Stream` field is a :class:`Field` with a variable *size* and
     returns its field *value* as a hexadecimal encoded string.
 
     Internally a `Stream` field uses a :class:`bytes` class to store the
@@ -1515,6 +1645,55 @@ class Float(Field):
 
     A `Float` field extends the :meth:`blueprint` method with a ``max`` and
     ``min`` key for its maximum and minimum possible field value.
+
+
+    Example:
+
+    >>> float = Float()
+    >>> float.is_float()
+    True
+    >>> float.name
+    'Float32'
+    >>> float.alignment
+    (4, 0)
+    >>> float.byte_order
+    Byteorder.auto = 'auto'
+    >>> float.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> float.bit_size
+    32
+    >>> float.min()
+    -3.4028234663852886e+38
+    >>> float.max()
+    3.4028234663852886e+38
+    >>> float.smallest()
+    1.1754943508222875e-38
+    >>> float.epsilon()
+    5.960464477539063e-08
+    >>> float.value
+    0.0
+    >>> float.value = 0x10
+    >>> float.value
+    16.0
+    >>> float.value = -3.4028234663852887e+38
+    >>> float.value
+    -3.4028234663852886e+38
+    >>> float.value = 3.4028234663852887e+38
+    >>> float.value
+    3.4028234663852886e+38
+    >>> from pprint import pprint
+    >>> pprint(float.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'Float32',
+     'index': [0, 0],
+     'max': 3.4028234663852886e+38,
+     'min': -3.4028234663852886e+38,
+     'name': 'Float32',
+     'order': 'auto',
+     'size': 32,
+     'type': 'field',
+     'value': 3.4028234663852886e+38}
     """
     field_type = ItemClass.Float
 
@@ -1619,6 +1798,101 @@ class Decimal(Field):
     A `Decimal` field extends its :meth:`blueprint` method with a ``max`` and
     ``min`` key for its maximum and minimum possible field value.
 
+    Example:
+
+    >>> unsigned = Decimal(16)
+    >>> unsigned.is_decimal()
+    True
+    >>> unsigned.name
+    'Decimal16'
+    >>> unsigned.alignment
+    (2, 0)
+    >>> unsigned.byte_order
+    Byteorder.auto = 'auto'
+    >>> unsigned.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> unsigned.bit_size
+    16
+    >>> unsigned.min()
+    0
+    >>> unsigned.max()
+    65535
+    >>> unsigned.signed
+    False
+    >>> unsigned.value
+    0
+    >>> unsigned.value = 0x4000
+    >>> unsigned.value
+    16384
+    >>> unsigned.value = -1
+    >>> unsigned.value
+    0
+    >>> unsigned.value = 65536
+    >>> unsigned.value
+    65535
+    >>> from pprint import pprint
+    >>> pprint(unsigned.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Decimal16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Decimal16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': 65535}
+
+
+    Example:
+
+    >>> signed = Decimal(16, signed=True)
+    >>> signed.is_decimal()
+    True
+    >>> signed.name
+    'Decimal16'
+    >>> signed.alignment
+    (2, 0)
+    >>> signed.byte_order
+    Byteorder.auto = 'auto'
+    >>> signed.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> signed.bit_size
+    16
+    >>> signed.min()
+    -32768
+    >>> signed.max()
+    32767
+    >>> signed.signed
+    True
+    >>> signed.value
+    0
+    >>> signed.value = -0x4000
+    >>> signed.value
+    -16384
+    >>> signed.value = -32769
+    >>> signed.value
+    -32768
+    >>> signed.value = 32768
+    >>> signed.value
+    32767
+    >>> from pprint import pprint
+    >>> pprint(signed.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Decimal16',
+     'index': [0, 0],
+     'max': 32767,
+     'min': -32768,
+     'name': 'Decimal16',
+     'order': 'auto',
+     'signed': True,
+     'size': 16,
+     'type': 'field',
+     'value': 32767}
+
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
 
@@ -1652,6 +1926,15 @@ class Decimal(Field):
     @value.setter
     def value(self, x):
         self._value = self.to_decimal(x)
+
+    @property
+    def signed(self):
+        """Field signed."""
+        return self._signed
+
+    @signed.setter
+    def signed(self, value):
+        self._signed = bool(value)
 
     @staticmethod
     def is_decimal():
@@ -1806,12 +2089,62 @@ class Decimal(Field):
         obj = super().blueprint(name, **options)
         obj['max'] = self.max()
         obj['min'] = self.min()
+        obj['signed'] = self.signed
         return OrderedDict(sorted(obj.items()))
 
 
 class Bit(Decimal):
     """A `Bit` field is an unsigned :class:`Decimal` with a *size* of
     one bit and returns its field *value* as an unsigned integer number.
+
+    Example:
+
+    >>> bit = Bit(0)
+    >>> bit.is_decimal()
+    True
+    >>> bit.is_bit()
+    True
+    >>> bit.name
+    'Bit'
+    >>> bit.alignment
+    (1, 0)
+    >>> bit.byte_order
+    Byteorder.auto = 'auto'
+    >>> bit.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bit.signed
+    False
+    >>> bit.value
+    0
+    >>> bit.value = 1
+    >>> bit.value
+    1
+    >>> bit.value = False
+    >>> bit.value
+    0
+    >>> bit.value = True
+    >>> bit.value
+    1
+    >>> bit.value = -1
+    >>> bit.value
+    0
+    >>> bit.value = 2
+    >>> bit.value
+    1
+    >>> from pprint import pprint
+    >>> pprint(bit.blueprint())
+    {'address': 0,
+     'alignment': [1, 0],
+     'class': 'Bit',
+     'index': [0, 0],
+     'max': 1,
+     'min': 0,
+     'name': 'Bit',
+     'order': 'auto',
+     'signed': False,
+     'size': 1,
+     'type': 'field',
+     'value': 1}
 
     :param int number: is the bit offset of the field within the aligned
         bytes, can be between *0* and *63*.
@@ -1839,6 +2172,54 @@ class Bit(Decimal):
 class Byte(Decimal):
     """A `Byte` field is an unsigned :class:`Decimal` field with a *size* of
     one byte and returns its field *value* as a hexadecimal encoded string.
+
+    Example:
+
+    >>> byte = Byte()
+    >>> byte.is_decimal()
+    True
+    >>> byte.name
+    'Byte'
+    >>> byte.alignment
+    (1, 0)
+    >>> byte.byte_order
+    Byteorder.auto = 'auto'
+    >>> byte.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> byte.bit_size
+    8
+    >>> byte.min()
+    0
+    >>> byte.max()
+    255
+    >>> byte.signed
+    False
+    >>> byte.value
+    '0x0'
+    >>> byte.value = 16
+    >>> byte.value
+    '0x10'
+    >>> byte.value = -1
+    >>> byte.value
+    '0x0'
+    >>> byte.value = 256
+    >>> byte.value
+    '0xff'
+    >>> from pprint import pprint
+    >>> pprint(byte.blueprint())
+    {'address': 0,
+     'alignment': [1, 0],
+     'class': 'Byte',
+     'index': [0, 0],
+     'max': 255,
+     'min': 0,
+     'name': 'Byte',
+     'order': 'auto',
+     'signed': False,
+     'size': 8,
+     'type': 'field',
+     'value': '0xff'}
+
     """
     field_type = ItemClass.Byte
 
@@ -1861,6 +2242,52 @@ class Byte(Decimal):
 class Char(Decimal):
     """A `Char` field is a unsigned :class:`Decimal` field with a *size* of
     one byte and returns its field *value* as a unicode encoded string.
+
+    Example:
+
+    >>> char = Char()
+    >>> char.is_decimal()
+    True
+    >>> char.name
+    'Char'
+    >>> char.alignment
+    (1, 0)
+    >>> char.byte_order
+    Byteorder.auto = 'auto'
+    >>> char.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> char.bit_size
+    8
+    >>> char.min()
+    0
+    >>> char.max()
+    255
+    >>> char.signed
+    False
+    >>> char.value = 65
+    >>> char.value
+    'A'
+    >>> char.value = 0x41
+    >>> char.value
+    'A'
+    >>> char.value = 'A'
+    >>> char.value
+    'A'
+    >>> from pprint import pprint
+    >>> pprint(char.blueprint())
+    {'address': 0,
+     'alignment': [1, 0],
+     'class': 'Char',
+     'index': [0, 0],
+     'max': 255,
+     'min': 0,
+     'name': 'Char',
+     'order': 'auto',
+     'signed': False,
+     'size': 8,
+     'type': 'field',
+     'value': 'A'}
+
     """
     field_type = ItemClass.Char
 
@@ -1883,6 +2310,54 @@ class Char(Decimal):
 class Signed(Decimal):
     """A `Signed` field is a signed :class:`Decimal` field with a variable
     *size* and returns its field *value* as a signed integer number.
+
+    Example:
+
+    >>> signed = Signed(16)
+    >>> signed.is_decimal()
+    True
+    >>> signed.name
+    'Signed16'
+    >>> signed.alignment
+    (2, 0)
+    >>> signed.byte_order
+    Byteorder.auto = 'auto'
+    >>> signed.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> signed.bit_size
+    16
+    >>> signed.min()
+    -32768
+    >>> signed.max()
+    32767
+    >>> signed.signed
+    True
+    >>> signed.value
+    0
+    >>> signed.value = -0x4000
+    >>> signed.value
+    -16384
+    >>> signed.value = -32769
+    >>> signed.value
+    -32768
+    >>> signed.value = 32768
+    >>> signed.value
+    32767
+    >>> from pprint import pprint
+    >>> pprint(signed.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Signed16',
+     'index': [0, 0],
+     'max': 32767,
+     'min': -32768,
+     'name': 'Signed16',
+     'order': 'auto',
+     'signed': True,
+     'size': 16,
+     'type': 'field',
+     'value': 32767}
+
     """
     field_type = ItemClass.Signed
 
@@ -1894,6 +2369,55 @@ class Unsigned(Decimal):
     """A `Unsigned` field is a unsigned :class:`Decimal` field with a
     variable *size* and returns its field *value* as a hexadecimal encoded
     string.
+
+    Example:
+
+    >>> unsigned = Unsigned(16)
+    >>> unsigned.is_decimal()
+    True
+    >>> unsigned.name
+    'Unsigned16'
+    >>> unsigned.alignment
+    (2, 0)
+    >>> unsigned.byte_order
+    Byteorder.auto = 'auto'
+    >>> unsigned.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> unsigned.bit_size
+    16
+    >>> unsigned.min()
+    0
+    >>> unsigned.max()
+    65535
+    >>> unsigned.signed
+    False
+    >>> unsigned.value
+    '0x0'
+    >>> unsigned.value = 16384
+    >>> unsigned.value
+    '0x4000'
+    >>> unsigned.value = -0x1
+    >>> unsigned.value
+    '0x0'
+    >>> unsigned.value = 0x10000
+    >>> unsigned.value
+    '0xffff'
+    >>> from pprint import pprint
+    >>> pprint(unsigned.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Unsigned16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Unsigned16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': '0xffff'}
+
+
     """
     field_type = ItemClass.Unsigned
 
@@ -1912,6 +2436,53 @@ class Unsigned(Decimal):
 class Bitset(Decimal):
     """A `Bitset` field is a unsigned :class:`Decimal` field with a variable
     *size* and returns its field *value* as a binary encoded string.
+
+    Example:
+
+    >>> bitset = Bitset(16)
+    >>> bitset.is_decimal()
+    True
+    >>> bitset.name
+    'Bitset16'
+    >>> bitset.alignment
+    (2, 0)
+    >>> bitset.byte_order
+    Byteorder.auto = 'auto'
+    >>> bitset.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bitset.bit_size
+    16
+    >>> bitset.min()
+    0
+    >>> bitset.max()
+    65535
+    >>> bitset.signed
+    False
+    >>> bitset.value
+    '0b0000000000000000'
+    >>> bitset.value = 0b1111
+    >>> bitset.value
+    '0b0000000000001111'
+    >>> bitset.value = -1
+    >>> bitset.value
+    '0b0000000000000000'
+    >>> bitset.value = 0x10000
+    >>> bitset.value
+    '0b1111111111111111'
+    >>> from pprint import pprint
+    >>> pprint(bitset.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Bitset16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Bitset16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': '0b1111111111111111'}
 
     :param byte_order: coding :class:`Byteorder` of a `Bitset` field.
     """
@@ -1934,6 +2505,56 @@ class Bitset(Decimal):
 class Bool(Decimal):
     """A `Bool` field is a unsigned :class:`Decimal` field with a variable
     *size* and returns its field *value* as a boolean.
+
+    Example:
+
+    >>> bool = Bool(16)
+    >>> bool.is_decimal()
+    True
+    >>> bool.is_bool()
+    True
+    >>> bool.name
+    'Bool16'
+    >>> bool.alignment
+    (2, 0)
+    >>> bool.byte_order
+    Byteorder.auto = 'auto'
+    >>> bool.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bool.bit_size
+    16
+    >>> bool.min()
+    0
+    >>> bool.max()
+    65535
+    >>> bool.signed
+    False
+    >>> bool.value
+    False
+    >>> bool.value = 1
+    >>> bool.value
+    True
+    >>> bool.value = -1
+    >>> bool.value
+    False
+    >>> bool.value = 0x10000
+    >>> bool.value
+    True
+    >>> from pprint import pprint
+    >>> pprint(bool.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Bool16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Bool16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': True}
+
     """
     field_type = ItemClass.Bool
 
@@ -1961,6 +2582,59 @@ class Enum(Decimal):
     If an *enumeration* is available and a member matches the integer number
     then the member name string is returned otherwise the integer number is
     returned.
+
+    Example:
+
+    >>> enum = Enum(16, enumeration=ItemClass)
+    >>> enum.is_decimal()
+    True
+    >>> enum.name
+    'Enum16'
+    >>> enum.alignment
+    (2, 0)
+    >>> enum.byte_order
+    Byteorder.auto = 'auto'
+    >>> enum.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> enum.bit_size
+    16
+    >>> enum.min()
+    0
+    >>> enum.max()
+    65535
+    >>> enum.signed
+    False
+    >>> enum.value
+    0
+    >>> enum.value = 48
+    >>> enum.value
+    'Enum'
+    >>> enum.value = 'Enum'
+    >>> enum.value
+    'Enum'
+    >>> enum.value = 40
+    >>> enum.value
+    'Decimal'
+    >>> enum.value = -1
+    >>> enum.value
+    0
+    >>> enum.value = 65536
+    >>> enum.value
+    65535
+    >>> from pprint import pprint
+    >>> pprint(enum.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Enum16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Enum16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': 65535}
 
     :param enumeration: :class:`Enumeration` definition of the field.
     """
@@ -2016,16 +2690,55 @@ class Scaled(Decimal):
 
     Example:
 
-    >>> scaled = Scaled(0x4000, 16)
-    >>> scaled.as_float(0x7fff)
-    32767.0
-    >>> scaled.as_float(-0x8000)
-    -32768.0
-    >>> scaled = Scaled(100.0, 16)
-    >>> scaled.as_float(0x7fff)
-    199.993896484375
-    >>> scaled.as_float(-0x8000)
+    >>> scaled = Scaled(100, 16)
+    >>> scaled.is_decimal()
+    True
+    >>> scaled.name
+    'Scaled16'
+    >>> scaled.alignment
+    (2, 0)
+    >>> scaled.byte_order
+    Byteorder.auto = 'auto'
+    >>> scaled.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> scaled.bit_size
+    16
+    >>> scaled.min()
+    -32768
+    >>> scaled.max()
+    32767
+    >>> scaled.scale
+    100.0
+    >>> scaled.scaling_base()
+    16384.0
+    >>> scaled.signed
+    True
+    >>> scaled.value
+    0.0
+    >>> scaled.value = -100
+    >>> scaled.value
+    -100.0
+    >>> scaled.value = -200.001
+    >>> scaled.value
     -200.0
+    >>> scaled.value = 200
+    >>> scaled.value
+    199.993896484375
+    >>> from pprint import pprint
+    >>> pprint(scaled.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Scaled16',
+     'index': [0, 0],
+     'max': 32767,
+     'min': -32768,
+     'name': 'Scaled16',
+     'order': 'auto',
+     'scale': 100.0,
+     'signed': True,
+     'size': 16,
+     'type': 'field',
+     'value': 199.993896484375}
 
     :param float scale: scaling factor of the field.
     """
@@ -2071,12 +2784,12 @@ class Scaled(Decimal):
 
 class Fraction(Decimal):
     """A `Fraction` field is an unsigned :class:`Decimal` field with a
-    variable size and returns its fractional field *value* as a float.
+    variable *size* and returns its fractional field *value* as a float.
 
     A fractional number is bitwise encoded and has up to three bit
     parts for this task.
 
-    The first part are the bits fo the fraction part of a fractional number.
+    The first part are the bits for the fraction part of a fractional number.
     The number of bits for the fraction part is derived from the *bit size*
     of the field and the required bits for the other two parts.
     The fraction part is always smaller than one.
@@ -2084,28 +2797,116 @@ class Fraction(Decimal):
     The second part are the *bits* for the *integer* part of a fractional
     number.
 
-    The third part is the optional bit for the sign of a *signed* fractional
-    number.
+    The third part is the bit for the sign of a *signed* fractional
+    number. Only a *signed* fractional number posses this bit.
 
     A fractional number is multiplied by hundred.
 
     Example:
 
     >>> unipolar = Fraction(2, 16)
+    >>> unipolar.is_decimal()
+    True
+    >>> unipolar.name
+    'Fraction2.16'
+    >>> unipolar.alignment
+    (2, 0)
+    >>> unipolar.byte_order
+    Byteorder.auto = 'auto'
+    >>> unipolar.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> unipolar.bit_size
+    16
+    >>> unipolar.min()
+    0
+    >>> unipolar.max()
+    65535
+    >>> unipolar.signed
+    False
+    >>> unipolar.value
+    0.0
+    >>> unipolar.value = 100
+    >>> unipolar.value
+    100.0
+    >>> unipolar.as_float(0x4000)
+    100.0
+    >>> unipolar.value = -1
+    >>> unipolar.value
+    0.0
+    >>> unipolar.value = 400
+    >>> unipolar.value
+    399.993896484375
     >>> unipolar.as_float(0xffff)
     399.993896484375
-    >>> hex(unipolar.to_fraction(100))
-    '0x4000'
-    >>> hex(unipolar.to_fraction(-100))
-    '0x0'
+    >>> from pprint import pprint
+    >>> pprint(unipolar.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Fraction2.16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Fraction2.16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': 399.993896484375}
+
+    Example:
+
     >>> bipolar = Fraction(2, 16, 2, True)
+    >>> bipolar.is_decimal()
+    True
+    >>> bipolar.name
+    'Fraction2.16'
+    >>> bipolar.alignment
+    (2, 0)
+    >>> bipolar.byte_order
+    Byteorder.auto = 'auto'
+    >>> bipolar.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bipolar.bit_size
+    16
+    >>> bipolar.min()
+    0
+    >>> bipolar.max()
+    65535
+    >>> bipolar.signed
+    False
+    >>> bipolar.value
+    0.0
+    >>> bipolar.value = -100
+    >>> bipolar.value
+    -100.0
+    >>> bipolar.as_float(0xc000)
+    -100.0
+    >>> bipolar.as_float(0x8000)
+    -0.0
+    >>> bipolar.value = -200
+    >>> bipolar.value
+    -199.993896484375
     >>> bipolar.as_float(0xffff)
     -199.993896484375
-    >>> hex(bipolar.to_fraction(100))
-    '0x4000'
-    >>> hex(bipolar.to_fraction(-100))
-    '0xc000'
-
+    >>> bipolar.value = 200
+    >>> bipolar.value
+    199.993896484375
+    >>> bipolar.as_float(0x7fff)
+    199.993896484375
+    >>> from pprint import pprint
+    >>> pprint(bipolar.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Fraction2.16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Fraction2.16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': 199.993896484375}
 
     :param int bits_integer: number of bits for the integer part of the
         fraction number, can be between *1* and the field *size*.
@@ -2170,10 +2971,69 @@ class Fraction(Decimal):
             decimal = limiter(integer | fraction, 0, 2 ** self.bit_size - 1)
         return self.to_decimal(decimal)
 
+    def blueprint(self, name=None, **options):
+        obj = super().blueprint(name, **options)
+        return OrderedDict(sorted(obj.items()))
+
 
 class Bipolar(Fraction):
     """A `Bipolar` field is a signed :class:`Fraction` field with a variable
     *size* and returns its fractional field value as a float.
+
+    Example:
+
+    >>> bipolar = Bipolar(2, 16)
+    >>> bipolar.is_decimal()
+    True
+    >>> bipolar.name
+    'Bipolar2.16'
+    >>> bipolar.alignment
+    (2, 0)
+    >>> bipolar.byte_order
+    Byteorder.auto = 'auto'
+    >>> bipolar.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bipolar.bit_size
+    16
+    >>> bipolar.min()
+    0
+    >>> bipolar.max()
+    65535
+    >>> bipolar.signed
+    False
+    >>> bipolar.value
+    0.0
+    >>> bipolar.value = -100
+    >>> bipolar.value
+    -100.0
+    >>> bipolar.as_float(0xc000)
+    -100.0
+    >>> bipolar.as_float(0x8000)
+    -0.0
+    >>> bipolar.value = -200
+    >>> bipolar.value
+    -199.993896484375
+    >>> bipolar.as_float(0xffff)
+    -199.993896484375
+    >>> bipolar.value = 200
+    >>> bipolar.value
+    199.993896484375
+    >>> bipolar.as_float(0x7fff)
+    199.993896484375
+    >>> from pprint import pprint
+    >>> pprint(bipolar.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Bipolar2.16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Bipolar2.16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': 199.993896484375}
     """
     field_type = ItemClass.Bipolar
 
@@ -2184,6 +3044,57 @@ class Bipolar(Fraction):
 class Unipolar(Fraction):
     """A `Unipolar` field is a unsigned :class:`Fraction` field with a variable
     *size* and returns its fractional field *value* as a float.
+
+    Example:
+
+    >>> unipolar = Unipolar(2, 16)
+    >>> unipolar.is_decimal()
+    True
+    >>> unipolar.name
+    'Unipolar2.16'
+    >>> unipolar.alignment
+    (2, 0)
+    >>> unipolar.byte_order
+    Byteorder.auto = 'auto'
+    >>> unipolar.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> unipolar.bit_size
+    16
+    >>> unipolar.min()
+    0
+    >>> unipolar.max()
+    65535
+    >>> unipolar.signed
+    False
+    >>> unipolar.value
+    0.0
+    >>> unipolar.value = 100
+    >>> unipolar.value
+    100.0
+    >>> unipolar.as_float(0x4000)
+    100.0
+    >>> unipolar.value = -1
+    >>> unipolar.value
+    0.0
+    >>> unipolar.value = 400
+    >>> unipolar.value
+    399.993896484375
+    >>> unipolar.as_float(0xffff)
+    399.993896484375
+    >>> from pprint import pprint
+    >>> pprint(unipolar.blueprint())
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Unipolar2.16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Unipolar2.16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'field',
+     'value': 399.993896484375}
     """
     field_type = ItemClass.Unipolar
 
@@ -2195,6 +3106,50 @@ class Datetime(Decimal):
     """A `Datetime` field is a unsigned :class:`Decimal` field with a fix
     *size* of four bytes and returns its field *value* as a UTC datetime
     encoded string in the format *YYYY-mm-dd HH:MM:SS*.
+
+    Example:
+
+    >>> datetime = Datetime()
+    >>> datetime.is_decimal()
+    True
+    >>> datetime.name
+    'Datetime32'
+    >>> datetime.alignment
+    (4, 0)
+    >>> datetime.byte_order
+    Byteorder.auto = 'auto'
+    >>> datetime.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> datetime.bit_size
+    32
+    >>> datetime.min()
+    0
+    >>> datetime.max()
+    4294967295
+    >>> datetime.signed
+    False
+    >>> datetime.value
+    '1970-01-01 00:00:00'
+    >>> datetime.value = '1970-01-01 01:00:00'
+    >>> datetime.value
+    '1970-01-01 00:00:00'
+    >>> datetime.value = '2106-02-07 07:28:15'
+    >>> datetime.value
+    '2106-02-07 06:28:15'
+    >>> from pprint import pprint
+    >>> pprint(datetime.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'Datetime32',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'Datetime32',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'field',
+     'value': '2106-02-07 06:28:15'}
     """
     field_type = ItemClass.Datetime
 
@@ -2203,15 +3158,15 @@ class Datetime(Decimal):
 
     @property
     def value(self):
-        return datetime.datetime.utcfromtimestamp(self._value)
+        return str(datetime.datetime.utcfromtimestamp(self._value))
 
     @value.setter
     def value(self, x):
         self._value = self.to_timestamp(x)
 
-    def to_timestamp(self, datetime):
+    def to_timestamp(self, value):
         decimal = int(time.mktime(
-            datetime.datetime.strptime(datetime,
+            datetime.datetime.strptime(value,
                                        "%Y-%m-%d %H:%M:%S").utctimetuple()))
         return self.to_decimal(decimal)
 
