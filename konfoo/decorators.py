@@ -12,34 +12,17 @@ from functools import wraps
 from .categories import Byteorder, Option
 
 
-def option(name, default=None):
-    """Attaches an option with its *name* and *default* value to the
-    keyword arguments, if the keyword does not exist. All positional
-    arguments and keyword arguments are forwarded unchanged.
-    """
-
-    def decorator(method):
-        @wraps(method)
-        def wrapper(*args, **kwargs):
-            kwargs[name] = kwargs.get(name, default)
-            return method(*args, **kwargs)
-
-        return wrapper
-
-    return decorator
-
-
 def byte_order_option(default=Byteorder.default):
-    """Attaches the byte order option with the *default* value to the
-    keyword arguments, if the keyword does not exist. All positional
+    """Attaches the option ``byte_order`` with its *default* value to the
+    keyword arguments, when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
 
     def decorator(method):
         @wraps(method)
         def wrapper(*args, **kwargs):
-            kwargs[Option.byteorder] = kwargs.get(Option.byteorder,
-                                                  bool(default))
+            option = Option.byteorder.value
+            kwargs[option] = kwargs.get(option, default)
             return method(*args, **kwargs)
 
         return wrapper
@@ -48,16 +31,16 @@ def byte_order_option(default=Byteorder.default):
 
 
 def field_types_option(default=False):
-    """Attaches the field type option with a *default* value to the
-    keyword arguments, if the keyword does not exist. All positional
+    """Attaches the option ``field_types`` with its *default* value to the
+    keyword arguments when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
 
     def decorator(method):
         @wraps(method)
         def wrapper(*args, **kwargs):
-            kwargs[Option.classes] = kwargs.get(Option.classes,
-                                                bool(default))
+            option = Option.field_types.value
+            kwargs[option] = kwargs.get(option, bool(default))
             return method(*args, **kwargs)
 
         return wrapper
@@ -66,16 +49,16 @@ def field_types_option(default=False):
 
 
 def nested_option(default=False):
-    """Attaches the nested option with the *default* value to the
-    keyword arguments, if the keyword does not exist. All positional
+    """Attaches the option ``nested`` with its *default* value to the
+    keyword arguments when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
 
     def decorator(method):
         @wraps(method)
         def wrapper(*args, **kwargs):
-            kwargs[Option.nested] = kwargs.get(Option.nested,
-                                               bool(default))
+            option = Option.nested.value
+            kwargs[option] = kwargs.get(option, bool(default))
             return method(*args, **kwargs)
 
         return wrapper
@@ -84,16 +67,16 @@ def nested_option(default=False):
 
 
 def verbose_option(default=False):
-    """Attaches the verbose option with the *default* value to the
-    keyword arguments, if the keyword does not exist. All positional
+    """Attaches the option ``verbose`` with its *default* value to the
+    keyword arguments when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
 
     def decorator(method):
         @wraps(method)
         def wrapper(*args, **kwargs):
-            kwargs[Option.verbose] = kwargs.get(Option.verbose,
-                                                bool(default))
+            option = Option.verbose.value
+            kwargs[option] = kwargs.get(option, bool(default))
             return method(*args, **kwargs)
 
         return wrapper
