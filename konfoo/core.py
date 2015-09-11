@@ -13,6 +13,7 @@ import struct
 import copy
 import time
 import datetime
+import calendar
 from collections import Mapping, namedtuple, OrderedDict
 from collections.abc import MutableSequence
 from configparser import ConfigParser
@@ -223,8 +224,6 @@ class Container(metaclass=abc.ABCMeta):
 
         :keyword bool verbose: if `True` the loading is executed in verbose mode.
         """
-        # Section in the INI file to look after the field values
-        # for the `Value` fields of a `Container` field
         section = self.__class__.__name__ if section is None else section
 
         parser = ConfigParser()
@@ -251,8 +250,10 @@ class Container(metaclass=abc.ABCMeta):
                     # Stream field
                     elif field.is_stream():
                         value = parser.get(section, option)
-                        stream = unhexlify(value.replace("b'", '').replace("'", ""))
-
+                        stream = unhexlify(value.replace("b'", '').
+                                           replace("'", ""))
+                        # Auto size a zero sized stream field to
+                        # the current stream length
                         if not len(field):
                             field.resize(len(stream))
                         field.value = stream
@@ -330,37 +331,26 @@ class Structure(OrderedDict, Container):
     *   **Read** from a `Provider` the necessary bytes for each `data`
         object referenced by the `Pointer` fields in a `Structure`
         via :meth:`read()`.
-
     *   **Decode** the *field values* of a `Structure` from a byte stream
         via :meth:`decode()`.
-
     *   **Encode** the *field values* of a `Structure` to a byte stream
         via :meth:`encode()`.
-
     *   Get the **next index** after the last *field* of a `Structure`
         via :meth:`next_index()`.
-
     *   Get the **first field** of a `Structure`
         via :meth:`first_field()`.
-
     *   Get the accumulated **length** of all *fields* in a `Structure`
         via :meth:`field_length()`.
-
     *   View the **index** for each *field* in a `Structure`
         via :meth:`field_indexes()`.
-
     *   View the **type** for each *field* in a `Structure`
         via :meth:`field_types()`.
-
     *   View the **value** for each *field* in a `Structure`
         via :meth:`field_values()`.
-
     *   List the **item** and its path for each *field* in a `Structure`
         as a flat list via :meth:`field_items()`.
-
     *   Get a **blueprint** of a `Structure` and its items
         via :meth:`blueprint()`,
-
     """
     item_class = ItemClass.Structure
 
@@ -401,19 +391,19 @@ class Structure(OrderedDict, Container):
         else:
             return self[name]
 
-    def __setattr__(self, name, field):
-        """Assigns the *field* to the member of the `Structure` whose dictionary
+    def __setattr__(self, name, item):
+        """Assigns the *item* to the member of the `Structure` whose dictionary
         key is equal to the *name*.
 
         If the attribute *name* is in the namespace of the `Ordered Dictionary`
         base class then the base class is called instead.
         """
         if name.startswith('_OrderedDict__'):
-            return super().__setattr__(name, field)
-        elif is_any(field):
-            self[name] = field
+            return super().__setattr__(name, item)
+        elif is_any(item):
+            self[name] = item
         else:
-            raise TypeError(name, field)
+            raise TypeError(name, item)
 
     @nested_option()
     def read(self, provider, **options):
@@ -697,56 +687,39 @@ class Sequence(MutableSequence, Container):
 
     *   **Append** a item to a `Sequence`
         via :meth:`append()`.
-
     *   **Insert** a item before the *index* into a `Sequence`
         via :meth:`insert()`.
-
     *   **Extend** a `Sequence` with items
         via :meth:`extend()`.
-
     *   **Clear** a `Sequence`
         via :meth:`clear()`.
-
     *   **Pop** a item with the *index* from a `Sequence`
         via :meth:`pop()`.
-
     *   **Remove**  the first occurrence of an *item* from a `Sequence`
         via :meth:`remove()`.
-
     *   **Reverse** all items in a `Sequence`
         via :meth:`reverse()`.
-
     *   **Read** from a `Provider` the necessary bytes for each `data`
         object referenced by the `Pointer` fields in a `Sequence`
         via :meth:`read()`.
-
     *   **Decode** the *field values* of a `Sequence` from a byte stream
         via :meth:`decode()`.
-
     *   **Encode** the *field values* of a `Sequence` to a byte stream
         via :meth:`encode()`.
-
     *   Get the **next index** after the last *field* of a `Sequence`
         via :meth:`next_index()`.
-
     *   Get the **first field** of a `Sequence`
         via :meth:`first_field()`.
-
     *   Get the accumulated **length** of all *fields* in a `Sequence`
         via :meth:`field_length()`.
-
     *   View the **index** for each *field* in a `Sequence`
         via :meth:`field_indexes()`.
-
     *   View the **type** for each *field* in a `Sequence`
         via :meth:`field_types()`.
-
     *   View the **value** for each *field* in a `Sequence`
         via :meth:`field_values()`.
-
     *   List the **item** and its path for each *field* in a `Sequence`
         as a flat list via :meth:`field_items()`.
-
     *   Get a **blueprint** of a `Sequence` and its items
         via :meth:`blueprint()`,
 
@@ -1139,10 +1112,8 @@ class Array(Sequence):
 
     *   **Append** a new `Array` element to a `Array`
         via :meth:`append()`.
-
     *   **Insert** a new `Array` element before the *index* into a `Array`
         via :meth:`insert()`.
-
     *   **Re-size** a `Array`
         via :meth:`resize()`.
 
@@ -1458,9 +1429,9 @@ class Field(metaclass=abc.ABCMeta):
                 address += self._align_to_byte_size
             else:
                 raise IndexError(index, byte_length, bit_length)
-
         return Index(byte, bit, address, base, update)
 
+    @nested_option(True)
     def blueprint(self, name=str(), **options):
         """Returns the blue print of a `Field` as an ordered dictionary.
 
@@ -1508,6 +1479,68 @@ class Stream(Field):
         of the `Stream` field.
     *   *iterable* ``iter(self)`` iterates over the bytes of the `Stream`
         field.
+
+    Example:
+
+    >>> from pprint import pprint
+    >>> stream = Stream()
+    >>> stream.is_stream()
+    True
+    >>> stream.name
+    'Stream'
+    >>> stream.alignment
+    (0, 0)
+    >>> stream.byte_order
+    Byteorder.auto = 'auto'
+    >>> stream.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> stream.bit_size
+    0
+    >>> stream.value
+    b''
+    >>> stream.resize(10)
+    >>> stream.name
+    'Stream10'
+    >>> stream.alignment
+    (10, 0)
+    >>> stream.bit_size
+    80
+    >>> stream.value
+    b'00000000000000000000'
+    >>> stream.value = '0102030405'
+    >>> stream.value
+    b'01020304050000000000'
+    >>> stream.resize(15)
+    >>> stream.value
+    b'010203040500000000000000000000'
+    >>> stream.resize(10)
+    >>> stream.value = '0102030405060708090a0b0c'
+    >>> stream.value
+    b'0102030405060708090a'
+    >>> len(stream)
+    10
+    >>> [byte for byte in stream]  # converts to int
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    >>> [hex(byte) for byte in stream]
+    ['0x1', '0x2', '0x3', '0x4', '0x5', '0x6', '0x7', '0x8', '0x9', '0xa']
+    >>> stream[5]  # converts to int
+    6
+    >>> 7 in stream
+    True
+    >>> 0x0 in stream
+    False
+    >>> hexlify(stream[5:])  # converts to bytes
+    b'060708090a'
+    >>> pprint(stream.blueprint())
+    {'address': 0,
+     'alignment': [10, 0],
+     'class': 'Stream10',
+     'index': [0, 0],
+     'name': 'Stream10',
+     'order': 'auto',
+     'size': 80,
+     'type': 'field',
+     'value': '0102030405060708090a'}
 
     :param int size: is the *size* of the field in bytes.
     """
@@ -1570,6 +1603,7 @@ class Stream(Field):
         bytestream += b'\x00' * max(len(self) - len(bytestream), 0)
         return bytestream
 
+    @byte_order_option()
     def unpack(self, buffer=bytes(), index=default_index(), **options):
         # Bad aligned field
         if index.bit:
@@ -1579,6 +1613,7 @@ class Stream(Field):
         size = offset + len(self)
         return buffer[offset:size]
 
+    @byte_order_option()
     def pack(self, buffer=bytearray(), **options):
         # Bad aligned field
         if self.index.bit:
@@ -1614,7 +1649,85 @@ class Stream(Field):
 
 class String(Stream):
     """A `String` field is a :class:`Stream` field with a variable *size* and
-    returns its field *value* as a ascii encoded string.
+    returns its field *value* as a zero terminated ascii encoded string.
+
+    A `String` field is:
+
+    *   *containable*: ``item in self`` returns `True` if *item* is part
+        of the `String` field.
+    *   *sized*: ``len(self)`` returns the length of the `String` field.
+    *   *subscriptable* ``self[index]`` returns the *byte* at the *index*
+        of the `String` field.
+    *   *iterable* ``iter(self)`` iterates over the bytes of the `String`
+        field.
+
+    Example:
+
+    >>> from pprint import pprint
+    >>> string = String()
+    >>> string.is_stream()
+    True
+    >>> string.is_string()
+    True
+    >>> string.name
+    'String'
+    >>> string.alignment
+    (0, 0)
+    >>> string.byte_order
+    Byteorder.auto = 'auto'
+    >>> string.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> string.bit_size
+    0
+    >>> string.value
+    ''
+    >>> string.resize(10)
+    >>> string.name
+    'String10'
+    >>> string.alignment
+    (10, 0)
+    >>> string.bit_size
+    80
+    >>> string.value
+    ''
+    >>> string.value = 'KonFoo'
+    >>> string.value
+    'KonFoo'
+    >>> string.resize(3)
+    >>> string.value
+    'Kon'
+    >>> string.resize(10)
+    >>> string.value
+    'Kon'
+    >>> string.value = 'KonFoo is Fun'
+    >>> string.value
+    'KonFoo is '
+    >>> len(string)
+    10
+    >>> [byte for byte in string]  # converts to int
+    [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
+    >>> [chr(byte) for byte in string]  # converts to int
+    ['K', 'o', 'n', 'F', 'o', 'o', ' ', 'i', 's', ' ']
+    >>> chr(string[5])  # converts to int
+    'o'
+    >>> ord(' ') in string
+    True
+    >>> 0x0 in string
+    False
+    >>> string[:6]  # converts to bytes
+    b'KonFoo'
+    >>> string[3:6]  # converts to bytes
+    b'Foo'
+    >>> pprint(string.blueprint())
+    {'address': 0,
+     'alignment': [10, 0],
+     'class': 'String10',
+     'index': [0, 0],
+     'name': 'String10',
+     'order': 'auto',
+     'size': 80,
+     'type': 'field',
+     'value': 'KonFoo is '}
     """
     field_type = ItemClass.String
 
@@ -1646,9 +1759,9 @@ class Float(Field):
     A `Float` field extends the :meth:`blueprint` method with a ``max`` and
     ``min`` key for its maximum and minimum possible field value.
 
-
     Example:
 
+    >>> from pprint import pprint
     >>> float = Float()
     >>> float.is_float()
     True
@@ -1681,7 +1794,6 @@ class Float(Field):
     >>> float.value = 3.4028234663852887e+38
     >>> float.value
     3.4028234663852886e+38
-    >>> from pprint import pprint
     >>> pprint(float.blueprint())
     {'address': 0,
      'alignment': [4, 0],
@@ -1800,6 +1912,7 @@ class Decimal(Field):
 
     Example:
 
+    >>> from pprint import pprint
     >>> unsigned = Decimal(16)
     >>> unsigned.is_decimal()
     True
@@ -1821,6 +1934,10 @@ class Decimal(Field):
     False
     >>> unsigned.value
     0
+    >>> unsigned.decode(unhexlify('0080'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> unsigned.value
+    32768
     >>> unsigned.value = 0x4000
     >>> unsigned.value
     16384
@@ -1830,6 +1947,13 @@ class Decimal(Field):
     >>> unsigned.value = 65536
     >>> unsigned.value
     65535
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> unsigned.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffff'
     >>> from pprint import pprint
     >>> pprint(unsigned.blueprint())
     {'address': 0,
@@ -1848,6 +1972,7 @@ class Decimal(Field):
 
     Example:
 
+    >>> from pprint import pprint
     >>> signed = Decimal(16, signed=True)
     >>> signed.is_decimal()
     True
@@ -1869,6 +1994,10 @@ class Decimal(Field):
     True
     >>> signed.value
     0
+    >>> signed.decode(unhexlify('00c0'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> signed.value
+    -16384
     >>> signed.value = -0x4000
     >>> signed.value
     -16384
@@ -1878,7 +2007,13 @@ class Decimal(Field):
     >>> signed.value = 32768
     >>> signed.value
     32767
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> signed.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ff7f'
     >>> pprint(signed.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -1902,7 +2037,6 @@ class Decimal(Field):
         corresponding to the field *size*.
 
     :param bool signed: if True` the decimal number is signed otherwise unsigned.
-
     """
     field_type = ItemClass.Decimal
 
@@ -1955,7 +2089,7 @@ class Decimal(Field):
 
     def _set_alignment(self, byte_size, bit_offset=0, auto_align=False):
         bit = int(bit_offset)
-        # Auto alignment?
+        # Auto alignment? -> align to field size
         if auto_align:
             byte, remainder = divmod(bit, 8)
             if remainder is not 0:
@@ -1964,38 +2098,44 @@ class Decimal(Field):
         # No auto alignment
         else:
             byte = int(byte_size)
-        # Range check alignment size
+
+        # Not allowed alignment size?
         if byte not in (1, 2, 3, 4, 5, 6, 7, 8):
             raise OutOfRange(self, byte)
-        # Range check field size
+
+        # Field size is out of range?
         if bit < 0 or bit > 63:
             raise OutOfRange(self, bit)
 
+        # Bad aligned field?
         if bit >= byte * 8:
             raise BadAligned(self, byte, bit)
+
+        # Set field alignment
         self._align_to_byte_size = byte
         self._align_to_bit_offset = bit
 
     def _set_bit_size(self, size, step=1, auto_align=False):
         bit_size = int(size)
-        # Step size check
+        # Field size is not a multiple of step?
         if bit_size % step != 0:
             raise InvalidSize(self, bit_size, step)
-        # Range check
+
+        # Field size is out of range?
         if bit_size < 1 or bit_size > 64:
             raise OutOfRange(self, bit_size)
 
         byte_size, bit_offset = divmod(bit_size, 8)
-        # Auto alignment?
+        # Auto alignment? -> align to field size
         if auto_align:
             if bit_offset is not 0:
                 self._align_to_byte_size = byte_size + 1
             else:
                 self._align_to_byte_size = byte_size
-        # Alignment check by no auto alignment
+        # Bad aligned?
         elif byte_size > self._align_to_byte_size:
             raise BadAligned(self, self._align_to_byte_size, byte_size)
-
+        # Set field size
         self._bit_size = bit_size
 
     def bit_mask(self):
@@ -2030,14 +2170,20 @@ class Decimal(Field):
         byte, bit = divmod(self.bit_size, 8)
 
         if self.byte_order is Byteorder.auto:
+            # No specific field byte order
             pass
         elif self.byte_order is byte_order:
+            # Field byte order matches the
+            # decoding byte order of the buffer
             pass
         elif byte < 1:
+            # Byte order not relevant for one byte
             pass
         elif bit != 0:
+            # Bad aligned field
             raise BadAligned(self, byte, bit)
         elif byte == 1:
+            # Byte order not relevant for field's with one byte
             pass
         else:
             value = int.from_bytes(value.to_bytes(byte, byte_order.value),
@@ -2099,6 +2245,7 @@ class Bit(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> bit = Bit(0)
     >>> bit.is_decimal()
     True
@@ -2116,9 +2263,13 @@ class Bit(Decimal):
     False
     >>> bit.value
     0
-    >>> bit.value = 1
+    >>> bit.decode(unhexlify('01'))
+    Index(byte=0, bit=1, address=0, base_address=0, update=False)
     >>> bit.value
     1
+    >>> bit.value = 0
+    >>> bit.value
+    0
     >>> bit.value = False
     >>> bit.value
     0
@@ -2131,7 +2282,13 @@ class Bit(Decimal):
     >>> bit.value = 2
     >>> bit.value
     1
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> bit.encode(bytestream)
+    Index(byte=0, bit=1, address=0, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'01'
     >>> pprint(bit.blueprint())
     {'address': 0,
      'alignment': [1, 0],
@@ -2175,6 +2332,7 @@ class Byte(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> byte = Byte()
     >>> byte.is_decimal()
     True
@@ -2196,6 +2354,10 @@ class Byte(Decimal):
     False
     >>> byte.value
     '0x0'
+    >>> byte.decode(unhexlify('20'))
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
+    >>> byte.value
+    '0x20'
     >>> byte.value = 16
     >>> byte.value
     '0x10'
@@ -2205,7 +2367,13 @@ class Byte(Decimal):
     >>> byte.value = 256
     >>> byte.value
     '0xff'
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> byte.encode(bytestream)
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ff'
     >>> pprint(byte.blueprint())
     {'address': 0,
      'alignment': [1, 0],
@@ -2219,7 +2387,6 @@ class Byte(Decimal):
      'size': 8,
      'type': 'field',
      'value': '0xff'}
-
     """
     field_type = ItemClass.Byte
 
@@ -2245,6 +2412,7 @@ class Char(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> char = Char()
     >>> char.is_decimal()
     True
@@ -2264,16 +2432,28 @@ class Char(Decimal):
     255
     >>> char.signed
     False
-    >>> char.value = 65
+    >>> ord(char.value)
+    0
+    >>> char.decode(unhexlify('41'))
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> char.value
     'A'
+    >>> char.value = 66
+    >>> char.value
+    'B'
     >>> char.value = 0x41
     >>> char.value
     'A'
-    >>> char.value = 'A'
+    >>> char.value = 'F'
     >>> char.value
-    'A'
-    >>> from pprint import pprint
+    'F'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> char.encode(bytestream)
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'46'
     >>> pprint(char.blueprint())
     {'address': 0,
      'alignment': [1, 0],
@@ -2286,8 +2466,7 @@ class Char(Decimal):
      'signed': False,
      'size': 8,
      'type': 'field',
-     'value': 'A'}
-
+     'value': 'F'}
     """
     field_type = ItemClass.Char
 
@@ -2313,6 +2492,7 @@ class Signed(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> signed = Signed(16)
     >>> signed.is_decimal()
     True
@@ -2334,6 +2514,10 @@ class Signed(Decimal):
     True
     >>> signed.value
     0
+    >>> signed.decode(unhexlify('00c0'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> signed.value
+    -16384
     >>> signed.value = -0x4000
     >>> signed.value
     -16384
@@ -2343,7 +2527,13 @@ class Signed(Decimal):
     >>> signed.value = 32768
     >>> signed.value
     32767
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> signed.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ff7f'
     >>> pprint(signed.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -2357,7 +2547,6 @@ class Signed(Decimal):
      'size': 16,
      'type': 'field',
      'value': 32767}
-
     """
     field_type = ItemClass.Signed
 
@@ -2372,6 +2561,7 @@ class Unsigned(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> unsigned = Unsigned(16)
     >>> unsigned.is_decimal()
     True
@@ -2393,7 +2583,11 @@ class Unsigned(Decimal):
     False
     >>> unsigned.value
     '0x0'
-    >>> unsigned.value = 16384
+    >>> unsigned.decode(unhexlify('00c0'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> unsigned.value
+    '0xc000'
+    >>> unsigned.value = 0x4000
     >>> unsigned.value
     '0x4000'
     >>> unsigned.value = -0x1
@@ -2402,7 +2596,13 @@ class Unsigned(Decimal):
     >>> unsigned.value = 0x10000
     >>> unsigned.value
     '0xffff'
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> unsigned.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffff'
     >>> pprint(unsigned.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -2416,8 +2616,6 @@ class Unsigned(Decimal):
      'size': 16,
      'type': 'field',
      'value': '0xffff'}
-
-
     """
     field_type = ItemClass.Unsigned
 
@@ -2439,6 +2637,7 @@ class Bitset(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> bitset = Bitset(16)
     >>> bitset.is_decimal()
     True
@@ -2460,6 +2659,10 @@ class Bitset(Decimal):
     False
     >>> bitset.value
     '0b0000000000000000'
+    >>> bitset.decode(unhexlify('f00f'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> bitset.value
+    '0b0000111111110000'
     >>> bitset.value = 0b1111
     >>> bitset.value
     '0b0000000000001111'
@@ -2469,7 +2672,13 @@ class Bitset(Decimal):
     >>> bitset.value = 0x10000
     >>> bitset.value
     '0b1111111111111111'
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> bitset.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffff'
     >>> pprint(bitset.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -2508,6 +2717,7 @@ class Bool(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> bool = Bool(16)
     >>> bool.is_decimal()
     True
@@ -2531,16 +2741,26 @@ class Bool(Decimal):
     False
     >>> bool.value
     False
-    >>> bool.value = 1
+    >>> bool.decode(unhexlify('0f00'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bool.value
     True
+    >>> bool.value = False
+    >>> bool.value
+    False
     >>> bool.value = -1
     >>> bool.value
     False
     >>> bool.value = 0x10000
     >>> bool.value
     True
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> bool.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffff'
     >>> pprint(bool.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -2554,7 +2774,6 @@ class Bool(Decimal):
      'size': 16,
      'type': 'field',
      'value': True}
-
     """
     field_type = ItemClass.Bool
 
@@ -2585,6 +2804,7 @@ class Enum(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> enum = Enum(16, enumeration=ItemClass)
     >>> enum.is_decimal()
     True
@@ -2606,6 +2826,10 @@ class Enum(Decimal):
     False
     >>> enum.value
     0
+    >>> enum.decode(unhexlify('2800'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> enum.value
+    'Decimal'
     >>> enum.value = 48
     >>> enum.value
     'Enum'
@@ -2621,7 +2845,13 @@ class Enum(Decimal):
     >>> enum.value = 65536
     >>> enum.value
     65535
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> enum.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffff'
     >>> pprint(enum.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -2688,8 +2918,12 @@ class Scaled(Decimal):
     The scaling base is:
         ``2 ** (field size - 1) / 2``
 
+    A `Scaled` field extends the :meth:`blueprint` method with a ``scale`` key
+    for its scaling factor.
+
     Example:
 
+    >>> from pprint import pprint
     >>> scaled = Scaled(100, 16)
     >>> scaled.is_decimal()
     True
@@ -2715,6 +2949,10 @@ class Scaled(Decimal):
     True
     >>> scaled.value
     0.0
+    >>> scaled.decode(unhexlify('0040'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> scaled.value
+    100.0
     >>> scaled.value = -100
     >>> scaled.value
     -100.0
@@ -2724,7 +2962,13 @@ class Scaled(Decimal):
     >>> scaled.value = 200
     >>> scaled.value
     199.993896484375
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> scaled.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ff7f'
     >>> pprint(scaled.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -2804,6 +3048,7 @@ class Fraction(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> unipolar = Fraction(2, 16)
     >>> unipolar.is_decimal()
     True
@@ -2825,6 +3070,10 @@ class Fraction(Decimal):
     False
     >>> unipolar.value
     0.0
+    >>> unipolar.decode(unhexlify('0080'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> unipolar.value
+    200.0
     >>> unipolar.value = 100
     >>> unipolar.value
     100.0
@@ -2838,7 +3087,13 @@ class Fraction(Decimal):
     399.993896484375
     >>> unipolar.as_float(0xffff)
     399.993896484375
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> unipolar.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffff'
     >>> pprint(unipolar.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -2855,6 +3110,7 @@ class Fraction(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> bipolar = Fraction(2, 16, 2, True)
     >>> bipolar.is_decimal()
     True
@@ -2876,6 +3132,10 @@ class Fraction(Decimal):
     False
     >>> bipolar.value
     0.0
+    >>> bipolar.decode(unhexlify('0040'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> bipolar.value
+    100.0
     >>> bipolar.value = -100
     >>> bipolar.value
     -100.0
@@ -2893,7 +3153,13 @@ class Fraction(Decimal):
     199.993896484375
     >>> bipolar.as_float(0x7fff)
     199.993896484375
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> bipolar.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ff7f'
     >>> pprint(bipolar.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -2903,7 +3169,7 @@ class Fraction(Decimal):
      'min': 0,
      'name': 'Fraction2.16',
      'order': 'auto',
-     'signed': False,
+     'signed': True,
      'size': 16,
      'type': 'field',
      'value': 199.993896484375}
@@ -2973,6 +3239,7 @@ class Fraction(Decimal):
 
     def blueprint(self, name=None, **options):
         obj = super().blueprint(name, **options)
+        obj['signed'] = self._signed_fraction
         return OrderedDict(sorted(obj.items()))
 
 
@@ -2982,6 +3249,7 @@ class Bipolar(Fraction):
 
     Example:
 
+    >>> from pprint import pprint
     >>> bipolar = Bipolar(2, 16)
     >>> bipolar.is_decimal()
     True
@@ -3020,7 +3288,13 @@ class Bipolar(Fraction):
     199.993896484375
     >>> bipolar.as_float(0x7fff)
     199.993896484375
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> bipolar.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ff7f'
     >>> pprint(bipolar.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -3030,7 +3304,7 @@ class Bipolar(Fraction):
      'min': 0,
      'name': 'Bipolar2.16',
      'order': 'auto',
-     'signed': False,
+     'signed': True,
      'size': 16,
      'type': 'field',
      'value': 199.993896484375}
@@ -3047,6 +3321,7 @@ class Unipolar(Fraction):
 
     Example:
 
+    >>> from pprint import pprint
     >>> unipolar = Unipolar(2, 16)
     >>> unipolar.is_decimal()
     True
@@ -3068,6 +3343,10 @@ class Unipolar(Fraction):
     False
     >>> unipolar.value
     0.0
+    >>> unipolar.decode(unhexlify('0080'))
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> unipolar.value
+    200.0
     >>> unipolar.value = 100
     >>> unipolar.value
     100.0
@@ -3081,7 +3360,13 @@ class Unipolar(Fraction):
     399.993896484375
     >>> unipolar.as_float(0xffff)
     399.993896484375
-    >>> from pprint import pprint
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> unipolar.encode(bytestream)
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffff'
     >>> pprint(unipolar.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -3109,6 +3394,7 @@ class Datetime(Decimal):
 
     Example:
 
+    >>> from pprint import pprint
     >>> datetime = Datetime()
     >>> datetime.is_decimal()
     True
@@ -3130,13 +3416,23 @@ class Datetime(Decimal):
     False
     >>> datetime.value
     '1970-01-01 00:00:00'
-    >>> datetime.value = '1970-01-01 01:00:00'
-    >>> datetime.value
-    '1970-01-01 00:00:00'
-    >>> datetime.value = '2106-02-07 07:28:15'
+    >>> datetime.decode(unhexlify('ffffffff'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> datetime.value
     '2106-02-07 06:28:15'
-    >>> from pprint import pprint
+    >>> datetime.value = '1969-12-31 23:59:59'
+    >>> datetime.value
+    '1970-01-01 00:00:00'
+    >>> datetime.value = '2106-02-07 06:28:16'
+    >>> datetime.value
+    '2106-02-07 06:28:15'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> datetime.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
     >>> pprint(datetime.blueprint())
     {'address': 0,
      'alignment': [4, 0],
@@ -3165,9 +3461,7 @@ class Datetime(Decimal):
         self._value = self.to_timestamp(x)
 
     def to_timestamp(self, value):
-        decimal = int(time.mktime(
-            datetime.datetime.strptime(value,
-                                       "%Y-%m-%d %H:%M:%S").utctimetuple()))
+        decimal = calendar.timegm(time.strptime(value, "%Y-%m-%d %H:%M:%S"))
         return self.to_decimal(decimal)
 
 
