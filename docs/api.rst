@@ -6,17 +6,19 @@ API
 This part of the documentation lists the full API reference of all public
 classes and functions.
 
-Index
------
-
-.. autoclass:: Index
-   :members:
 
 Provider
 --------
 
 .. autoclass:: Provider
    :members:
+
+FileProvider
+~~~~~~~~~~~~
+
+.. autoclass:: FileProvider
+   :members:
+
 
 Container
 ---------
@@ -346,52 +348,31 @@ String Relative Pointer
 .. autoclass:: StringRelativePointer
    :members:
 
-Enumerations
-------------
-
-.. autoclass:: Enumeration
-   :members:
-
-Item class
-~~~~~~~~~~
-
-.. autoclass:: ItemClass
-   :members:
-   :undoc-members:
-   :inherited-members:
-
-Categories
-----------
-
-.. autoclass:: Category
-   :members:
-
 Byteorder
-~~~~~~~~~
+---------
 
 .. autoclass:: Byteorder
    :members:
    :undoc-members:
    :inherited-members:
 
-Option
-~~~~~~
+Index
+-----
 
-.. autoclass:: Option
+.. autoclass:: Index
    :members:
-   :undoc-members:
-   :inherited-members:
 
-Decorators
+Enumerations
+------------
+
+.. autoclass:: Enumeration
+   :members:
+
+Categories
 ----------
 
-.. autofunction:: byte_order_option
-
-.. autofunction:: field_types_option
-
-.. autofunction:: nested_option
-
-.. autofunction:: verbose_option
+.. autoclass:: Category
+   :members:
 
 Exceptions
 ----------

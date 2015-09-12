@@ -181,22 +181,3 @@ class Category(enum.Enum):
             if member[1].value == value:
                 return member[1]
         return default
-
-
-class Byteorder(Category):
-    auto = 'auto'
-    little = 'little'
-    big = 'big'
-    default = 'little'
-
-
-class Encoding(Category):
-    ascii = 'ascii'
-    hex = 'hex'
-
-
-class Option(Category):
-    field_types = 'field_types'
-    byteorder = 'byte_order'
-    nested = 'nested'
-    verbose = 'verbose'

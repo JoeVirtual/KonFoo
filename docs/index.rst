@@ -1,3 +1,8 @@
+.. image:: _static/logo.png
+   :align: right
+   :alt: Logo
+
+
 Welcome to the KonF'00' Documentation
 =====================================
 
@@ -46,7 +51,7 @@ If you are looking for information on a specific function, class, or
 method, this part of the documentation is for you.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    api
 
@@ -59,3 +64,5 @@ Miscellaneous Pages
    changelog
    upgrading
    license
+
+

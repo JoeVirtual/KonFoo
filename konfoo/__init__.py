@@ -12,22 +12,21 @@
     :license: BSD, see LICENSE for details.
 """
 
-# Providers
-from .providers import Provider
-
 # Enumerations
-from .enums import Enumeration, ItemClass
+from .enums import Enumeration
 
 # Categories
-from .categories import Category, Byteorder, Option
+from .categories import Category
 
-# Decorators
-from .decorators import byte_order_option, field_types_option, \
-    nested_option, verbose_option
+# Globals
+from .globals import Byteorder, BYTEORDER
 
 # Exceptions
 from .exceptions import KonFooException, FileError, OutOfRange, \
     InvalidIndex, InvalidSize, InvalidLength, BadAligned, BadOffset
+
+# Providers
+from .providers import Provider, FileProvider
 
 # Core classes
 from .core import Index, Container, Structure, Sequence, Array, \
@@ -50,31 +49,26 @@ from .fields import Decimal8, Decimal16, Decimal24, Decimal32, \
     RelativePointer8, RelativePointer16, RelativePointer32, RelativePointer64, \
     StreamRelativePointer8, StreamRelativePointer16, StreamRelativePointer32
 
-# Exceptions
-from .exceptions import KonFooException, FileError, OutOfRange, \
-    InvalidIndex, InvalidSize, InvalidLength, BadAligned, BadOffset
-
 # Utilities
 from .utils import d3json
 
 __all__ = [
-    # Provider
-    'Provider',
-
     # Enumerations
-    'Enumeration', 'ItemClass',
+    'Enumeration',
 
-    # Decorators
-    'byte_order_option', 'field_types_option', 'nested_option',
-    'verbose_option',
+    # Categories
+    'Category',
+
+    # Globals
+    'Byteorder', 'BYTEORDER',
 
     # Exceptions
     'KonFooException',
     'FileError', 'OutOfRange', 'InvalidIndex', 'InvalidSize',
     'InvalidLength', 'BadAligned', 'BadOffset',
 
-    # Categories
-    'Category', 'Byteorder', 'Option',
+    # Provider
+    'Provider', 'FileProvider',
 
     # Core classes
     'Index', 'Container', 'Structure', 'Sequence', 'Array',

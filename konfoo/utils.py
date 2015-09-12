@@ -11,7 +11,7 @@
 import json
 from collections import OrderedDict
 
-from .enums import ItemClass
+from .globals import ItemClass
 
 
 class HexViewer:

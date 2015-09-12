@@ -20,44 +20,16 @@ from configparser import ConfigParser
 from binascii import hexlify, unhexlify
 import abc
 
+from konfoo.enums import Enumeration
+
+from konfoo.globals import ItemClass, Byteorder, BYTEORDER, \
+    Option, get_byte_order, get_nested, get_field_types, verbose, \
+    byte_order_option, field_types_option, nested_option, verbose_option, \
+    limiter
+
 from konfoo.providers import Provider
-from konfoo.enums import Enumeration, ItemClass
-from konfoo.categories import Byteorder, Option
-from konfoo.decorators import byte_order_option, field_types_option, nested_option, verbose_option
+
 from konfoo.exceptions import OutOfRange, InvalidSize, BadAligned
-
-
-def limiter(value, minimum, maximum):
-    """Returns the *value* limited between *minimum* and *maximum*
-    whereby the *maximum* wins over the *minimum*.
-
-    Example:
-
-    >>> limiter(64, 0, 255)
-    64
-    >>> limiter(-128, 0, 255)
-    0
-    >>> limiter(0, 127, -128)
-    -128
-    """
-    return min(max(value, minimum), maximum)
-
-
-def get_byte_order(options):
-    return options.get(Option.byteorder, Byteorder.default)
-
-
-def get_field_types(options):
-    return options.get(Option.field_types, False)
-
-
-def get_nested(options):
-    return options.get(Option.nested, False)
-
-
-def verbose(options, message=None):
-    if options.get(Option.verbose, False) and message:
-        print(message)
 
 
 def is_any(obj):
@@ -147,12 +119,12 @@ class Container(metaclass=abc.ABCMeta):
             inserted into the tuple.
         """
         # Name of the `Container`
-        name = self.__class__.__name__ if name else name
+        root = name if name else self.__class__.__name__
 
         fields = list()
         for item in self.field_items(**options):
             path_to_field, field = item
-            path_to_field = '{0}.{1}'.format(name, path_to_field)
+            path_to_field = '{0}.{1}'.format(root, path_to_field)
 
             if get_field_types(options):
                 byte, bit = field.alignment
@@ -181,10 +153,10 @@ class Container(metaclass=abc.ABCMeta):
         :keyword bool field_types: if `True` the type of the `Field` is
             append to the end of path string with '|' as separator.
         """
-        name = self.__class__.__name__ if name else name
+        root = name if name else self.__class__.__name__
 
         fields = OrderedDict()
-        fields[name] = OrderedDict()
+        fields[root] = OrderedDict()
         for item in self.field_items(**options):
             path_to_field, field = item
 
@@ -192,7 +164,7 @@ class Container(metaclass=abc.ABCMeta):
                 byte, bit = field.alignment
                 path_to_field += '|' + field.name + str((byte, bit))
 
-            fields[name][path_to_field] = field.value
+            fields[root][path_to_field] = field.value
         return fields
 
     @nested_option()
@@ -326,7 +298,8 @@ class Structure(OrderedDict, Container):
     easier, but this comes with the cost that the dictionary `keys` must be valid
     python attribute names.
 
-    A `Structure` provides the following additional features:
+    A `Structure` has additional methods for reading, decoding, encoding and
+    viewing binary data:
 
     *   **Read** from a `Provider` the necessary bytes for each `data`
         object referenced by the `Pointer` fields in a `Structure`
@@ -352,7 +325,7 @@ class Structure(OrderedDict, Container):
     *   Get a **blueprint** of a `Structure` and its items
         via :meth:`blueprint()`,
     """
-    item_class = ItemClass.Structure
+    item_type = ItemClass.Structure
 
     def __init__(self, *args, **options):
         super().__init__(*args, **options)
@@ -414,7 +387,7 @@ class Structure(OrderedDict, Container):
         :param provider: data :class:`Provider`.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Structure`reads their *nested* `data` object fields.
+            `Structure` reads their *nested* `data` object fields.
             A `Pointer` field stores the bytes for the *nested* `data`
             object in its own `bytestream`.
         """
@@ -653,7 +626,7 @@ class Structure(OrderedDict, Container):
                 'class': self.__class__.__name__,
                 'name': name if name else self.__class__.__name__,
                 'size': len(self),
-                'type': Structure.item_class.name
+                'type': Structure.item_type.name
                 'member': [
                     field.blueprint(member) for member, field in self.items()
                 ]
@@ -669,7 +642,7 @@ class Structure(OrderedDict, Container):
         obj['class'] = self.__class__.__name__
         obj['name'] = name if name else self.__class__.__name__
         obj['size'] = len(self)
-        obj['type'] = Structure.item_class.name
+        obj['type'] = Structure.item_type.name
         obj['member'] = members
 
         for member_name, item in self.items():
@@ -683,7 +656,16 @@ class Structure(OrderedDict, Container):
 class Sequence(MutableSequence, Container):
     """A `Sequence` contains
 
-    A `Sequence` provides the following features:
+    A `Sequence` is:
+
+    *   *containable*: ``item in self`` returns `True` if *item* is part
+        of the `Sequence`.
+    *   *sized*: ``len(self)`` returns the number of items in the `Sequence`.
+    *   *subscriptable* ``self[index]`` returns the *item* at the *index*
+        of the `Sequence`.
+    *   *iterable* ``iter(self)`` iterates over the *items* of the `Sequence`
+
+    A `Sequence` supports the usual methods:
 
     *   **Append** a item to a `Sequence`
         via :meth:`append()`.
@@ -699,6 +681,10 @@ class Sequence(MutableSequence, Container):
         via :meth:`remove()`.
     *   **Reverse** all items in a `Sequence`
         via :meth:`reverse()`.
+
+    A `Sequence` has additional methods for reading, decoding, encoding and
+    viewing binary data:
+
     *   **Read** from a `Provider` the necessary bytes for each `data`
         object referenced by the `Pointer` fields in a `Sequence`
         via :meth:`read()`.
@@ -729,7 +715,7 @@ class Sequence(MutableSequence, Container):
         to the `Sequence`.
     """
 
-    item_class = ItemClass.Sequence
+    item_type = ItemClass.Sequence
 
     def __init__(self, iterable=None):
         # Data object
@@ -1064,7 +1050,7 @@ class Sequence(MutableSequence, Container):
                 'class': self.__class__.__name__,
                 'name': name if name else self.__class__.__name__,
                 'size': len(self),
-                'type': Sequence.item_class.name
+                'type': Sequence.item_type.name
                 'member': [
                     field.blueprint('name[idx]') for idx, field in enumerate(self)
                 ]
@@ -1080,7 +1066,7 @@ class Sequence(MutableSequence, Container):
         obj['class'] = self.__class__.__name__
         obj['name'] = name if name else self.__class__.__name__
         obj['size'] = len(self)
-        obj['type'] = Sequence.item_class.name
+        obj['type'] = Sequence.item_type.name
         obj['member'] = members
 
         for idx, item in enumerate(self):
@@ -1123,7 +1109,7 @@ class Array(Sequence):
 
     :param int size: size of the `Array` in number of `Array` elements.
     """
-    item_class = ItemClass.Array
+    item_type = ItemClass.Array
 
     def __init__(self, template, size=0):
         super().__init__()
@@ -1146,8 +1132,7 @@ class Array(Sequence):
             return self._template()
 
     def append(self):
-        """Appends a new `Array` element to the `Array`.
-        """
+        """Appends a new `Array` element to the `Array`."""
         super().append(self.__create__())
 
     def insert(self, index):
@@ -1158,7 +1143,7 @@ class Array(Sequence):
         super().insert(index, self.__create__())
 
     def resize(self, size):
-        """Re-sizes the `Array` by appending  new `Array` elements or
+        """Re-sizes the `Array` by appending new `Array` elements or
         removing `Array` elements from the end.
 
         :param int size: new size of the `Array` in number of `Array`
@@ -1179,7 +1164,7 @@ class Array(Sequence):
 
     def blueprint(self, name=None, **options):
         obj = super().blueprint(name, **options)
-        obj['type'] = Array.item_class.name
+        obj['type'] = Array.item_type.name
         return obj
 
 
@@ -1194,7 +1179,7 @@ class Field(metaclass=abc.ABCMeta):
 
     :param byte_order: coding :class:`Byteorder` of the `Field`.
     """
-    field_type = ItemClass.Field
+    item_type = ItemClass.Field
 
     def __init__(self, bit_size=0, align_to=0, byte_order=Byteorder.auto):
         super().__init__()
@@ -1273,7 +1258,7 @@ class Field(metaclass=abc.ABCMeta):
     @property
     def name(self):
         """Field type."""
-        return self.field_type.name.capitalize() + str(self.bit_size)
+        return self.item_type.name.capitalize() + str(self.bit_size)
 
     @property
     def value(self):
@@ -1544,7 +1529,7 @@ class Stream(Field):
 
     :param int size: is the *size* of the field in bytes.
     """
-    field_type = ItemClass.Stream
+    item_type = ItemClass.Stream
 
     def __init__(self, size=0):
 
@@ -1570,9 +1555,9 @@ class Stream(Field):
     def name(self):
         size = len(self)
         if size > 0:
-            return self.field_type.name.capitalize() + str(size)
+            return self.item_type.name.capitalize() + str(size)
         else:
-            return self.field_type.name.capitalize()
+            return self.item_type.name.capitalize()
 
     @property
     def value(self):
@@ -1729,7 +1714,7 @@ class String(Stream):
      'type': 'field',
      'value': 'KonFoo is '}
     """
-    field_type = ItemClass.String
+    item_type = ItemClass.String
 
     @property
     def value(self):
@@ -1807,7 +1792,7 @@ class Float(Field):
      'type': 'field',
      'value': 3.4028234663852886e+38}
     """
-    field_type = ItemClass.Float
+    item_type = ItemClass.Float
 
     def __init__(self):
         super().__init__()
@@ -1954,7 +1939,6 @@ class Decimal(Field):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> from pprint import pprint
     >>> pprint(unsigned.blueprint())
     {'address': 0,
      'alignment': [2, 0],
@@ -1968,7 +1952,6 @@ class Decimal(Field):
      'size': 16,
      'type': 'field',
      'value': 65535}
-
 
     Example:
 
@@ -2036,9 +2019,9 @@ class Decimal(Field):
         `Decimal` field aligns itself to the next matching byte size
         corresponding to the field *size*.
 
-    :param bool signed: if True` the decimal number is signed otherwise unsigned.
+    :param bool signed: if `True` the decimal number is signed otherwise unsigned.
     """
-    field_type = ItemClass.Decimal
+    item_type = ItemClass.Decimal
 
     def __init__(self, bit_size, align_to=None, signed=False):
         super().__init__()
@@ -2306,7 +2289,7 @@ class Bit(Decimal):
     :param int number: is the bit offset of the field within the aligned
         bytes, can be between *0* and *63*.
     """
-    field_type = ItemClass.Bit
+    item_type = ItemClass.Bit
 
     def __init__(self, number, align_to=None):
         super().__init__(bit_size=1, align_to=align_to)
@@ -2318,7 +2301,7 @@ class Bit(Decimal):
 
     @property
     def name(self):
-        return self.field_type.name.capitalize()
+        return self.item_type.name.capitalize()
 
     @staticmethod
     def is_bit():
@@ -2388,14 +2371,14 @@ class Byte(Decimal):
      'type': 'field',
      'value': '0xff'}
     """
-    field_type = ItemClass.Byte
+    item_type = ItemClass.Byte
 
     def __init__(self, align_to=None):
         super().__init__(bit_size=8, align_to=align_to)
 
     @property
     def name(self):
-        return self.field_type.name.capitalize()
+        return self.item_type.name.capitalize()
 
     @property
     def value(self):
@@ -2468,14 +2451,14 @@ class Char(Decimal):
      'type': 'field',
      'value': 'F'}
     """
-    field_type = ItemClass.Char
+    item_type = ItemClass.Char
 
     def __init__(self, align_to=None):
         super().__init__(bit_size=8, align_to=align_to)
 
     @property
     def name(self):
-        return self.field_type.name.capitalize()
+        return self.item_type.name.capitalize()
 
     @property
     def value(self):
@@ -2548,7 +2531,7 @@ class Signed(Decimal):
      'type': 'field',
      'value': 32767}
     """
-    field_type = ItemClass.Signed
+    item_type = ItemClass.Signed
 
     def __init__(self, bit_size, align_to=None):
         super().__init__(bit_size, align_to, signed=True)
@@ -2617,7 +2600,7 @@ class Unsigned(Decimal):
      'type': 'field',
      'value': '0xffff'}
     """
-    field_type = ItemClass.Unsigned
+    item_type = ItemClass.Unsigned
 
     def __init__(self, bit_size, align_to=None):
         super().__init__(bit_size, align_to)
@@ -2695,7 +2678,7 @@ class Bitset(Decimal):
 
     :param byte_order: coding :class:`Byteorder` of a `Bitset` field.
     """
-    field_type = ItemClass.Bitset
+    item_type = ItemClass.Bitset
 
     def __init__(self, bit_size, align_to=None, byte_order=Byteorder.auto):
         super().__init__(bit_size, align_to)
@@ -2775,7 +2758,7 @@ class Bool(Decimal):
      'type': 'field',
      'value': True}
     """
-    field_type = ItemClass.Bool
+    item_type = ItemClass.Bool
 
     def __init__(self, bit_size, align_to=None):
         super().__init__(bit_size, align_to)
@@ -2868,7 +2851,7 @@ class Enum(Decimal):
 
     :param enumeration: :class:`Enumeration` definition of the field.
     """
-    field_type = ItemClass.Enum
+    item_type = ItemClass.Enum
 
     def __init__(self, bit_size, align_to=None, enumeration=None):
         super().__init__(bit_size, align_to)
@@ -2986,7 +2969,7 @@ class Scaled(Decimal):
 
     :param float scale: scaling factor of the field.
     """
-    field_type = ItemClass.Scaled
+    item_type = ItemClass.Scaled
 
     def __init__(self, scale, bit_size, align_to=None):
         super().__init__(bit_size, align_to, signed=True)
@@ -3110,7 +3093,6 @@ class Fraction(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> bipolar = Fraction(2, 16, 2, True)
     >>> bipolar.is_decimal()
     True
@@ -3180,7 +3162,7 @@ class Fraction(Decimal):
     :param bool signed: if `True` the fraction number is signed otherwise
         unsigned.
     """
-    field_type = ItemClass.Fraction
+    item_type = ItemClass.Fraction
 
     def __init__(self, bits_integer, bit_size, align_to=None, signed=False):
         super().__init__(bit_size, align_to)
@@ -3194,7 +3176,7 @@ class Fraction(Decimal):
 
     @property
     def name(self):
-        return self.field_type.name.capitalize() + str(self._bits_integer) + '.' + str(self.bit_size)
+        return self.item_type.name.capitalize() + str(self._bits_integer) + '.' + str(self.bit_size)
 
     @property
     def value(self):
@@ -3309,7 +3291,7 @@ class Bipolar(Fraction):
      'type': 'field',
      'value': 199.993896484375}
     """
-    field_type = ItemClass.Bipolar
+    item_type = ItemClass.Bipolar
 
     def __init__(self, bits_integer, bit_size, align_to=None):
         super().__init__(bits_integer, bit_size, align_to, True)
@@ -3381,7 +3363,7 @@ class Unipolar(Fraction):
      'type': 'field',
      'value': 399.993896484375}
     """
-    field_type = ItemClass.Unipolar
+    item_type = ItemClass.Unipolar
 
     def __init__(self, bits_integer, bit_size, align_to=None):
         super().__init__(bits_integer, bit_size, align_to, False)
@@ -3447,7 +3429,7 @@ class Datetime(Decimal):
      'type': 'field',
      'value': '2106-02-07 06:28:15'}
     """
-    field_type = ItemClass.Datetime
+    item_type = ItemClass.Datetime
 
     def __init__(self):
         super().__init__(bit_size=32)
@@ -3469,6 +3451,104 @@ class Pointer(Decimal, Container):
     """A `Pointer` field is an unsigned :class:`Decimal` field with a *size* of
     four bytes and returns its field *value* as a hexadecimal encoded string.
 
+    The `Pointer` class extends the :class:`Decimal` with the :class:`Container`
+    class for the underlying *data object*.
+
+    A `Pointer` provides additional features:
+
+    *   **Read** from a `Provider` the necessary bytes for each `data`
+        object referenced by the `Pointer` fields in a `Structure`
+        via :meth:`read()`.
+    *   **Decode** the *field values* of a `Structure` from a byte stream
+        via :meth:`decode()`.
+    *   **Encode** the *field values* of a `Structure` to a byte stream
+        via :meth:`encode()`.
+    *   Get the **next index** after the last *field* of a `Structure`
+        via :meth:`next_index()`.
+    *   Get the **first field** of a `Structure`
+        via :meth:`first_field()`.
+    *   Get the accumulated **length** of all *fields* in a `Structure`
+        via :meth:`field_length()`.
+    *   View the **index** for each *field* in a `Structure`
+        via :meth:`field_indexes()`.
+    *   View the **type** for each *field* in a `Structure`
+        via :meth:`field_types()`.
+    *   View the **value** for each *field* in a `Structure`
+        via :meth:`field_values()`.
+    *   List the **item** and its path for each *field* in a `Structure`
+        as a flat list via :meth:`field_items()`.
+    *   Get a **blueprint** of a `Structure` and its items
+        via :meth:`blueprint()`,
+
+    Example:
+
+    >>> from pprint import pprint
+    >>> pointer = Pointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data
+    >>> pointer.size
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> pointer.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'Pointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'Pointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'pointer',
+     'value': '0xffffffff'}
+
     :param template: template for the `data` object referenced by the pointer.
 
     :param int address: absolute address of the `data` object referenced by
@@ -3477,9 +3557,9 @@ class Pointer(Decimal, Container):
     :param byte_order: coding :class:`Byteorder` of the `data` object
         referenced by the pointer.
     """
-    item_class = ItemClass.Pointer
+    item_type = ItemClass.Pointer
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(bit_size=32, align_to=4)
         # Field value
         if address:
@@ -3598,8 +3678,8 @@ class Pointer(Decimal, Container):
 
         :param provider: data :class:`Provider`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Pointer` reads their *nested* `data` object fields.
+        :keyword bool nested: if `True` all `Pointer` fields of the `data`
+            object of a `Pointer` reads their *nested* `data` object fields.
             A `Pointer` field stores the bytes for the *nested* `data`
             object in its own `bytestream`.
         """
@@ -3623,7 +3703,7 @@ class Pointer(Decimal, Container):
             else:
                 raise TypeError(provider)
 
-    def patch(self, item, byte_order=Byteorder.default):
+    def patch(self, item, byte_order=BYTEORDER):
         """Returns a memory :class:`Patch` for the *values* of the referenced
         *item*.
 
@@ -3713,7 +3793,7 @@ class Pointer(Decimal, Container):
         else:
             raise TypeError(item)
 
-    def write(self, provider, item, byte_order=Byteorder.default):
+    def write(self, provider, item, byte_order=BYTEORDER):
         """Writes the values of the referenced *item* to a data *provider*.
 
         :param provider: data :class:`Provider`.
@@ -3824,13 +3904,15 @@ class Pointer(Decimal, Container):
         elif is_field(self._data):
             self._data.next_index(index)
 
+    @nested_option()
     def field_indexes(self, index=default_index(), **options):
         """Returns a ordered dictionary which contains a ``['value']`` key
         which contains the field *index* of a `Pointer` and a ``['data']`` key
         which contains the field *indexes* of the `data` object of a `Pointer`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Pointer`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all `Pointer` fields of the `data`
+            object of a `Pointer` lists their *nested* `data` object fields
+            as well.
         """
         self.next_index(index)
 
@@ -3860,8 +3942,9 @@ class Pointer(Decimal, Container):
         which contains the field *type* of a `Pointer` and a ``['data']`` key
         which contains the field *types* of the `data` object of a `Pointer`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Pointer`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all `Pointer` fields of the `data`
+            object of a `Pointer` lists their *nested* `data` object fields
+            as well.
         """
         types = OrderedDict()
         types['value'] = self.name
@@ -3884,8 +3967,9 @@ class Pointer(Decimal, Container):
         which contains the field *value* of a `Pointer` and a ``['data']`` key
         which contains the field *values* of the `data` object of a `Pointer`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Pointer`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all `Pointer` fields of the `data`
+            object of a `Pointer` lists their *nested* `data` object fields
+            as well.
         """
         values = OrderedDict()
         values['value'] = self.value
@@ -3902,28 +3986,39 @@ class Pointer(Decimal, Container):
             values['data'] = self._data
         return values
 
-    def field_items(self, root=None, **options):
-        if root:
-            path = base = root
-        else:
-            base = str()
-            path = 'value'
+    @nested_option()
+    def field_items(self, root=str(), **options):
+        """Returns a flat list which contains tuples in the form of
+        ``(path, item)`` for each `Field` of a `Pointer`.
 
-        lst = list()
-        lst.append((path, self))
-        if base:
-            path = base + '.data'
-        else:
-            path = 'data'
+        :param str root: root path.
+
+        :keyword bool nested: if `True` all `Pointer` fields of the `data`
+            object of a `Pointer` lists their *nested* `data` object fields
+            as well.
+
+        :keyword bool nested: if `True` the `Fields` of the *nested* `data`
+            objects of all `Pointer` fields in the *nested* `data` object
+            of a `Pointer` are added to the list.
+        """
+        items = list()
+        # Field
+        path = root if root else 'value'
+        items.append((path, self))
+        # Data Object
+        path = '{0}.{1}'.format(root, 'data') if root else 'data'
+        # Container
         if is_container(self._data):
             for field_item in self._data.field_items(path, **options):
-                lst.append(field_item)
+                items.append(field_item)
+        # Pointer
         elif is_pointer(self._data) and get_nested(options):
             for field_item in self._data.field_items(path, **options):
-                lst.append(field_item)
+                items.append(field_item)
+        # Field
         elif is_field(self._data):
-            lst.append((path, self._data))
-        return lst
+            items.append((path, self._data))
+        return items
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
@@ -3963,13 +4058,14 @@ class Pointer(Decimal, Container):
 
 
 class StructurePointer(Pointer):
-    """A :class:`Pointer` field which refers to a :class:`Structure`.
+    """A `StructurePointer` field is a :class:`Pointer` which refers
+    to a :class:`Structure`.
 
     :param template: template for the `data` object.
         The *template* must be a `Structure` instance.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         if template is None:
             template = Structure()
         elif not isinstance(template, Structure):
@@ -4002,7 +4098,34 @@ class StructurePointer(Pointer):
 
 
 class SequencePointer(Pointer):
-    """A :class:`Pointer` field which refers to a :class:`Sequence`.
+    """A `SequencePointer` field is a :class:`Pointer` which refers
+    to a :class:`Sequence`.
+
+    A `SequencePointer` is:
+
+    *   *containable*: ``item in self`` returns `True` if *item* is part
+        of the `Sequence`.
+    *   *sized*: ``len(self)`` returns the number of items in the `Sequence`.
+    *   *subscriptable* ``self[index]`` returns the *item* at the *index*
+        of the `Sequence`.
+    *   *iterable* ``iter(self)`` iterates over the *items* of the `Sequence`
+
+    A `SequencePointer` supports the usual methods:
+
+    *   **Append** a item to a `Sequence`
+        via :meth:`append()`.
+    *   **Insert** a item before the *index* into a `Sequence`
+        via :meth:`insert()`.
+    *   **Extend** a `Sequence` with items
+        via :meth:`extend()`.
+    *   **Clear** a `Sequence`
+        via :meth:`clear()`.
+    *   **Pop** a item with the *index* from a `Sequence`
+        via :meth:`pop()`.
+    *   **Remove**  the first occurrence of an *item* from a `Sequence`
+        via :meth:`remove()`.
+    *   **Reverse** all items in a `Sequence`
+        via :meth:`reverse()`.
 
     :param iterable: any *iterable* that contains items of `Structure`,
         `Sequence`, `Array` or `Field` instances. If the *iterable* is one
@@ -4010,7 +4133,7 @@ class SequencePointer(Pointer):
         to the `Sequence`.
     """
 
-    def __init__(self, iterable=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, iterable=None, address=None, byte_order=BYTEORDER):
         super().__init__(Sequence(iterable), address, byte_order)
 
     def __contains__(self, key):
@@ -4029,29 +4152,41 @@ class SequencePointer(Pointer):
         del self._data[index]
 
     def append(self, item):
+        """Appends the *item* to the end of the `Sequence`."""
         self._data.append(item)
 
     def insert(self, index, item):
+        """Inserts the *item* before the *index* into the `Sequence`.
+
+        :param int index: `Sequence` index.
+        :param item:
+        """
         self._data.insert(index, item)
 
     def pop(self, index=-1):
+        """Removes and returns the item at the *index* from the `Sequence`."""
         return self._data.pop(index)
 
     def clear(self):
+        """Remove all items from the `Sequence`."""
         self._data.clear()
 
     def remove(self, item):
+        """Removes the first occurrence of an *item* from the `Sequence`."""
         self._data.remove(item)
 
     def reverse(self):
+        """In place reversing of the `Sequence` items."""
         self._data.reverse()
 
     def extend(self, iterable):
+        """Extends the `Sequence` by appending items from the *iterable*."""
         self._data.extend(iterable)
 
 
 class ArrayPointer(SequencePointer):
-    """A :class:`Pointer` field which refers to a :class:`Array`.
+    """A `ArrayPointer` field is a :class:`SequencePointer` which refers
+    to a :class:`Array`.
 
     :param template: template for the `Array` element.
         The *template* can be any `Field` instance or any *callable* that
@@ -4060,23 +4195,45 @@ class ArrayPointer(SequencePointer):
     :param int size: is the size of the `Array` in number of `Array` elements.
     """
 
-    def __init__(self, template, size=0, address=None, byte_order=Byteorder.default):
+    def __init__(self, template, size=0, address=None, byte_order=BYTEORDER):
         super().__init__(address, byte_order=byte_order)
         self._data = Array(template, size)
 
     def append(self):
+        """Appends a new `Array` element to the `Array`."""
         self._data.append()
 
     def insert(self, index):
+        """Inserts a new `Array` element before the *index* of the `Array`.
+
+        :param int index: `Array` index.
+        """
         self._data.insert(index)
 
     def resize(self, size):
+        """Re-sizes the `Array` by appending new `Array` elements or
+        removing `Array` elements from the end.
+
+        :param int size: new size of the `Array` in number of `Array`
+            elements.
+        """
         if isinstance(self._data, Array):
             self._data.resize(size)
 
 
 class StreamPointer(Pointer):
-    """A :class:`Pointer` field which refers to a :class:`Stream` field.
+    """A `StreamPointer` field is a :class:`Pointer` which refers
+    to a :class:`Stream` field.
+
+    A `StreamPointer` field is:
+
+    *   *containable*: ``item in self`` returns `True` if *item* is part
+        of the `Stream` field.
+    *   *sized*: ``len(self)`` returns the length of the `Stream` field.
+    *   *subscriptable* ``self[index]`` returns the *byte* at the *index*
+        of the `Stream` field.
+    *   *iterable* ``iter(self)`` iterates over the bytes of the `Stream`
+        field.
 
     :param int size: is the size of the `Stream` field in bytes.
     """
@@ -4097,12 +4254,18 @@ class StreamPointer(Pointer):
         return iter(self._data)
 
     def resize(self, size):
+        """Re-sizes the `Stream` field by appending zero bytes or
+        removing bytes from the end.
+
+        :param int size: `Stream` size in number of bytes.
+        """
         if isinstance(self._data, Stream):
             self._data.resize(size)
 
 
 class StringPointer(StreamPointer):
-    """A :class:`Pointer` field which refers to a :class:`String` field.
+    """A `StringPointer` field is a :class:`StreamPointer` which refers
+    to a :class:`String` field.
 
     :param int size: is the *size* of the `String` field in bytes.
     """
@@ -4126,22 +4289,34 @@ class RelativePointer(Pointer):
         referenced by the pointer.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
 
     @property
     def address(self):
-        """Absolute address of the `data` object."""
+        """`Data` objects absolute address."""
         return self._value + self.base_address
 
     @property
     def base_address(self):
-        """Base address of the data `source`."""
-        return self.index.base
+        """Data `Provider` base address."""
+        return self.index.base_address
 
 
 class StreamRelativePointer(RelativePointer):
-    """A :class:`RelativePointer` which refers to a :class:`Stream` field.
+    """A `StreamRelativePointer` field is a :class:`RelativePointer` field
+    which refers to a :class:`Stream` field.
+
+
+    A `StreamRelativePointer` field is:
+
+    *   *containable*: ``item in self`` returns `True` if *item* is part
+        of the `Stream` field.
+    *   *sized*: ``len(self)`` returns the length of the `Stream` field.
+    *   *subscriptable* ``self[index]`` returns the *byte* at the *index*
+        of the `Stream` field.
+    *   *iterable* ``iter(self)`` iterates over the bytes of the `Stream`
+        field.
 
     :param int size: is the size of the `Stream` field in bytes.
     """
@@ -4167,9 +4342,10 @@ class StreamRelativePointer(RelativePointer):
 
 
 class StringRelativePointer(StreamRelativePointer):
-    """A :class:`RelativePointer` which refers to a :class:`String` field.
+    """A `StringRelativePointer` field is a :class:`StreamRelativePointer`
+    which refers to a :class:`String` field.
 
-    :param int size: is the size of the `String` field in bytes.
+    :param int size: is the *size* of the `String` field in bytes..
     """
 
     def __init__(self, size=0, address=None):
