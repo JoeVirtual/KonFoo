@@ -8,7 +8,7 @@
     :license: BSD-style, see LICENSE for details
 """
 
-from .enums import Enumeration
+from .globals import Enumeration
 
 
 class ExitCodes(Enumeration):

@@ -8,9 +8,10 @@
     :license: BSD-style, see LICENSE for details
 """
 
-from .core import Enumeration, Byteorder, \
-    Float, Decimal, Signed, Unsigned, Bitset, Bool, Enum, Scaled, Bipolar, Unipolar, \
-    Pointer, StreamPointer, RelativePointer, StreamRelativePointer
+from .globals import Enumeration, Byteorder, BYTEORDER
+from .core import Float, Decimal, Signed, Unsigned, Bitset, Bool, Enum, \
+    Scaled, Bipolar, Unipolar, Pointer, StreamPointer, RelativePointer, \
+    StreamRelativePointer
 
 
 class Decimal8(Decimal):
@@ -321,7 +322,7 @@ class Pointer8(Pointer):
     one byte.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
         # Field alignment
         self._align_to_byte_size = 1
@@ -334,7 +335,7 @@ class Pointer16(Pointer):
     two bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
         # Field alignment
         self._align_to_byte_size = 2
@@ -347,7 +348,7 @@ class Pointer32(Pointer):
     four bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
         # Field alignment
         self._align_to_byte_size = 4
@@ -360,7 +361,7 @@ class Pointer64(Pointer):
     eight bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
         # Field alignment
         self._align_to_byte_size = 8
@@ -412,7 +413,7 @@ class RelativePointer8(RelativePointer):
     with a *size* of one byte.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
         # Field alignment
         self._align_to_byte_size = 1
@@ -425,7 +426,7 @@ class RelativePointer16(RelativePointer):
     with a *size* of two bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
         # Field alignment
         self._align_to_byte_size = 2
@@ -438,7 +439,7 @@ class RelativePointer32(RelativePointer):
     with a *size* of four bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
         # Field alignment
         self._align_to_byte_size = 4
@@ -451,7 +452,7 @@ class RelativePointer64(RelativePointer):
     with a *size* of eight bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=Byteorder.default):
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         super().__init__(template=template, address=address, byte_order=byte_order)
         # Field alignment
         self._align_to_byte_size = 8
@@ -499,35 +500,35 @@ class StreamRelativePointer32(StreamRelativePointer):
 
 
 class FloatPointer(Pointer):
-    def __init__(self, address=None, byte_order=Byteorder.default):
+    def __init__(self, address=None, byte_order=BYTEORDER):
         super().__init__(Float(), address, byte_order=byte_order)
 
 
 class Signed8Pointer(Pointer):
-    def __init__(self, address=None, byte_order=Byteorder.default):
+    def __init__(self, address=None, byte_order=BYTEORDER):
         super().__init__(Signed8(), address, byte_order=byte_order)
 
 
 class Signed16Pointer(Pointer):
-    def __init__(self, address=None, byte_order=Byteorder.default):
+    def __init__(self, address=None, byte_order=BYTEORDER):
         super().__init__(Signed16(), address, byte_order=byte_order)
 
 
 class Signed32Pointer(Pointer):
-    def __init__(self, address=None, byte_order=Byteorder.default):
+    def __init__(self, address=None, byte_order=BYTEORDER):
         super().__init__(Signed32(), address, byte_order=byte_order)
 
 
 class Unsigned8Pointer(Pointer):
-    def __init__(self, address=None, byte_order=Byteorder.default):
+    def __init__(self, address=None, byte_order=BYTEORDER):
         super().__init__(Unsigned8(), address, byte_order=byte_order)
 
 
 class Unsigned16Pointer(Pointer):
-    def __init__(self, address=None, byte_order=Byteorder.default):
+    def __init__(self, address=None, byte_order=BYTEORDER):
         super().__init__(Unsigned16(), address, byte_order=byte_order)
 
 
 class Unsigned32Pointer(Pointer):
-    def __init__(self, address=None, byte_order=Byteorder.default):
+    def __init__(self, address=None, byte_order=BYTEORDER):
         super().__init__(Unsigned32(), address, byte_order=byte_order)

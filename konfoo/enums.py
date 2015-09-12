@@ -181,29 +181,3 @@ class Enumeration(enum.Enum):
             if member[1].value == value:
                 return member[1]
         return default
-
-
-class ItemClass(Enumeration):
-    Field = 1
-    Container = 2
-    Pointer = 3
-    Structure = 10
-    Sequence = 11
-    Array = 12
-    Stream = 20
-    String = 21
-    Float = 30
-    Decimal = 40
-    Bit = 41
-    Byte = 42
-    Char = 43
-    Signed = 44
-    Unsigned = 45
-    Bitset = 46
-    Bool = 47
-    Enum = 48
-    Scaled = 49
-    Fraction = 50
-    Bipolar = 51
-    Unipolar = 52
-    Datetime = 53

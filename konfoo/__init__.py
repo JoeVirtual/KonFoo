@@ -12,22 +12,21 @@
     :license: BSD, see LICENSE for details.
 """
 
-# Providers
-from .providers import Provider
-
 # Enumerations
-from .enums import Enumeration, ItemClass
+from .enums import Enumeration
 
 # Categories
-from .categories import Category, Byteorder, Option
+from .categories import Category
 
-# Decorators
-from .decorators import byte_order_option, field_types_option, \
-    nested_option, verbose_option
+# Globals
+from .globals import BYTEORDER, Byteorder
 
 # Exceptions
 from .exceptions import KonFooException, FileError, OutOfRange, \
     InvalidIndex, InvalidSize, InvalidLength, BadAligned, BadOffset
+
+# Providers
+from .providers import Provider
 
 # Core classes
 from .core import Index, Container, Structure, Sequence, Array, \
@@ -58,26 +57,25 @@ from .exceptions import KonFooException, FileError, OutOfRange, \
 from .utils import d3json
 
 __all__ = [
-    # Provider
-    'Provider',
-
     # Enumerations
-    'Enumeration', 'ItemClass',
+    'Enumeration',
 
-    # Decorators
-    'byte_order_option', 'field_types_option', 'nested_option',
-    'verbose_option',
+    # Categories
+    'Category',
+
+    # Globals
+    'BYTEORDER', 'Byteorder',
 
     # Exceptions
     'KonFooException',
     'FileError', 'OutOfRange', 'InvalidIndex', 'InvalidSize',
     'InvalidLength', 'BadAligned', 'BadOffset',
 
-    # Categories
-    'Category', 'Byteorder', 'Option',
+    # Provider
+    'Provider',
 
     # Core classes
-    'Index', 'Container', 'Structure', 'Sequence', 'Array',
+    'BYTEORDER', 'Index', 'Container', 'Structure', 'Sequence', 'Array',
 
     'Field', 'Stream', 'String', 'Float', 'Decimal', 'Bit', 'Byte', 'Char',
     'Signed', 'Unsigned', 'Bitset', 'Bool', 'Enum', 'Scaled', 'Fraction',
