@@ -39,7 +39,7 @@ setup(
     version=version,
     license='BSD',
     author='Jochen Gerhaeusser',
-    author_email='jochen.gerhaeusser@freenet.de',
+    author_email='jochen_privat@gmx.de',
     url='http://github.com/JoeVirtual/KonFoo',
     description='A declarative byte stream mapping engine.',
     long_description=__doc__,

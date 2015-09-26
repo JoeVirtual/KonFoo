@@ -43,6 +43,8 @@ usage patterns.
    :maxdepth: 2
 
    quickstart
+   concept
+
 
 API Reference
 -------------

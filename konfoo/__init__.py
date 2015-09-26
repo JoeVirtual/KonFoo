@@ -29,7 +29,7 @@ from .exceptions import KonFooException, FileError, OutOfRange, \
 from .providers import Provider, FileProvider
 
 # Core classes
-from .core import Index, Container, Structure, Sequence, Array, \
+from .core import Index, zero, Container, Structure, Sequence, Array, \
     Field, Stream, String, Float, Decimal, Bit, Byte, Char, Signed, Unsigned, \
     Bitset, Bool, Enum, Scaled, Fraction, Bipolar, Unipolar, Datetime, \
     Pointer, StructurePointer, SequencePointer, ArrayPointer, StreamPointer, \
@@ -43,11 +43,18 @@ from .fields import Decimal8, Decimal16, Decimal24, Decimal32, \
     Antivalent, Enum4, Enum8, Enum16, Enum24, Enum32, \
     Bitset8, Bitset16, Bitset24, Bitset32, \
     Scaled8, Scaled16, Scaled24, Scaled32, \
-    Bipolar2, Bipolar4, Unipolar2, \
-    Pointer8, Pointer16, Pointer32, Pointer64, \
+    Bipolar2, Bipolar4, Unipolar2
+
+# Pointer classes
+from .pointers import Pointer8, Pointer16, Pointer32, Pointer64, \
     StreamPointer8, StreamPointer16, StreamPointer32, \
-    RelativePointer8, RelativePointer16, RelativePointer32, RelativePointer64, \
-    StreamRelativePointer8, StreamRelativePointer16, StreamRelativePointer32
+    FloatPointer, Signed8Pointer, Signed16Pointer, Signed32Pointer, \
+    Unsigned8Pointer, Unsigned16Pointer, Unsigned32Pointer
+
+# Relative pointer classes
+from .pointers import RelativePointer8, RelativePointer16, RelativePointer32, \
+    RelativePointer64, StreamRelativePointer8, StreamRelativePointer16, \
+    StreamRelativePointer32
 
 # Utilities
 from .utils import d3json
@@ -71,7 +78,7 @@ __all__ = [
     'Provider', 'FileProvider',
 
     # Core classes
-    'Index', 'Container', 'Structure', 'Sequence', 'Array',
+    'Index', 'zero', 'Container', 'Structure', 'Sequence', 'Array',
 
     'Field', 'Stream', 'String', 'Float', 'Decimal', 'Bit', 'Byte', 'Char',
     'Signed', 'Unsigned', 'Bitset', 'Bool', 'Enum', 'Scaled', 'Fraction',
@@ -92,9 +99,14 @@ __all__ = [
     'Scaled8', 'Scaled16', 'Scaled24', 'Scaled32',
     'Bipolar2', 'Bipolar4', 'Unipolar2',
 
+    # Pointer classes
     'Pointer8', 'Pointer16', 'Pointer32', 'Pointer64',
     'StreamPointer8', 'StreamPointer16', 'StreamPointer32',
+    'FloatPointer',
+    'Signed8Pointer', 'Signed16Pointer', 'Signed32Pointer',
+    'Unsigned8Pointer', 'Unsigned16Pointer', 'Unsigned32Pointer',
 
+    # Relative pointer classes
     'RelativePointer8', 'RelativePointer16', 'RelativePointer32',
     'RelativePointer64',
     'StreamRelativePointer8', 'StreamRelativePointer16',

@@ -8,7 +8,7 @@
     :license: BSD-style, see LICENSE for details
 """
 
-from konfoo.globals import Enumeration
+from .enums import Enumeration
 
 
 class ExitCodes(Enumeration):

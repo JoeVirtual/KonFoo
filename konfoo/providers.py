@@ -26,6 +26,10 @@ class Provider:
         :param int address: start address.
 
         :param int count: number of bytes to read from a data `source`.
+
+        .. note::
+
+           This is method must be overwritten by a derived class.
         """
         return self._stream
 
@@ -38,6 +42,10 @@ class Provider:
         :param int address: start address.
 
         :param int count: number of bytes to write to a data `source`.
+
+        .. note::
+
+           This is method must be overwritten by a derived class.
         """
         pass
 
