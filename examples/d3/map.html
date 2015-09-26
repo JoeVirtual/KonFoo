@@ -59,7 +59,7 @@ var div = d3.select("body").append("div")
     .style("left", margin.left + "px")
     .style("top", margin.top + "px");
 
-d3.json("file:///D:/workspace/PyProjects/konfoo/examples/explorer/data.json", function(error, root) {
+d3.json("https://raw.githubusercontent.com/JoeVirtual/KonFoo/master/examples/d3/data.json", function(error, root) {
   if (error) throw error;
 
   var node = div.datum(root).selectAll(".node")
