@@ -91,25 +91,25 @@ class Container(metaclass=abc.ABCMeta):
     """
 
     def field_items(self, root=str(), **options):
-        """Returns a flat list which contains tuples in the form of
+        """Returns a **flat** list which contains tuples in the form of
         ``(path, item)`` for each `Field` of a `Container`.
-
-        .. note::
-
-           This method must be overwritten by a derived class.
 
         :param str root: root path.
 
         :keyword bool nested: if `True` the `Fields` of the *nested* `data`
             objects of all `Pointer` fields in a `Container` are added to
             the list.
+
+        .. note::
+
+           This method must be overwritten by a derived class.
         """
         return list()
 
     @nested_option()
     @field_types_option()
     def to_list(self, name=str(), **options):
-        """Returns a flat list which contains tuples in the form of
+        """Returns a **flat** list which contains tuples in the form of
         ``(path, type, value)`` for each `Field` of a `Container`
 
         The type of the field is optional.
@@ -143,7 +143,7 @@ class Container(metaclass=abc.ABCMeta):
     @nested_option()
     @field_types_option()
     def to_dict(self, name=str(), **options):
-        """Returns a flat ordered dictionary which contains the
+        """Returns a **flat** ordered dictionary which contains the
         `path`, `value` pairs for each `Field` of a `Container`.
 
         Returns a flat ordered dictionary of all `Field` values of a
@@ -156,7 +156,7 @@ class Container(metaclass=abc.ABCMeta):
             lists their *nested* `data` object as well.
 
         :keyword bool field_types: if `True` the type of the `Field` is
-            append to the end of path string with '|' as separator.
+            append to the end of the path string with '|' as separator.
         """
         root = name if name else self.__class__.__name__
 
@@ -197,7 +197,7 @@ class Container(metaclass=abc.ABCMeta):
             name of the instance is used.
 
         :keyword bool field_types: if `True` the type of the `Field` is
-            append to the end of path string with '|' as separator.
+            append to the end of the path string with '|' as separator.
 
         :keyword bool verbose: if `True` the loading is executed in verbose mode.
         """
@@ -2480,6 +2480,9 @@ class Signed(Decimal):
     """A `Signed` field is a signed :class:`Decimal` field with a variable
     *size* and returns its field *value* as a signed integer number.
 
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
+
     Example:
 
     >>> from pprint import pprint
@@ -2624,6 +2627,9 @@ class Unsigned(Decimal):
 class Bitset(Decimal):
     """A `Bitset` field is an unsigned :class:`Decimal` field with a variable
     *size* and returns its field *value* as a binary encoded string.
+
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
 
     :param byte_order: coding :class:`Byteorder` of a `Bitset` field.
 
@@ -2792,6 +2798,9 @@ class Enum(Decimal):
     then the member name string is returned otherwise the integer number is
     returned.
 
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
+
     :param enumeration: :class:`Enumeration` definition of the field.
 
     Example:
@@ -2912,6 +2921,9 @@ class Scaled(Decimal):
     for its scaling factor.
 
     :param float scale: scaling factor of the field.
+
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
 
     Example:
 
@@ -3038,6 +3050,9 @@ class Fraction(Decimal):
 
     :param int bits_integer: number of bits for the integer part of the
         fraction number, can be between *1* and the field *size*.
+
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
 
     :param bool signed: if `True` the fraction number is signed otherwise
         unsigned.
@@ -3236,6 +3251,12 @@ class Bipolar(Fraction):
     """A `Bipolar` field is a signed :class:`Fraction` field with a variable
     *size* and returns its fractional field value as a float.
 
+    :param int bits_integer: number of bits for the integer part of the
+        fraction number, can be between *1* and the field *size*.
+
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
+
     Example:
 
     >>> from pprint import pprint
@@ -3307,6 +3328,12 @@ class Bipolar(Fraction):
 class Unipolar(Fraction):
     """A `Unipolar` field is an unsigned :class:`Fraction` field with a variable
     *size* and returns its fractional field *value* as a float.
+
+    :param int bits_integer: number of bits for the integer part of the
+        fraction number, can be between *1* and the field *size*.
+
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
 
     Example:
 
@@ -3461,12 +3488,12 @@ class Pointer(Decimal, Container):
     A `Pointer` field refers absolutely to a `data` object of a data `Provider`.
 
     The `Pointer` class extends the :class:`Decimal` field with the
-    :class:`Container` class for its nested *data object*.
+    :class:`Container` class for its referenced *data object*.
 
     A `Pointer` provides additional features:
 
     *   **Read** from a `Provider` the necessary amount of bytes for
-        the nested `data` object of the `Pointer` via :meth:`read()`.
+        the referenced `data` object of the `Pointer` via :meth:`read()`.
     *   Get the **next index** after the last *field* of a `Structure`
         via :meth:`next_index()`.
     *   View the **index** for each *field* in a `Structure`
@@ -3650,7 +3677,7 @@ class Pointer(Decimal, Container):
         return True
 
     def refresh(self):
-        """Refresh the `Fields` of the `data` object with the internal `bytestream`
+        """Refresh the fields of the `data` object with the internal `bytestream`
         and returns the `Index` of the `bytestream` after the last `Field` of the
         `data` object.
         """
@@ -4069,6 +4096,12 @@ class StructurePointer(Pointer):
 
     :param template: template for the `data` object.
         The *template* must be a `Structure` instance.
+
+    :param int address: absolute address of the `data` object referenced by
+        the pointer.
+
+    :param byte_order: coding :class:`Byteorder` of the `data` object
+        referenced by the pointer.
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -4137,6 +4170,12 @@ class SequencePointer(Pointer):
         `Sequence`, `Array` or `Field` instances. If the *iterable* is one
         of these instances itself then the *iterable* itself is appended
         to the `Sequence`.
+
+    :param int address: absolute address of the `data` object referenced by
+        the pointer.
+
+    :param byte_order: coding :class:`Byteorder` of the `data` object
+        referenced by the pointer.
     """
 
     def __init__(self, iterable=None, address=None, byte_order=BYTEORDER):
@@ -4199,6 +4238,12 @@ class ArrayPointer(SequencePointer):
         returns a `Structure`, `Sequence`, `Array` or any `Field` instance.
 
     :param int size: is the size of the `Array` in number of `Array` elements.
+
+    :param int address: absolute address of the `data` object referenced by
+        the pointer.
+
+    :param byte_order: coding :class:`Byteorder` of the `data` object
+        referenced by the pointer.
     """
 
     def __init__(self, template, size=0, address=None, byte_order=BYTEORDER):
@@ -4242,6 +4287,9 @@ class StreamPointer(Pointer):
         field.
 
     :param int size: is the size of the `Stream` field in bytes.
+
+    :param int address: absolute address of the `data` object referenced by
+        the pointer.
     """
 
     def __init__(self, size=0, address=None):
@@ -4274,6 +4322,9 @@ class StringPointer(StreamPointer):
     to a :class:`String` field.
 
     :param int size: is the *size* of the `String` field in bytes.
+
+    :param int address: absolute address of the `data` object referenced by
+        the pointer.
     """
 
     def __init__(self, size=0, address=None):
@@ -4326,6 +4377,9 @@ class StreamRelativePointer(RelativePointer):
         field.
 
     :param int size: is the size of the `Stream` field in bytes.
+
+    :param address: relative address of the `data` object referenced
+        by the pointer.
     """
 
     def __init__(self, size=0, address=None):
@@ -4344,6 +4398,11 @@ class StreamRelativePointer(RelativePointer):
         return iter(self._data)
 
     def resize(self, size):
+        """Re-sizes the `Stream` field by appending zero bytes or
+        removing bytes from the end.
+
+        :param int size: `Stream` size in number of bytes.
+        """
         if isinstance(self._data, Stream):
             self._data.resize(size)
 
@@ -4353,6 +4412,9 @@ class StringRelativePointer(StreamRelativePointer):
     which refers to a :class:`String` field.
 
     :param int size: is the *size* of the `String` field in bytes.
+
+    :param address: relative address of the `data` object referenced
+        by the pointer.
     """
 
     def __init__(self, size=0, address=None):

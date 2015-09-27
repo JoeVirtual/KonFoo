@@ -10,7 +10,10 @@
 
 
 class Provider:
-    """A `Provider` ...
+    """A `Provider` provides access for the `Pointer` classes to read and
+    write byte streams from and to a data *source*. The `Provider` class
+    servers as a meta class. A derived class must implement the two methods
+    :meth:`read` and :meth:`write` for reading and writing byte streams.
 
     :param source: generic data source.
     """
@@ -29,7 +32,7 @@ class Provider:
 
         .. note::
 
-           This is method must be overwritten by a derived class.
+           This method must be overwritten by a derived class.
         """
         return self._stream
 
@@ -45,7 +48,7 @@ class Provider:
 
         .. note::
 
-           This is method must be overwritten by a derived class.
+           This method must be overwritten by a derived class.
         """
         pass
 
@@ -58,8 +61,6 @@ class FileProvider(Provider):
 
     def __init__(self, source):
         super().__init__(source)
-        if not isinstance(self._source, str):
-            raise TypeError(self._source)
         if isinstance(source, str):
             self._stream = bytearray(open(source, 'rb').read())
         else:
