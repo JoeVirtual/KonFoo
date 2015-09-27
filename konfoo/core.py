@@ -201,7 +201,7 @@ class Container(metaclass=abc.ABCMeta):
 
         :keyword bool verbose: if `True` the loading is executed in verbose mode.
         """
-        section = self.__class__.__name__ if section is None else section
+        section = section if section else self.__class__.__name__
 
         parser = ConfigParser()
         parser.read(file)
