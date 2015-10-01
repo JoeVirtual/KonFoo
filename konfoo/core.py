@@ -4362,6 +4362,188 @@ class RelativePointer(Pointer):
         return self.index.base_address
 
 
+class StructureRelativePointer(RelativePointer):
+    """A `StructureRelativePointer` field is a :class:`RelativePointer` which
+    refers to a :class:`Structure`.
+
+    :param template: template for the `data` object.
+        The *template* must be a `Structure` instance.
+
+    :param address: relative address of the `data` object referenced
+        by the pointer.
+
+    :param byte_order: coding :class:`Byteorder` of the `data` object
+        referenced by the pointer.
+    """
+
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
+        if template is None:
+            template = Structure()
+        elif not isinstance(template, Structure):
+            raise TypeError(template)
+        super().__init__(template, address, byte_order=byte_order)
+
+    def __contains__(self, key):
+        return key in self._data
+
+    def __len__(self):
+        return len(self._data)
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __iter__(self):
+        return iter(self._data)
+
+    def __getattr__(self, attr):
+        return self._data[attr]
+
+    def items(self):
+        return self._data.items()
+
+    def keys(self):
+        return self._data.keys()
+
+    def values(self):
+        return self._data.values()
+
+
+class SequenceRelativePointer(RelativePointer):
+    """A `SequenceRelativePointer` field is a :class:`RelativePointer` which
+    refers to a :class:`Sequence`.
+
+    A `SequenceRelativePointer` is:
+
+    *   *containable*: ``item in self`` returns `True` if *item* is part
+        of the `Sequence`.
+    *   *sized*: ``len(self)`` returns the number of items in the `Sequence`.
+    *   *subscriptable* ``self[index]`` returns the *item* at the *index*
+        of the `Sequence`.
+    *   *iterable* ``iter(self)`` iterates over the *items* of the `Sequence`
+
+    A `SequencePointer` supports the usual methods:
+
+    *   **Append** a item to a `Sequence`
+        via :meth:`append()`.
+    *   **Insert** a item before the *index* into a `Sequence`
+        via :meth:`insert()`.
+    *   **Extend** a `Sequence` with items
+        via :meth:`extend()`.
+    *   **Clear** a `Sequence`
+        via :meth:`clear()`.
+    *   **Pop** a item with the *index* from a `Sequence`
+        via :meth:`pop()`.
+    *   **Remove**  the first occurrence of an *item* from a `Sequence`
+        via :meth:`remove()`.
+    *   **Reverse** all items in a `Sequence`
+        via :meth:`reverse()`.
+
+    :param iterable: any *iterable* that contains items of `Structure`,
+        `Sequence`, `Array` or `Field` instances. If the *iterable* is one
+        of these instances itself then the *iterable* itself is appended
+        to the `Sequence`.
+
+    :param address: relative address of the `data` object referenced
+        by the pointer.
+
+    :param byte_order: coding :class:`Byteorder` of the `data` object
+        referenced by the pointer.
+    """
+
+    def __init__(self, iterable=None, address=None, byte_order=BYTEORDER):
+        super().__init__(Sequence(iterable), address, byte_order)
+
+    def __contains__(self, key):
+        return key in self._data
+
+    def __len__(self):
+        return len(self._data)
+
+    def __getitem__(self, index):
+        return self._data[index]
+
+    def __setitem__(self, index, value):
+        self._data[index] = value
+
+    def __delitem__(self, index):
+        del self._data[index]
+
+    def append(self, item):
+        """Appends the *item* to the end of the `Sequence`."""
+        self._data.append(item)
+
+    def insert(self, index, item):
+        """Inserts the *item* before the *index* into the `Sequence`.
+
+        :param int index: `Sequence` index.
+        :param item:
+        """
+        self._data.insert(index, item)
+
+    def pop(self, index=-1):
+        """Removes and returns the item at the *index* from the `Sequence`."""
+        return self._data.pop(index)
+
+    def clear(self):
+        """Remove all items from the `Sequence`."""
+        self._data.clear()
+
+    def remove(self, item):
+        """Removes the first occurrence of an *item* from the `Sequence`."""
+        self._data.remove(item)
+
+    def reverse(self):
+        """In place reversing of the `Sequence` items."""
+        self._data.reverse()
+
+    def extend(self, iterable):
+        """Extends the `Sequence` by appending items from the *iterable*."""
+        self._data.extend(iterable)
+
+
+class ArrayRelativePointer(SequenceRelativePointer):
+    """A `ArrayPointer` field is a :class:`SequenceRelativePointer` which
+    refers to a :class:`Array`.
+
+    :param template: template for the `Array` element.
+        The *template* can be any `Field` instance or any *callable* that
+        returns a `Structure`, `Sequence`, `Array` or any `Field` instance.
+
+    :param int size: is the size of the `Array` in number of `Array` elements.
+
+    :param address: relative address of the `data` object referenced
+        by the pointer.
+
+    :param byte_order: coding :class:`Byteorder` of the `data` object
+        referenced by the pointer.
+    """
+
+    def __init__(self, template, size=0, address=None, byte_order=BYTEORDER):
+        super().__init__(address, byte_order=byte_order)
+        self._data = Array(template, size)
+
+    def append(self):
+        """Appends a new `Array` element to the `Array`."""
+        self._data.append()
+
+    def insert(self, index):
+        """Inserts a new `Array` element before the *index* of the `Array`.
+
+        :param int index: `Array` index.
+        """
+        self._data.insert(index)
+
+    def resize(self, size):
+        """Re-sizes the `Array` by appending new `Array` elements or
+        removing `Array` elements from the end.
+
+        :param int size: new size of the `Array` in number of `Array`
+            elements.
+        """
+        if isinstance(self._data, Array):
+            self._data.resize(size)
+
+
 class StreamRelativePointer(RelativePointer):
     """A `StreamRelativePointer` field is a :class:`RelativePointer` field
     which refers to a :class:`Stream` field.

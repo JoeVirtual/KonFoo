@@ -11,9 +11,8 @@ Concept
     from binascii import hexlify, unhexlify
     from konfoo import *
 
-KonFoo is based on declaring *byte stream mapper* through classes.
-KonFoo has two abstract classes the `Field` class and the `Container`
-class.
+KonFoo is based on defining or declaring *byte stream mapper* through classes.
+KonFoo has two abstract classes the `Field` class and the `Container` class.
 
 A `Field` holds the value of a area in a byte stream which the `Field` maps
 and knows how to unpack and pack its value from and to a byte stream.
@@ -29,7 +28,7 @@ The build-in decoding and encoding engine unpacks and packs the byte stream
 sequential to and from each `Field` in the declared *byte stream mapper*.
 
 How does a *byte stream mapper* look like.
-Let's us begin with declaring of one.
+Let's us begin with defining or declaring of one.
 
 
 .. _mapping_declaration:
@@ -38,17 +37,17 @@ Mapping declaration
 ===================
 
 KonFoo ships with a `Structure` class and many, many `Field` classes to declare
-the mapping part of a *byte stream mapper* . The order how you declare the fields
+the mapping part of a *byte stream mapper*. The order how you declare the fields
 in the mapping declaration defines the order how the fields are decoded and encoded
 by the built-in decoding and encoding engine.
 
-.. _create_mapping:
+.. _create_mapper:
 
 Create a mapping declaration
 ----------------------------
 
 
-Define a mapper
+Define a mapper.
 
 .. code-block:: python
 
@@ -69,7 +68,7 @@ Define a mapper
     will be raised when decoding or encoding an incomplete declaration.
 
 
-Declare a mapper
+Declare a mapper instance.
 
     >>> mapper = Structure()
     >>> mapper.version = Byte()
@@ -78,7 +77,7 @@ Declare a mapper
     >>> mapper.module = Char()
 
 
-View a declaration
+View a mapper instance.
 
     >>> mapper
     Structure([('version', Byte(index=Index(byte=0, bit=0,
@@ -125,7 +124,7 @@ Get the byte stream index after the last field of the mapper.
 
 .. note::
 
-    Re-indexes all fields in the mapper as well.
+    The method :meth:`next_index` re-indexes all fields in the mapper as well.
 
 List the index of each field in the mapper as a **nested** ordered dictionary.
 
@@ -145,7 +144,10 @@ List the type of each field in the mapper as a **nested** ordered dictionary.
      'module': 'Char'}
 
 
-    >>> mapper.decode(bytes.fromhex('01020946'))
+Decode a byte stream with a mapper.
+
+    >>> bytestream = bytes.fromhex('01020946f00f00')
+    >>> mapper.decode(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
 
 
@@ -211,7 +213,7 @@ List the value of each field in the mapper as a **flat** ordered dictionary.
     is given.
 
 
-Saves the values of each field in the mapper to a INI file.
+Saves the values of each field in the mapper to an INI file.
 
     >>> mapper.save("_static/structure.ini")
 
@@ -221,7 +223,7 @@ Saves the values of each field in the mapper to a INI file.
     is given.
 
 
-Loads the values of each field in the mapper from a INI file.
+Loads the values of each field in the mapper from an INI file.
 
     >>> mapper.load("_static/structure.ini")
     [Structure]
@@ -236,7 +238,7 @@ Loads the values of each field in the mapper from a INI file.
     is given.
 
 
-.. _reuse_mapping:
+.. _reuse_mapper:
 
 Re-use of a mapping declaration
 -------------------------------
@@ -252,12 +254,13 @@ Define a mapper
 
         def __init__(self):
             super().__init__()
-            self.version = Byte(4)       # 1st field aligned to 4 bytes
-            self.id = Unsigned(8, 4)     # 2nd field aligned to 4 bytes
-            self.length = Decimal(8, 4)  # 3rd field aligned to 4 bytes
-            self.module = Char(4)        # 4th field aligned to 4 bytes
+            self.version = Byte()
+            self.id = Unsigned8()
+            self.length = Decimal8()
+            self.module = Char()
             self.next_index()
 
+Re-use a mapper
 
 .. code-block:: python
 
@@ -266,19 +269,56 @@ Define a mapper
 
         def __init__(self):
             super().__init__()
-            self.type_id = Identifier()   # re-used mapping declaration
-            self.size = Decimal(32)
+            self.type = Identifier()   # re-used mapping declaration
+            self.size = Decimal32()
             self.next_index()
 
+Declare a mapper instance
 
-.. _aligning_mapping:
+    >>> identifier = Structure()
+    >>> identifier.version = Byte()
+    >>> identifier.id = Unsigned8()
+    >>> identifier.length = Decimal8()
+    >>> identifier.module = Char()
 
-Aligning of fields in a mapping declaration
--------------------------------------------
+Re-use a mapper instance
+
+    >>> header = Structure()
+    >>> header.type = identifier
+    >>> header.size = Decimal32()
+    >>> pprint(header.to_list())
+    [('Structure.type.version', '0x0'),
+     ('Structure.type.id', '0x0'),
+     ('Structure.type.length', 0),
+     ('Structure.type.module', '\x00'),
+     ('Structure.size', 0)]
+
+Declare mapper instances in on step
+
+    >>> mapper = Structure()
+    >>> mapper.type = Structure()
+    >>> mapper.type.version = Byte()
+    >>> mapper.type.id = Unsigned8()
+    >>> mapper.type.length = Decimal8()
+    >>> mapper.type.module = Char()
+    >>> mapper.size = Decimal32()
+    >>> pprint(mapper.to_list())
+    [('Structure.type.version', '0x0'),
+     ('Structure.type.id', '0x0'),
+     ('Structure.type.length', 0),
+     ('Structure.type.module', '\x00'),
+     ('Structure.size', 0)]
+
+.. _aligned_mapper:
+
+Align fields in a mapping declaration
+-------------------------------------
+
+Define a mapper with aligned fields
 
 .. code-block:: python
 
-    # Mapping declaration
+    # Mapping declaration with aligned fields
     class Identifier(Structure):
 
         def __init__(self):
@@ -290,7 +330,7 @@ Aligning of fields in a mapping declaration
             self.next_index()
 
 
-Declare a mapper
+Declare a mapper instance with aligned fields
 
     >>> mapper = Structure()
     >>> mapper.version = Byte(4)
@@ -299,7 +339,7 @@ Declare a mapper
     >>> mapper.module = Char(4)
 
 
-.. _byte_order_mapping:
+.. _byte_order_mapper:
 
 Byte order of a mapping declaration
 -----------------------------------
@@ -307,10 +347,26 @@ Byte order of a mapping declaration
 
 
 
-.. _factorising_mapping:
+.. _parametrized_mapper:
 
-Factorising a mapping declaration
+Parametrize a mapping declaration
 ---------------------------------
+
+
+.. code-block:: python
+
+    # Parametrized mapping declaration
+    class Parametrized(Structure):
+
+        def __init__(self, arg, *args, **kwargs):
+            super().__init__()
+            # Do stuff here with these parameters
+
+
+.. _factorized_mapper:
+
+Factorize a mapping declaration
+-------------------------------
 
 
 .. code-block:: python
@@ -357,8 +413,8 @@ Define a mapper
 
         def __init__(self):
             super().__init__()
-            self.size = Signed16()
-            self.item = StreamPointer(0)
+            self.size = Decimal32()
+            self.item = Pointer()
             self.next_index()
 
 Define a reference to a mapper
@@ -374,8 +430,8 @@ Define a reference to a mapper
 Declare a mapper.
 
     >>> mapper = Structure()
-    >>> mapper.size = Signed16()
-    >>> mapper.item = StreamPointer(0)
+    >>> mapper.size = Decimal32()
+    >>> mapper.item = Pointer()
 
 Declare a reference to the mapper via a pointer.
 
@@ -386,7 +442,7 @@ Declare a reference to the mapper via a specialized pointer for structures.
     >>> reference = StructurePointer(mapper)
 
 
-.. _nesting_reference:
+.. _nested_reference:
 
 Nesting a reference declaration
 -------------------------------
@@ -394,14 +450,12 @@ Nesting a reference declaration
 .. code-block:: python
 
     # Mapping declaration
-    class Buffer(Structure):
+    class Container(Structure):
 
         def __init__(self):
             super().__init__()
-            self.type_id = Identifier()  # re-used mapping declaration
-            self.size = Decimal(32)
-            self.length = Decimal(32)
-            self.payload = StreamPointer(0)  # nested reference
+            self.size = Decimal32()
+            self.item = Pointer(Stream())  # nested reference
 
 
 
@@ -411,7 +465,6 @@ Nesting a reference declaration
 Array declaration
 =================
 
-
 .. code-block:: python
 
     # Mapping declaration
@@ -419,16 +472,14 @@ Array declaration
 
         def __init__(self):
             super().__init__()
-            self.length = Decimal(32)
+            self.length = Decimal32()
             self.entry = Array(Signed32)
-
 
 
 .. _enumeration_declaration:
 
 Enum declaration
 ================
-
 
 
 
@@ -441,12 +492,15 @@ Decoding
 ========
 
 
+
 Resizing on the fly
 -------------------
 
 
+
 Updating on the fly
 -------------------
+
 
 
 Declaring on the fly
@@ -456,8 +510,6 @@ Declaring on the fly
 
 Encoding
 ========
-
-
 
 
 
@@ -473,11 +525,5 @@ Saving
 
 Loading
 =======
-
-
-
-
-
-
 
 

@@ -33,7 +33,9 @@ from .core import Index, zero, Container, Structure, Sequence, Array, \
     Field, Stream, String, Float, Decimal, Bit, Byte, Char, Signed, Unsigned, \
     Bitset, Bool, Enum, Scaled, Fraction, Bipolar, Unipolar, Datetime, \
     Pointer, StructurePointer, SequencePointer, ArrayPointer, StreamPointer, \
-    StringPointer, RelativePointer, StreamRelativePointer, StringRelativePointer
+    StringPointer, RelativePointer, StructureRelativePointer, \
+    SequenceRelativePointer, ArrayRelativePointer, StreamRelativePointer, \
+    StringRelativePointer
 
 # Field classes
 from .fields import Decimal8, Decimal16, Decimal24, Decimal32, \
@@ -47,14 +49,20 @@ from .fields import Decimal8, Decimal16, Decimal24, Decimal32, \
 
 # Pointer classes
 from .pointers import Pointer8, Pointer16, Pointer32, Pointer64, \
+    StructurePointer8, StructurePointer16, StructurePointer32, \
+    ArrayPointer8, ArrayPointer16, ArrayPointer32, \
     StreamPointer8, StreamPointer16, StreamPointer32, \
+    StringPointer8, StringPointer16, StringPointer32, \
     FloatPointer, Signed8Pointer, Signed16Pointer, Signed32Pointer, \
     Unsigned8Pointer, Unsigned16Pointer, Unsigned32Pointer
 
 # Relative pointer classes
 from .pointers import RelativePointer8, RelativePointer16, RelativePointer32, \
-    RelativePointer64, StreamRelativePointer8, StreamRelativePointer16, \
-    StreamRelativePointer32
+    RelativePointer64, StructureRelativePointer8, StructureRelativePointer16, \
+    StructureRelativePointer32, ArrayRelativePointer8, ArrayRelativePointer16, \
+    ArrayRelativePointer32, StreamRelativePointer8, StreamRelativePointer16, \
+    StreamRelativePointer32, StringRelativePointer8, StringRelativePointer16, \
+    StringRelativePointer32
 
 # Utilities
 from .utils import d3json
@@ -87,7 +95,8 @@ __all__ = [
     'Pointer', 'StructurePointer', 'SequencePointer', 'ArrayPointer',
     'StreamPointer', 'StringPointer',
 
-    'RelativePointer', 'StreamRelativePointer', 'StringRelativePointer',
+    'RelativePointer', 'StructureRelativePointer', 'SequenceRelativePointer',
+    'ArrayRelativePointer', 'StreamRelativePointer', 'StringRelativePointer',
 
     # Field classes
     'Decimal8', 'Decimal16', 'Decimal24', 'Decimal32',
@@ -101,7 +110,10 @@ __all__ = [
 
     # Pointer classes
     'Pointer8', 'Pointer16', 'Pointer32', 'Pointer64',
+    'StructurePointer8', 'StructurePointer16', 'StructurePointer32',
+    'ArrayPointer8', 'ArrayPointer16', 'ArrayPointer32',
     'StreamPointer8', 'StreamPointer16', 'StreamPointer32',
+    'StringPointer8', 'StringPointer16', 'StringPointer32',
     'FloatPointer',
     'Signed8Pointer', 'Signed16Pointer', 'Signed32Pointer',
     'Unsigned8Pointer', 'Unsigned16Pointer', 'Unsigned32Pointer',
@@ -109,8 +121,14 @@ __all__ = [
     # Relative pointer classes
     'RelativePointer8', 'RelativePointer16', 'RelativePointer32',
     'RelativePointer64',
+    'StructureRelativePointer8', 'StructureRelativePointer16',
+    'StructureRelativePointer32',
+    'ArrayRelativePointer8', 'ArrayRelativePointer16',
+    'ArrayRelativePointer32',
     'StreamRelativePointer8', 'StreamRelativePointer16',
     'StreamRelativePointer32',
+    'StringRelativePointer8', 'StringRelativePointer16',
+    'StringRelativePointer32',
 
     # Utilities
     'd3json',

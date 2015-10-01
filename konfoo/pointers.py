@@ -10,8 +10,10 @@
 
 from .globals import BYTEORDER
 
-from .core import Pointer, StreamPointer, \
-    RelativePointer, StreamRelativePointer, \
+from .core import Pointer, StructurePointer, ArrayPointer, StreamPointer, \
+    StringPointer, \
+    RelativePointer, StructureRelativePointer, ArrayRelativePointer, \
+    StreamRelativePointer, StringRelativePointer, \
     Float
 
 from .fields import Signed8, Signed16, Signed32, \
@@ -19,8 +21,8 @@ from .fields import Signed8, Signed16, Signed32, \
 
 
 class Pointer8(Pointer):
-    """A `Pointer8` field is a :class:`Pointer` field with a *size* of
-    one byte.
+    """A `Pointer8` field is a :class:`Pointer` field
+    with a *size* of one byte.
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -32,8 +34,8 @@ class Pointer8(Pointer):
 
 
 class Pointer16(Pointer):
-    """A `Pointer16` field is a :class:`Pointer` field with a *size* of
-    two bytes.
+    """A `Pointer16` field is a :class:`Pointer` field
+    with a *size* of two bytes.
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -45,8 +47,8 @@ class Pointer16(Pointer):
 
 
 class Pointer32(Pointer):
-    """A `Pointer16` field is a :class:`Pointer` field with a *size* of
-    four bytes.
+    """A `Pointer32` field is a :class:`Pointer` field
+    with a *size* of four bytes.
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -57,9 +59,87 @@ class Pointer32(Pointer):
         self._bit_size = 32
 
 
+class StructurePointer8(StructurePointer):
+    """A `StructurePointer8` field is a :class:`StructurePointer` field
+    with a `Pointer` *size* of one byte.
+    """
+
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 1
+        # Field bit size
+        self._bit_size = 8
+
+
+class StructurePointer16(StructurePointer):
+    """A `StructurePointer16` field is a :class:`StructurePointer` field with
+    a `Pointer` *size* of two byte.
+    """
+
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 2
+        # Field bit size
+        self._bit_size = 16
+
+
+class StructurePointer32(StructurePointer):
+    """A `StructurePointer32` field is a :class:`StructurePointer` field
+    with a `Pointer` *size* of four byte.
+    """
+
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 4
+        # Field bit size
+        self._bit_size = 32
+
+
+class ArrayPointer8(ArrayPointer):
+    """A `ArrayPointer8` field is a :class:`ArrayPointer` field
+    with a `Pointer` *size* of one byte.
+    """
+
+    def __init__(self, template, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 1
+        # Field bit size
+        self._bit_size = 8
+
+
+class ArrayPointer16(ArrayPointer):
+    """A `ArrayPointer16` field is a :class:`ArrayPointer` field with
+    a `Pointer` *size* of two byte.
+    """
+
+    def __init__(self, template, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 2
+        # Field bit size
+        self._bit_size = 16
+
+
+class ArrayPointer32(ArrayPointer):
+    """A `ArrayPointer32` field is a :class:`ArrayPointer` field
+    with a `Pointer` *size* of four byte.
+    """
+
+    def __init__(self, template, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 4
+        # Field bit size
+        self._bit_size = 32
+
+
 class Pointer64(Pointer):
-    """A `Pointer16` field is a :class:`Pointer` field with a *size* of
-    eight bytes.
+    """A `Pointer64` field is a :class:`Pointer` field
+    with a *size* of eight bytes.
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -98,6 +178,45 @@ class StreamPointer16(StreamPointer):
 
 class StreamPointer32(StreamPointer):
     """A `StreamPointer32` field is a :class:`StreamPointer` field
+    with a `Pointer` *size* of four bytes.
+    """
+
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 4
+        # Field bit size
+        self._bit_size = 32
+
+
+class StringPointer8(StringPointer):
+    """A `StringPointer8` field is a :class:`StringPointer` field
+    with a `Pointer` *size* of one byte.
+    """
+
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 1
+        # Field bit size
+        self._bit_size = 8
+
+
+class StringPointer16(StringPointer):
+    """A `StringPointer16` field is a :class:`StringPointer` field
+    with a `Pointer` *size* of two bytes.
+    """
+
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 2
+        # Field bit size
+        self._bit_size = 16
+
+
+class StringPointer32(StringPointer):
+    """A `StringPointer32` field is a :class:`StringPointer` field
     with a `Pointer` *size* of four bytes.
     """
 
@@ -224,6 +343,84 @@ class RelativePointer64(RelativePointer):
         self._bit_size = 64
 
 
+class StructureRelativePointer8(StructureRelativePointer):
+    """A `StructureRelativePointer8` field is a :class:`StructureRelativePointer`
+    field with a `RelativePointer` *size* of one byte.
+    """
+
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 1
+        # Field bit size
+        self._bit_size = 8
+
+
+class StructureRelativePointer16(StructureRelativePointer):
+    """A `StructureRelativePointer16` field is a :class:`StructureRelativePointer`
+    field with a `RelativePointer` *size* of two byte.
+    """
+
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 2
+        # Field bit size
+        self._bit_size = 16
+
+
+class StructureRelativePointer32(StructureRelativePointer):
+    """A `StructureRelativePointer32` field is a :class:`StructureRelativePointer`
+    field with a `Pointer` *size* of four byte.
+    """
+
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 4
+        # Field bit size
+        self._bit_size = 32
+
+
+class ArrayRelativePointer8(ArrayRelativePointer):
+    """A `ArrayRelativePointer8` field is a :class:`ArrayRelativePointer`
+    field with a `RelativePointer` *size* of one byte.
+    """
+
+    def __init__(self, template, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 1
+        # Field bit size
+        self._bit_size = 8
+
+
+class ArrayRelativePointer16(ArrayRelativePointer):
+    """A `ArrayRelativePointer16` field is a :class:`ArrayRelativePointer`
+    field with a `RelativePointer` *size* of two byte.
+    """
+
+    def __init__(self, template, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 2
+        # Field bit size
+        self._bit_size = 16
+
+
+class ArrayRelativePointer32(ArrayRelativePointer):
+    """A `ArrayRelativePointer32` field is a :class:`ArrayRelativePointer`
+    field with a `Pointer` *size* of four byte.
+    """
+
+    def __init__(self, template, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 4
+        # Field bit size
+        self._bit_size = 32
+
+
 class StreamRelativePointer8(StreamRelativePointer):
     """A `StreamRelativePointer8` field is a :class:`StreamRelativePointer`
     field with a `RelativePointer` *size* of one byte.
@@ -252,6 +449,45 @@ class StreamRelativePointer16(StreamRelativePointer):
 
 class StreamRelativePointer32(StreamRelativePointer):
     """A `StreamRelativePointer32` field is a :class:`StreamRelativePointer`
+    field with a `RelativePointer` *size* of four byte.
+    """
+
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 4
+        # Field bit size
+        self._bit_size = 32
+
+
+class StringRelativePointer8(StringRelativePointer):
+    """A `StringRelativePointer8` field is a :class:`StringRelativePointer`
+    field with a `RelativePointer` *size* of one byte.
+    """
+
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 1
+        # Field bit size
+        self._bit_size = 8
+
+
+class StringRelativePointer16(StringRelativePointer):
+    """A `StringRelativePointer16` field is a :class:`StringRelativePointer`
+    field with a `RelativePointer` *size* of two byte.
+    """
+
+    def __init__(self, size=0, address=None):
+        super().__init__(size, address)
+        # Field alignment
+        self._align_to_byte_size = 2
+        # Field bit size
+        self._bit_size = 16
+
+
+class StringRelativePointer32(StringRelativePointer):
+    """A `StringRelativePointer32` field is a :class:`StringRelativePointer`
     field with a `RelativePointer` *size* of four byte.
     """
 

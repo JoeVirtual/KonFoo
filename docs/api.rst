@@ -282,6 +282,16 @@ Structure Pointer
 
 .. autoclass:: StructurePointer
    :members:
+   
+.. autoclass:: StructurePointer8
+   :members:
+
+.. autoclass:: StructurePointer16
+   :members:
+
+.. autoclass:: StructurePointer32
+   :members:
+
 
 Sequence Pointer
 ~~~~~~~~~~~~~~~~
@@ -293,6 +303,15 @@ Array Pointer
 ~~~~~~~~~~~~~
 
 .. autoclass:: ArrayPointer
+   :members:
+    
+.. autoclass:: ArrayPointer8
+   :members:
+
+.. autoclass:: ArrayPointer16
+   :members:
+
+.. autoclass:: ArrayPointer32
    :members:
 
 Stream Pointer
@@ -315,6 +334,15 @@ String Pointer
 
 .. autoclass:: StringPointer
    :members:
+   
+.. autoclass:: StringPointer8
+   :members:
+
+.. autoclass:: StringPointer16
+   :members:
+
+.. autoclass:: StringPointer32
+   :members:
 
 Relative Pointer
 ----------------
@@ -332,6 +360,44 @@ Relative Pointer
    :members:
 
 .. autoclass:: RelativePointer64
+   :members:
+
+
+Structure Relative Pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: StructureRelativePointer
+   :members:
+
+.. autoclass:: StructureRelativePointer8
+   :members:
+
+.. autoclass:: StructureRelativePointer16
+   :members:
+
+.. autoclass:: StructureRelativePointer32
+   :members:
+
+
+Sequence Relative Pointer
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: SequenceRelativePointer
+   :members:
+
+Array Relative Pointer
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: ArrayRelativePointer
+   :members:
+
+.. autoclass:: ArrayRelativePointer8
+   :members:
+
+.. autoclass:: ArrayRelativePointer16
+   :members:
+
+.. autoclass:: ArrayRelativePointer32
    :members:
 
 Stream Relative Pointer
@@ -355,6 +421,15 @@ String Relative Pointer
 .. autoclass:: StringRelativePointer
    :members:
 
+.. autoclass:: StringRelativePointer8
+   :members:
+
+.. autoclass:: StringRelativePointer16
+   :members:
+
+.. autoclass:: StringRelativePointer32
+   :members:
+   
 Byteorder
 ---------
 
