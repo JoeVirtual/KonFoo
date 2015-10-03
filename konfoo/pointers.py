@@ -59,6 +59,19 @@ class Pointer32(Pointer):
         self._bit_size = 32
 
 
+class Pointer64(Pointer):
+    """A `Pointer64` field is a :class:`Pointer` field
+    with a *size* of eight bytes.
+    """
+
+    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
+        super().__init__(template=template, address=address, byte_order=byte_order)
+        # Field alignment
+        self._align_to_byte_size = 8
+        # Field bit size
+        self._bit_size = 64
+
+
 class StructurePointer8(StructurePointer):
     """A `StructurePointer8` field is a :class:`StructurePointer` field
     with a `Pointer` *size* of one byte.
@@ -135,19 +148,6 @@ class ArrayPointer32(ArrayPointer):
         self._align_to_byte_size = 4
         # Field bit size
         self._bit_size = 32
-
-
-class Pointer64(Pointer):
-    """A `Pointer64` field is a :class:`Pointer` field
-    with a *size* of eight bytes.
-    """
-
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field alignment
-        self._align_to_byte_size = 8
-        # Field bit size
-        self._bit_size = 64
 
 
 class StreamPointer8(StreamPointer):

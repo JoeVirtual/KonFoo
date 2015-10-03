@@ -1,5 +1,5 @@
 API
-===
+***
 
 .. module:: konfoo
 
@@ -15,32 +15,32 @@ classes and functions.
 
 
 Provider
---------
+========
 
 .. autoclass:: Provider
    :members:
 
 FileProvider
-~~~~~~~~~~~~
+------------
 
 .. autoclass:: FileProvider
    :members:
 
 
 Container
----------
+=========
 
 .. autoclass:: Container
    :members:
 
 Structure
-~~~~~~~~~
+---------
 
 .. autoclass:: Structure
    :members:
 
 Sequence
-~~~~~~~~
+--------
 
 .. autoclass:: Sequence
    :members:
@@ -52,13 +52,13 @@ Array
    :members:
 
 Fields
-------
+======
 
 .. autoclass:: Field
    :members:
 
 Stream
-~~~~~~
+------
 
 .. autoclass:: Stream
    :members:
@@ -70,13 +70,13 @@ String
    :members:
 
 Float
-~~~~~
+-----
 
 .. autoclass:: Float
    :members:
 
 Decimal
-~~~~~~~
+-------
 
 .. autoclass:: Decimal
    :members:
@@ -260,7 +260,7 @@ Datetime
    :members:
 
 Pointer
--------
+=======
 
 .. autoclass:: Pointer
    :members:
@@ -278,7 +278,7 @@ Pointer
    :members:
 
 Structure Pointer
-~~~~~~~~~~~~~~~~~
+-----------------
 
 .. autoclass:: StructurePointer
    :members:
@@ -294,13 +294,13 @@ Structure Pointer
 
 
 Sequence Pointer
-~~~~~~~~~~~~~~~~
+----------------
 
 .. autoclass:: SequencePointer
    :members:
 
 Array Pointer
-~~~~~~~~~~~~~
+-------------
 
 .. autoclass:: ArrayPointer
    :members:
@@ -315,7 +315,7 @@ Array Pointer
    :members:
 
 Stream Pointer
-~~~~~~~~~~~~~~
+--------------
 
 .. autoclass:: StreamPointer
    :members:
@@ -330,7 +330,7 @@ Stream Pointer
    :members:
 
 String Pointer
-~~~~~~~~~~~~~~
+--------------
 
 .. autoclass:: StringPointer
    :members:
@@ -345,7 +345,7 @@ String Pointer
    :members:
 
 Relative Pointer
-----------------
+================
 
 .. autoclass:: RelativePointer
    :members:
@@ -364,7 +364,7 @@ Relative Pointer
 
 
 Structure Relative Pointer
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+--------------------------
 
 .. autoclass:: StructureRelativePointer
    :members:
@@ -380,13 +380,13 @@ Structure Relative Pointer
 
 
 Sequence Relative Pointer
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 .. autoclass:: SequenceRelativePointer
    :members:
 
 Array Relative Pointer
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 .. autoclass:: ArrayRelativePointer
    :members:
@@ -401,7 +401,7 @@ Array Relative Pointer
    :members:
 
 Stream Relative Pointer
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 .. autoclass:: StreamRelativePointer
    :members:
@@ -416,7 +416,7 @@ Stream Relative Pointer
    :members:
 
 String Relative Pointer
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 .. autoclass:: StringRelativePointer
    :members:
@@ -431,7 +431,7 @@ String Relative Pointer
    :members:
    
 Byteorder
----------
+=========
 
 .. autoclass:: Byteorder
    :members:
@@ -439,25 +439,25 @@ Byteorder
    :inherited-members:
 
 Index
------
+=====
 
 .. autoclass:: Index
    :members:
 
 Enumerations
-------------
+============
 
 .. autoclass:: Enumeration
    :members:
 
 Categories
-----------
+==========
 
 .. autoclass:: Category
    :members:
 
 Exceptions
-----------
+==========
 
 .. autoexception:: KonFooException
 
@@ -476,6 +476,6 @@ Exceptions
 .. autoexception:: BadOffset
 
 Utilities
----------
+=========
 
 .. autofunction:: d3json

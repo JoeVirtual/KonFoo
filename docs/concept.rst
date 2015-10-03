@@ -151,6 +151,44 @@ Decode a byte stream with a mapper.
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
 
 
+Encode a byte stream with a mapper.
+
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> mapper.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'01020946'
+
+
+Accessing a field in a mapper.
+
+    >>> mapper.version
+    Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+         alignment=(1, 0),
+         bit_size=8,
+         value='0x1')
+
+
+Accessing field properties in a mapper.
+
+    >>> mapper.version.value
+    '0x1'
+    >>> mapper.version.name
+    'Byte'
+    >>> mapper.version.bit_size
+    8
+    >>> mapper.version.alignment
+    (1, 0)
+    >>> mapper.version.byte_order
+    Byteorder.auto = 'auto'
+    >>> mapper.version.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> mapper.version.index.address
+    0
+
+
 List the value of each field in the mapper as a **nested** ordered dictionary.
 
     >>> pprint(mapper.field_values())
@@ -238,6 +276,63 @@ Loads the values of each field in the mapper from an INI file.
     is given.
 
 
+Get a blueprint of a mapper.
+
+    >>> pprint(mapper.blueprint())
+    {'class': 'Structure',
+     'name': 'Structure',
+     'size': 4,
+     'type': 'Structure',
+     'member': [{'address': 0,
+                 'alignment': [1, 0],
+                 'class': 'Byte',
+                 'index': [0, 0],
+                 'max': 255,
+                 'min': 0,
+                 'name': 'version',
+                 'order': 'auto',
+                 'signed': False,
+                 'size': 8,
+                 'type': 'Field',
+                 'value': '0x1'},
+                {'address': 1,
+                 'alignment': [1, 0],
+                 'class': 'Unsigned8',
+                 'index': [1, 0],
+                 'max': 255,
+                 'min': 0,
+                 'name': 'id',
+                 'order': 'auto',
+                 'signed': False,
+                 'size': 8,
+                 'type': 'Field',
+                 'value': '0x2'},
+                {'address': 2,
+                 'alignment': [1, 0],
+                 'class': 'Decimal8',
+                 'index': [2, 0],
+                 'max': 255,
+                 'min': 0,
+                 'name': 'length',
+                 'order': 'auto',
+                 'signed': False,
+                 'size': 8,
+                 'type': 'Field',
+                 'value': 9},
+                {'address': 3,
+                 'alignment': [1, 0],
+                 'class': 'Char',
+                 'index': [3, 0],
+                 'max': 255,
+                 'min': 0,
+                 'name': 'module',
+                 'order': 'auto',
+                 'signed': False,
+                 'size': 8,
+                 'type': 'Field',
+                 'value': 'F'}]}
+
+
 .. _reuse_mapper:
 
 Re-use of a mapping declaration
@@ -309,6 +404,7 @@ Declare mapper instances in on step
      ('Structure.type.module', '\x00'),
      ('Structure.size', 0)]
 
+
 .. _aligned_mapper:
 
 Align fields in a mapping declaration
@@ -318,7 +414,7 @@ Define a mapper with aligned fields
 
 .. code-block:: python
 
-    # Mapping declaration with aligned fields
+    # Mapping declaration
     class Identifier(Structure):
 
         def __init__(self):
@@ -344,7 +440,10 @@ Declare a mapper instance with aligned fields
 Byte order of a mapping declaration
 -----------------------------------
 
-
+Each field in a mapping declaration defines its own decoding/encoding byte order.
+The default byte order of a field is 'auto' this means that the field use the
+byte order which the byte stream defines to unpack and pack the required bytes
+and bits for its field value from and to the byte stream.
 
 
 .. _parametrized_mapper:

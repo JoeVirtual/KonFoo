@@ -21,8 +21,8 @@ class Decimal8(Decimal):
     a *size* of one byte and is by default signed.
     """
 
-    def __init__(self, signed=False):
-        super().__init__(bit_size=8, signed=signed)
+    def __init__(self, signed=False, byte_order=Byteorder.auto):
+        super().__init__(bit_size=8, signed=signed, byte_order=byte_order)
 
 
 class Decimal16(Decimal):
@@ -30,8 +30,8 @@ class Decimal16(Decimal):
     two bytes and is by default signed.
     """
 
-    def __init__(self, signed=False):
-        super().__init__(bit_size=16, signed=signed)
+    def __init__(self, signed=False, byte_order=Byteorder.auto):
+        super().__init__(bit_size=16, signed=signed, byte_order=byte_order)
 
 
 class Decimal24(Decimal):
@@ -39,8 +39,8 @@ class Decimal24(Decimal):
     three bytes and is by default signed.
     """
 
-    def __init__(self, signed=False):
-        super().__init__(bit_size=24, signed=signed)
+    def __init__(self, signed=False, byte_order=Byteorder.auto):
+        super().__init__(bit_size=24, signed=signed, byte_order=byte_order)
 
 
 class Decimal32(Decimal):
@@ -48,8 +48,8 @@ class Decimal32(Decimal):
     four bytes and is by default signed.
     """
 
-    def __init__(self, signed=False):
-        super().__init__(bit_size=32, signed=signed)
+    def __init__(self, signed=False, byte_order=Byteorder.auto):
+        super().__init__(bit_size=32, signed=signed, byte_order=byte_order)
 
 
 class Signed8(Signed):
@@ -57,8 +57,8 @@ class Signed8(Signed):
     one byte.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=8)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=8, byte_order=byte_order)
 
 
 class Signed16(Signed):
@@ -66,8 +66,8 @@ class Signed16(Signed):
     two bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=16)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=16, byte_order=byte_order)
 
 
 class Signed24(Signed):
@@ -75,8 +75,8 @@ class Signed24(Signed):
     three bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=24)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=24, byte_order=byte_order)
 
 
 class Signed32(Signed):
@@ -84,8 +84,8 @@ class Signed32(Signed):
     four bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=32)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=32, byte_order=byte_order)
 
 
 class Unsigned8(Unsigned):
@@ -93,8 +93,8 @@ class Unsigned8(Unsigned):
     one byte.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=8)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=8, byte_order=byte_order)
 
 
 class Unsigned16(Unsigned):
@@ -102,8 +102,8 @@ class Unsigned16(Unsigned):
     two bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=16)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=16, byte_order=byte_order)
 
 
 class Unsigned24(Unsigned):
@@ -111,8 +111,8 @@ class Unsigned24(Unsigned):
     three bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=24)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=24, byte_order=byte_order)
 
 
 class Unsigned32(Unsigned):
@@ -120,8 +120,8 @@ class Unsigned32(Unsigned):
     four bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=32)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=32, byte_order=byte_order)
 
 
 class Bitset8(Bitset):
@@ -130,7 +130,7 @@ class Bitset8(Bitset):
     """
 
     def __init__(self, byte_order=Byteorder.little):
-        super().__init__(8, 1, byte_order)
+        super().__init__(bit_size=8, byte_order=byte_order)
 
 
 class Bitset16(Bitset):
@@ -139,7 +139,7 @@ class Bitset16(Bitset):
     """
 
     def __init__(self, byte_order=Byteorder.little):
-        super().__init__(16, 2, byte_order)
+        super().__init__(bit_size=16, byte_order=byte_order)
 
 
 class Bitset24(Bitset):
@@ -148,7 +148,7 @@ class Bitset24(Bitset):
     """
 
     def __init__(self, byte_order=Byteorder.little):
-        super().__init__(24, 3, byte_order)
+        super().__init__(bit_size=24, byte_order=byte_order)
 
 
 class Bitset32(Bitset):
@@ -157,7 +157,7 @@ class Bitset32(Bitset):
     """
 
     def __init__(self, byte_order=Byteorder.little):
-        super().__init__(32, 4, byte_order)
+        super().__init__(bit_size=32, byte_order=byte_order)
 
 
 class Bool8(Bool):
@@ -165,8 +165,8 @@ class Bool8(Bool):
     one byte.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=8)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=8, byte_order=byte_order)
 
 
 class Bool16(Bool):
@@ -174,8 +174,8 @@ class Bool16(Bool):
     two bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=16)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=16, byte_order=byte_order)
 
 
 class Bool24(Bool):
@@ -183,8 +183,8 @@ class Bool24(Bool):
     three bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=16)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=16, byte_order=byte_order)
 
 
 class Bool32(Bool):
@@ -192,8 +192,8 @@ class Bool32(Bool):
     four bytes.
     """
 
-    def __init__(self):
-        super().__init__(bit_size=32)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=32, byte_order=byte_order)
 
 
 class Antivalent(Enum):
@@ -207,8 +207,10 @@ class Antivalent(Enum):
         valid = 2
         undefined = 3
 
-    def __init__(self, align_to=None):
-        super().__init__(bit_size=2, align_to=align_to, enumeration=Antivalent.Validity)
+    def __init__(self, align_to=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size=2, align_to=align_to,
+                         enumeration=Antivalent.Validity,
+                         byte_order=byte_order)
 
 
 class Enum4(Enum):
@@ -216,8 +218,11 @@ class Enum4(Enum):
     four bits.
     """
 
-    def __init__(self, align_to=None, enumeration=None):
-        super().__init__(bit_size=4, align_to=align_to, enumeration=enumeration)
+    def __init__(self, align_to=None, enumeration=None,
+                 byte_order=Byteorder.auto):
+        super().__init__(bit_size=4, align_to=align_to,
+                         enumeration=enumeration,
+                         byte_order=byte_order)
 
 
 class Enum8(Enum):
@@ -225,8 +230,10 @@ class Enum8(Enum):
     one byte.
     """
 
-    def __init__(self, enumeration=None):
-        super().__init__(bit_size=8, enumeration=enumeration)
+    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size=8,
+                         enumeration=enumeration,
+                         byte_order=byte_order)
 
 
 class Enum16(Enum):
@@ -234,8 +241,10 @@ class Enum16(Enum):
     two bytes.
     """
 
-    def __init__(self, enumeration=None):
-        super().__init__(bit_size=16, enumeration=enumeration)
+    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size=16,
+                         enumeration=enumeration,
+                         byte_order=byte_order)
 
 
 class Enum24(Enum):
@@ -243,8 +252,10 @@ class Enum24(Enum):
     three bytes.
     """
 
-    def __init__(self, enumeration=None):
-        super().__init__(bit_size=24, enumeration=enumeration)
+    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size=24,
+                         enumeration=enumeration,
+                         byte_order=byte_order)
 
 
 class Enum32(Enum):
@@ -252,8 +263,10 @@ class Enum32(Enum):
     four bytes.
     """
 
-    def __init__(self, enumeration=None):
-        super().__init__(bit_size=32, enumeration=enumeration)
+    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size=32,
+                         enumeration=enumeration,
+                         byte_order=byte_order)
 
 
 class Scaled8(Scaled):
@@ -261,8 +274,9 @@ class Scaled8(Scaled):
     onw byte.
     """
 
-    def __init__(self, scale):
-        super().__init__(scale, bit_size=8)
+    def __init__(self, scale, byte_order=Byteorder.auto):
+        super().__init__(scale, bit_size=8,
+                         byte_order=byte_order)
 
 
 class Scaled16(Scaled):
@@ -270,8 +284,9 @@ class Scaled16(Scaled):
     two bytes.
     """
 
-    def __init__(self, scale):
-        super().__init__(scale, bit_size=16)
+    def __init__(self, scale, byte_order=Byteorder.auto):
+        super().__init__(scale, bit_size=16,
+                         byte_order=byte_order)
 
 
 class Scaled24(Scaled):
@@ -279,8 +294,9 @@ class Scaled24(Scaled):
     three bytes.
     """
 
-    def __init__(self, scale):
-        super().__init__(scale, bit_size=24)
+    def __init__(self, scale, byte_order=Byteorder.auto):
+        super().__init__(scale, bit_size=24,
+                         byte_order=byte_order)
 
 
 class Scaled32(Scaled):
@@ -288,8 +304,9 @@ class Scaled32(Scaled):
     four bytes.
     """
 
-    def __init__(self, scale):
-        super().__init__(scale, bit_size=16)
+    def __init__(self, scale, byte_order=Byteorder.auto):
+        super().__init__(scale, bit_size=32,
+                         byte_order=byte_order)
 
 
 class Bipolar2(Bipolar):
@@ -297,8 +314,9 @@ class Bipolar2(Bipolar):
     two bytes and an integer part of two bits.
     """
 
-    def __init__(self):
-        super().__init__(bits_integer=2, bit_size=16)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bits_integer=2, bit_size=16,
+                         byte_order=byte_order)
 
 
 class Bipolar4(Bipolar):
@@ -306,8 +324,9 @@ class Bipolar4(Bipolar):
     two bytes and an integer part of four bits.
     """
 
-    def __init__(self):
-        super().__init__(bits_integer=4, bit_size=16)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bits_integer=4, bit_size=16,
+                         byte_order=byte_order)
 
 
 class Unipolar2(Unipolar):
@@ -315,5 +334,6 @@ class Unipolar2(Unipolar):
     two bytes and an integer part of two bits.
     """
 
-    def __init__(self):
-        super().__init__(bits_integer=2, bit_size=16)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bits_integer=2, bit_size=16,
+                         byte_order=byte_order)

@@ -763,7 +763,10 @@ class Sequence(MutableSequence, Container):
         return iter(self._data)
 
     def append(self, item):
-        """Appends the *item* to the end of the `Sequence`."""
+        """Appends the *item* to the end of the `Sequence`.
+
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        """
         if not is_any(item):
             raise TypeError(item)
         self._data.append(item)
@@ -772,14 +775,17 @@ class Sequence(MutableSequence, Container):
         """Inserts the *item* before the *index* into the `Sequence`.
 
         :param int index: `Sequence` index.
-        :param item:
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
         """
         if not is_any(item):
             raise TypeError(item)
         self._data.insert(index, item)
 
     def pop(self, index=-1):
-        """Removes and returns the item at the *index* from the `Sequence`."""
+        """Removes and returns the item at the *index* from the `Sequence`.
+
+        :param int index: `Sequence` index.
+        """
         return self._data.pop(index)
 
     def clear(self):
@@ -787,7 +793,10 @@ class Sequence(MutableSequence, Container):
         self._data.clear()
 
     def remove(self, item):
-        """Removes the first occurrence of an *item* from the `Sequence`."""
+        """Removes the first occurrence of an *item* from the `Sequence`.
+
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        """
         self._data.remove(item)
 
     def reverse(self):
@@ -795,7 +804,13 @@ class Sequence(MutableSequence, Container):
         self._data.reverse()
 
     def extend(self, iterable):
-        """Extends the `Sequence` by appending items from the *iterable*."""
+        """Extends the `Sequence` by appending items from the *iterable*.
+
+        :param iterable: any *iterable* that contains items of `Structure`,
+            `Sequence`, `Array` or `Field` instances. If the *iterable* is one
+            of these instances itself then the *iterable* itself is appended
+            to the `Sequence`.
+        """
         # Sequence
         if is_sequence(iterable):
             self._data.extend(iterable)
@@ -1131,7 +1146,7 @@ class Array(Sequence):
         self.resize(size)
 
     def __create__(self):
-        if isinstance(self._template, Field):
+        if is_field(self._template, Field):
             return copy.copy(self._template)
         else:
             return self._template()
@@ -1437,7 +1452,7 @@ class Field(metaclass=abc.ABCMeta):
                 'name': name if name else self.name,
                 'order': self.byteorder.value,
                 'size': self.bit_size,
-                'type': 'field',
+                'type': Field.item_type.name,
                 'value': self.value
             }
         """
@@ -1449,7 +1464,7 @@ class Field(metaclass=abc.ABCMeta):
             'index': [self.index.byte, self.index.bit],
             'name': name if name else self.name,
             'size': self.bit_size,
-            'type': 'field',
+            'type': Field.item_type.name,
             'value': self.value
         }
         return OrderedDict(sorted(obj.items()))
@@ -1488,6 +1503,8 @@ class Stream(Field):
     Byteorder.auto = 'auto'
     >>> stream.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> stream.next_index()
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
     >>> stream.bit_size
     0
     >>> stream.value
@@ -1499,6 +1516,8 @@ class Stream(Field):
     (10, 0)
     >>> stream.bit_size
     80
+    >>> stream.next_index()
+    Index(byte=10, bit=0, address=10, base_address=0, update=False)
     >>> stream.value
     b'00000000000000000000'
     >>> stream.value = '0102030405'
@@ -1533,7 +1552,7 @@ class Stream(Field):
      'name': 'Stream10',
      'order': 'auto',
      'size': 80,
-     'type': 'field',
+     'type': 'Field',
      'value': '0102030405060708090a'}
     """
     item_type = ItemClass.Stream
@@ -1669,6 +1688,8 @@ class String(Stream):
     Byteorder.auto = 'auto'
     >>> string.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> string.next_index()
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
     >>> string.bit_size
     0
     >>> string.value
@@ -1680,6 +1701,8 @@ class String(Stream):
     (10, 0)
     >>> string.bit_size
     80
+    >>> string.next_index()
+    Index(byte=10, bit=0, address=10, base_address=0, update=False)
     >>> string.value
     ''
     >>> string.value = 'KonFoo'
@@ -1718,7 +1741,7 @@ class String(Stream):
      'name': 'String10',
      'order': 'auto',
      'size': 80,
-     'type': 'field',
+     'type': 'Field',
      'value': 'KonFoo is '}
     """
     item_type = ItemClass.String
@@ -1765,6 +1788,8 @@ class Float(Field):
     Byteorder.auto = 'auto'
     >>> float.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> float.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> float.bit_size
     32
     >>> float.min()
@@ -1796,17 +1821,13 @@ class Float(Field):
      'name': 'Float32',
      'order': 'auto',
      'size': 32,
-     'type': 'field',
+     'type': 'Field',
      'value': 3.4028234663852886e+38}
     """
     item_type = ItemClass.Float
 
-    def __init__(self):
-        super().__init__()
-        # Field alignment
-        self._align_to_byte_size = 4
-        # Field bit size
-        self._bit_size = 32
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=32, align_to=4, byte_order=byte_order)
         # Field value
         self._value = float()
 
@@ -1926,6 +1947,8 @@ class Decimal(Field):
     Byteorder.auto = 'auto'
     >>> unsigned.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> unsigned.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unsigned.bit_size
     16
     >>> unsigned.min()
@@ -1967,7 +1990,7 @@ class Decimal(Field):
      'order': 'auto',
      'signed': False,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 65535}
 
     Example:
@@ -1984,6 +2007,8 @@ class Decimal(Field):
     Byteorder.auto = 'auto'
     >>> signed.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> signed.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> signed.bit_size
     16
     >>> signed.min()
@@ -2025,13 +2050,14 @@ class Decimal(Field):
      'order': 'auto',
      'signed': True,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 32767}
     """
     item_type = ItemClass.Decimal
 
-    def __init__(self, bit_size, align_to=None, signed=False):
-        super().__init__()
+    def __init__(self, bit_size, align_to=None, signed=False,
+                 byte_order=Byteorder.auto):
+        super().__init__(byte_order=byte_order)
         # Field signed?
         self._signed = bool(signed)
         # Field alignment and field bit size
@@ -2252,6 +2278,8 @@ class Bit(Decimal):
     Byteorder.auto = 'auto'
     >>> bit.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bit.next_index()
+    Index(byte=0, bit=1, address=0, base_address=0, update=False)
     >>> bit.signed
     False
     >>> bit.value
@@ -2293,7 +2321,7 @@ class Bit(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 1,
-     'type': 'field',
+     'type': 'Field',
      'value': 1}
     """
     item_type = ItemClass.Bit
@@ -2334,6 +2362,8 @@ class Byte(Decimal):
     Byteorder.auto = 'auto'
     >>> byte.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> byte.next_index()
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> byte.bit_size
     8
     >>> byte.min()
@@ -2375,7 +2405,7 @@ class Byte(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 8,
-     'type': 'field',
+     'type': 'Field',
      'value': '0xff'}
     """
     item_type = ItemClass.Byte
@@ -2414,6 +2444,8 @@ class Char(Decimal):
     Byteorder.auto = 'auto'
     >>> char.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> char.next_index()
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> char.bit_size
     8
     >>> char.min()
@@ -2455,7 +2487,7 @@ class Char(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 8,
-     'type': 'field',
+     'type': 'Field',
      'value': 'F'}
     """
     item_type = ItemClass.Char
@@ -2497,6 +2529,8 @@ class Signed(Decimal):
     Byteorder.auto = 'auto'
     >>> signed.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> signed.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> signed.bit_size
     16
     >>> signed.min()
@@ -2538,13 +2572,13 @@ class Signed(Decimal):
      'order': 'auto',
      'signed': True,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 32767}
     """
     item_type = ItemClass.Signed
 
-    def __init__(self, bit_size, align_to=None):
-        super().__init__(bit_size, align_to, signed=True)
+    def __init__(self, bit_size, align_to=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size, align_to, True, byte_order)
 
 
 class Unsigned(Decimal):
@@ -2566,6 +2600,8 @@ class Unsigned(Decimal):
     Byteorder.auto = 'auto'
     >>> unsigned.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> unsigned.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unsigned.bit_size
     16
     >>> unsigned.min()
@@ -2607,13 +2643,13 @@ class Unsigned(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': '0xffff'}
     """
     item_type = ItemClass.Unsigned
 
-    def __init__(self, bit_size, align_to=None):
-        super().__init__(bit_size, align_to)
+    def __init__(self, bit_size, align_to=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size, align_to, False, byte_order)
 
     @property
     def value(self):
@@ -2647,6 +2683,8 @@ class Bitset(Decimal):
     Byteorder.auto = 'auto'
     >>> bitset.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bitset.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bitset.bit_size
     16
     >>> bitset.min()
@@ -2688,15 +2726,13 @@ class Bitset(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': '0b1111111111111111'}
     """
     item_type = ItemClass.Bitset
 
     def __init__(self, bit_size, align_to=None, byte_order=Byteorder.auto):
-        super().__init__(bit_size, align_to)
-        # Field byte order
-        self.byte_order = byte_order
+        super().__init__(bit_size, align_to, False, byte_order)
 
     @property
     def value(self):
@@ -2727,6 +2763,8 @@ class Bool(Decimal):
     Byteorder.auto = 'auto'
     >>> bool.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bool.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bool.bit_size
     16
     >>> bool.min()
@@ -2768,13 +2806,13 @@ class Bool(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': True}
     """
     item_type = ItemClass.Bool
 
-    def __init__(self, bit_size, align_to=None):
-        super().__init__(bit_size, align_to)
+    def __init__(self, bit_size, align_to=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size, align_to, False, byte_order)
 
     @property
     def value(self):
@@ -2817,6 +2855,8 @@ class Enum(Decimal):
     Byteorder.auto = 'auto'
     >>> enum.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> enum.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> enum.bit_size
     16
     >>> enum.min()
@@ -2864,13 +2904,14 @@ class Enum(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 65535}
     """
     item_type = ItemClass.Enum
 
-    def __init__(self, bit_size, align_to=None, enumeration=None):
-        super().__init__(bit_size, align_to)
+    def __init__(self, bit_size, align_to=None, enumeration=None,
+                 byte_order=Byteorder.auto):
+        super().__init__(bit_size, align_to, False, byte_order)
         # Field enumeration class
         if enumeration is None:
             self._enum = None
@@ -2909,12 +2950,15 @@ class Scaled(Decimal):
     *size* and returns its scaled field *value* as a float.
 
     The scaled field *value* is:
+
         ``(unscaled field value / scaling base) * scaling factor``
 
     The unscaled field *value* is:
+
         ``(scaled field value / scaling factor) * scaling base``
 
     The scaling base is:
+
         ``2 ** (field size - 1) / 2``
 
     A `Scaled` field extends the :meth:`blueprint` method with a ``scale`` key
@@ -2939,6 +2983,8 @@ class Scaled(Decimal):
     Byteorder.auto = 'auto'
     >>> scaled.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> scaled.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> scaled.bit_size
     16
     >>> scaled.min()
@@ -2985,13 +3031,14 @@ class Scaled(Decimal):
      'scale': 100.0,
      'signed': True,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 199.993896484375}
     """
     item_type = ItemClass.Scaled
 
-    def __init__(self, scale, bit_size, align_to=None):
-        super().__init__(bit_size, align_to, signed=True)
+    def __init__(self, scale, bit_size, align_to=None,
+                 byte_order=Byteorder.auto):
+        super().__init__(bit_size, align_to, True, byte_order)
         # Field scaling factor
         self._scale = float(scale)
 
@@ -3040,11 +3087,17 @@ class Fraction(Decimal):
     of the field and the required bits for the other two parts.
     The fraction part is always smaller than one.
 
+        ``fraction part = (2**bits - 1) / (2**bits)``
+
     The second part are the *bits* for the *integer* part of a fractional
     number.
 
+        ``integer part = (2**bits - 1)``
+
     The third part is the bit for the sign of a *signed* fractional
     number. Only a *signed* fractional number posses this bit.
+
+        ``sign part = {'0': '+', '1': '-'}``
 
     A fractional number is multiplied by hundred.
 
@@ -3071,6 +3124,8 @@ class Fraction(Decimal):
     Byteorder.auto = 'auto'
     >>> unipolar.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> unipolar.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unipolar.bit_size
     16
     >>> unipolar.min()
@@ -3116,7 +3171,7 @@ class Fraction(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 399.993896484375}
 
     Example:
@@ -3132,6 +3187,8 @@ class Fraction(Decimal):
     Byteorder.auto = 'auto'
     >>> bipolar.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bipolar.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bipolar.bit_size
     16
     >>> bipolar.min()
@@ -3181,13 +3238,14 @@ class Fraction(Decimal):
      'order': 'auto',
      'signed': True,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 199.993896484375}
     """
     item_type = ItemClass.Fraction
 
-    def __init__(self, bits_integer, bit_size, align_to=None, signed=False):
-        super().__init__(bit_size, align_to)
+    def __init__(self, bits_integer, bit_size, align_to=None, signed=False,
+                 byte_order=Byteorder.auto):
+        super().__init__(bit_size, align_to, False, byte_order)
         # Number of bits of the integer part of the fraction number
         self._bits_integer = limiter(int(bits_integer), 1, self._bit_size)
         # Fraction number signed?
@@ -3271,6 +3329,8 @@ class Bipolar(Fraction):
     Byteorder.auto = 'auto'
     >>> bipolar.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> bipolar.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bipolar.bit_size
     16
     >>> bipolar.min()
@@ -3316,13 +3376,14 @@ class Bipolar(Fraction):
      'order': 'auto',
      'signed': True,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 199.993896484375}
     """
     item_type = ItemClass.Bipolar
 
-    def __init__(self, bits_integer, bit_size, align_to=None):
-        super().__init__(bits_integer, bit_size, align_to, True)
+    def __init__(self, bits_integer, bit_size, align_to=None,
+                 byte_order=Byteorder.auto):
+        super().__init__(bits_integer, bit_size, align_to, True, byte_order)
 
 
 class Unipolar(Fraction):
@@ -3349,6 +3410,8 @@ class Unipolar(Fraction):
     Byteorder.auto = 'auto'
     >>> unipolar.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> unipolar.next_index()
+    Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unipolar.bit_size
     16
     >>> unipolar.min()
@@ -3394,13 +3457,14 @@ class Unipolar(Fraction):
      'order': 'auto',
      'signed': False,
      'size': 16,
-     'type': 'field',
+     'type': 'Field',
      'value': 399.993896484375}
     """
     item_type = ItemClass.Unipolar
 
-    def __init__(self, bits_integer, bit_size, align_to=None):
-        super().__init__(bits_integer, bit_size, align_to, False)
+    def __init__(self, bits_integer, bit_size, align_to=None,
+                 byte_order=Byteorder.auto):
+        super().__init__(bits_integer, bit_size, align_to, False, byte_order)
 
 
 class Datetime(Decimal):
@@ -3422,6 +3486,8 @@ class Datetime(Decimal):
     Byteorder.auto = 'auto'
     >>> datetime.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> datetime.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> datetime.bit_size
     32
     >>> datetime.min()
@@ -3460,13 +3526,14 @@ class Datetime(Decimal):
      'order': 'auto',
      'signed': False,
      'size': 32,
-     'type': 'field',
+     'type': 'Field',
      'value': '2106-02-07 06:28:15'}
     """
     item_type = ItemClass.Datetime
 
-    def __init__(self):
-        super().__init__(bit_size=32)
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=32, align_to=None, signed=False,
+                         byte_order=byte_order)
 
     @property
     def value(self):
@@ -3494,16 +3561,20 @@ class Pointer(Decimal, Container):
 
     *   **Read** from a `Provider` the necessary amount of bytes for
         the referenced `data` object of the `Pointer` via :meth:`read()`.
-    *   Get the **next index** after the last *field* of a `Structure`
-        via :meth:`next_index()`.
-    *   View the **index** for each *field* in a `Structure`
+    *   **Write** to a `Provider` the necessary amount of bytes for
+        the referenced `data` object of the `Pointer` via :meth:`write()`.
+    *   View the **index** of the `Pointer` field and for each *field*
+        in the referenced `data` object of the `Pointer`
         via :meth:`field_indexes()`.
-    *   View the **type** for each *field* in a `Structure`
+    *   View the **type** of the `Pointer` field and for each *field*
+        in the referenced `data` object of the `Pointer`
         via :meth:`field_types()`.
-    *   View the **value** for each *field* in a `Structure`
+    *   View the **value** of the `Pointer` field and for each *field*
+        in the referenced `data` object of the `Pointer`
         via :meth:`field_values()`.
-    *   List the **item** and its path for each *field* in a `Structure`
-        as a flat list via :meth:`field_items()`.
+    *   List the **item** and its path for the `Pointer` field and for each
+        *field* in the referenced `data` object of the `Pointer` as a flat
+        list via :meth:`field_items()`.
     *   Get a **blueprint** of a `Structure` and its items
         via :meth:`blueprint()`,
 
@@ -3531,6 +3602,8 @@ class Pointer(Decimal, Container):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
     >>> pointer.min()
@@ -3548,6 +3621,8 @@ class Pointer(Decimal, Container):
     0
     >>> pointer.order
     Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
     >>> pointer.value
     '0x0'
     >>> pointer.decode(unhexlify('00c0'))
@@ -3583,6 +3658,19 @@ class Pointer(Decimal, Container):
      'size': 32,
      'type': 'pointer',
      'value': '0xffffffff'}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', None)])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', None)])
+    >>> pprint(pointer.field_items())
+    [('value',
+      Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+              alignment=(4, 0),
+              bit_size=32,
+              value='0xffffffff'))]
     """
     item_type = ItemClass.Pointer
 
@@ -3605,7 +3693,7 @@ class Pointer(Decimal, Container):
 
     @property
     def base_address(self):
-        """Data `Provider` base address."""
+        """Data `providers` base address."""
         return self._value
 
     @property
@@ -3631,7 +3719,7 @@ class Pointer(Decimal, Container):
     def data(self, value):
         if value is None:
             self._data = None
-        elif isinstance(value, (Sequence, Structure, Field)):
+        elif is_any(value):
             self._data = value
         else:
             raise TypeError(value)
@@ -3837,7 +3925,7 @@ class Pointer(Decimal, Container):
         if patch is None:
             return patch
 
-        if isinstance(provider, Provider):
+        if is_provider(provider):
             if patch.inject:
                 stream = provider.read(patch.address, len(patch.buffer))
 
@@ -4070,7 +4158,7 @@ class Pointer(Decimal, Container):
                 'name': name if name else self.__class__.__name__,
                 'order': self.byteorder.value,
                 'size': self.bit_size,
-                'type': 'field',
+                'type': 'Field',
                 'value': self.value,
                 'member': list(members)
             }
@@ -4107,7 +4195,7 @@ class StructurePointer(Pointer):
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         if template is None:
             template = Structure()
-        elif not isinstance(template, Structure):
+        elif not is_structure(template):
             raise TypeError(template)
         super().__init__(template, address, byte_order=byte_order)
 
@@ -4197,19 +4285,25 @@ class SequencePointer(Pointer):
         del self._data[index]
 
     def append(self, item):
-        """Appends the *item* to the end of the `Sequence`."""
+        """Appends the *item* to the end of the `Sequence`.
+
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        """
         self._data.append(item)
 
     def insert(self, index, item):
         """Inserts the *item* before the *index* into the `Sequence`.
 
         :param int index: `Sequence` index.
-        :param item:
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
         """
         self._data.insert(index, item)
 
     def pop(self, index=-1):
-        """Removes and returns the item at the *index* from the `Sequence`."""
+        """Removes and returns the item at the *index* from the `Sequence`.
+
+        :param int index: `Sequence` index.
+        """
         return self._data.pop(index)
 
     def clear(self):
@@ -4217,7 +4311,10 @@ class SequencePointer(Pointer):
         self._data.clear()
 
     def remove(self, item):
-        """Removes the first occurrence of an *item* from the `Sequence`."""
+        """Removes the first occurrence of an *item* from the `Sequence`.
+
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        """
         self._data.remove(item)
 
     def reverse(self):
@@ -4225,7 +4322,13 @@ class SequencePointer(Pointer):
         self._data.reverse()
 
     def extend(self, iterable):
-        """Extends the `Sequence` by appending items from the *iterable*."""
+        """Extends the `Sequence` by appending items from the *iterable*.
+
+        :param iterable: any *iterable* that contains items of `Structure`,
+            `Sequence`, `Array` or `Field` instances. If the *iterable* is one
+            of these instances itself then the *iterable* itself is appended
+            to the `Sequence`.
+        """
         self._data.extend(iterable)
 
 
@@ -4379,7 +4482,7 @@ class StructureRelativePointer(RelativePointer):
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
         if template is None:
             template = Structure()
-        elif not isinstance(template, Structure):
+        elif not is_structure(template):
             raise TypeError(template)
         super().__init__(template, address, byte_order=byte_order)
 
@@ -4469,19 +4572,25 @@ class SequenceRelativePointer(RelativePointer):
         del self._data[index]
 
     def append(self, item):
-        """Appends the *item* to the end of the `Sequence`."""
+        """Appends the *item* to the end of the `Sequence`.
+
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        """
         self._data.append(item)
 
     def insert(self, index, item):
         """Inserts the *item* before the *index* into the `Sequence`.
 
         :param int index: `Sequence` index.
-        :param item:
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
         """
         self._data.insert(index, item)
 
     def pop(self, index=-1):
-        """Removes and returns the item at the *index* from the `Sequence`."""
+        """Removes and returns the item at the *index* from the `Sequence`.
+
+        :param int index: `Sequence` index.
+        """
         return self._data.pop(index)
 
     def clear(self):
@@ -4489,7 +4598,10 @@ class SequenceRelativePointer(RelativePointer):
         self._data.clear()
 
     def remove(self, item):
-        """Removes the first occurrence of an *item* from the `Sequence`."""
+        """Removes the first occurrence of an *item* from the `Sequence`.
+
+        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        """
         self._data.remove(item)
 
     def reverse(self):
@@ -4497,7 +4609,13 @@ class SequenceRelativePointer(RelativePointer):
         self._data.reverse()
 
     def extend(self, iterable):
-        """Extends the `Sequence` by appending items from the *iterable*."""
+        """Extends the `Sequence` by appending items from the *iterable*.
+
+        :param iterable: any *iterable* that contains items of `Structure`,
+            `Sequence`, `Array` or `Field` instances. If the *iterable* is one
+            of these instances itself then the *iterable* itself is appended
+            to the `Sequence`.
+        """
         self._data.extend(iterable)
 
 
