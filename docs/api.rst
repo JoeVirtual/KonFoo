@@ -442,7 +442,6 @@ Index
 =====
 
 .. autoclass:: Index
-   :members:
 
 Enumerations
 ============
@@ -477,5 +476,8 @@ Exceptions
 
 Utilities
 =========
+
+.. autoclass:: HexViewer
+   :members:
 
 .. autofunction:: d3json

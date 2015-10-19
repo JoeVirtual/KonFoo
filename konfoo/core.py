@@ -19,6 +19,7 @@ from collections.abc import MutableSequence
 from configparser import ConfigParser
 from binascii import hexlify, unhexlify
 import abc
+from pprint import pprint
 
 from konfoo.enums import Enumeration
 
@@ -69,10 +70,35 @@ def is_mixin(obj):
 
 
 #: Memory Patch
-Patch = namedtuple('Patch', ['buffer', 'address', 'byteorder', 'bit_size', 'bit_offset', 'inject'])
+Patch = namedtuple('Patch', [
+    'buffer',
+    'address',
+    'byteorder',
+    'bit_size',
+    'bit_offset',
+    'inject'
+])
 
-#: Field index
-Index = namedtuple('Index', ['byte', 'bit', 'address', 'base_address', 'update'])
+Index = namedtuple('Index', [
+    'byte',
+    'bit',
+    'address',
+    'base_address',
+    'update'
+])
+"""`Field` Index.
+
+:param int byte: byte offset of the `Field` in the bytestream.
+
+:param int bit: bit offset of the `Field` from its byte offset.
+
+:param int address: absolute address of the `Field`.
+
+:param int base_address: base address of the data `Provider`.
+
+:param bool update: if `True` the bytestream needs to be updated
+    by the data `Provider`.
+"""
 
 
 def zero():
@@ -86,8 +112,6 @@ class Container(metaclass=abc.ABCMeta):
 
     The `Container` class provides core features to save, load and view the
     values of the `Field` items in a container class.
-
-
     """
 
     def field_items(self, root=str(), **options):
@@ -180,15 +204,15 @@ class Container(metaclass=abc.ABCMeta):
 
         .. code-block:: ini
 
-            [self.__class__.name]
-            field =
-            stream =
-            structure.field =
-            array[0] =
-            array[1] =
-            array[2] =
-            pointer.value = 0
-            pointer.data =
+            [Foo]
+            stream = b''
+            string =
+            float = 0.0
+            structure.char =
+            array[0] = 0x0
+            array[1] = 0x0
+            array[2] = 0x0
+            pointer = 0x0
 
         :param str file: name and location of the *INI file*.
 
@@ -200,6 +224,27 @@ class Container(metaclass=abc.ABCMeta):
             append to the end of the path string with '|' as separator.
 
         :keyword bool verbose: if `True` the loading is executed in verbose mode.
+
+        >>> class Foo(Structure):
+        ...     def __init__(self):
+        ...         super().__init__()
+        ...         self.stream = Stream()
+        ...         self.string = String()
+        ...         self.float = Float()
+        ...         self.structure = Structure()
+        ...         self.structure.char = Char()
+        ...         self.array = Array(Byte, 3)
+        ...         self.pointer = Pointer()
+        >>> foo = Foo()
+        >>> foo.load('foo.ini')
+        [Foo]
+        Foo.stream = b''
+        Foo.string =
+        Foo.float = 0.0
+        Foo.structure.char =
+        Foo.array[0] = 0x0
+        Foo.array[1] = 0x0
+        Foo.array[2] = 0x0
         """
         section = section if section else self.__class__.__name__
 
@@ -243,30 +288,20 @@ class Container(metaclass=abc.ABCMeta):
 
     @nested_option()
     @field_types_option()
-    @verbose_option(True)
     def save(self, file, section=str(), **options):
         """Saves the `Field` values of a `Container` to a *INI file*.
 
-        >>> class Foo(Structure):
-        ...     def __init__(self):
-        ...         super().__init__()
-        ...         self.field = Field()
-        ...         self.stream = Stream()
-        ...         self.structure = Structure()
-        ...         self.array = Array(Field, 3)
-        ...         self.pointer = Pointer()
-
         .. code-block:: ini
 
-            [self.__class__.name]
-            field = ...
-            stream = ...
-            structure = ...
-            array[0] = ...
-            array[1] = ...
-            array[2] = ...
-            pointer.value = ...
-            pointer.data = ...
+            [Foo]
+            stream = b''
+            string =
+            float = 0.0
+            structure.char =
+            array[0] = 0x0
+            array[1] = 0x0
+            array[2] = 0x0
+            pointer = 0x0
 
         :param str file: name and location of the *INI file*.
 
@@ -280,7 +315,18 @@ class Container(metaclass=abc.ABCMeta):
         :keyword bool field_types: if `True` the type of the `Field` is
             appended to its path string with the '|' sign as separator.
 
-        :keyword bool verbose: if `True` the saving is executed in verbose mode.
+        >>> class Foo(Structure):
+        ...     def __init__(self):
+        ...         super().__init__()
+        ...         self.stream = Stream()
+        ...         self.string = String()
+        ...         self.float = Float()
+        ...         self.structure = Structure()
+        ...         self.structure.char = Char()
+        ...         self.array = Array(Byte, 3)
+        ...         self.pointer = Pointer()
+        >>> foo = Foo()
+        >>> foo.save('foo.ini')
         """
         parser = ConfigParser()
         parser.read_dict(self.to_dict(section, **options))
@@ -308,7 +354,7 @@ class Structure(OrderedDict, Container):
 
     *   **Read** from a `Provider` the necessary bytes for each `data`
         object referenced by the `Pointer` fields in a `Structure`
-        via :meth:`read()`.
+        via :meth:`read_from()`.
     *   **Decode** the *field values* of a `Structure` from a byte stream
         via :meth:`decode()`.
     *   **Encode** the *field values* of a `Structure` to a byte stream
@@ -384,7 +430,7 @@ class Structure(OrderedDict, Container):
             raise TypeError(name, item)
 
     @nested_option()
-    def read(self, provider, **options):
+    def read_from(self, provider, **options):
         """All `Pointer` fields of a `Structure` read the necessary amount
         of bytes from the data *provider* for their *nested* `data` object
         fields.
@@ -399,7 +445,7 @@ class Structure(OrderedDict, Container):
         for item in self.values():
             # Container or Pointer
             if is_mixin(item):
-                item.read(provider, **options)
+                item.read_from(provider, **options)
 
     @byte_order_option()
     @nested_option()
@@ -692,7 +738,7 @@ class Sequence(MutableSequence, Container):
 
     *   **Read** from a `Provider` the necessary bytes for each `data`
         object referenced by the `Pointer` fields in a `Sequence`
-        via :meth:`read()`.
+        via :meth:`read_from()`.
     *   **Decode** the *field values* of a `Sequence` from a byte stream
         via :meth:`decode()`.
     *   **Encode** the *field values* of a `Sequence` to a byte stream
@@ -825,7 +871,7 @@ class Sequence(MutableSequence, Container):
             raise TypeError(iterable)
 
     @nested_option()
-    def read(self, provider, **options):
+    def read_from(self, provider, **options):
         """All `Pointer` fields of a `Sequence` read the necessary amount of
         bytes from the data *provider* for their *nested* `data` object fields.
 
@@ -837,8 +883,9 @@ class Sequence(MutableSequence, Container):
             object in its own `bytestream`.
         """
         for item in iter(self):
-            if is_container(item) or is_pointer(item):
-                item.read(provider, **options)
+            # Container or Pointer
+            if is_mixin(item):
+                item.read_from(provider, **options)
 
     @byte_order_option()
     @nested_option()
@@ -1146,7 +1193,7 @@ class Array(Sequence):
         self.resize(size)
 
     def __create__(self):
-        if is_field(self._template, Field):
+        if is_field(self._template):
             return copy.copy(self._template)
         else:
             return self._template()
@@ -1491,7 +1538,6 @@ class Stream(Field):
 
     Example:
 
-    >>> from pprint import pprint
     >>> stream = Stream()
     >>> stream.is_stream()
     True
@@ -1674,7 +1720,6 @@ class String(Stream):
 
     Example:
 
-    >>> from pprint import pprint
     >>> string = String()
     >>> string.is_stream()
     True
@@ -1776,42 +1821,41 @@ class Float(Field):
 
     Example:
 
-    >>> from pprint import pprint
-    >>> float = Float()
-    >>> float.is_float()
+    >>> real = Float()
+    >>> real.is_float()
     True
-    >>> float.name
+    >>> real.name
     'Float32'
-    >>> float.alignment
+    >>> real.alignment
     (4, 0)
-    >>> float.byte_order
+    >>> real.byte_order
     Byteorder.auto = 'auto'
-    >>> float.index
+    >>> real.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> float.next_index()
+    >>> real.next_index()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> float.bit_size
+    >>> real.bit_size
     32
-    >>> float.min()
+    >>> real.min()
     -3.4028234663852886e+38
-    >>> float.max()
+    >>> real.max()
     3.4028234663852886e+38
-    >>> float.smallest()
+    >>> real.smallest()
     1.1754943508222875e-38
-    >>> float.epsilon()
+    >>> real.epsilon()
     5.960464477539063e-08
-    >>> float.value
+    >>> real.value
     0.0
-    >>> float.value = 0x10
-    >>> float.value
+    >>> real.value = 0x10
+    >>> real.value
     16.0
-    >>> float.value = -3.4028234663852887e+38
-    >>> float.value
+    >>> real.value = -3.4028234663852887e+38
+    >>> real.value
     -3.4028234663852886e+38
-    >>> float.value = 3.4028234663852887e+38
-    >>> float.value
+    >>> real.value = 3.4028234663852887e+38
+    >>> real.value
     3.4028234663852886e+38
-    >>> pprint(float.blueprint())
+    >>> pprint(real.blueprint())
     {'address': 0,
      'alignment': [4, 0],
      'class': 'Float32',
@@ -1935,7 +1979,6 @@ class Decimal(Field):
 
     Example:
 
-    >>> from pprint import pprint
     >>> unsigned = Decimal(16)
     >>> unsigned.is_decimal()
     True
@@ -1995,7 +2038,6 @@ class Decimal(Field):
 
     Example:
 
-    >>> from pprint import pprint
     >>> signed = Decimal(16, signed=True)
     >>> signed.is_decimal()
     True
@@ -2241,7 +2283,8 @@ class Decimal(Field):
         if len(buffer) == size:
             view = memoryview(buffer)
             value |= int.from_bytes(buffer[offset:size], byte_order.value)
-            view[offset:size] = value.to_bytes(self._align_to_byte_size, byte_order.value)
+            view[offset:size] = value.to_bytes(self._align_to_byte_size,
+                                               byte_order.value)
             return bytes()
         # Extend field value with the aligned bytes
         else:
@@ -2264,7 +2307,6 @@ class Bit(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> bit = Bit(0)
     >>> bit.is_decimal()
     True
@@ -2350,7 +2392,6 @@ class Byte(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> byte = Byte()
     >>> byte.is_decimal()
     True
@@ -2432,7 +2473,6 @@ class Char(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> char = Char()
     >>> char.is_decimal()
     True
@@ -2517,7 +2557,6 @@ class Signed(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> signed = Signed(16)
     >>> signed.is_decimal()
     True
@@ -2588,7 +2627,6 @@ class Unsigned(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> unsigned = Unsigned(16)
     >>> unsigned.is_decimal()
     True
@@ -2671,7 +2709,6 @@ class Bitset(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> bitset = Bitset(16)
     >>> bitset.is_decimal()
     True
@@ -2749,53 +2786,52 @@ class Bool(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
-    >>> bool = Bool(16)
-    >>> bool.is_decimal()
+    >>> boolean = Bool(16)
+    >>> boolean.is_decimal()
     True
-    >>> bool.is_bool()
+    >>> boolean.is_bool()
     True
-    >>> bool.name
+    >>> boolean.name
     'Bool16'
-    >>> bool.alignment
+    >>> boolean.alignment
     (2, 0)
-    >>> bool.byte_order
+    >>> boolean.byte_order
     Byteorder.auto = 'auto'
-    >>> bool.index
+    >>> boolean.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> bool.next_index()
+    >>> boolean.next_index()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> bool.bit_size
+    >>> boolean.bit_size
     16
-    >>> bool.min()
+    >>> boolean.min()
     0
-    >>> bool.max()
+    >>> boolean.max()
     65535
-    >>> bool.signed
+    >>> boolean.signed
     False
-    >>> bool.value
+    >>> boolean.value
     False
-    >>> bool.decode(unhexlify('0f00'))
+    >>> boolean.decode(unhexlify('0f00'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> bool.value
+    >>> boolean.value
     True
-    >>> bool.value = False
-    >>> bool.value
+    >>> boolean.value = False
+    >>> boolean.value
     False
-    >>> bool.value = -1
-    >>> bool.value
+    >>> boolean.value = -1
+    >>> boolean.value
     False
-    >>> bool.value = 0x10000
-    >>> bool.value
+    >>> boolean.value = 0x10000
+    >>> boolean.value
     True
     >>> bytestream = bytearray()
     >>> bytestream
     bytearray(b'')
-    >>> bool.encode(bytestream)
+    >>> boolean.encode(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> pprint(bool.blueprint())
+    >>> pprint(boolean.blueprint())
     {'address': 0,
      'alignment': [2, 0],
      'class': 'Bool16',
@@ -2843,7 +2879,6 @@ class Enum(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> enum = Enum(16, enumeration=ItemClass)
     >>> enum.is_decimal()
     True
@@ -2971,7 +3006,6 @@ class Scaled(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> scaled = Scaled(100, 16)
     >>> scaled.is_decimal()
     True
@@ -3112,7 +3146,6 @@ class Fraction(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> unipolar = Fraction(2, 16)
     >>> unipolar.is_decimal()
     True
@@ -3317,7 +3350,6 @@ class Bipolar(Fraction):
 
     Example:
 
-    >>> from pprint import pprint
     >>> bipolar = Bipolar(2, 16)
     >>> bipolar.is_decimal()
     True
@@ -3398,7 +3430,6 @@ class Unipolar(Fraction):
 
     Example:
 
-    >>> from pprint import pprint
     >>> unipolar = Unipolar(2, 16)
     >>> unipolar.is_decimal()
     True
@@ -3474,7 +3505,6 @@ class Datetime(Decimal):
 
     Example:
 
-    >>> from pprint import pprint
     >>> datetime = Datetime()
     >>> datetime.is_decimal()
     True
@@ -3560,9 +3590,9 @@ class Pointer(Decimal, Container):
     A `Pointer` provides additional features:
 
     *   **Read** from a `Provider` the necessary amount of bytes for
-        the referenced `data` object of the `Pointer` via :meth:`read()`.
+        the referenced `data` object of the `Pointer` via :meth:`read_from()`.
     *   **Write** to a `Provider` the necessary amount of bytes for
-        the referenced `data` object of the `Pointer` via :meth:`write()`.
+        the referenced `data` object of the `Pointer` via :meth:`write_to()`.
     *   View the **index** of the `Pointer` field and for each *field*
         in the referenced `data` object of the `Pointer`
         via :meth:`field_indexes()`.
@@ -3588,7 +3618,6 @@ class Pointer(Decimal, Container):
 
     Example:
 
-    >>> from pprint import pprint
     >>> pointer = Pointer()
     >>> pointer.is_decimal()
     True
@@ -3783,7 +3812,7 @@ class Pointer(Decimal, Container):
         return buffer
 
     @nested_option(True)
-    def read(self, provider, null_allowed=False, **options):
+    def read_from(self, provider, null_allowed=False, **options):
         """Reads from the data *provider* the necessary amount of bytes for
         the nested `data` object of a `Pointer` field.
 
@@ -3800,25 +3829,26 @@ class Pointer(Decimal, Container):
             A `Pointer` field stores the bytes for the *nested* `data`
             object in its own `bytestream`.
         """
-        if self._data is not None:
-            if is_provider(provider):
-                if self._value < 0:
-                    pass
-                elif null_allowed or self._value > 0:
-                    update = True
-                    while update:
-                        self.bytestream = provider.read(self.address, self.size)
-                        index = self.refresh()
-                        if index.bit != 0:
-                            raise IndexError(index)
-                        update = index.update
-                    if is_mixin(self._data) and get_nested(options):
-                        self._data.read(provider, False, **options)
-                else:
-                    self._data_stream = bytes()
-                    self.refresh()
+        if self._data is None:
+            pass
+        elif is_provider(provider):
+            if self._value < 0:
+                pass
+            elif null_allowed or self._value > 0:
+                update = True
+                while update:
+                    self.bytestream = provider.read(self.address, self.size)
+                    index = self.refresh()
+                    if index.bit != 0:
+                        raise IndexError(index)
+                    update = index.update
+                if is_mixin(self._data) and get_nested(options):
+                    self._data.read_from(provider, **options)
             else:
-                raise TypeError(provider)
+                self._data_stream = bytes()
+                self.refresh()
+        else:
+            raise TypeError(provider)
 
     def patch(self, item, byte_order=BYTEORDER):
         """Returns a memory :class:`Patch` for the values of the referenced
@@ -3864,7 +3894,12 @@ class Pointer(Decimal, Container):
             if len(buffer) != byte_length:
                 raise BufferError(len(buffer), byte_length)
 
-            return Patch(buffer, index.address, byte_order, byte_length * 8, 0, False)
+            return Patch(buffer,
+                         index.address,
+                         byte_order,
+                         byte_length * 8,
+                         0,
+                         False)
         # Field?
         elif is_field(item):
             byte_length, bit_offset = item.alignment
@@ -3889,6 +3924,7 @@ class Pointer(Decimal, Container):
             if len(buffer) != byte_length:
                 raise BufferError(len(buffer), byte_length)
 
+            # Patch a not full byte sized field?
             byte_size, bits = divmod(item.bit_size, 8)
             if bits != 0:
                 inject = True
@@ -3896,22 +3932,30 @@ class Pointer(Decimal, Container):
             else:
                 inject = False
 
+            # Patch a not byte aligned field?
             byte_offset, bit_offset = divmod(bit_offset, 8)
             if bit_offset != 0:
                 inject = True
 
             if byte_order is Byteorder.big:
-                buffer = buffer[byte_length - byte_offset - byte_size:byte_length - byte_offset]
-                address = index.address + byte_length - byte_offset - byte_size
+                start = byte_length - (byte_offset + byte_size)
+                stop = byte_length - byte_offset
             else:
-                buffer = buffer[byte_offset:byte_offset + byte_size]
-                address = index.address + byte_offset
+                start = byte_offset
+                stop = byte_offset + byte_size
+            buffer = buffer[start:stop]
+            address = index.address + start
 
-            return Patch(buffer, address, byte_order, item.bit_size, bit_offset, inject)
+            return Patch(buffer,
+                         address,
+                         byte_order,
+                         item.bit_size,
+                         bit_offset,
+                         inject)
         else:
             raise TypeError(item)
 
-    def write(self, provider, item, byte_order=BYTEORDER):
+    def write_to(self, provider, item, byte_order=BYTEORDER):
         """Writes the values of the referenced *item* to a data *provider*.
 
         :param provider: data :class:`Provider`.
@@ -3920,22 +3964,26 @@ class Pointer(Decimal, Container):
 
         :param byte_order: encoding :class:`Byteorder`.
         """
+        # Create memory patch for the item to write
         patch = self.patch(item, byte_order)
 
         if patch is None:
-            return patch
-
-        if is_provider(provider):
+            pass
+        elif is_provider(provider):
             if patch.inject:
+                # Memory area to patch as byte stream
                 stream = provider.read(patch.address, len(patch.buffer))
 
+                # Memory area to patch as decimal value
                 value = int.from_bytes(stream, byte_order.value)
 
+                # Inject memory patch
                 bit_mask = ~((2 ** patch.bit_size - 1) << patch.bit_offset)
                 bit_mask &= (2 ** (len(patch.buffer) * 8) - 1)
                 value &= bit_mask
                 value |= int.from_bytes(patch.buffer, byte_order.value)
 
+                # Patched memory area as byte stream
                 stream = value.to_bytes(len(patch.buffer), byte_order.value)
 
                 provider.write(stream, patch.address, len(stream))
@@ -4049,10 +4097,14 @@ class Pointer(Decimal, Container):
                 **options)
         # Field
         elif is_field(self._data):
-            self._data.next_index(Index(0, 0, self.address, self.base_address, False))
+            self._data.next_index(Index(0, 0,
+                                        self.address, self.base_address,
+                                        False))
             indexes['data'] = self._data.index
         else:
-            indexes['data'] = Index(0, 0, self.address, self.base_address, False)
+            indexes['data'] = Index(0, 0,
+                                    self.address, self.base_address,
+                                    False)
         return indexes
 
     @nested_option()
@@ -4436,8 +4488,8 @@ class StringPointer(StreamPointer):
 
 
 class RelativePointer(Pointer):
-    """A `RelativePointer` field is a :class:`Pointer` field which refers to
-    a `data` object relatively to a base address of a data `Provider`.
+    """A `RelativePointer` field is a :class:`Pointer` field which refers
+    to a `data` object relatively to a base address of a data `Provider`.
 
     :param template: template for the `data` object referenced by the
         pointer.
@@ -4526,9 +4578,9 @@ class SequenceRelativePointer(RelativePointer):
 
     A `SequencePointer` supports the usual methods:
 
-    *   **Append** a item to a `Sequence`
+    *   **Append** an item to a `Sequence`
         via :meth:`append()`.
-    *   **Insert** a item before the *index* into a `Sequence`
+    *   **Insert** an item before the *index* into a `Sequence`
         via :meth:`insert()`.
     *   **Extend** a `Sequence` with items
         via :meth:`extend()`.

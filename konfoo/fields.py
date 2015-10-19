@@ -17,8 +17,8 @@ from .core import Decimal, Signed, Unsigned, Bitset, Bool, Enum, \
 
 
 class Decimal8(Decimal):
-    """A `Decimal8` field is a signed :class:`Decimal` field with
-    a *size* of one byte and is by default signed.
+    """A `Decimal8` field is a :class:`Decimal` field with a *size* of
+    one byte and is by default unsigned.
     """
 
     def __init__(self, signed=False, byte_order=Byteorder.auto):
@@ -27,7 +27,7 @@ class Decimal8(Decimal):
 
 class Decimal16(Decimal):
     """A `Decimal16` field is a :class:`Decimal` field with a *size* of
-    two bytes and is by default signed.
+    two bytes and is by default unsigned.
     """
 
     def __init__(self, signed=False, byte_order=Byteorder.auto):
@@ -36,7 +36,7 @@ class Decimal16(Decimal):
 
 class Decimal24(Decimal):
     """A `Decimal24` field is a :class:`Decimal` field with a *size* of
-    three bytes and is by default signed.
+    three bytes and is by default unsigned.
     """
 
     def __init__(self, signed=False, byte_order=Byteorder.auto):
@@ -45,7 +45,7 @@ class Decimal24(Decimal):
 
 class Decimal32(Decimal):
     """A `Decimal32` field is a :class:`Decimal` field with a *size* of
-    four bytes and is by default signed.
+    four bytes and is by default unsigned.
     """
 
     def __init__(self, signed=False, byte_order=Byteorder.auto):
@@ -153,7 +153,7 @@ class Bitset24(Bitset):
 
 class Bitset32(Bitset):
     """A `Bitset32` field is a :class:`Bitset` field with a *size* of
-     four bytes and the default coding byteorder is 'little' endian.
+    four bytes and the default coding byteorder is 'little' endian.
     """
 
     def __init__(self, byte_order=Byteorder.little):
@@ -184,7 +184,7 @@ class Bool24(Bool):
     """
 
     def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=16, byte_order=byte_order)
+        super().__init__(bit_size=24, byte_order=byte_order)
 
 
 class Bool32(Bool):
@@ -203,8 +203,8 @@ class Antivalent(Enum):
 
     class Validity(Enumeration):
         error = 0
-        invalid = 1
-        valid = 2
+        correct = 1
+        forced = 2
         undefined = 3
 
     def __init__(self, align_to=None, byte_order=Byteorder.auto):
@@ -271,7 +271,7 @@ class Enum32(Enum):
 
 class Scaled8(Scaled):
     """A `Scaled8` field is a :class:`Scaled` field with a *size* of
-    onw byte.
+    one byte.
     """
 
     def __init__(self, scale, byte_order=Byteorder.auto):

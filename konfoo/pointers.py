@@ -86,8 +86,8 @@ class StructurePointer8(StructurePointer):
 
 
 class StructurePointer16(StructurePointer):
-    """A `StructurePointer16` field is a :class:`StructurePointer` field with
-    a `Pointer` *size* of two byte.
+    """A `StructurePointer16` field is a :class:`StructurePointer` field
+    with a `Pointer` *size* of two byte.
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -125,8 +125,8 @@ class ArrayPointer8(ArrayPointer):
 
 
 class ArrayPointer16(ArrayPointer):
-    """A `ArrayPointer16` field is a :class:`ArrayPointer` field with
-    a `Pointer` *size* of two byte.
+    """A `ArrayPointer16` field is a :class:`ArrayPointer` field
+    with a `Pointer` *size* of two byte.
     """
 
     def __init__(self, template, address=None, byte_order=BYTEORDER):

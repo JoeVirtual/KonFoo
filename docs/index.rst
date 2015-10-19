@@ -28,6 +28,7 @@ KonFoo in points:
 -   creatable blueprints from a template class
 -   blueprint converter to JSON to visualise templates with *d3.js*.
 
+KonFoo requires Python 3.4 or higher.
 
 You can get the library directly from PyPI::
 
@@ -35,7 +36,7 @@ You can get the library directly from PyPI::
 
 
 Examples
----------
+--------
 
 Examples of KonFoo can be found in the documentation as well
 as in the GitHub repository together with readme files:

@@ -48,6 +48,7 @@ class Option(Category):
 
 
 class Byteorder(Category):
+    """Byte order categories."""
     auto = 'auto'
     little = 'little'
     big = 'big'

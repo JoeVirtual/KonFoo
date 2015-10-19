@@ -11,7 +11,7 @@
 import json
 from collections import OrderedDict
 
-from .globals import ItemClass
+from konfoo.globals import ItemClass
 
 
 class HexViewer:
@@ -20,6 +20,14 @@ class HexViewer:
 
     :param int columns: number of output columns.
         Allowed values are *8*, *16* or *32*.
+
+    Example:
+
+    >>> viewer = HexViewer()
+    >>> viewer.dump(b'KonF`00` is Fun.')
+             | 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 |
+    ---------+-------------------------------------------------+-----------------
+    00000000 | 4B 6F 6E 46 60 30 30 60 20 69 73 20 46 75 6E 2E | KonF`00` is Fun.
     """
 
     def __init__(self, columns=16):
@@ -68,15 +76,15 @@ class HexViewer:
 
     def file_dump(self, source, index=0, count=0, output=str()):
         """Dumps the content of the *source* file to the console or to the
-         optional given *output* file.
+        optional given *output* file.
 
         :param str source: location and name of the source file.
 
-        :param int index: optional index to begin with the view of the file
-            in bytes. Default is from the begin of file.
+        :param int index: optional start index of the viewing area in bytes.
+            Default is from the begin of the file.
 
-        :param int count: optional number of bytes to view of the file.
-            Default is to the end of file.
+        :param int count: optional number of bytes to view.
+            Default is to the end of the file.
 
         :param str output: location and name for the optional output file.
         """
@@ -84,15 +92,15 @@ class HexViewer:
         self.dump(stream, index, count, output)
 
     def dump(self, stream, index=0, count=0, output=str()):
-        """Dumps the content of a byte *stream* to the console or to the
-         optional given *output* file.
+        """Dumps the content of the byte *stream* to the console or to the
+        optional given *output* file.
 
         :param bytes stream: byte stream to view.
 
-        :param int index: start index of the viewing area.
+        :param int index: optional start index of the viewing area in bytes.
             Default is the begin of the stream.
 
-        :param int count: number of bytes to view.
+        :param int count: optional number of bytes to view.
             Default is to the end of the stream.
 
         :param str output: location and name for the optional output file.
@@ -107,23 +115,34 @@ class HexViewer:
             else:
                 print(content)
 
-        file = None
+        dst = None
         if output:
-            file = open(output, 'w')
+            dst = open(output, 'w')
 
         start, stop = self._view_area(stream, index, count)
         digits = max(len(hex(start + stop)) - 2, 8)
 
         # Write header
-        write_to(file, " " * digits + " |" + numerate(" {0:02d}", self.columns) + " |")
-        write_to(file, "-" * digits + "-+" + "-" * (self.columns * 3) + "-+-" + "-" * self.columns)
+        write_to(dst,
+                 " " * digits +
+                 " |" +
+                 numerate(" {0:02d}", self.columns) +
+                 " |")
+        write_to(dst,
+                 "-" * digits +
+                 "-+" +
+                 "-" * (self.columns * 3) +
+                 "-+-" +
+                 "-" * self.columns)
 
         # Set start row and column
         row = int(start / self.columns)
         column = int(start % self.columns)
 
         # Initialize output for start index row
-        output_line = "{0:0{1:d}X} |".format(row * self.columns, digits) + " .." * column
+        output_line = "{0:0{1:d}X} |".format(row * self.columns,
+                                             digits)
+        output_line += " .." * column
         output_ascii = "." * column
 
         # Iterate over viewing area
@@ -138,18 +157,19 @@ class HexViewer:
             if not column:
                 # Write output line
                 output_line += ' | ' + output_ascii
-                write_to(file, output_line)
+                write_to(dst, output_line)
                 # Next row
                 row += 1
-                output_line = "{0:0{1:d}X} |".format(row * self.columns, digits)
+                output_line = "{0:0{1:d}X} |".format(row * self.columns,
+                                                     digits)
                 output_ascii = ""
 
         # Write output of stop index row
         if column:
-            # Fill missing columns with white spaces.
+            # Fill missing columns with white spaces
             output_line += " " * (self.columns - column) * 3
             output_line += " | " + output_ascii
-            write_to(file, output_line)
+            write_to(dst, output_line)
 
 
 def d3json(blueprint, **options):
@@ -165,7 +185,7 @@ def d3json(blueprint, **options):
             "children": []
         }
 
-    :param dict blueprint: blueprint generated  from a `Structure`,
+    :param dict blueprint: blueprint generated from a `Structure`,
         `Sequence`, `Array` or any `Field` instance.
 
     :keyword int indent: indentation for the JSON string. Default is *2*.

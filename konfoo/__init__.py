@@ -65,7 +65,7 @@ from .pointers import RelativePointer8, RelativePointer16, RelativePointer32, \
     StringRelativePointer32
 
 # Utilities
-from .utils import d3json
+from .utils import d3json, HexViewer
 
 __all__ = [
     # Enumerations
@@ -131,7 +131,7 @@ __all__ = [
     'StringRelativePointer32',
 
     # Utilities
-    'd3json',
+    'd3json', 'HexViewer',
 ]
 
 __version__ = '0.0-dev'

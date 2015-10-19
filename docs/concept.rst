@@ -1,7 +1,7 @@
-.. _concept:
+.. _introduction:
 
-Concept
-=======
+Introduction
+============
 
 .. currentmodule:: konfoo
 
@@ -10,6 +10,11 @@ Concept
     from pprint import pprint
     from binascii import hexlify, unhexlify
     from konfoo import *
+
+.. _concept:
+
+Concept
+-------
 
 KonFoo is based on defining or declaring *byte stream mapper* through classes.
 KonFoo has two abstract classes the `Field` class and the `Container` class.
@@ -45,7 +50,6 @@ by the built-in decoding and encoding engine.
 
 Create a mapping declaration
 ----------------------------
-
 
 Define a mapper.
 
@@ -580,6 +584,10 @@ Array declaration
 Enum declaration
 ================
 
+.. _create_enumeration:
+
+Create a enumeration declaration
+--------------------------------
 
 
 Reading
