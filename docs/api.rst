@@ -438,10 +438,15 @@ Byteorder
    :undoc-members:
    :inherited-members:
 
-Index
-=====
+Field Index
+===========
 
 .. autoclass:: Index
+
+Memory Patch
+============
+
+.. autoclass:: Patch
 
 Enumerations
 ============
