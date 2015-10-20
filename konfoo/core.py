@@ -69,7 +69,6 @@ def is_mixin(obj):
     return is_container(obj) or is_pointer(obj)
 
 
-#: Memory Patch
 Patch = namedtuple('Patch', [
     'buffer',
     'address',
@@ -78,6 +77,25 @@ Patch = namedtuple('Patch', [
     'bit_offset',
     'inject'
 ])
+"""The :class:`~collections.namedtuple` `Patch` contains the relevant
+information to patch a memory area within a data source provided by
+a data `Provider`.
+
+:param bytes buffer: byte stream for the memory area to patch in the data
+    source. The byte stream contains the data of the patch item.
+
+:param int address: address of the memory area to patch in the data source.
+
+:param byteorder: :class:`Byteorder` of the memory area to patch in the data
+    source.
+
+:param int bit_size: bit size of the patch item.
+
+:param int bit_offset: bit offset of the patch item within the memory area.
+
+:param bool inject: if `True` the patch item must be injected into the
+    memory area of the data source.
+"""
 
 Index = namedtuple('Index', [
     'byte',
@@ -86,17 +104,19 @@ Index = namedtuple('Index', [
     'base_address',
     'update'
 ])
-"""`Field` Index.
+"""The :class:`~collections.namedtuple` `Index` contains the relevant
+information to locate a `Field` within a byte stream provided by a data
+`Provider` from a data source.
 
-:param int byte: byte offset of the `Field` in the bytestream.
+:param int byte: byte offset of the `Field` within the byte stream.
 
-:param int bit: bit offset of the `Field` from its byte offset.
+:param int bit: bit offset of the `Field` relative to its byte offset.
 
-:param int address: absolute address of the `Field`.
+:param int address: address of the `Field` in the data source.
 
-:param int base_address: base address of the data `Provider`.
+:param int base_address: base address of the data source.
 
-:param bool update: if `True` the bytestream needs to be updated
+:param bool update: if `True` the byte stream needs to be updated
     by the data `Provider`.
 """
 
@@ -3678,6 +3698,11 @@ class Pointer(Decimal, Container):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffffffff'
+    >>> pointer.bytestream = b'KonFoo is Fun'
+    >>> pointer.bytestream
+    b'4b6f6e466f6f2069732046756e'
+    >>> pointer.refresh()
+    Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)
     >>> pprint(pointer.blueprint())
     {'address': 0,
      'alignment': [4, 0],
@@ -3704,6 +3729,10 @@ class Pointer(Decimal, Container):
               alignment=(4, 0),
               bit_size=32,
               value='0xffffffff'))]
+    >>> pprint(pointer.to_list())
+    [('Pointer.value', '0xffffffff')]
+    >>> pprint(pointer.to_dict())
+    OrderedDict([('Pointer', OrderedDict([('value', '0xffffffff')]))])
     """
     item_type = ItemClass.Pointer
 
@@ -3802,16 +3831,21 @@ class Pointer(Decimal, Container):
         and returns the `Index` of the `bytestream` after the last `Field` of the
         `data` object.
         """
-        return self._data.decode(self._data_stream,
-                                 Index(0, 0, self.address, self.base_address, False),
-                                 nested=False,
-                                 byte_order=self.order)
+        index = Index(0, 0, self.address, self.base_address, False)
+        if self._data:
+            index = self._data.decode(self._data_stream,
+                                      index,
+                                      nested=False,
+                                      byte_order=self.order)
+        return index
 
     def as_bytestream(self):
         buffer = bytearray()
         if self._data:
             self._data.encode(buffer,
-                              Index(0, 0, self.address, self.base_address, False),
+                              Index(0, 0,
+                                    self.address, self.base_address,
+                                    False),
                               byte_order=self.order)
         return buffer
 
@@ -3839,13 +3873,13 @@ class Pointer(Decimal, Container):
             if self._value < 0:
                 pass
             elif null_allowed or self._value > 0:
-                update = True
-                while update:
+                while True:
                     self.bytestream = provider.read(self.address, self.size)
                     index = self.refresh()
                     if index.bit != 0:
                         raise IndexError(index)
-                    update = index.update
+                    if index.update:
+                        break
                 if is_mixin(self._data) and get_nested(options):
                     self._data.read_from(provider, **options)
             else:
@@ -4173,10 +4207,6 @@ class Pointer(Decimal, Container):
         :keyword bool nested: if `True` all `Pointer` fields of the `data`
             object of a `Pointer` lists their *nested* `data` object fields
             as well.
-
-        :keyword bool nested: if `True` the `Fields` of the *nested* `data`
-            objects of all `Pointer` fields in the *nested* `data` object
-            of a `Pointer` are added to the list.
         """
         items = list()
         # Field
@@ -4570,12 +4600,16 @@ class StreamPointer(Pointer):
     OrderedDict([('value', '0xffffffff'), ('data', b'4b6f6e466f6f20697320')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
-      StreamPointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+      StreamPointer(index=Index(byte=0, bit=0,
+                                address=0, base_address=0,
+                                update=False),
                     alignment=(4, 0),
                     bit_size=32,
                     value='0xffffffff')),
      ('data',
-      Stream(index=Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False),
+      Stream(index=Index(byte=0, bit=0,
+                         address=4294967295, base_address=4294967295,
+                         update=False),
              alignment=(10, 0),
              bit_size=80,
              value=b'4b6f6e466f6f20697320'))]
@@ -4740,12 +4774,16 @@ class StringPointer(StreamPointer):
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
-      StringPointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+      StringPointer(index=Index(byte=0, bit=0,
+                                address=0, base_address=0,
+                                update=False),
                     alignment=(4, 0),
                     bit_size=32,
                     value='0xffffffff')),
      ('data',
-      String(index=Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False),
+      String(index=Index(byte=0, bit=0,
+                         address=4294967295, base_address=4294967295,
+                         update=False),
              alignment=(10, 0),
              bit_size=80,
              value='KonFoo is '))]
@@ -4854,10 +4892,16 @@ class RelativePointer(Pointer):
     OrderedDict([('value', '0xffffffff'), ('data', None)])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
-      RelativePointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+      RelativePointer(index=Index(byte=0, bit=0,
+                                  address=0, base_address=0,
+                                  update=False),
                       alignment=(4, 0),
                       bit_size=32,
                       value='0xffffffff'))]
+    >>> pprint(pointer.to_list())
+    [('RelativePointer.value', '0xffffffff')]
+    >>> pprint(pointer.to_dict())
+    OrderedDict([('RelativePointer', OrderedDict([('value', '0xffffffff')]))])
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -5211,12 +5255,16 @@ class StreamRelativePointer(RelativePointer):
     OrderedDict([('value', '0xffffffff'), ('data', b'4b6f6e466f6f20697320')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
-      StreamRelativePointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+      StreamRelativePointer(index=Index(byte=0, bit=0,
+                                        address=0, base_address=0,
+                                        update=False),
                             alignment=(4, 0),
                             bit_size=32,
                             value='0xffffffff')),
      ('data',
-      Stream(index=Index(byte=0, bit=0, address=4294967295, base_address=0, update=False),
+      Stream(index=Index(byte=0, bit=0,
+                         address=4294967295, base_address=0,
+                         update=False),
              alignment=(10, 0),
              bit_size=80,
              value=b'4b6f6e466f6f20697320'))]
@@ -5381,12 +5429,16 @@ class StringRelativePointer(StreamRelativePointer):
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
-      StringRelativePointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+      StringRelativePointer(index=Index(byte=0, bit=0,
+                                        address=0, base_address=0,
+                                        update=False),
                             alignment=(4, 0),
                             bit_size=32,
                             value='0xffffffff')),
      ('data',
-      String(index=Index(byte=0, bit=0, address=4294967295, base_address=0, update=False),
+      String(index=Index(byte=0, bit=0,
+                         address=4294967295, base_address=0,
+                         update=False),
              alignment=(10, 0),
              bit_size=80,
              value='KonFoo is '))]
