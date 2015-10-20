@@ -193,11 +193,11 @@ def d3json(blueprint, **options):
 
     def convert(root):
         dct = OrderedDict()
-        field_type = root.get('type', None)
+        item_type = root.get('type', None)
         dct['class'] = root.get('class', None)
         dct['name'] = root.get('name', None)
 
-        if field_type is ItemClass.Field.name:
+        if item_type is ItemClass.Field.name:
             dct['size'] = root.get('size', None)
             dct['content'] = root.get('value', None)
 
@@ -206,7 +206,7 @@ def d3json(blueprint, **options):
         if children:
             dct['children'] = list()
             # Create pointer address field as child
-            if field_type is ItemClass.Pointer.name:
+            if item_type is ItemClass.Pointer.name:
                 field = OrderedDict()
                 field['class'] = dct['class']
                 field['name'] = '*' + dct['name']
@@ -217,7 +217,7 @@ def d3json(blueprint, **options):
             for child in map(convert, children):
                 dct['children'].append(child)
         # Null pointer (None pointer)
-        elif field_type is ItemClass.Pointer.name:
+        elif item_type is ItemClass.Pointer.name:
             dct['size'] = root.get('size', None)
             dct['content'] = root.get('value', None)
         return dct

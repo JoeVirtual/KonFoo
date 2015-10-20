@@ -51,7 +51,7 @@ by the built-in decoding and encoding engine.
 Create a mapping declaration
 ----------------------------
 
-Define a mapper.
+Define a mapper template.
 
 .. code-block:: python
 
@@ -59,7 +59,7 @@ Define a mapper.
     class Identifier(Structure):
 
         def __init__(self):
-            super().__init__()        # <- NEVER forget to call it first !!!
+            super().__init__()        # <- NEVER forget to call it first!
             self.version = Byte()     # 1st field
             self.id = Unsigned8()     # 2nd field
             self.length = Decimal8()  # 3rd field
@@ -83,7 +83,7 @@ Declare a mapper instance.
 
 View a mapper instance.
 
-    >>> mapper
+    >>> mapper # doctest: +NORMALIZE_WHITESPACE
     Structure([('version', Byte(index=Index(byte=0, bit=0,
                                             address=0, base_address=0,
                                             update=False),
@@ -168,7 +168,7 @@ Encode a byte stream with a mapper.
 
 Accessing a field in a mapper.
 
-    >>> mapper.version
+    >>> mapper.version # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=(1, 0),
          bit_size=8,
@@ -204,7 +204,7 @@ List the value of each field in the mapper as a **nested** ordered dictionary.
 
 List all field items in the mapper as a **flat** list.
 
-    >>> pprint(mapper.field_items())
+    >>> pprint(mapper.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('version',
      Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=(1, 0),
@@ -344,7 +344,7 @@ Re-use of a mapping declaration
 
 You can re-use a mapping declaration in other mapping declarations.
 
-Define a mapper
+Define a mapper template.
 
 .. code-block:: python
 
@@ -359,7 +359,7 @@ Define a mapper
             self.module = Char()
             self.next_index()
 
-Re-use a mapper
+Re-use a mapper template.
 
 .. code-block:: python
 
@@ -368,11 +368,11 @@ Re-use a mapper
 
         def __init__(self):
             super().__init__()
-            self.type = Identifier()   # re-used mapping declaration
+            self.type = Identifier()  # re-used mapping declaration
             self.size = Decimal32()
             self.next_index()
 
-Declare a mapper instance
+Declare a mapper instance.
 
     >>> identifier = Structure()
     >>> identifier.version = Byte()
@@ -380,7 +380,7 @@ Declare a mapper instance
     >>> identifier.length = Decimal8()
     >>> identifier.module = Char()
 
-Re-use a mapper instance
+Re-use a mapper instance.
 
     >>> header = Structure()
     >>> header.type = identifier
@@ -392,7 +392,7 @@ Re-use a mapper instance
      ('Structure.type.module', '\x00'),
      ('Structure.size', 0)]
 
-Declare mapper instances in on step
+Declare mapper instances in on step.
 
     >>> mapper = Structure()
     >>> mapper.type = Structure()
@@ -414,7 +414,7 @@ Declare mapper instances in on step
 Align fields in a mapping declaration
 -------------------------------------
 
-Define a mapper with aligned fields
+Define a mapper template with aligned fields.
 
 .. code-block:: python
 
@@ -430,7 +430,7 @@ Define a mapper with aligned fields
             self.next_index()
 
 
-Declare a mapper instance with aligned fields
+Declare a mapper instance with aligned fields.
 
     >>> mapper = Structure()
     >>> mapper.version = Byte(4)
@@ -455,6 +455,7 @@ and bits for its field value from and to the byte stream.
 Parametrize a mapping declaration
 ---------------------------------
 
+Define a mapper template with arguments.
 
 .. code-block:: python
 
@@ -463,7 +464,24 @@ Parametrize a mapping declaration
 
         def __init__(self, arg, *args, **kwargs):
             super().__init__()
-            # Do stuff here with these parameters
+            # Do stuff with these arguments here
+
+Declare a mapper template with arguments.
+
+    >>> class Parametrized(Structure):
+    ...
+    ...     def __init__(self, arg, *args, **kwargs):
+    ...         super().__init__(*args, **kwargs)
+    ...         self.field = arg
+    >>> mapper = Parametrized(Byte())
+    >>> mapper # doctest: +NORMALIZE_WHITESPACE
+    Parametrized([('field',
+                    Byte(index=Index(byte=0, bit=0,
+                                     address=0, base_address=0,
+                                     update=False),
+                         alignment=(1, 0),
+                         bit_size=8,
+                         value='0x0'))])
 
 
 .. _factorized_mapper:
@@ -471,6 +489,7 @@ Parametrize a mapping declaration
 Factorize a mapping declaration
 -------------------------------
 
+Define a mapper template with arguments.
 
 .. code-block:: python
 
@@ -478,22 +497,57 @@ Factorize a mapping declaration
     class Parametrized(Structure):
 
         def __init__(self, arg, *args, **kwargs):
-            super().__init__()
-            # Do stuff here with these parameters
+            super().__init__(*args, **kwargs)
+            self.field = arg
+
+Define a factory of a mapper template with arguments.
 
 .. code-block:: python
 
     # Factory for a parametrized mapping declaration
     class Factory:
         def __init__(self, arg, *args, **kwargs):
-            self.arg = arg
-            self.args = args
-            self.kwargs = kwargs
+            self.arg = arg  # fix argument
+            self.args = args  # list of positional arguments
+            self.kwargs = kwargs  # dict of keyword arguments
 
         def __call__(self):
-            return Parametrized(self.arg, self.args, self.kwargs)
+            return Parametrized(self.arg, *self.args, **self.kwargs)
 
 
+Factory for a parametrized mapper template.
+
+    >>> class Parametrized(Structure):
+    ...
+    ...     def __init__(self, arg, *args, **kwargs):
+    ...         super().__init__(*args, **kwargs)
+    ...         self.field = arg
+    >>> class Factory:
+    ...     def __init__(self, arg, *args, **kwargs):
+    ...         self.arg = arg
+    ...         self.args = args
+    ...         self.kwargs = kwargs
+    ...
+    ...     def __call__(self):
+    ...         return Parametrized(self.arg, *self.args, **self.kwargs)
+    >>> factory = Factory(Byte())
+    >>> factory.arg  # doctest: +NORMALIZE_WHITESPACE
+    Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+         alignment=(1, 0),
+         bit_size=8,
+         value='0x0')
+    >>> factory.args
+    ()
+    >>> factory.kwargs
+    {}
+    >>> factory() # doctest: +NORMALIZE_WHITESPACE
+    Parametrized([('field',
+                    Byte(index=Index(byte=0, bit=0,
+                                     address=0, base_address=0,
+                                     update=False),
+                    alignment=(1, 0),
+                    bit_size=8,
+                    value='0x0'))])
 
 .. _reference_declaration:
 
@@ -507,7 +561,7 @@ Reference declaration
 Create a reference declaration
 ------------------------------
 
-Define a mapper
+Define a mapper template.
 
 .. code-block:: python
 
@@ -520,7 +574,7 @@ Define a mapper
             self.item = Pointer()
             self.next_index()
 
-Define a reference to a mapper
+Define a reference of a mapper template.
 
 .. code-block:: python
 
@@ -530,25 +584,38 @@ Define a reference to a mapper
         def __init__(self, address=None):
             super().__init__(Container(), address)  # <- Mapping declaration
 
-Declare a mapper.
+Declare a mapper instance.
 
     >>> mapper = Structure()
     >>> mapper.size = Decimal32()
     >>> mapper.item = Pointer()
+    >>> pprint(mapper.to_dict(nested=True)) # doctest: +NORMALIZE_WHITESPACE
+    OrderedDict([('Structure', OrderedDict([('size', 0),
+                                            ('item', '0x0')]))])
 
-Declare a reference to the mapper via a pointer.
+Declare a reference of the mapper instance via a pointer.
 
     >>> reference = Pointer(mapper)
+    >>> pprint(reference.to_dict(nested=True))
+    {'Pointer': {'value': '0x0',
+                 'data.size': 0,
+                 'data.item': '0x0'}}
 
-Declare a reference to the mapper via a specialized pointer for structures.
+Declare a reference of the mapper instance via a specialized pointer for
+structures.
 
     >>> reference = StructurePointer(mapper)
-
+    >>> pprint(reference.to_dict(nested=True))
+    {'StructurePointer': {'value': '0x0',
+                          'data.size': 0,
+                          'data.item': '0x0'}}
 
 .. _nested_reference:
 
 Nesting a reference declaration
 -------------------------------
+
+Define a mapper template with a nested reference.
 
 .. code-block:: python
 
@@ -560,8 +627,15 @@ Nesting a reference declaration
             self.size = Decimal32()
             self.item = Pointer(Stream())  # nested reference
 
+Declare a mapper instance with a nested reference.
 
-
+    >>> mapper = Structure()
+    >>> mapper.size = Decimal32()
+    >>> mapper.item = Pointer(Stream())
+    >>> pprint(mapper.to_dict(nested=True)) # doctest: +NORMALIZE_WHITESPACE
+    {'Structure': OrderedDict([('size', 0),
+                               ('item', '0x0'),
+                               ('item.data', b'')])}
 
 .. _array_declaration:
 

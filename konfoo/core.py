@@ -202,18 +202,6 @@ class Container(metaclass=abc.ABCMeta):
     def load(self, file, section=str(), **options):
         """Loads the `Field` values of a `Container` from an *INI file*.
 
-        .. code-block:: ini
-
-            [Foo]
-            stream = b''
-            string =
-            float = 0.0
-            structure.char =
-            array[0] = 0x0
-            array[1] = 0x0
-            array[2] = 0x0
-            pointer = 0x0
-
         :param str file: name and location of the *INI file*.
 
         :param str section: section in the INI *file* to look for the `Field`
@@ -225,26 +213,40 @@ class Container(metaclass=abc.ABCMeta):
 
         :keyword bool verbose: if `True` the loading is executed in verbose mode.
 
+        File `foo.ini`:
+
+        .. code-block:: ini
+
+            [Foo]
+            stream = b''
+            float = 0.0
+            structure.decimal = 0
+            array[0] = 0x0
+            array[1] = 0x0
+            array[2] = 0x0
+            pointer = 0x0
+
+        Example:
+
         >>> class Foo(Structure):
         ...     def __init__(self):
         ...         super().__init__()
         ...         self.stream = Stream()
-        ...         self.string = String()
         ...         self.float = Float()
         ...         self.structure = Structure()
-        ...         self.structure.char = Char()
+        ...         self.structure.decimal = Decimal(8)
         ...         self.array = Array(Byte, 3)
         ...         self.pointer = Pointer()
         >>> foo = Foo()
         >>> foo.load('foo.ini')
         [Foo]
         Foo.stream = b''
-        Foo.string =
         Foo.float = 0.0
-        Foo.structure.char =
+        Foo.structure.decimal = 0
         Foo.array[0] = 0x0
         Foo.array[1] = 0x0
         Foo.array[2] = 0x0
+        Foo.pointer = 0x0
         """
         section = section if section else self.__class__.__name__
 
@@ -291,18 +293,6 @@ class Container(metaclass=abc.ABCMeta):
     def save(self, file, section=str(), **options):
         """Saves the `Field` values of a `Container` to a *INI file*.
 
-        .. code-block:: ini
-
-            [Foo]
-            stream = b''
-            string =
-            float = 0.0
-            structure.char =
-            array[0] = 0x0
-            array[1] = 0x0
-            array[2] = 0x0
-            pointer = 0x0
-
         :param str file: name and location of the *INI file*.
 
         :param str section: section in the INI file to look for the `Field`
@@ -315,18 +305,32 @@ class Container(metaclass=abc.ABCMeta):
         :keyword bool field_types: if `True` the type of the `Field` is
             appended to its path string with the '|' sign as separator.
 
+        Example:
+
         >>> class Foo(Structure):
         ...     def __init__(self):
         ...         super().__init__()
         ...         self.stream = Stream()
-        ...         self.string = String()
         ...         self.float = Float()
         ...         self.structure = Structure()
-        ...         self.structure.char = Char()
+        ...         self.structure.decimal = Decimal(8)
         ...         self.array = Array(Byte, 3)
         ...         self.pointer = Pointer()
         >>> foo = Foo()
         >>> foo.save('foo.ini')
+
+        File `foo.ini`:
+
+        .. code-block:: ini
+
+            [Foo]
+            stream = b''
+            float = 0.0
+            structure.decimal = 0
+            array[0] = 0x0
+            array[1] = 0x0
+            array[2] = 0x0
+            pointer = 0x0
         """
         parser = ConfigParser()
         parser.read_dict(self.to_dict(section, **options))
@@ -378,8 +382,8 @@ class Structure(OrderedDict, Container):
     """
     item_type = ItemClass.Structure
 
-    def __init__(self, *args, **options):
-        super().__init__(*args, **options)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def __getitem__(self, key):
         return super().__getitem__(key)
@@ -1768,7 +1772,7 @@ class String(Stream):
     [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
     >>> [chr(byte) for byte in string]  # converts to int
     ['K', 'o', 'n', 'F', 'o', 'o', ' ', 'i', 's', ' ']
-    >>> chr(string[5])  # converts to int
+    >>> chr(string[5])  # converts to int -> chr
     'o'
     >>> ord(' ') in string
     True
@@ -3685,7 +3689,7 @@ class Pointer(Decimal, Container):
      'order': 'auto',
      'signed': False,
      'size': 32,
-     'type': 'pointer',
+     'type': 'Pointer',
      'value': '0xffffffff'}
     >>> pprint(pointer.field_indexes())
     {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -3694,7 +3698,7 @@ class Pointer(Decimal, Container):
     OrderedDict([('value', 'Pointer32'), ('data', None)])
     >>> pprint(pointer.field_values())
     OrderedDict([('value', '0xffffffff'), ('data', None)])
-    >>> pprint(pointer.field_items())
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
               alignment=(4, 0),
@@ -4210,7 +4214,7 @@ class Pointer(Decimal, Container):
                 'name': name if name else self.__class__.__name__,
                 'order': self.byteorder.value,
                 'size': self.bit_size,
-                'type': 'Field',
+                'type': Pointer.item_type.name,
                 'value': self.value,
                 'member': list(members)
             }
@@ -4223,7 +4227,7 @@ class Pointer(Decimal, Container):
         obj = super().blueprint(name, **options)
         obj['class'] = self.__class__.__name__
         obj['name'] = name if name else self.__class__.__name__
-        obj['type'] = 'pointer'
+        obj['type'] = Pointer.item_type.name
         if is_any(self._data):
             obj['member'] = list()
             obj['member'].append(self._data.blueprint(None, **options))
@@ -4445,6 +4449,142 @@ class StreamPointer(Pointer):
 
     :param int address: absolute address of the `data` object referenced by
         the pointer.
+
+
+    Example:
+
+    >>> pointer = StreamPointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+           alignment=(0, 0),
+           bit_size=0,
+           value=b'')
+    >>> pointer.size
+    0
+    >>> len(pointer)
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> pointer.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
+    >>> pointer.resize(10)
+    >>> pointer.size
+    10
+    >>> len(pointer)
+    10
+    >>> pointer.bytestream = b'KonFoo is Fun'
+    >>> pointer.bytestream
+    b'4b6f6e466f6f2069732046756e'
+    >>> pointer.refresh()
+    Index(byte=10, bit=0, address=4294967305, base_address=4294967295, update=False)
+    >>> [byte for byte in pointer]  # converts to int
+    [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
+    >>> [hex(byte) for byte in pointer]
+    ['0x4b', '0x6f', '0x6e', '0x46', '0x6f', '0x6f', '0x20', '0x69', '0x73', '0x20']
+    >>> pointer[5]  # converts to int
+    111
+    >>> 111 in pointer
+    True
+    >>> 0x0 in pointer
+    False
+    >>> pointer[:6]  # converts to bytes
+    b'KonFoo'
+    >>> pointer[3:6]  # converts to bytes
+    b'Foo'
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StreamPointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StreamPointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'address': 4294967295,
+                 'alignment': [10, 0],
+                 'class': 'Stream10',
+                 'index': [0, 0],
+                 'name': 'Stream10',
+                 'order': 'auto',
+                 'size': 80,
+                 'type': 'Field',
+                 'value': '4b6f6e466f6f20697320'}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', 'Stream10')])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', b'4b6f6e466f6f20697320')])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      StreamPointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+                    alignment=(4, 0),
+                    bit_size=32,
+                    value='0xffffffff')),
+     ('data',
+      Stream(index=Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False),
+             alignment=(10, 0),
+             bit_size=80,
+             value=b'4b6f6e466f6f20697320'))]
+    >>> pprint(pointer.to_list())
+    [('StreamPointer.value', '0xffffffff'),
+     ('StreamPointer.data', b'4b6f6e466f6f20697320')]
+    >>> pprint(pointer.to_dict())
+    {'StreamPointer': {'value': '0xffffffff',
+                       'data': b'4b6f6e466f6f20697320'}}
     """
 
     def __init__(self, size=0, address=None):
@@ -4480,6 +4620,140 @@ class StringPointer(StreamPointer):
 
     :param int address: absolute address of the `data` object referenced by
         the pointer.
+
+    Example:
+
+    >>> pointer = StringPointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+           alignment=(0, 0),
+           bit_size=0,
+           value='')
+    >>> pointer.size
+    0
+    >>> len(pointer)
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> pointer.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
+    >>> pointer.resize(10)
+    >>> pointer.size
+    10
+    >>> len(pointer)
+    10
+    >>> pointer.bytestream = b'KonFoo is Fun'
+    >>> pointer.bytestream
+    b'4b6f6e466f6f2069732046756e'
+    >>> pointer.refresh()
+    Index(byte=10, bit=0, address=4294967305, base_address=4294967295, update=False)
+    >>> [byte for byte in pointer]  # converts to int
+    [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
+    >>> [chr(byte) for byte in pointer]  # converts to int
+    ['K', 'o', 'n', 'F', 'o', 'o', ' ', 'i', 's', ' ']
+    >>> chr(pointer[5])  # converts to int -> chr
+    'o'
+    >>> ord(' ') in pointer
+    True
+    >>> 0x0 in pointer
+    False
+    >>> pointer[:6]  # converts to bytes
+    b'KonFoo'
+    >>> pointer[3:6]  # converts to bytes
+    b'Foo'
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StringPointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StringPointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'address': 4294967295,
+                 'alignment': [10, 0],
+                 'class': 'String10',
+                 'index': [0, 0],
+                 'name': 'String10',
+                 'order': 'auto',
+                 'size': 80,
+                 'type': 'Field',
+                 'value': 'KonFoo is '}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      StringPointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+                    alignment=(4, 0),
+                    bit_size=32,
+                    value='0xffffffff')),
+     ('data',
+      String(index=Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False),
+             alignment=(10, 0),
+             bit_size=80,
+             value='KonFoo is '))]
+    >>> pprint(pointer.to_list())
+    [('StringPointer.value', '0xffffffff'), ('StringPointer.data', 'KonFoo is ')]
+    >>> pprint(pointer.to_dict())
+    {'StringPointer': {'value': '0xffffffff',
+                       'data': 'KonFoo is '}}
     """
 
     def __init__(self, size=0, address=None):
@@ -4499,6 +4773,91 @@ class RelativePointer(Pointer):
 
     :param byte_order: coding :class:`Byteorder` of the `data` object
         referenced by the pointer.
+
+    Example:
+
+    >>> pointer = RelativePointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data
+    >>> pointer.size
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> pointer.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'RelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'RelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff'}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', None)])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', None)])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      RelativePointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+                      alignment=(4, 0),
+                      bit_size=32,
+                      value='0xffffffff'))]
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -4732,6 +5091,141 @@ class StreamRelativePointer(RelativePointer):
 
     :param address: relative address of the `data` object referenced
         by the pointer.
+
+    Example:
+
+    >>> pointer = StreamRelativePointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+           alignment=(0, 0),
+           bit_size=0,
+           value=b'')
+    >>> pointer.size
+    0
+    >>> len(pointer)
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> pointer.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
+    >>> pointer.resize(10)
+    >>> pointer.size
+    10
+    >>> len(pointer)
+    10
+    >>> pointer.bytestream = b'KonFoo is Fun'
+    >>> pointer.bytestream
+    b'4b6f6e466f6f2069732046756e'
+    >>> pointer.refresh()
+    Index(byte=10, bit=0, address=4294967305, base_address=0, update=False)
+    >>> [byte for byte in pointer]  # converts to int
+    [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
+    >>> [hex(byte) for byte in pointer]
+    ['0x4b', '0x6f', '0x6e', '0x46', '0x6f', '0x6f', '0x20', '0x69', '0x73', '0x20']
+    >>> pointer[5]  # converts to int
+    111
+    >>> 111 in pointer
+    True
+    >>> 0x0 in pointer
+    False
+    >>> pointer[:6]  # converts to bytes
+    b'KonFoo'
+    >>> pointer[3:6]  # converts to bytes
+    b'Foo'
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StreamRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StreamRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'address': 4294967295,
+                 'alignment': [10, 0],
+                 'class': 'Stream10',
+                 'index': [0, 0],
+                 'name': 'Stream10',
+                 'order': 'auto',
+                 'size': 80,
+                 'type': 'Field',
+                 'value': '4b6f6e466f6f20697320'}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', 'Stream10')])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', b'4b6f6e466f6f20697320')])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      StreamRelativePointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+                            alignment=(4, 0),
+                            bit_size=32,
+                            value='0xffffffff')),
+     ('data',
+      Stream(index=Index(byte=0, bit=0, address=4294967295, base_address=0, update=False),
+             alignment=(10, 0),
+             bit_size=80,
+             value=b'4b6f6e466f6f20697320'))]
+    >>> pprint(pointer.to_list())
+    [('StreamRelativePointer.value', '0xffffffff'),
+     ('StreamRelativePointer.data', b'4b6f6e466f6f20697320')]
+    >>> pprint(pointer.to_dict())
+    {'StreamRelativePointer': {'value': '0xffffffff',
+                               'data': b'4b6f6e466f6f20697320'}}
     """
 
     def __init__(self, size=0, address=None):
@@ -4767,6 +5261,141 @@ class StringRelativePointer(StreamRelativePointer):
 
     :param address: relative address of the `data` object referenced
         by the pointer.
+
+    Example:
+
+    >>> pointer = StringRelativePointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+           alignment=(0, 0),
+           bit_size=0,
+           value='')
+    >>> pointer.size
+    0
+    >>> len(pointer)
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> pointer.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
+    >>> pointer.resize(10)
+    >>> pointer.size
+    10
+    >>> len(pointer)
+    10
+    >>> pointer.bytestream = b'KonFoo is Fun'
+    >>> pointer.bytestream
+    b'4b6f6e466f6f2069732046756e'
+    >>> pointer.refresh()
+    Index(byte=10, bit=0, address=4294967305, base_address=0, update=False)
+    >>> [byte for byte in pointer]  # converts to int
+    [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
+    >>> [chr(byte) for byte in pointer]  # converts to int
+    ['K', 'o', 'n', 'F', 'o', 'o', ' ', 'i', 's', ' ']
+    >>> chr(pointer[5])  # converts to int -> chr
+    'o'
+    >>> ord(' ') in pointer
+    True
+    >>> 0x0 in pointer
+    False
+    >>> pointer[:6]  # converts to bytes
+    b'KonFoo'
+    >>> pointer[3:6]  # converts to bytes
+    b'Foo'
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StringRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StringRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'address': 4294967295,
+                 'alignment': [10, 0],
+                 'class': 'String10',
+                 'index': [0, 0],
+                 'name': 'String10',
+                 'order': 'auto',
+                 'size': 80,
+                 'type': 'Field',
+                 'value': 'KonFoo is '}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      StringRelativePointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+                            alignment=(4, 0),
+                            bit_size=32,
+                            value='0xffffffff')),
+     ('data',
+      String(index=Index(byte=0, bit=0, address=4294967295, base_address=0, update=False),
+             alignment=(10, 0),
+             bit_size=80,
+             value='KonFoo is '))]
+    >>> pprint(pointer.to_list())
+    [('StringRelativePointer.value', '0xffffffff'),
+     ('StringRelativePointer.data', 'KonFoo is ')]
+    >>> pprint(pointer.to_dict())
+    {'StringRelativePointer': {'value': '0xffffffff',
+                               'data': 'KonFoo is '}}
     """
 
     def __init__(self, size=0, address=None):

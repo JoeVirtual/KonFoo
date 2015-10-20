@@ -300,7 +300,7 @@ Sequence Pointer
    :members:
 
 Array Pointer
--------------
+~~~~~~~~~~~~~
 
 .. autoclass:: ArrayPointer
    :members:
@@ -330,7 +330,7 @@ Stream Pointer
    :members:
 
 String Pointer
---------------
+~~~~~~~~~~~~~~
 
 .. autoclass:: StringPointer
    :members:
@@ -386,7 +386,7 @@ Sequence Relative Pointer
    :members:
 
 Array Relative Pointer
-----------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ArrayRelativePointer
    :members:
@@ -416,7 +416,7 @@ Stream Relative Pointer
    :members:
 
 String Relative Pointer
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: StringRelativePointer
    :members:
