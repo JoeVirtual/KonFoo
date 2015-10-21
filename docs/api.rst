@@ -482,7 +482,13 @@ Exceptions
 Utilities
 =========
 
-.. autoclass:: HexViewer
-   :members:
+Blueprint to JSON Converter
+---------------------------
 
 .. autofunction:: d3json
+
+Hexadecimal Viewer
+------------------
+
+.. autoclass:: HexViewer
+   :members:

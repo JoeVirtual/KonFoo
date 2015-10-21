@@ -78,8 +78,8 @@ Patch = namedtuple('Patch', [
     'inject'
 ])
 """The :class:`~collections.namedtuple` `Patch` contains the relevant
-information to patch a memory area within a data source provided by
-a data `Provider`.
+information to patch a memory area of a `data source` accessed via a data
+:class:`Provider` by a :class:`Pointer` field.
 
 :param bytes buffer: byte stream for the memory area to patch in the data
     source. The byte stream contains the data of the patch item.
@@ -105,10 +105,12 @@ Index = namedtuple('Index', [
     'update'
 ])
 """The :class:`~collections.namedtuple` `Index` contains the relevant
-information to locate a `Field` within a byte stream provided by a data
-`Provider` from a data source.
+information of the location of a `Field` in a byte stream and in a data
+source. The `bytestream` is normally provided by a :class:`Pointer` field.
+The `data source` is normally accessed via a data :class:`Provider` by a
+`Pointer` field.
 
-:param int byte: byte offset of the `Field` within the byte stream.
+:param int byte: byte offset of the `Field` in the byte stream.
 
 :param int bit: bit offset of the `Field` relative to its byte offset.
 
@@ -116,8 +118,7 @@ information to locate a `Field` within a byte stream provided by a data
 
 :param int base_address: base address of the data source.
 
-:param bool update: if `True` the byte stream needs to be updated
-    by the data `Provider`.
+:param bool update: if `True` the byte stream needs to be updated.
 """
 
 
@@ -140,9 +141,9 @@ class Container(metaclass=abc.ABCMeta):
 
         :param str root: root path.
 
-        :keyword bool nested: if `True` the `Fields` of the *nested* `data`
-            objects of all `Pointer` fields in a `Container` are added to
-            the list.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` objects of all `Pointer` fields of a `Container` list their
+            *nested* `data` object fields as well (chained method call).
 
         .. note::
 
@@ -161,8 +162,9 @@ class Container(metaclass=abc.ABCMeta):
         :param str name: name of the `Container`.
             Default is the class name of the instance.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Container`
-            lists their *nested* `data` object as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Container` lists their *nested* `data` object fields as well
+            (chained method call).
 
         :keyword bool field_types: if `True` the type of the `Field` is
             inserted into the tuple.
@@ -187,17 +189,15 @@ class Container(metaclass=abc.ABCMeta):
     @nested_option()
     @field_types_option()
     def to_dict(self, name=str(), **options):
-        """Returns a **flat** ordered dictionary which contains the
-        `path`, `value` pairs for each `Field` of a `Container`.
-
-        Returns a flat ordered dictionary of all `Field` values of a
-        `Container`.
+        """Returns a **flat** :class:`ordered dictionary <collections.OrderedDict>`
+        which contains the `path`, `value` pairs for each `Field` of a `Container`.
 
         :param str name: name of the `Container`.
             Default is the class name of the instance.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Container`
-            lists their *nested* `data` object as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Container` lists their *nested* `data` object fields as well
+            (chained method call).
 
         :keyword bool field_types: if `True` the type of the `Field` is
             append to the end of the path string with '|' as separator.
@@ -227,6 +227,10 @@ class Container(metaclass=abc.ABCMeta):
         :param str section: section in the INI *file* to look for the `Field`
             values of a `Container`. If no *section* is specified the class
             name of the instance is used.
+
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Container` load their *nested* `data` object fields as well
+            (chained method call).
 
         :keyword bool field_types: if `True` the type of the `Field` is
             append to the end of the path string with '|' as separator.
@@ -319,8 +323,9 @@ class Container(metaclass=abc.ABCMeta):
             values of a `Container`. If no *section* is specified the class
             name of the instance is used.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Container`
-            stores all `Field` values for their *nested* `data` objects as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Container` saves their *nested* `data` object fields as well
+            (chained method call).
 
         :keyword bool field_types: if `True` the type of the `Field` is
             appended to its path string with the '|' sign as separator.
@@ -360,7 +365,7 @@ class Container(metaclass=abc.ABCMeta):
 
 
 class Structure(OrderedDict, Container):
-    """A `Structure` is a :class:`ordered dictionary <collections.OrderedDict>`
+    """A `Structure` is an :class:`ordered dictionary <collections.OrderedDict>`
     whereby the dictionary `key` describes the name of a member of the
     `Structure` and the `value` of a dictionary `key` describes the type of
     a member of the `Structure`. Allowed members are `Structure`, `Sequence`,
@@ -398,7 +403,7 @@ class Structure(OrderedDict, Container):
     *   List the **item** and its path for each *field* in a `Structure`
         as a flat list via :meth:`field_items()`.
     *   Get a **blueprint** of a `Structure` and its items
-        via :meth:`blueprint()`,
+        via :meth:`blueprint()`.
     """
     item_type = ItemClass.Structure
 
@@ -455,16 +460,17 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def read_from(self, provider, **options):
-        """All `Pointer` fields of a `Structure` read the necessary amount
-        of bytes from the data *provider* for their *nested* `data` object
-        fields.
+        """All `Pointer` fields of a `Structure` read the necessary amount of
+        bytes from the data *provider* for their *nested* `data` object fields.
+        Null pointer will be ignored.
 
         :param provider: data :class:`Provider`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Structure` reads their *nested* `data` object fields.
-            A `Pointer` field stores the bytes for the *nested* `data`
-            object in its own `bytestream`.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` objects of all `Pointer` fields of a `Structure` reads their
+            *nested* `data` object fields as well (chained method call).
+            A `Pointer` field stores the bytes for the *nested* `data` object
+            in its own `bytestream`.
         """
         for item in self.values():
             # Container or Pointer
@@ -491,7 +497,8 @@ class Structure(OrderedDict, Container):
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Structure` decodes their *nested* `data` object fields as well.
+            `Structure` decodes their *nested* `data` object fields as well
+            (chained method call).
             A `Pointer` field uses for the decoding of the *nested* `data`
             object its own `bytestream`.
         """
@@ -519,7 +526,8 @@ class Structure(OrderedDict, Container):
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Structure` encodes their *nested* `data` object as well.
+            `Structure` encodes their *nested* `data` object fields as well
+            (chained method call).
             A `Pointer` field uses for the encoding of the *nested* `data`
             object its own `bytestream`.
         """
@@ -529,12 +537,13 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def next_index(self, index=zero(), **options):
-        """Returns the `Index` after the last `Field` of a `Structure`.
+        """Returns the :class:`Index` after the last `Field` of a `Structure`.
 
         :param index: :class:`Index` for the first `Field` of a `Structure`.
 
-        :keyword nested: if `True` all `Pointer` fields of a `Structure`
-            indexes their *nested* `data` object as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Structure` indexes their *nested* `data` object fields as well
+            (chained method call).
         """
         for item in self.values():
             # Container
@@ -559,6 +568,7 @@ class Structure(OrderedDict, Container):
             # Container
             if is_container(item):
                 field = item.first_field()
+                # Container is not empty
                 if field is not None:
                     return field
             # Field
@@ -587,13 +597,15 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def field_indexes(self, index=zero(), **options):
-        """Returns a ordered dictionary which contains the `name`, `index`
-        pairs for each `Field` of the `Structure`.
+        """Returns an :class:`ordered dictionary <collections.OrderedDict>`
+        which contains the `name`, `index` pairs for each `Field` of the
+        `Structure`.
 
         :param index: optional start :class:`Index` of the `Structure`.
 
-        :keyword nested: if `True` all `Pointer` fields of a `Structure`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Structure` lists their *nested* `data` object fields as well
+            (chained method call).
         """
         indexes = OrderedDict()
         for name, item in self.items():
@@ -615,11 +627,13 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def field_types(self, **options):
-        """Returns a ordered dictionary which contains the `name`, `type`
-        pairs for each `Field` of a `Structure`.
+        """Returns an :class:`ordered dictionary <collections.OrderedDict>`
+        which contains the `name`, `type` pairs for each `Field` of a
+        `Structure`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Structure`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Structure` lists their *nested* `data` object fields as well
+            (chained method call).
         """
         types = OrderedDict()
         for name, item in self.items():
@@ -638,11 +652,13 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def field_values(self, **options):
-        """Returns a ordered dictionary which contains the `name`, `value`
-        pairs for each `Field` of a `Structure`.
+        """Returns an :class:`ordered dictionary <collections.OrderedDict>`
+        which contains the `name`, `value` pairs for each `Field` of a
+        `Structure`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Structure`
-            lists their *nested* `data` object as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Structure` lists their *nested* `data` object fields as well
+            (chained method call).
         """
         values = OrderedDict()
         for name, item in self.items():
@@ -661,14 +677,14 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def field_items(self, root=None, **options):
-        """Returns a flat list which contains tuples in the form of
+        """Returns a **flat** list which contains tuples in the form of
         ``(path, item)`` for each `Field` of a `Structure`.
 
         :param str root: root path.
 
-        :keyword bool nested: if `True` the `Fields` of the *nested* `data`
-            objects of all `Pointer` fields in a `Structure` are added to
-            the list.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` objects of all `Pointer` fields of a `Structure` list their
+            *nested* `data` object fields as well (chained method call).
         """
         base = root if root else str()
 
@@ -692,8 +708,8 @@ class Structure(OrderedDict, Container):
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
-        """Returns the blue print of a `Structure` as an ordered dictionary
-        including the blue prints of the nested fields.
+        """Returns the blue print of a `Structure` as an
+        :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
 
@@ -709,8 +725,9 @@ class Structure(OrderedDict, Container):
 
         :param str name: optional name for the `Structure`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Structure`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Structure` lists their *nested* `data` object fields as well
+            (chained method call). Default is `True`.
         """
         members = list()
         obj = OrderedDict()
@@ -721,8 +738,15 @@ class Structure(OrderedDict, Container):
         obj['member'] = members
 
         for member_name, item in self.items():
-            if is_any(item):
+            # Container
+            if is_container(item):
                 members.append(item.blueprint(member_name, **options))
+            # Pointer
+            elif is_pointer(item) and get_nested(options):
+                members.append(item.blueprint(member_name, **options))
+            # Field
+            elif is_field(item):
+                members.append(item.blueprint(member_name, nested=False))
             else:
                 raise TypeError(member_name, item)
         return obj
@@ -782,7 +806,7 @@ class Sequence(MutableSequence, Container):
     *   List the **item** and its path for each *field* in a `Sequence`
         as a flat list via :meth:`field_items()`.
     *   Get a **blueprint** of a `Sequence` and its items
-        via :meth:`blueprint()`,
+        via :meth:`blueprint()`.
 
     :param iterable: any *iterable* that contains items of `Structure`,
         `Sequence`, `Array` or `Field` instances. If the *iterable* is one
@@ -898,13 +922,15 @@ class Sequence(MutableSequence, Container):
     def read_from(self, provider, **options):
         """All `Pointer` fields of a `Sequence` read the necessary amount of
         bytes from the data *provider* for their *nested* `data` object fields.
+        Null pointer will be ignored.
 
         :param provider: data :class:`Provider`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Sequence` reads their *nested* `data` object fields.
-            A `Pointer` field stores the bytes for the *nested* `data`
-            object in its own `bytestream`.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` objects of all `Pointer` fields of a `Sequence` reads their
+            *nested* `data` object fields as well (chained method call).
+            A `Pointer` field stores the bytes for the *nested* `data` object
+            in its own `bytestream`.
         """
         for item in iter(self):
             # Container or Pointer
@@ -931,7 +957,8 @@ class Sequence(MutableSequence, Container):
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Sequence` decodes their *nested* `data` object fields as well.
+            `Sequence` decodes their *nested* `data` object fields as well
+            (chained method call).
             A `Pointer` field uses for the decoding of the *nested* `data`
             object its own `bytestream`.
         """
@@ -959,7 +986,8 @@ class Sequence(MutableSequence, Container):
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Sequence` encodes their *nested* `data` object as well.
+            `Sequence` encodes their *nested* `data` object fields as well
+            (chained method call).
             A `Pointer` field uses for the encoding of the *nested* `data`
             object its own `bytestream`.
         """
@@ -969,12 +997,13 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def next_index(self, index=zero(), **options):
-        """Returns the `Index` after the last `Field` of a `Sequence`.
+        """Returns the :class:`Index` after the last `Field` of a `Sequence`.
 
         :param index: :class:`Index` for the first `Field` of a `Sequence`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Sequence`
-            indexes their *nested* `data` object as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Sequence` indexes their *nested* `data` object fields as well
+            (chained method call).
         """
         for item in iter(self):
             # Container
@@ -999,6 +1028,7 @@ class Sequence(MutableSequence, Container):
             # Container
             if is_container(item):
                 field = item.first_field()
+                # Container is not empty
                 if field is not None:
                     return field
             # Field
@@ -1032,8 +1062,9 @@ class Sequence(MutableSequence, Container):
 
         :param index: optional start :class:`Index` of the `Sequence`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Sequence`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Sequence` lists their *nested* `data` object fields as well
+            (chained method call).
         """
         indexes = list()
         for idx, item in enumerate(self):
@@ -1058,8 +1089,9 @@ class Sequence(MutableSequence, Container):
         """Returns a list which contains ``(name, type)`` tuples for each
         `Field` of a `Sequence`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Sequence`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Sequence` lists their *nested* `data` object fields as well
+            (chained method call).
         """
         types = list()
         for idx, item in enumerate(self):
@@ -1081,8 +1113,9 @@ class Sequence(MutableSequence, Container):
         """Returns a list which contains ``(name, value)`` tuples for each
         `Field` of a `Sequence`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Sequence`
-            lists their *nested* `data` object as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Sequence` lists their *nested* `data` object fields as well
+            (chained method call).
         """
         values = list()
         for idx, item in enumerate(self):
@@ -1101,14 +1134,14 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def field_items(self, root=str(), **options):
-        """Returns a flat list which contains tuples in the form of
+        """Returns a **flat** list which contains tuples in the form of
         ``(path, field)`` for each `Field` of a `Sequence`.
 
         :param str root: root path.
 
-        :keyword bool nested: if `True` the `Fields` of the *nested* `data`
-            objects of all `Pointer` fields in a `Sequence` are added to
-            the list.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` objects of all `Pointer` fields of a `Sequence` list their
+            *nested* `data` object fields as well (chained method call).
         """
         base = root if root else str()
 
@@ -1132,8 +1165,8 @@ class Sequence(MutableSequence, Container):
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
-        """Returns the blue print of a `Sequence` as an ordered dictionary
-        including the blue prints of the nested fields.
+        """Returns the blue print of a `Sequence` as an
+        :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
 
@@ -1149,8 +1182,9 @@ class Sequence(MutableSequence, Container):
 
         :param str name: optional name for the `Sequence`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of the `Sequence`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+            `Sequence` lists their *nested* `data` object fields as well
+            (chained method call). Default is `True`.
         """
         members = list()
         obj = OrderedDict()
@@ -1161,10 +1195,21 @@ class Sequence(MutableSequence, Container):
         obj['member'] = members
 
         for idx, item in enumerate(self):
-            if is_any(item):
+            # Container
+            if is_container(item):
                 members.append(item.blueprint("{0}[{1}]".
                                               format(obj['name'], idx),
                                               **options))
+            # Pointer
+            elif is_pointer(item) and get_nested(options):
+                members.append(item.blueprint("{0}[{1}]".
+                                              format(obj['name'], idx),
+                                              **options))
+            # Field
+            elif is_field(item):
+                members.append(item.blueprint("{0}[{1}]".
+                                              format(obj['name'], idx),
+                                              nested=False))
             else:
                 raise TypeError(idx, item)
         return obj
@@ -1194,6 +1239,9 @@ class Array(Sequence):
     *   **Re-size** a `Array`
         via :meth:`resize()`.
 
+    A `Array` replaces the ``type`` key of the `Blueprint` of a `Sequence` with
+    its own `item` type.
+
     :param template: template for the `Array` element.
         The *template* can be any `Field` instance or any *callable* that
         returns a `Structure`, `Sequence`, `Array` or any `Field` instance.
@@ -1205,10 +1253,12 @@ class Array(Sequence):
     def __init__(self, template, size=0):
         super().__init__()
 
-        # Template for the array elements.
+        # Template for the array element.
         if is_field(template):
+            # Field: Array element instance
             self._template = template
         elif callable(template) and is_any(template()):
+            # Callable: Array element factory
             self._template = template
         else:
             raise TypeError(template)
@@ -1217,8 +1267,10 @@ class Array(Sequence):
         self.resize(size)
 
     def __create__(self):
+        # Field: Array element instance
         if is_field(self._template):
             return copy.copy(self._template)
+        # Callable: Array element factory
         else:
             return self._template()
 
@@ -1270,7 +1322,8 @@ class Field(metaclass=abc.ABCMeta):
     :param int align_to: aligns the `Field` to the number of bytes,
         can be between *1* and *8*.
 
-    :param byte_order: coding :class:`Byteorder` of the `Field`.
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
     """
     item_type = ItemClass.Field
 
@@ -1331,22 +1384,35 @@ class Field(metaclass=abc.ABCMeta):
     @index.setter
     def index(self, value):
         byte, bit, address, base, update = value
+
+        # Check: Field location
         if byte < 0 or bit < 0 or bit > 64:
             raise ValueError(value)
-        size, offset = self.alignment
+
+        # Fields required minimal alignment size
         length, remainder = divmod(self.bit_size + bit, 8)
         if remainder:
             length += 1
+
+        # Check: Field alignment
+        size, offset = self.alignment
         if length > size:
             raise ValueError(value)
+        # Bit field: Check field alignment
         if self.is_bit():
             if offset != bit:
                 raise ValueError(value)
+        # No bit field: Set field alignment info
         else:
             self._align_to_bit_offset = bit
+
+        # Check: Field address
         if address < 0:
             raise ValueError(value)
-        self._index = Index(int(byte), int(bit), int(address), int(base), update)
+
+        self._index = Index(int(byte), int(bit),
+                            int(address), int(base),
+                            update)
 
     @property
     def name(self):
@@ -1427,7 +1493,7 @@ class Field(metaclass=abc.ABCMeta):
         A specific coding byte order of a `Field` overrules the encoding
         byte order of the *buffer*.
 
-        Returns the encoded bytes for its field value.
+        Returns the encoded :class:`bytes` for its field value.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
@@ -1456,9 +1522,9 @@ class Field(metaclass=abc.ABCMeta):
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` a :class:`Pointer` field decodes its
-            *nested* `data` object fields as well.
+            *nested* `data` object fields as well (chained method call).
             A `Pointer` field uses for the decoding of the *nested* `data`
-            object its own `bytestream`
+            object its own `bytestream`.
         """
         self.index = index
         self._value = self.unpack(buffer, index, **options)
@@ -1483,35 +1549,44 @@ class Field(metaclass=abc.ABCMeta):
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` a :class:`Pointer` field encodes its
-            *nested* `data` object fields as well.
+            *nested* `data` object fields as well (chained method call).
             A `Pointer` field uses for the encoding of the *nested* `data`
-            object its own `bytestream`
+            object its own `bytestream`.
         """
         self.index = index
         buffer += self.pack(buffer, **options)
         return self.next_index(index)
 
     def next_index(self, index=zero()):
-        """Returns the `Index` after the `Field`.
+        """Returns the :class:`Index` after the `Field`.
 
         :param index: start :class:`Index` for the `Field`.
         """
+        # Set field index
         self.index = index
+
+        # Next bit offset
         byte, bit, address, base, update = index
         bit += self.bit_size
+
+        # Fields required minimal alignment size
         byte_length, bit_length = divmod(bit, 8)
+
+        # Last field in alignment group?
         if byte_length == self._align_to_byte_size:
             if bit_length is 0:
                 byte += self._align_to_byte_size
                 bit = 0
                 address += self._align_to_byte_size
+            # Bad aligned field
             else:
                 raise IndexError(index, byte_length, bit_length)
         return Index(byte, bit, address, base, update)
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
-        """Returns the blue print of a `Field` as an ordered dictionary.
+        """Returns the blue print of a `Field` as an
+        :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
 
@@ -1526,6 +1601,12 @@ class Field(metaclass=abc.ABCMeta):
                 'type': Field.item_type.name,
                 'value': self.value
             }
+
+        :param str name: optional name for the `Field`.
+
+        :keyword bool nested: if `True` a :class:`Pointer` field lists its
+            *nested* `data` object fields as well (chained method call).
+            Default is `True`.
         """
         obj = {
             'address': self.index.address,
@@ -1742,6 +1823,8 @@ class String(Stream):
     *   *iterable* ``iter(self)`` iterates over the bytes of the `String`
         field.
 
+    :param int size: is the *size* of the field in bytes.
+
     Example:
 
     >>> string = String()
@@ -1840,8 +1923,11 @@ class Float(Field):
     Internally a `Float` field uses a :class:`float` class to store the
     data of its field *value*.
 
-    A `Float` field extends the :meth:`blueprint` method with a ``max`` and
+    A `Float` field extends the `Blueprint` of a `Field` with a ``max`` and
     ``min`` key for its maximum and minimum possible field value.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -1945,7 +2031,7 @@ class Float(Field):
         if self.byte_order is not Byteorder.auto:
             byte_order = self.byte_order
 
-        # No data enough bytes for the field in the bytestream
+        # Not enough bytes for the field in the bytestream
         offset = index.byte
         size = offset + self._align_to_byte_size
         bytestream = buffer[offset:size]
@@ -1988,18 +2074,23 @@ class Decimal(Field):
     Internally a `Decimal` field uses a :class:`int` class to store the
     data of its field *value*.
 
-    A `Decimal` field extends its :meth:`blueprint` method with a ``max`` and
-    ``min`` key for its maximum and minimum possible field value.
+    A `Decimal` field extends the `Blueprint` of a `Field` with a ``max``
+    and ``min`` key for its maximum and minimum possible field value and
+    a ``sigend`` key to mark the decimal number as signed or unsigned.
 
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
 
     :param int align_to: aligns the field to the number of bytes,
-        can be between *1* and *8*. If no field *alignment* is set the a
-        `Decimal` field aligns itself to the next matching byte size
-        corresponding to the field *size*.
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
 
-    :param bool signed: if `True` the decimal number is signed otherwise unsigned.
+    :param bool signed: if `True` the decimal number is signed otherwise
+        unsigned.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -2185,7 +2276,7 @@ class Decimal(Field):
         if byte not in (1, 2, 3, 4, 5, 6, 7, 8):
             raise OutOfRange(self, byte)
 
-        # Field size is out of range?
+        # Field alignment is out of range?
         if bit < 0 or bit > 63:
             raise OutOfRange(self, bit)
 
@@ -2414,6 +2505,11 @@ class Byte(Decimal):
     """A `Byte` field is an unsigned :class:`Decimal` field with a *size* of
     one byte and returns its field *value* as a hexadecimal encoded string.
 
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
     Example:
 
     >>> byte = Byte()
@@ -2494,6 +2590,11 @@ class Byte(Decimal):
 class Char(Decimal):
     """A `Char` field is an unsigned :class:`Decimal` field with a *size* of
     one byte and returns its field *value* as a unicode encoded string.
+
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
 
     Example:
 
@@ -2579,6 +2680,14 @@ class Signed(Decimal):
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
 
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
+
     Example:
 
     >>> signed = Signed(16)
@@ -2648,6 +2757,17 @@ class Unsigned(Decimal):
     """A `Unsigned` field is an unsigned :class:`Decimal` field with a
     variable *size* and returns its field *value* as a hexadecimal encoded
     string.
+
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
+
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -2729,7 +2849,13 @@ class Bitset(Decimal):
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
 
-    :param byte_order: coding :class:`Byteorder` of a `Bitset` field.
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -2807,6 +2933,17 @@ class Bitset(Decimal):
 class Bool(Decimal):
     """A `Bool` field is an unsigned :class:`Decimal` field with a variable
     *size* and returns its field *value* as a boolean.
+
+    :param int bit_size: is the *size* of the field in bits,
+        can be between *1* and *64*.
+
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -2899,7 +3036,15 @@ class Enum(Decimal):
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
 
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
     :param enumeration: :class:`Enumeration` definition of the field.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -3020,13 +3165,21 @@ class Scaled(Decimal):
 
         ``2 ** (field size - 1) / 2``
 
-    A `Scaled` field extends the :meth:`blueprint` method with a ``scale`` key
-    for its scaling factor.
+    A `Scaled` field extends the `Blueprint` of a `Decimal` with a ``scale``
+    key for its scaling factor.
 
     :param float scale: scaling factor of the field.
 
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
+
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -3165,8 +3318,16 @@ class Fraction(Decimal):
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
 
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
     :param bool signed: if `True` the fraction number is signed otherwise
         unsigned.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -3313,7 +3474,9 @@ class Fraction(Decimal):
 
     @property
     def name(self):
-        return self.item_type.name.capitalize() + str(self._bits_integer) + '.' + str(self.bit_size)
+        return "{0}{1}.{2}".format(self.item_type.name.capitalize(),
+                                   self._bits_integer,
+                                   self.bit_size)
 
     @property
     def value(self):
@@ -3371,6 +3534,14 @@ class Bipolar(Fraction):
 
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
+
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -3452,6 +3623,14 @@ class Unipolar(Fraction):
     :param int bit_size: is the *size* of the field in bits,
         can be between *1* and *64*.
 
+    :param int align_to: aligns the field to the number of bytes,
+        can be between *1* and *8*.
+        If no field *alignment* is set the field aligns itself to the next
+        matching byte size corresponding to the field *size*.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
+
     Example:
 
     >>> unipolar = Unipolar(2, 16)
@@ -3526,6 +3705,9 @@ class Datetime(Decimal):
     """A `Datetime` field is an unsigned :class:`Decimal` field with a fix
     *size* of four bytes and returns its field *value* as a UTC datetime
     encoded string in the format *YYYY-mm-dd HH:MM:SS*.
+
+    :param byte_order: coding :class:`Byteorder` of the field.
+        Default is 'auto'.
 
     Example:
 
@@ -3828,8 +4010,8 @@ class Pointer(Decimal, Container):
 
     def refresh(self):
         """Refresh the fields of the `data` object with the internal `bytestream`
-        and returns the `Index` of the `bytestream` after the last `Field` of the
-        `data` object.
+        and returns the :class:`Index` of the `bytestream` after the last `Field`
+        of the `data` object.
         """
         index = Index(0, 0, self.address, self.base_address, False)
         if self._data:
@@ -3862,8 +4044,9 @@ class Pointer(Decimal, Container):
         :param bool null_allowed: if `True` read access of address zero (null)
             is allowed.
 
-        :keyword bool nested: if `True` all `Pointer` fields of the `data`
-            object of a `Pointer` reads their *nested* `data` object fields.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` object of the `Pointer` reads their *nested* `data` object
+            fields as well (chained method call).
             A `Pointer` field stores the bytes for the *nested* `data`
             object in its own `bytestream`.
         """
@@ -3878,7 +4061,7 @@ class Pointer(Decimal, Container):
                     index = self.refresh()
                     if index.bit != 0:
                         raise IndexError(index)
-                    if index.update:
+                    if not index.update:
                         break
                 if is_mixin(self._data) and get_nested(options):
                     self._data.read_from(provider, **options)
@@ -3889,8 +4072,8 @@ class Pointer(Decimal, Container):
             raise TypeError(provider)
 
     def patch(self, item, byte_order=BYTEORDER):
-        """Returns a memory :class:`Patch` for the values of the referenced
-        *item*.
+        """Returns a memory :class:`Patch` for the given *item* that shall be
+        patched in the data source.
 
         :param item: item to patch.
 
@@ -3994,7 +4177,8 @@ class Pointer(Decimal, Container):
             raise TypeError(item)
 
     def write_to(self, provider, item, byte_order=BYTEORDER):
-        """Writes the values of the referenced *item* to a data *provider*.
+        """Writes via a data *provider* the `Field` values of the given
+        *item* to the data source.
 
         :param provider: data :class:`Provider`.
 
@@ -4009,10 +4193,11 @@ class Pointer(Decimal, Container):
             pass
         elif is_provider(provider):
             if patch.inject:
-                # Memory area to patch as byte stream
+                # Unpatched byte stream of the memory area to patch
+                # in the data source
                 stream = provider.read(patch.address, len(patch.buffer))
 
-                # Memory area to patch as decimal value
+                # Decimal value of the memory area to patch
                 value = int.from_bytes(stream, byte_order.value)
 
                 # Inject memory patch
@@ -4021,7 +4206,8 @@ class Pointer(Decimal, Container):
                 value &= bit_mask
                 value |= int.from_bytes(patch.buffer, byte_order.value)
 
-                # Patched memory area as byte stream
+                # Patched byte stream of the memory area to patch
+                # in the data source
                 stream = value.to_bytes(len(patch.buffer), byte_order.value)
 
                 provider.write(stream, patch.address, len(stream))
@@ -4038,6 +4224,9 @@ class Pointer(Decimal, Container):
         value of the `Pointer` by considering the decoding `Byteorder` of the
         *buffer* and the `Pointer`.
 
+        A specific coding byte order of the `Pointer` overrules the decoding
+        byte order of the *buffer*.
+
         Returns the :class:`Index` of the *buffer* after the `Pointer`.
 
         Optional the decoding of the *nested* `data` object of a `Pointer`
@@ -4046,7 +4235,7 @@ class Pointer(Decimal, Container):
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` a :class:`Pointer` field decodes its
-            *nested* `data` object fields as well.
+            *nested* `data` object fields as well (chained method call).
             A `Pointer` field uses for the decoding of the *nested* `data`
             object its own `bytestream`.
         """
@@ -4070,6 +4259,9 @@ class Pointer(Decimal, Container):
         `Pointer` to the bytes by considering the encoding `Byteorder` of the
         *buffer* and the `Pointer`.
 
+        A specific coding byte order of the `Pointer` overrules the encoding
+        byte order of the *buffer*.
+
         Returns the :class:`Index` of the *buffer* after the `Pointer`.
 
         Optional the encoding of the *nested* `data` object of a `Pointer`
@@ -4078,9 +4270,9 @@ class Pointer(Decimal, Container):
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` a :class:`Pointer` field encodes its
-            *nested* `data` object fields as well.
+            *nested* `data` object fields as well (chained method call).
             A `Pointer` field uses for the encoding of the *nested* `data`
-            object its own `bytestream`
+            object its own `bytestream`.
         """
         # Field
         index = super().encode(buffer, index, **options)
@@ -4089,7 +4281,9 @@ class Pointer(Decimal, Container):
             options[Option.byteorder] = self.order
             self._data_stream = bytearray()
             self._data.encode(self._data_stream,
-                              Index(0, 0, self.address, self.base_address, False),
+                              Index(0, 0,
+                                    self.address, self.base_address,
+                                    False),
                               **options)
             self._data_stream = bytes(self._data_stream)
         return index
@@ -4110,14 +4304,15 @@ class Pointer(Decimal, Container):
 
     @nested_option()
     def field_indexes(self, index=zero(), **options):
-        """Returns a ordered dictionary with two keys.
+        """Returns an :class:`ordered dictionary <collections.OrderedDict>`
+        with two keys.
         The ``['value']`` key contains the field *index* of the `Pointer` and
         the ``['data']`` key contains the field *indexes* of the `data` object
         of a `Pointer`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of the `data`
-            object of a `Pointer` lists their *nested* `data` object fields
-            as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` object of the `Pointer` lists their *nested* `data` object
+            fields as well (chained method call).
         """
         self.next_index(index)
 
@@ -4147,14 +4342,15 @@ class Pointer(Decimal, Container):
 
     @nested_option()
     def field_types(self, **options):
-        """Returns a ordered dictionary with two keys.
+        """Returns an :class:`ordered dictionary <collections.OrderedDict>`
+        with two keys.
         The ``['value']`` key contains the field *type* of the `Pointer` and
         the ``['data']`` key contains the field *types* of the `data` object
         of a `Pointer`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of the `data`
-            object of a `Pointer` lists their *nested* `data` object fields
-            as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` object of the `Pointer` lists their *nested* `data` object
+            fields as well (chained method call).
         """
         types = OrderedDict()
         types['value'] = self.name
@@ -4173,14 +4369,15 @@ class Pointer(Decimal, Container):
 
     @nested_option()
     def field_values(self, **options):
-        """Returns a ordered dictionary with two keys.
+        """Returns an :class:`ordered dictionary <collections.OrderedDict>`
+        with two keys.
         The ``['value']`` key contains the field *value* of the `Pointer` and
         the ``['data']`` key contains the field *values* of the `data` object
         of a `Pointer`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of the `data`
-            object of a `Pointer` lists their *nested* `data` object fields
-            as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` object of the `Pointer` lists their *nested* `data` object
+            fields as well (chained method call).
         """
         values = OrderedDict()
         values['value'] = self.value
@@ -4199,14 +4396,14 @@ class Pointer(Decimal, Container):
 
     @nested_option()
     def field_items(self, root=str(), **options):
-        """Returns a flat list which contains tuples in the form of
+        """Returns a **flat** list which contains tuples in the form of
         ``(path, item)`` for each `Field` of a `Pointer`.
 
         :param str root: root path.
 
-        :keyword bool nested: if `True` all `Pointer` fields of the `data`
-            object of a `Pointer` lists their *nested* `data` object fields
-            as well.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `data` object of the `Pointer` list their *nested* `data` object
+            fields as well (chained method call).
         """
         items = list()
         # Field
@@ -4229,8 +4426,8 @@ class Pointer(Decimal, Container):
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
-        """Returns the blue print of a `Pointer` as an ordered dictionary
-        including the blue prints of the nested fields.
+        """Returns the blue print of a `Pointer` as an
+        :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
 
@@ -4251,14 +4448,15 @@ class Pointer(Decimal, Container):
 
         :param str name: optional name for the `Pointer`.
 
-        :keyword bool nested: if `True` all `Pointer` fields of a `Pointer`
-            lists their *nested* `data` object fields as well.
+        :keyword bool nested: if `True` a :class:`Pointer` field lists its
+            *nested* `data` object fields as well (chained method call).
+            Default is `True`.
         """
         obj = super().blueprint(name, **options)
         obj['class'] = self.__class__.__name__
         obj['name'] = name if name else self.__class__.__name__
         obj['type'] = Pointer.item_type.name
-        if is_any(self._data):
+        if is_any(self._data) and get_nested(options):
             obj['member'] = list()
             obj['member'].append(self._data.blueprint(None, **options))
         return obj
@@ -4422,6 +4620,16 @@ class ArrayPointer(SequencePointer):
     """A `ArrayPointer` field is a :class:`SequencePointer` which refers
     to a :class:`Array`.
 
+    A `ArrayPointer` adapts and extends a `SequencePointer` with the following
+    features:
+
+    *   **Append** a new `Array` element to a `Array`
+        via :meth:`append()`.
+    *   **Insert** a new `Array` element before the *index* into a `Array`
+        via :meth:`insert()`.
+    *   **Re-size** a `Array`
+        via :meth:`resize()`.
+
     :param template: template for the `Array` element.
         The *template* can be any `Field` instance or any *callable* that
         returns a `Structure`, `Sequence`, `Array` or any `Field` instance.
@@ -4479,7 +4687,6 @@ class StreamPointer(Pointer):
 
     :param int address: absolute address of the `data` object referenced by
         the pointer.
-
 
     Example:
 
@@ -5075,8 +5282,18 @@ class SequenceRelativePointer(RelativePointer):
 
 
 class ArrayRelativePointer(SequenceRelativePointer):
-    """A `ArrayPointer` field is a :class:`SequenceRelativePointer` which
-    refers to a :class:`Array`.
+    """A `ArrayRelativePointer` field is a :class:`SequenceRelativePointer`
+    which refers to a :class:`Array`.
+
+    A `ArrayRelativePointer` adapts and extends a `SequenceRelativePointer` with
+    the following features:
+
+    *   **Append** a new `Array` element to a `Array`
+        via :meth:`append()`.
+    *   **Insert** a new `Array` element before the *index* into a `Array`
+        via :meth:`insert()`.
+    *   **Re-size** a `Array`
+        via :meth:`resize()`.
 
     :param template: template for the `Array` element.
         The *template* can be any `Field` instance or any *callable* that

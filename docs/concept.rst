@@ -19,15 +19,15 @@ Concept
 KonFoo is based on defining or declaring *byte stream mapper* through classes.
 KonFoo has two abstract classes the `Field` class and the `Container` class.
 
-A `Field` holds the value of a area in a byte stream which the `Field` maps
-and knows how to unpack and pack its value from and to a byte stream.
+A :class:`Field` holds the value of a area in a byte stream which the `Field`
+maps and knows how to unpack and pack its value from and to a byte stream.
 
-A `Container` holds `Field` and/or `Container` classes and knows how to view,
-save and load the values of the `Field` items in a `Container` class.
+A :class:`Container` holds `Field` and/or `Container` classes and knows how
+to view, save and load the values of the `Field` items in a `Container` class.
 
-The mixin `Pointer` class has both features of the two base classes and has
-an interface to a data `Provider` to read and write byte streams from and
-back to the data `Provider` for its referenced *byte stream mapper*.
+The mixin :class:`Pointer` class has both features of the two base classes and
+has an interface to a data :class:`Provider` to read and write byte streams
+from and back to the data `Provider` for its referenced *byte stream mapper*.
 
 The build-in decoding and encoding engine unpacks and packs the byte stream
 sequential to and from each `Field` in the declared *byte stream mapper*.
@@ -41,10 +41,10 @@ Let's us begin with defining or declaring of one.
 Mapping declaration
 ===================
 
-KonFoo ships with a `Structure` class and many, many `Field` classes to declare
-the mapping part of a *byte stream mapper*. The order how you declare the fields
-in the mapping declaration defines the order how the fields are decoded and encoded
-by the built-in decoding and encoding engine.
+KonFoo ships with a :class:`Structure` class and many, many :class:`Field`
+classes to declare the mapping part of a *byte stream mapper*. The order how
+you declare the fields in the mapping declaration defines the order how the
+fields are decoded and encoded by the built-in decoding and encoding engine.
 
 .. _create_mapper:
 
@@ -121,7 +121,7 @@ Get the length of the mapper as a tuple in the form of
    The remaining bits must be always zero or the declaration is incomplete.
 
 
-Get the byte stream index after the last field of the mapper.
+Get the byte stream :class:`Index` after the last field of the mapper.
 
     >>> mapper.next_index()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)

@@ -10,8 +10,8 @@
 
 
 class Provider:
-    """A `Provider` provides access for the `Pointer` classes to read and
-    write byte streams from and to a data *source*. The `Provider` class
+    """A `Provider` provides access for the :class:`Pointer` classes to read
+    and write byte streams from and to a data *source*. The `Provider` class
     servers as a meta class. A derived class must implement the two methods
     :meth:`read` and :meth:`write` for reading and writing byte streams.
 
@@ -37,7 +37,7 @@ class Provider:
         return self._stream
 
     def write(self, buffer=bytes(), address=0, count=0):
-        """ Writes the content of the *buffer* to a data `source` beginning
+        """Writes the content of the *buffer* to a data `source` beginning
         at the start *address*.
 
         :param bytes buffer: content to write.
