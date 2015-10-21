@@ -23,10 +23,11 @@ from pprint import pprint
 
 from konfoo.enums import Enumeration
 
-from konfoo.globals import ItemClass, Byteorder, BYTEORDER, \
-    Option, get_byte_order, get_nested, get_field_types, verbose, \
-    byte_order_option, field_types_option, nested_option, verbose_option, \
-    limiter
+from konfoo.globals import ItemClass, Byteorder, BYTEORDER, limiter
+
+from konfoo.options import Option, byte_order_option, get_byte_order, \
+    nested_option, get_nested, field_types_option, get_field_types, \
+    verbose_option, verbose
 
 from konfoo.providers import Provider
 
@@ -95,7 +96,6 @@ information to patch a memory area of a `data source` accessed via a data
 :param bool inject: if `True` the patch item must be injected into the
     memory area of the data source.
 """
-
 
 Index = namedtuple('Index', [
     'byte',

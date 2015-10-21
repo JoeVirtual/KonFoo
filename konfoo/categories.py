@@ -16,7 +16,7 @@ class Category(enum.Enum):
     provided by the Python standard module :mod:`enum` and extends its
     base class with methods
 
-    * to `describe` a specific `Category`  member by its `name`, `value` pair
+    * to `describe` a specific `Category` member by its `name`, `value` pair
     * to list the `member names` of a `Category`
     * to list the `member values` of a `Category`
     * to `get` the `value` of the `Category` member with the matching `name`
