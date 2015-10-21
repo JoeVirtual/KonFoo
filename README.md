@@ -21,4 +21,7 @@ KonFoo in points:
 -   creatable blueprints from a template class
 -   blueprint converter to JSON to visualise templates with *d3.js*.
 
-This library is far away from stable but it works so far. Feedback is very welcomed!
+Read the docs at http://konfoo.readthedocs.org
+
+This library is far away from stable but it works so far.
+Feedback is very welcomed!
