@@ -21,6 +21,12 @@ import datetime
 sys.path.append(os.path.abspath('..'))
 sys.path.append(os.path.abspath('.'))
 
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+if not on_rtd:
+    import sphinx_rtd_theme
+    html_theme = 'sphinx_rtd_theme'
+    html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -51,8 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'KonFoo'
-copyright = '%d, Jochen Gerhäußer' % datetime.datetime.utcnow().year
-author = 'Jochen Gerhäußer'
+copyright = u'%d, Jochen Gerhäußer' % datetime.datetime.utcnow().year
+author = u'Jochen Gerhäußer'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -99,8 +105,7 @@ exclude_patterns = ['_build']
 
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
-# html_theme = 'alabaster'
-html_theme = 'sphinx_rtd_theme'
+#html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -161,7 +166,7 @@ html_static_path = ['_static']
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = True
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #html_show_sphinx = True
@@ -207,7 +212,7 @@ htmlhelp_basename = 'KonFoodoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   (master_doc, 'KonFoo.tex', 'KonFoo documentation',
-   'Jochen Gerhäußer', 'manual'),
+   u'Jochen Gerhäußer', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

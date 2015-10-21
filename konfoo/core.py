@@ -75,8 +75,7 @@ Patch = namedtuple('Patch', [
     'byteorder',
     'bit_size',
     'bit_offset',
-    'inject'
-])
+    'inject'])
 """The :class:`~collections.namedtuple` `Patch` contains the relevant
 information to patch a memory area of a `data source` accessed via a data
 :class:`Provider` by a :class:`Pointer` field.
@@ -97,13 +96,13 @@ information to patch a memory area of a `data source` accessed via a data
     memory area of the data source.
 """
 
+
 Index = namedtuple('Index', [
     'byte',
     'bit',
     'address',
     'base_address',
-    'update'
-])
+    'update'])
 """The :class:`~collections.namedtuple` `Index` contains the relevant
 information of the location of a `Field` in a byte stream and in a data
 source. The `bytestream` is normally provided by a :class:`Pointer` field.
