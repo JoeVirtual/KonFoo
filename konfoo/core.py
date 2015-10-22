@@ -154,7 +154,7 @@ class Container(metaclass=abc.ABCMeta):
     @field_types_option()
     def to_list(self, name=str(), **options):
         """Returns a **flat** list which contains tuples in the form of
-        ``(path, type, value)`` for each `Field` of a `Container`
+        ``(path, type, value)`` for each `Field` of a `Container`.
 
         The type of the field is optional.
 
@@ -3882,8 +3882,12 @@ class Pointer(Decimal, Container):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     b'4b6f6e466f6f2069732046756e'
+    >>> pointer.as_bytestream()
+    bytearray(b'')
     >>> pointer.refresh()
     Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)
+    >>> pointer.as_bytestream()
+    bytearray(b'')
     >>> pprint(pointer.blueprint())
     {'address': 0,
      'alignment': [4, 0],
@@ -4759,8 +4763,12 @@ class StreamPointer(Pointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     b'4b6f6e466f6f2069732046756e'
+    >>> hexlify(pointer.as_bytestream())
+    b'00000000000000000000'
     >>> pointer.refresh()
     Index(byte=10, bit=0, address=4294967305, base_address=4294967295, update=False)
+    >>> pointer.as_bytestream()
+    bytearray(b'KonFoo is ')
     >>> [byte for byte in pointer]  # converts to int
     [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
     >>> [hex(byte) for byte in pointer]
@@ -4933,8 +4941,12 @@ class StringPointer(StreamPointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     b'4b6f6e466f6f2069732046756e'
+    >>> hexlify(pointer.as_bytestream())
+    b'00000000000000000000'
     >>> pointer.refresh()
     Index(byte=10, bit=0, address=4294967305, base_address=4294967295, update=False)
+    >>> pointer.as_bytestream()
+    bytearray(b'KonFoo is ')
     >>> [byte for byte in pointer]  # converts to int
     [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
     >>> [chr(byte) for byte in pointer]  # converts to int
@@ -5076,6 +5088,15 @@ class RelativePointer(Pointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffffffff'
+    >>> pointer.bytestream = b'KonFoo is Fun'
+    >>> pointer.bytestream
+    b'4b6f6e466f6f2069732046756e'
+    >>> pointer.as_bytestream()
+    bytearray(b'')
+    >>> pointer.refresh()
+    Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)
+    >>> pointer.as_bytestream()
+    bytearray(b'')
     >>> pprint(pointer.blueprint())
     {'address': 0,
      'alignment': [4, 0],
@@ -5424,8 +5445,12 @@ class StreamRelativePointer(RelativePointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     b'4b6f6e466f6f2069732046756e'
+    >>> hexlify(pointer.as_bytestream())
+    b'00000000000000000000'
     >>> pointer.refresh()
     Index(byte=10, bit=0, address=4294967305, base_address=0, update=False)
+    >>> pointer.as_bytestream()
+    bytearray(b'KonFoo is ')
     >>> [byte for byte in pointer]  # converts to int
     [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
     >>> [hex(byte) for byte in pointer]
@@ -5598,8 +5623,12 @@ class StringRelativePointer(StreamRelativePointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     b'4b6f6e466f6f2069732046756e'
+    >>> hexlify(pointer.as_bytestream())
+    b'00000000000000000000'
     >>> pointer.refresh()
     Index(byte=10, bit=0, address=4294967305, base_address=0, update=False)
+    >>> pointer.as_bytestream()
+    bytearray(b'KonFoo is ')
     >>> [byte for byte in pointer]  # converts to int
     [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
     >>> [chr(byte) for byte in pointer]  # converts to int
