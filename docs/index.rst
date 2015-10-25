@@ -68,6 +68,7 @@ method, this part of the documentation is for you.
 
    api
 
+
 Miscellaneous Pages
 -------------------
 
@@ -77,5 +78,3 @@ Miscellaneous Pages
    changelog
    upgrading
    license
-
-

@@ -16,10 +16,9 @@ Setup
 Links
 -----
 * `website <http://github.com/JoeVirtual/KonFoo/>`_
-* `documentation <http://github.com/JoeVirtual/KonFoo/master/docs/>`_
+* `documentation <http://konfoo.readthedocs.org>`_
 * `development version
   <http://github.com/JoeVirtual/KonFoo/master>`_
-
 
 """
 
@@ -44,9 +43,22 @@ setup(
     description='A declarative byte stream mapping engine.',
     long_description=__doc__,
     packages=['konfoo'],
+    include_package_data=True,
+    zip_safe=False,
+    platforms='any',
     install_requires=[],
     classifiers=[
-        'License :: BSD License',
-        'Programming Language :: Python :: 3',
+        'Development Status :: 1 - Planning',
+        'Environment :: Console',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.4',
+        'Topic :: Software Development',
+        'Topic :: Software Development :: Embedded Systems',
+        'Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator'
+        'Topic :: Scientific/Engineering :: Visualization',
     ]
 )
