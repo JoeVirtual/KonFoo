@@ -1,3 +1,5 @@
+.. currentmodule:: konfoo
+
 Upgrading To Newer Releases
 ===========================
 

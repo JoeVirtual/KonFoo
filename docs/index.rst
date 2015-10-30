@@ -55,6 +55,16 @@ usage patterns.
    :maxdepth: 2
 
    concept
+   structure
+   enum
+   pointer
+   array
+   reading
+   decoding
+   encoding
+   writing
+   saving
+   loading
 
 
 API Reference

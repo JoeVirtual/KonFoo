@@ -1,3 +1,5 @@
+.. currentmodule:: konfoo
+
 License
 =======
 
