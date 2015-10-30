@@ -154,9 +154,10 @@ class Container(metaclass=abc.ABCMeta):
     @field_types_option()
     def to_list(self, name=str(), **options):
         """Returns a **flat** list which contains tuples in the form of
-        ``(path, type, value)`` for each `Field` of a `Container`.
+        ``(path, value)`` or ``(path, type, value)`` for each `Field` of a
+        `Container`.
 
-        The type of the field is optional.
+        The type entry of the tuple is optional.
 
         :param str name: name of the `Container`.
             Default is the class name of the instance.
@@ -718,7 +719,7 @@ class Structure(OrderedDict, Container):
                 'size': len(self),
                 'type': Structure.item_type.name
                 'member': [
-                    field.blueprint(member) for member, field in self.items()
+                    item.blueprint(member) for member, item in self.items()
                 ]
             }
 
@@ -1175,7 +1176,7 @@ class Sequence(MutableSequence, Container):
                 'size': len(self),
                 'type': Sequence.item_type.name
                 'member': [
-                    field.blueprint('name[idx]') for idx, field in enumerate(self)
+                    item.blueprint('name[idx]') for idx, item in enumerate(self)
                 ]
             }
 
@@ -4446,7 +4447,7 @@ class Pointer(Decimal, Container):
                 'size': self.bit_size,
                 'type': Pointer.item_type.name,
                 'value': self.value,
-                'member': list(members)
+                'member': [self.data.blueprint()]
             }
 
         :param str name: optional name for the `Pointer`.

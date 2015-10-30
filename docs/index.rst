@@ -2,6 +2,7 @@
    :align: right
    :alt: Logo
 
+.. _d3js: http://d3js.org/
 
 Welcome to the KonF'00' Documentation
 =====================================
@@ -26,14 +27,13 @@ KonFoo in points:
 -   loadable template content including nested data from an INI file
 -   savable template content including nested data to an INI file
 -   creatable blueprints from a template class
--   blueprint converter to JSON to visualise templates with *d3.js*.
+-   blueprint converter to JSON to visualise templates with `d3js`_.
 
 KonFoo requires Python 3.4 or higher.
 
 You can get the library directly from PyPI::
 
     pip install konfoo
-
 
 Examples
 --------

@@ -185,8 +185,12 @@ Accessing field properties in a mapper.
     8
     >>> mapper.version.alignment
     (1, 0)
+    >>> mapper.version.alignment[0]
+    1
     >>> mapper.version.byte_order
     Byteorder.auto = 'auto'
+    >>> mapper.version.byte_order.value
+    'auto'
     >>> mapper.version.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
     >>> mapper.version.index.address
@@ -383,7 +387,7 @@ Declare a mapper instance.
 Re-use a mapper instance.
 
     >>> header = Structure()
-    >>> header.type = identifier
+    >>> header.type = identifier  # re-used mapping declaration
     >>> header.size = Decimal32()
     >>> pprint(header.to_list())
     [('Structure.type.version', '0x0'),
@@ -515,7 +519,7 @@ Define a factory of a mapper template with arguments.
             return Parametrized(self.arg, *self.args, **self.kwargs)
 
 
-Factory for a parametrized mapper template.
+Usa a factory for a parametrized mapper template.
 
     >>> class Parametrized(Structure):
     ...
@@ -549,11 +553,30 @@ Factory for a parametrized mapper template.
                     bit_size=8,
                     value='0x0'))])
 
+
+.. _enumeration_declaration:
+
+Enum declaration
+================
+
+.. _create_enumeration:
+
+Create a enumeration declaration
+--------------------------------
+
+
 .. _reference_declaration:
 
 Reference declaration
 =====================
 
+KonFoo has a :class:`Pointer` class to reference ...
+The :class:`RelativePointer` ...
+
+KonFoo provides specialized pointers for :class:`Structures <StructurePointer>`,
+:class:`Sequences <SequencePointer>`, :class:`Arrays <ArrayPointer>`,
+:class:`Streams <StreamPointer>`  and :class:`Strings <StringPointer>` which have
+additional features for their referenced data objects.
 
 
 .. _create_reference:
@@ -642,6 +665,61 @@ Declare a mapper instance with a nested reference.
 Array declaration
 =================
 
+KonFoo has a :class:`Array` class to declare ...
+
+
+A `Array` element can be any :class:`Field`  or :class:`Container` class.
+
+
+Declare a array with a array element declaration
+------------------------------------------------
+
+Define a array element template.
+
+.. code-block:: python
+
+    #  Declaration for a array element
+    class Element(Structure):
+
+        def __init__(self):
+            super().__init__()
+            self.id = Decimal16()
+            self.name = String(10)
+
+
+Declare a array in a mapper by calling the array element constructor.
+
+.. code-block:: python
+
+    # Mapping declaration
+    class EntryList(Structure):
+
+        def __init__(self):
+            super().__init__()
+            self.length = Decimal32()
+            self.entry = Array(Element, 5)  # Array declaration
+
+
+.. _factorized_array:
+
+Declare a array with a array element factory
+--------------------------------------------
+
+Define a factory for a array element template.
+
+.. code-block:: python
+
+    # Factory for a array element declaration
+    class ElementFactory:
+        def __init__(self, size):
+            self.size = size
+
+        def __call__(self):
+            return String(size)
+
+
+Declare a array in a mapper by using a array element factory.
+
 .. code-block:: python
 
     # Mapping declaration
@@ -650,18 +728,23 @@ Array declaration
         def __init__(self):
             super().__init__()
             self.length = Decimal32()
-            self.entry = Array(Signed32)
+            self.entry = Array(ElementFactory(10), 5)  # Array declaration
 
 
-.. _enumeration_declaration:
+Declare a array with a array element instance
+---------------------------------------------
 
-Enum declaration
-================
+Declare a array in mapper by using a array element instance.
 
-.. _create_enumeration:
+.. code-block:: python
 
-Create a enumeration declaration
---------------------------------
+    # Mapping declaration
+    class List(Structure):
+
+        def __init__(self):
+            super().__init__()
+            self.length = Decimal32()
+            self.entry = Array(String(10), 5)  # Array declaration
 
 
 Reading
