@@ -29,22 +29,56 @@ class Category(enum.Enum):
     ...     hour = 'hh'
     ...     minute = 'mm'
     ...     second = 'ss'
+    >>> Format
+    <enum 'Format'>
+    >>> type(Format.hour)
+    <enum 'Format'>
+    >>> isinstance(Format, Category)
+    False
+    >>> issubclass(Format, Category)
+    True
+    >>> isinstance(Format.hour, Format)
+    True
+    >>> print(Format.hour)
+    (hour, hh)
     >>> str(Format.hour)
     '(hour, hh)'
+    >>> Format.hour
+    Format.hour = 'hh'
     >>> repr(Format.hour)
     "Format.hour = 'hh'"
+    >>> list(Format)
+    [Format.hour = 'hh', Format.minute = 'mm', Format.second = 'ss']
+    >>> [format for format in Format]
+    [Format.hour = 'hh', Format.minute = 'mm', Format.second = 'ss']
+    >>> Format.hour.name
+    'hour'
+    >>> Format.hour.value
+    'hh'
     >>> Format.hour.describe()
     ('hour', 'hh')
+    >>> [format.name for format in Format]
+    ['hour', 'minute', 'second']
     >>> Format.names()
     ['hour', 'minute', 'second']
+    >>> [format.value for format in Format]
+    ['hh', 'mm', 'ss']
     >>> Format.values()
     ['hh', 'mm', 'ss']
+    >>> Format['hour'].value
+    'hh'
     >>> Format.get_value('hour')
     'hh'
+    >>> Format('hh').name
+    'hour'
     >>> Format.get_name('hh')
     'hour'
     >>> Format.get_member('hh')
     Format.hour = 'hh'
+    >>> 'hh' in Format.values()
+    True
+    >>> 'hour' in Format.names()
+    True
     """
 
     def __str__(self):
@@ -102,7 +136,7 @@ class Category(enum.Enum):
         >>> Format.names()
         ['hour', 'minute', 'second']
         """
-        return [member[1].name for member in cls.__members__.items()]
+        return [member.name for member in cls]
 
     @classmethod
     def values(cls):
@@ -117,7 +151,7 @@ class Category(enum.Enum):
         >>> Format.values()
         ['hh', 'mm', 'ss']
         """
-        return [member[1].value for member in cls.__members__.items()]
+        return [member.value for member in cls]
 
     @classmethod
     def get_name(cls, value):
@@ -135,9 +169,9 @@ class Category(enum.Enum):
         >>> Format.get_name('dd')
         ''
         """
-        for v, n in zip(cls.values(), cls.names()):
-            if v == value:
-                return n
+        for member in cls:
+            if member.value == value:
+                return member.name
         return str()
 
     @classmethod
@@ -156,9 +190,9 @@ class Category(enum.Enum):
         >>> Format.get_value('day')
 
         """
-        for v, n in zip(cls.values(), cls.names()):
-            if n == name:
-                return v
+        for member in cls:
+            if member.name == name:
+                return member.value
         return None
 
     @classmethod
@@ -177,7 +211,7 @@ class Category(enum.Enum):
         >>> Format.get_member('day', None)
 
         """
-        for member in cls.__members__.items():
-            if member[1].value == value:
-                return member[1]
+        for member in cls:
+            if member.value == value:
+                return member
         return default

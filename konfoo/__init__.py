@@ -29,7 +29,8 @@ from .exceptions import KonFooException, FileError, OutOfRange, \
 from .providers import Provider, FileProvider
 
 # Core classes
-from .core import Patch, Index, zero, Container, Structure, Sequence, Array, \
+from .core import is_any, is_field, is_container, is_pointer, is_mixin, \
+    Patch, Index, zero, Container, Structure, Sequence, Array, \
     Field, Stream, String, Float, Decimal, Bit, Byte, Char, Signed, Unsigned, \
     Bitset, Bool, Enum, Scaled, Fraction, Bipolar, Unipolar, Datetime, \
     Pointer, StructurePointer, SequencePointer, ArrayPointer, StreamPointer, \
@@ -86,6 +87,8 @@ __all__ = [
     'Provider', 'FileProvider',
 
     # Core classes
+    'is_any', 'is_field', 'is_container', 'is_pointer', 'is_mixin',
+
     'Patch', 'Index', 'zero',
 
     'Container', 'Structure', 'Sequence', 'Array',

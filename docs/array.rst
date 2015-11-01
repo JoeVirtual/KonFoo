@@ -5,88 +5,70 @@
     from pprint import pprint
     from konfoo import *
 
-.. _array_declaration:
+.. _array_template:
 
-Array declaration
-=================
+Array template
+==============
 
 KonFoo has a :class:`Array` class to declare ...
 
 
-A `Array` element can be any :class:`Field`  or :class:`Container` class.
+
+.. _array_element:
+
+Array element
+-------------
+
+A :class:`Array` element can be any :class:`Field` or :class:`Container` class.
 
 
-Declare a array with a array element declaration
-------------------------------------------------
+Define a template
+-----------------
 
-Define a array element template.
-
-.. code-block:: python
-
-    #  Declaration for a array element
-    class Element(Structure):
-
-        def __init__(self):
-            super().__init__()
-            self.id = Decimal16()
-            self.name = String(10)
-
-
-Declare a array in a mapper by calling the array element constructor.
+Define a array in a template by calling the array element constructor.
 
 .. code-block:: python
 
-    # Structure declaration
+    # Template
     class EntryList(Structure):
 
         def __init__(self):
             super().__init__()
             self.length = Decimal32()
-            self.entry = Array(Element, 5)  # Array declaration
+            self.entry = Array(Decimal32, 5)  # Array
 
 
-.. _factorized_array:
-
-Declare a array with a array element factory
---------------------------------------------
-
-Define a factory for a array element template.
+Define a array in a template by using a array element instance.
 
 .. code-block:: python
 
-    # Factory for a array element declaration
-    class ElementFactory:
+    # Template
+    class List(Structure):
+
+        def __init__(self):
+            super().__init__()
+            self.length = Decimal32()
+            self.entry = Array(Decimal32(), 5) # Array
+
+
+Define a array in a template by calling a factory class or function.
+
+.. code-block:: python
+
+    # Factory for the array element template
+    class Factory:
         def __init__(self, size):
             self.size = size
 
         def __call__(self):
             return String(size)
 
-
-Declare a array in a mapper by using a array element factory.
-
 .. code-block:: python
 
-    # Structure declaration
+    # Template
     class List(Structure):
 
         def __init__(self):
             super().__init__()
             self.length = Decimal32()
-            self.entry = Array(ElementFactory(10), 5)  # Array declaration
-
-
-Declare a array with a array element instance
----------------------------------------------
-
-Declare a array in mapper by using a array element instance.
-
-.. code-block:: python
-
-    # Structure declaration
-    class List(Structure):
-
-        def __init__(self):
-            super().__init__()
-            self.length = Decimal32()
-            self.entry = Array(String(10), 5)  # Array declaration
+            self.entry = Array(Factory(10), 5)  # Array

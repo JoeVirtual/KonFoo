@@ -69,7 +69,7 @@ def is_pointer(obj):
 def is_mixin(obj):
     return is_container(obj) or is_pointer(obj)
 
-
+# Memory Patch
 Patch = namedtuple('Patch', [
     'buffer',
     'address',
@@ -77,9 +77,9 @@ Patch = namedtuple('Patch', [
     'bit_size',
     'bit_offset',
     'inject'])
-"""The :class:`~collections.namedtuple` `Patch` contains the relevant
-information to patch a memory area of a `data source` accessed via a data
-:class:`Provider` by a :class:`Pointer` field.
+"""The `Patch` contains the relevant information to patch a memory area of a
+`data source` accessed via  a data :class:`Provider` by a :class:`Pointer`
+field.
 
 :param bytes buffer: byte stream for the memory area to patch in the data
     source. The byte stream contains the data of the patch item.
@@ -97,17 +97,17 @@ information to patch a memory area of a `data source` accessed via a data
     memory area of the data source.
 """
 
+# Field Index
 Index = namedtuple('Index', [
     'byte',
     'bit',
     'address',
     'base_address',
     'update'])
-"""The :class:`~collections.namedtuple` `Index` contains the relevant
-information of the location of a `Field` in a byte stream and in a data
-source. The `bytestream` is normally provided by a :class:`Pointer` field.
-The `data source` is normally accessed via a data :class:`Provider` by a
-`Pointer` field.
+"""The `Index` contains the relevant information of the location of a `Field`
+in a byte stream and in a data source. The `bytestream` is normally provided
+by a :class:`Pointer` field. The `data source` is normally accessed via a data
+:class:`Provider` by a :class:`Pointer` field.
 
 :param int byte: byte offset of the `Field` in the byte stream.
 
@@ -376,7 +376,7 @@ class Structure(OrderedDict, Container):
     with the :class:`Container` class and attribute getter and setter for the
     `key`, `value` pairs to access and to assign  the members of a `Structure`
     easier, but this comes with the cost that the dictionary `keys` must be valid
-    python attribute names.
+    Python attribute names.
 
     A `Structure` has additional methods for reading, decoding, encoding and
     viewing binary data:
@@ -407,8 +407,8 @@ class Structure(OrderedDict, Container):
     """
     item_type = ItemClass.Structure
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        super().__init__()
 
     def __getitem__(self, key):
         return super().__getitem__(key)
@@ -439,6 +439,7 @@ class Structure(OrderedDict, Container):
         The `__getattr__` method is only called when the method
         `__getattribute__` raises an `AttributeError` exception.
         """
+        # Namespace check for ordered dictionary attribute
         if name.startswith('_OrderedDict__'):
             return super().__getattribute__(name)
         else:
@@ -451,10 +452,18 @@ class Structure(OrderedDict, Container):
         If the attribute *name* is in the namespace of the `Ordered Dictionary`
         base class then the base class is called instead.
         """
+        # Namespace check for ordered dictionary attribute
         if name.startswith('_OrderedDict__'):
             return super().__setattr__(name, item)
         elif is_any(item):
             self[name] = item
+        # Factory
+        elif callable(item):
+            setitem = item()
+            if is_any(setitem):
+                super().__setitem__(name, setitem)
+            else:
+                raise TypeError(name, item)
         else:
             raise TypeError(name, item)
 
@@ -3788,7 +3797,8 @@ class Pointer(Decimal, Container):
     """A `Pointer` field is an unsigned :class:`Decimal` field with a *size* of
     four bytes and returns its field *value* as a hexadecimal encoded string.
 
-    A `Pointer` field refers absolutely to a `data` object of a data `Provider`.
+    A `Pointer` field refers absolutely to a `data` object of a data
+    :class:`Provider`.
 
     The `Pointer` class extends the :class:`Decimal` field with the
     :class:`Container` class for its referenced *data object*.
@@ -4478,6 +4488,107 @@ class StructurePointer(Pointer):
 
     :param byte_order: coding :class:`Byteorder` of the `data` object
         referenced by the pointer.
+
+    Example:
+
+    >>> pointer = StructurePointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data
+    Structure()
+    >>> pointer.size
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> len(pointer)
+    0
+    >>> [name for name in pointer.keys()]
+    []
+    >>> [member.value for member in pointer.values()]
+    []
+    >>> [(name, member.value) for name, member in pointer.items()]
+    []
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StructurePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StructurePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'class': 'Structure',
+                 'name': 'Structure',
+                 'size': 0,
+                 'type': 'Structure',
+                 'member': []}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': OrderedDict()}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', OrderedDict())])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      StructurePointer(index=Index(byte=0, bit=0,
+                                   address=0, base_address=0,
+                                   update=False),
+                       alignment=(4, 0),
+                       bit_size=32,
+                       value='0xffffffff'))]
+    >>> pprint(pointer.to_list(nested=True))
+    [('StructurePointer.value', '0xffffffff')]
+    >>> pprint(pointer.to_dict(nested=True))
+    OrderedDict([('StructurePointer', OrderedDict([('value', '0xffffffff')]))])
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -5020,7 +5131,7 @@ class StringPointer(StreamPointer):
 
 class RelativePointer(Pointer):
     """A `RelativePointer` field is a :class:`Pointer` field which refers
-    to a `data` object relatively to a base address of a data `Provider`.
+    to a `data` object relatively to a base address of a data :class:`Provider`.
 
     :param template: template for the `data` object referenced by the
         pointer.

@@ -11,7 +11,7 @@
 import enum
 
 
-class Enumeration(enum.Enum):
+class Enumeration(enum.IntEnum):
     """The `Enumeration` class is a subclass from the :class:`~enum.IntEnum` class
     provided by the Python standard module :mod:`enum` and extends its
     base class with methods
@@ -29,22 +29,58 @@ class Enumeration(enum.Enum):
     ...     black = 0x000000
     ...     maroon = 0x080000
     ...     white = 0xffffff
+    >>> Color
+    <enum 'Color'>
+    >>> type(Color.maroon)
+    <enum 'Color'>
+    >>> isinstance(Color, Enumeration)
+    False
+    >>> issubclass(Color, Enumeration)
+    True
+    >>> isinstance(Color.maroon, Color)
+    True
+    >>> print(Color.maroon)
+    (maroon, 524288)
     >>> str(Color.maroon)
     '(maroon, 524288)'
+    >>> Color.maroon
+    Color.maroon = 524288
     >>> repr(Color.maroon)
     'Color.maroon = 524288'
+    >>> list(Color)
+    [Color.black = 0, Color.maroon = 524288, Color.white = 16777215]
+    >>> [color for color in Color]
+    [Color.black = 0, Color.maroon = 524288, Color.white = 16777215]
+    >>> Color.maroon.name
+    'maroon'
+    >>> Color.maroon.value
+    524288
     >>> Color.maroon.describe()
     ('maroon', 524288)
+    >>> [color.name for color in Color]
+    ['black', 'maroon', 'white']
     >>> Color.names()
     ['black', 'maroon', 'white']
+    >>> [color.value for color in Color]
+    [0, 524288, 16777215]
     >>> Color.values()
     [0, 524288, 16777215]
+    >>> Color['maroon'].value
+    524288
     >>> Color.get_value('maroon')
     524288
+    >>> Color(0).name
+    'black'
     >>> Color.get_name(0)
     'black'
     >>> Color.get_member(0)
     Color.black = 0
+    >>> int(Color.black)
+    0
+    >>> 0 in Color.values()
+    True
+    >>> 'black' in Color.names()
+    True
     """
 
     def __str__(self):
@@ -102,7 +138,7 @@ class Enumeration(enum.Enum):
         >>> Color.names()
         ['black', 'maroon', 'white']
         """
-        return [member[1].name for member in cls.__members__.items()]
+        return [member.name for member in cls]
 
     @classmethod
     def values(cls):
@@ -117,7 +153,7 @@ class Enumeration(enum.Enum):
         >>> Color.values()
         [0, 524288, 16777215]
         """
-        return [member[1].value for member in cls.__members__.items()]
+        return [member.value for member in cls]
 
     @classmethod
     def get_name(cls, value):
@@ -135,9 +171,9 @@ class Enumeration(enum.Enum):
         >>> Color.get_name(0x777777)
         ''
         """
-        for v, n in zip(cls.values(), cls.names()):
-            if v == value:
-                return n
+        for member in cls:
+            if member.value == value:
+                return member.name
         return str()
 
     @classmethod
@@ -156,9 +192,9 @@ class Enumeration(enum.Enum):
         >>> Color.get_value('red')
 
         """
-        for v, n in zip(cls.values(), cls.names()):
-            if n == name:
-                return v
+        for member in cls:
+            if member.name == name:
+                return member.value
         return None
 
     @classmethod
@@ -177,7 +213,7 @@ class Enumeration(enum.Enum):
         >>> Color.get_member(0x777777, None)
 
         """
-        for member in cls.__members__.items():
-            if member[1].value == value:
-                return member[1]
+        for member in cls:
+            if member.value == value:
+                return member
         return default
