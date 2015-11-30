@@ -344,6 +344,14 @@ String Pointer
 .. autoclass:: StringPointer32
    :members:
 
+
+Auto String Pointer
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: AutoStringPointer
+   :members:
+
+
 Relative Pointer
 ================
 
@@ -463,21 +471,20 @@ Categories
 Exceptions
 ==========
 
-.. autoexception:: KonFooException
+.. autoexception:: KonFooError
 
 .. autoexception:: FileError
 
-.. autoexception:: OutOfRange
+.. autoexception:: RangeError
 
-.. autoexception:: InvalidIndex
+.. autoexception:: SizeError
 
-.. autoexception:: InvalidSize
+.. autoexception:: LengthError
 
-.. autoexception:: InvalidLength
+.. autoexception:: AlignmentError
 
-.. autoexception:: BadAligned
+.. autoexception:: OffsetError
 
-.. autoexception:: BadOffset
 
 Utilities
 =========

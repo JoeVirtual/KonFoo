@@ -10,10 +10,11 @@
 
 
 class Provider:
-    """A `Provider` provides access for the :class:`Pointer` classes to read
-    and write byte streams from and to a data *source*. The `Provider` class
-    servers as a meta class. A derived class must implement the two methods
-    :meth:`read` and :meth:`write` for reading and writing byte streams.
+    """A `Provider` class provides access for the :class:`Pointer` class to
+    **read** and **write** byte streams from and back to a data *source*.
+    The `Provider` class servers as a meta class. A derived class must
+    implement the two methods :meth:`read` and :meth:`write` for reading
+    and writing byte streams from and back to the data *source*.
 
     :param source: generic data source.
     """

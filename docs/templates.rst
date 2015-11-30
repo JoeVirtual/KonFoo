@@ -14,10 +14,14 @@ Templates
 
 .. _template_member:
 
-Member
-------
+Members
+-------
 
 
+
+
+Fields
+======
 
 .. _field_byte_order:
 
@@ -45,7 +49,8 @@ Enumerations
 
 
 
+
 .. _blueprint:
 
 Blueprints
-----------
+==========

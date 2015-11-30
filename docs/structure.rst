@@ -11,17 +11,16 @@
 Structure template
 ==================
 
-KonFoo ships with a :class:`Structure` class and many, many :class:`Field`
-classes to declare the mapping part of a *byte stream mapper* in a template.
-The order how you declare the fields in the structure template defines the
-order how the fields are decoded and encoded by the built-in decoding and
-encoding engine.
+KonFoo ships with a :class:`Structure` class and many :class:`Field` classes to
+declare the mapping part of a *byte stream mapper*. The order how you declare the
+fields in the :class:`Structure` defines the order how the fields are decoded and
+encoded by the built-in decoding and encoding engine.
 
-Define a template
------------------
+Define a Structure
+------------------
 
-You can define template :ref:`members <template_member>` by adding them in
-the constructor method of the :class:`Structure` class.
+You can define the :ref:`members <template_member>` of a :class:`Structure`
+by adding them in the constructor method of the :class:`Structure` class.
 
 .. code-block:: python
 
@@ -42,12 +41,14 @@ the constructor method of the :class:`Structure` class.
     will be raised when decoding or encoding an incomplete template declaration.
 
 
-Align fields in a template
---------------------------
+Align fields in a Structure
+---------------------------
 
-You can define a template with aligned fields.
+You can :ref:`align <field_alignment>` consecutive fields in a :class:`Structure`
+to each other by using the ``align_to`` parameter of the :class:`Field` class.
 
 .. code-block:: python
+   :emphasize-lines: 6-9
 
     # Structure template
     class Identifier(Structure):
@@ -67,6 +68,7 @@ Re-use a template
 You can re-use a template in other templates.
 
 .. code-block:: python
+    :emphasize-lines: 6
 
     # Structure template
     class Header(Structure):
@@ -83,9 +85,11 @@ Parametrize a template
 
 You can define a template with arguments.
 
+.. code-block:: python
+    :emphasize-lines: 6
+
     >>> # Template with arguments
     >>> class Parametrized(Structure):
-    ...
     ...     def __init__(self, arg, *args, **kwargs):
     ...         super().__init__()
     ...         self.field = arg
@@ -111,7 +115,6 @@ in this case you assign the class constructor of the **factory** or the
 instead of the class constructor of the template.
 
     >>> class Parametrized(Structure):
-    ...
     ...     def __init__(self, arg, *args, **kwargs):
     ...         super().__init__()
     ...         self.field = arg
@@ -157,7 +160,7 @@ instead of the class constructor of the template.
 Declare a template on the fly
 -----------------------------
 
-Declare a template on the fly.
+You can **declare** a template on the fly.
 
     >>> structure = Structure()
     >>> structure.version = Byte()
@@ -172,7 +175,7 @@ Declare a template on the fly.
      'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
      'module': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
 
-Nesting of templates on the fly.
+You can **nest** templates on the fly.
 
     >>> structure = Structure()
     >>> structure.type = Structure()
@@ -189,7 +192,8 @@ Nesting of templates on the fly.
      ('Structure.size', 0)]
 
 
-Declare a template with aligned fields on the fly.
+You can declare a template with :ref:`aligned <field_alignment>` fields
+on the fly.
 
     >>> structure = Structure()
     >>> structure.version = Byte(4)
@@ -205,7 +209,7 @@ Declare a template with aligned fields on the fly.
      'module': Index(byte=0, bit=24, address=0, base_address=0, update=False)}
 
 
-Re-use a declared template on the fly.
+You can **re-use** a declared template on the fly in other templates on the fly.
 
     >>> reuse = Structure()
     >>> reuse.type = structure  # re-used template
@@ -218,11 +222,10 @@ Re-use a declared template on the fly.
      ('Structure.size', 0)]
 
 
+View a template
+---------------
 
-View of a template
-------------------
-
-View of a template.
+You can **view** a template with
 
     >>> structure = Structure()
     >>> structure.version = Byte()
@@ -258,7 +261,8 @@ View of a template.
 Blueprint of a template
 -----------------------
 
-Blueprint of a template.
+You can get the :ref:`blueprint <blueprint>` of a template by calling the
+method :meth:`~Structure.blueprint`.
 
     >>> pprint(structure.blueprint())
     {'class': 'Structure',
@@ -318,8 +322,9 @@ Blueprint of a template.
 Length of a template
 --------------------
 
-Get the length of the template as a tuple in the form of
-``(number of bytes, remaining bits)``.
+You can get the **length** of the template as a tuple in the form of
+``(number of bytes, remaining bits)`` by calling the method
+:meth:`~Structure.field_length`.
 
     >>> structure.field_length()
     (4, 0)
@@ -333,7 +338,8 @@ Get the length of the template as a tuple in the form of
 Indexing
 --------
 
-Get the byte stream :class:`Index` after the last field of the template.
+You can get the byte stream :class:`Index` after the last :class:`Field`
+of the template by calling the method :meth:`~Structure.next_index`.
 
     >>> structure.next_index()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
@@ -346,7 +352,8 @@ Get the byte stream :class:`Index` after the last field of the template.
 Decoding
 --------
 
-Decode a byte stream with a template.
+You can **decode** a byte stream with a template by calling the method
+:meth:`~Structure.decode`.
 
     >>> bytestream = bytes.fromhex('01020946f00f00')
     >>> structure.decode(bytestream)
@@ -356,7 +363,8 @@ Decode a byte stream with a template.
 Encoding
 --------
 
-Encode a byte stream with a template.
+You can **encode** a byte stream with a template by calling the method
+:meth:`~Structure.encode`.
 
     >>> bytestream = bytearray()
     >>> bytestream
@@ -370,7 +378,8 @@ Encode a byte stream with a template.
 Accessing a member
 ------------------
 
-Accessing a member in a template.
+You can **access** a :ref:`member <template_member>` in a template with its
+name.
 
     >>> structure.version # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -383,7 +392,8 @@ Accessing a member in a template.
          bit_size=8,
          value='0x1')
 
-Accessing :class:`Field` properties of a member in a template.
+You can **access** the :class:`Field` properties of a :ref:`member
+<template_member>` in a template with the property names.
 
     >>> structure.version.name
     'Byte'
@@ -434,12 +444,14 @@ Accessing :class:`Field` properties of a member in a template.
 Iterating over members
 ----------------------
 
-Iterating over the member names of a template.
+You can **iterate** over the :ref:`member <template_member>` names
+of a template.
 
     >>> [key for key in structure.keys()]
     ['version', 'id', 'length', 'module']
 
-Iterating over all kind of member item types of a template.
+You can **iterate** over all kind of :ref:`member <template_member>` items
+of a template.
 
     >>> pprint([(key, value.item_type) for key, value in structure.items()])
     [('version', ItemClass.Byte = 42),
@@ -447,7 +459,8 @@ Iterating over all kind of member item types of a template.
      ('length', ItemClass.Decimal = 40),
      ('module', ItemClass.Char = 43)]
 
-Iterating over all members of a template.
+You can **iterate** over all :ref:`members <template_member>`
+of a template.
 
     >>> pprint([value.item_type for value in structure.values()])
     [ItemClass.Byte = 42,
@@ -455,7 +468,7 @@ Iterating over all members of a template.
      ItemClass.Decimal = 40,
      ItemClass.Char = 43]
 
-Iterating over field members of a template.
+You can **iterate** over :class:`Field` members of a template.
 
     >>> [value.name for value in structure.values() if is_field(value)]
     ['Byte', 'Unsigned8', 'Decimal8', 'Char']
@@ -465,7 +478,8 @@ Iterating over field members of a template.
 List fields
 -----------
 
-List all field items in the template as a **flat** list.
+You can list all :class:`Field` items in the template as a **flat** list
+by calling the method :meth:`~Structure.field_items`.
 
     >>> pprint(structure.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('version',
@@ -493,8 +507,9 @@ List all field items in the template as a **flat** list.
 List field indexes
 ------------------
 
-List the :class:`Index` of each field in the template as a **nested** ordered
-dictionary.
+You can list the :class:`Index` of each :class:`Field` in the template as a
+**nested** ordered dictionary by calling the method
+:meth:`~Structure.field_indexes`.
 
     >>> pprint(structure.field_indexes())
     {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -506,7 +521,9 @@ dictionary.
 List field types
 ----------------
 
-List the type of each field in the template as a **nested** ordered dictionary.
+You can list the **types** of each :class:`Field` in the template as a
+**nested** ordered dictionary by calling the method
+:meth:`~Structure.field_types`.
 
     >>> pprint(structure.field_types())
     {'version': 'Byte',
@@ -518,7 +535,9 @@ List the type of each field in the template as a **nested** ordered dictionary.
 List field values
 -----------------
 
-List the value of each field in the template as a **nested** ordered dictionary.
+You can list the **values** of each :class:`Field` in the template as a
+**nested** ordered dictionary by calling the method
+:meth:`~Structure.field_values`.
 
     >>> pprint(structure.field_values())
     {'version': '0x1',
@@ -526,7 +545,9 @@ List the value of each field in the template as a **nested** ordered dictionary.
      'length': 9,
      'module': 'F'}
 
-List the value of each field in the template as a **flat** list.
+
+You can list the **values** of each :class:`Field` in the template as a
+**flat** list by calling the method :meth:`~Container.to_list`.
 
     >>> pprint(structure.to_list())
     [('Structure.version', '0x1'),
@@ -536,11 +557,12 @@ List the value of each field in the template as a **flat** list.
 
 .. note::
 
-    The class name of the instance is used for the root name as long as no *name*
-    is given.
+    The class name of the instance is used for the root name as long as no
+    *name* is given.
 
 
-List the value of each field in the template as a **flat** ordered dictionary.
+You can list the **values** of each :class:`Field` in the template as a
+**flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 
     >>> pprint(structure.to_dict())
     {'Structure': {'version': '0x1',
@@ -550,27 +572,29 @@ List the value of each field in the template as a **flat** ordered dictionary.
 
 .. note::
 
-    The class name of the instance is used for the root name as long as no *name*
-    is given.
+    The class name of the instance is used for the root name as long as no
+    *name* is given.
 
 
 Save field values
 -----------------
 
-Saves the values of each field in the template to an INI file.
+You can **save** the values of each :class:`Field` in the template to an
+INI file by calling the method :meth:`~Container.save`.
 
     >>> structure.save("_static/structure.ini")
 
 .. note::
 
-    The class name of the instance is used for the section name as long as no *section*
-    is given.
+    The class name of the instance is used for the section name as long as no
+    *section* is given.
 
 
 Load field values
 -----------------
 
-Loads the values of each field in the template from an INI file.
+You can **load** the values of each :class:`Field` in the template from an
+INI file by calling the method :meth:`~Container.load`.
 
     >>> structure.load("_static/structure.ini")
     [Structure]
@@ -581,5 +605,5 @@ Loads the values of each field in the template from an INI file.
 
 .. note::
 
-    The class name of the instance is used for the section name as long as no *section*
-    is given.
+    The class name of the instance is used for the section name as long as no
+    *section* is given.

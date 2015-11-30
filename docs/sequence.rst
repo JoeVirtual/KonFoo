@@ -5,73 +5,19 @@
     from pprint import pprint
     from konfoo import *
 
-.. _array_template:
 
-Array template
-==============
+.. _sequence_template:
 
-KonFoo has a :class:`Array` class to declare ...
+Sequence template
+=================
 
+KonFoo has a :class:`Sequence` class to declare ...
 
-
-.. _array_element:
-
-Array element
--------------
-
-A :class:`Array` element can be any :class:`Field` or :class:`Container` class.
 
 
 Define a template
 -----------------
 
-Define a array in a template by calling the array element constructor.
-
-.. code-block:: python
-
-    # Template
-    class EntryList(Structure):
-
-        def __init__(self):
-            super().__init__()
-            self.length = Decimal32()
-            self.entry = Array(Decimal32, 5)  # Array
-
-
-Define a array in a template by using a array element instance.
-
-.. code-block:: python
-
-    # Template
-    class List(Structure):
-
-        def __init__(self):
-            super().__init__()
-            self.length = Decimal32()
-            self.entry = Array(Decimal32(), 5) # Array
-
-
-Define a array in a template by calling a factory class or function.
-
-.. code-block:: python
-
-    # Factory for the array element template
-    class Factory:
-        def __init__(self, size):
-            self.size = size
-
-        def __call__(self):
-            return String(size)
-
-.. code-block:: python
-
-    # Template
-    class List(Structure):
-
-        def __init__(self):
-            super().__init__()
-            self.length = Decimal32()
-            self.entry = Array(Factory(10), 5)  # Array
 
 
 List fields
@@ -80,7 +26,7 @@ List fields
 You can list all :class:`Field` items in the template as a **flat** list
 by calling the method :meth:`~Sequence.field_items`.
 
-    >>> pprint(array.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    >>> pprint(sequence.field_items()) # doctest: +NORMALIZE_WHITESPACE
     []
 
 
@@ -88,11 +34,10 @@ List field indexes
 ------------------
 
 You can list the :class:`Index` of each :class:`Field` in the template as a
-**nested** ordered dictionary by calling the method
-:meth:`~Sequence.field_indexes`.
+**nested** list by calling the method :meth:`~Sequence.field_indexes`.
 
-    >>> pprint(array.field_indexes())
-    {}
+    >>> pprint(sequence.field_indexes())
+    []
 
 
 List field types
@@ -102,7 +47,7 @@ You can list the **types** of each :class:`Field` in the template as a
 **nested** ordered dictionary by calling the method
 :meth:`~Sequence.field_types`.
 
-    >>> pprint(array.field_types())
+    >>> pprint(sequence.field_types())
     {}
 
 
@@ -114,14 +59,14 @@ You can list the **values** of each :class:`Field` in the template as a
 :meth:`~Sequence.field_values`.
 
 
-    >>> pprint(array.field_values())
-    {}
+    >>> pprint(sequence.field_values())
+    []
 
 
 You can list the **values** of each :class:`Field` in the template as a
 **flat** list by calling the method :meth:`~Container.to_list`.
 
-    >>> pprint(array.to_list())
+    >>> pprint(sequence.to_list())
     []
 
 .. note::
@@ -133,8 +78,8 @@ You can list the **values** of each :class:`Field` in the template as a
 You can list the **values** of each :class:`Field` in the template as a
 **flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 
-    >>> pprint(array.to_dict())
-    {'Array': [] }
+    >>> pprint(sequence.to_dict())
+    {'Sequence': []}
 
 .. note::
 
@@ -148,7 +93,7 @@ Save field values
 You can **save** the values of each :class:`Field` in the template to an
 INI file by calling the method :meth:`~Container.save`.
 
-    >>> array.save("_static/array.ini", nested=True)
+    >>> sequence.save("_static/sequence.ini", nested=True)
 
 .. note::
 
@@ -162,8 +107,8 @@ Load field values
 You can **load** the values of each :class:`Field` in the template from an
 INI file by calling the method :meth:`~Container.load`.
 
-    >>> array.load("_static/array.ini", nested=True)
-    [Array]
+    >>> sequence.load("_static/sequence.ini", nested=True)
+    [Sequence]
 
 
 .. note::

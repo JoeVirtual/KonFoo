@@ -29,7 +29,7 @@ KonFoo in points:
 -   creatable blueprints from a template class
 -   blueprint converter to JSON to visualise templates with `d3js`_.
 
-KonFoo requires Python 3.4 or higher.
+KonFoo runs on `Python 3.4.3 <https://www.python.org/>`_ or higher.
 
 You can get the latest version of KonFoo directly from GitHub:
 
@@ -61,6 +61,7 @@ usage patterns.
    concept
    templates
    structure
+   sequence
    array
    pointer
    reading
@@ -74,7 +75,7 @@ usage patterns.
 API Reference
 -------------
 
-If you are looking for information on a specific function, class, or
+If you are looking for information on a specific function, class or
 method, this part of the documentation is for you.
 
 .. toctree::

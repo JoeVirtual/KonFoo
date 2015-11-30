@@ -11,76 +11,48 @@
 from .enums import Enumeration
 
 
-class ExitCodes(Enumeration):
-    Exception = 1
-    FileError = 2
-    RangeError = 3
-    IndexError = 4
-    SizeError = 5
-    LengthError = 6
-    AlignmentError = 7
-    OffsetError = 8
-
-
-class KonFooException(Exception):
+class KonFooError(Exception):
     """An exception that KonF'00' can handle and show to the user."""
-
-    #: The exit code for this exception
-    exit_code = ExitCodes.Exception
     pass
 
 
-class FileError(KonFooException):
+class FileError(KonFooError):
     """
 
     """
-    exit_code = ExitCodes.FileError
     pass
 
 
-class OutOfRange(KonFooException):
+class RangeError(KonFooError):
     """
 
     """
-    exit_code = ExitCodes.RangeError
     pass
 
 
-class InvalidIndex(KonFooException):
+class SizeError(KonFooError):
     """
 
     """
-    exit_code = ExitCodes.IndexError
     pass
 
 
-class InvalidSize(KonFooException):
+class LengthError(KonFooError):
     """
 
     """
-    exit_code = ExitCodes.SizeError
     pass
 
 
-class InvalidLength(KonFooException):
+class AlignmentError(KonFooError):
     """
 
     """
-    exit_code = ExitCodes.LengthError
     pass
 
 
-class BadAligned(KonFooException):
+class OffsetError(KonFooError):
     """
 
     """
-    exit_code = ExitCodes.AlignmentError
-    pass
-
-
-class BadOffset(KonFooException):
-    """
-
-    """
-    exit_code = ExitCodes.OffsetError
     pass

@@ -22,16 +22,12 @@ import abc
 from pprint import pprint
 
 from konfoo.enums import Enumeration
-
 from konfoo.globals import ItemClass, Byteorder, BYTEORDER, limiter
-
 from konfoo.options import Option, byte_order_option, get_byte_order, \
     nested_option, get_nested, field_types_option, get_field_types, \
     verbose_option, verbose
-
+from konfoo.exceptions import RangeError, SizeError, AlignmentError
 from konfoo.providers import Provider
-
-from konfoo.exceptions import OutOfRange, InvalidSize, BadAligned
 
 
 def is_any(obj):
@@ -69,6 +65,7 @@ def is_pointer(obj):
 def is_mixin(obj):
     return is_container(obj) or is_pointer(obj)
 
+
 # Memory Patch
 Patch = namedtuple('Patch', [
     'buffer',
@@ -77,8 +74,8 @@ Patch = namedtuple('Patch', [
     'bit_size',
     'bit_offset',
     'inject'])
-"""The `Patch` contains the relevant information to patch a memory area of a
-`data source` accessed via  a data :class:`Provider` by a :class:`Pointer`
+"""The `Patch` class contains the relevant information to patch a memory area
+of a `data source` accessed via a data :class:`Provider` by a :class:`Pointer`
 field.
 
 :param bytes buffer: byte stream for the memory area to patch in the data
@@ -104,10 +101,10 @@ Index = namedtuple('Index', [
     'address',
     'base_address',
     'update'])
-"""The `Index` contains the relevant information of the location of a `Field`
-in a byte stream and in a data source. The `bytestream` is normally provided
-by a :class:`Pointer` field. The `data source` is normally accessed via a data
-:class:`Provider` by a :class:`Pointer` field.
+"""The `Index` class contains the relevant information of the location of a
+:class:`Field` in a `byte stream` and in a `data source`. The `byte stream` is
+normally provided by a :class:`Pointer` field. The `data source` is normally
+accessed via a data :class:`Provider` by a :class:`Pointer` field.
 
 :param int byte: byte offset of the `Field` in the byte stream.
 
@@ -126,23 +123,25 @@ def zero():
 
 
 class Container(metaclass=abc.ABCMeta):
-    """The abstract `Container` class is a meta class for all classes which
-    can contain `Field` items. Container classes are `Structures`, `Sequences`,
-    `Arrays` and `Pointers`.
+    """The `Container` class is a meta class for all classes which
+    can contain :class:`Field` items. Container classes are :class:`Structures
+    <Structure>`, :class:`Sequences <Sequence>`, :class:`Arrays <Array>` and
+    :class:`Pointers <Pointer>`.
 
-    The `Container` class provides core features to save, load and view the
-    values of the `Field` items in a container class.
+    The `Container` class provides core features to **save**, to **load** and
+    to **view** the *values* of the :class:`Field` items in a `Container` class.
     """
 
     def field_items(self, root=str(), **options):
-        """Returns a **flat** list which contains tuples in the form of
-        ``(path, item)`` for each `Field` of a `Container`.
+        """Returns a **flat** list which contains the ``(path, item)`` tuples
+        for each :class:`Field` in the `Container`.
 
         :param str root: root path.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` objects of all `Pointer` fields of a `Container` list their
-            *nested* `data` object fields as well (chained method call).
+            `data` objects of all :class:`Pointer` fields of a `Container`
+            list their  *nested* `data` object fields as well
+            (chained method call).
 
         .. note::
 
@@ -154,8 +153,8 @@ class Container(metaclass=abc.ABCMeta):
     @field_types_option()
     def to_list(self, name=str(), **options):
         """Returns a **flat** list which contains tuples in the form of
-        ``(path, value)`` or ``(path, type, value)`` for each `Field` of a
-        `Container`.
+        ``(path, value)`` or ``(path, type, value)`` for each :class:`Field`
+        in the `Container`.
 
         The type entry of the tuple is optional.
 
@@ -166,10 +165,10 @@ class Container(metaclass=abc.ABCMeta):
             `Container` lists their *nested* `data` object fields as well
             (chained method call).
 
-        :keyword bool field_types: if `True` the type of the `Field` is
-            inserted into the tuple.
+        :keyword bool field_types: if `True` the type of the :class:`Field`
+            is inserted into the tuple.
         """
-        # Name of the `Container`
+        # Name of the Container
         root = name if name else self.__class__.__name__
 
         fields = list()
@@ -190,7 +189,8 @@ class Container(metaclass=abc.ABCMeta):
     @field_types_option()
     def to_dict(self, name=str(), **options):
         """Returns a **flat** :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the `path`, `value` pairs for each `Field` of a `Container`.
+        which contains the ``{'path': value}`` or ``{'path|type': value}`` pairs
+        for each :class:`Field` in the `Container`.
 
         :param str name: name of the `Container`.
             Default is the class name of the instance.
@@ -199,9 +199,10 @@ class Container(metaclass=abc.ABCMeta):
             `Container` lists their *nested* `data` object fields as well
             (chained method call).
 
-        :keyword bool field_types: if `True` the type of the `Field` is
-            append to the end of the path string with '|' as separator.
+        :keyword bool field_types: if `True` the type of the :class:`Field`
+            is append to the end of the path string with '|' as delimiter.
         """
+        # Name of the Container
         root = name if name else self.__class__.__name__
 
         fields = OrderedDict()
@@ -220,22 +221,24 @@ class Container(metaclass=abc.ABCMeta):
     @field_types_option()
     @verbose_option(True)
     def load(self, file, section=str(), **options):
-        """Loads the `Field` values of a `Container` from an *INI file*.
+        """Loads the *values* of the :class:`Field`'s in the `Container` from
+        an INI *file*.
 
-        :param str file: name and location of the *INI file*.
+        :param str file: name and location of the INI *file*.
 
-        :param str section: section in the INI *file* to look for the `Field`
-            values of a `Container`. If no *section* is specified the class
-            name of the instance is used.
+        :param str section: section in the INI *file* to look for the
+            :class:`Field` values of a `Container`. If no *section* is
+            specified the class name of the instance is used.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
             `Container` load their *nested* `data` object fields as well
             (chained method call).
 
-        :keyword bool field_types: if `True` the type of the `Field` is
-            append to the end of the path string with '|' as separator.
+        :keyword bool field_types: if `True` the type of the :class:`Field`
+            is append to the end of the path string with '|' as delimiter.
 
-        :keyword bool verbose: if `True` the loading is executed in verbose mode.
+        :keyword bool verbose: if `True` the loading is executed in verbose
+            mode.
 
         File `foo.ini`:
 
@@ -286,16 +289,16 @@ class Container(metaclass=abc.ABCMeta):
                     option += '|' + field.name + str((byte, bit))
 
                 if parser.has_option(section, option):
-                    # Bool field
+                    # Bool fields
                     if field.is_bool():
                         field.value = parser.getboolean(section, option)
-                    # Float field
+                    # Float fields
                     elif field.is_float():
                         field.value = parser.getfloat(section, option)
-                    # String field
+                    # String fields
                     elif field.is_string():
                         field.value = parser.get(section, option)
-                    # Stream field
+                    # Stream fields
                     elif field.is_stream():
                         value = parser.get(section, option)
                         stream = unhexlify(value.replace("b'", '').
@@ -305,7 +308,7 @@ class Container(metaclass=abc.ABCMeta):
                         if not len(field):
                             field.resize(len(stream))
                         field.value = stream
-                    # Decimal field
+                    # Decimal fields
                     else:
                         field.value = parser.get(section, option)
                     verbose(options, "{0}.{1} = {2}".format(section, option, field.value))
@@ -315,20 +318,21 @@ class Container(metaclass=abc.ABCMeta):
     @nested_option()
     @field_types_option()
     def save(self, file, section=str(), **options):
-        """Saves the `Field` values of a `Container` to a *INI file*.
+        """Saves the *values* of the :class:`Field`'s in the `Container` to
+        an INI *file*.
 
-        :param str file: name and location of the *INI file*.
+        :param str file: name and location of the INI *file*.
 
-        :param str section: section in the INI file to look for the `Field`
-            values of a `Container`. If no *section* is specified the class
-            name of the instance is used.
+        :param str section: section in the INI file to look for the
+            :class:`Field` values of a `Container`. If no *section* is
+            specified the class name of the instance is used.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
             `Container` saves their *nested* `data` object fields as well
             (chained method call).
 
-        :keyword bool field_types: if `True` the type of the `Field` is
-            appended to its path string with the '|' sign as separator.
+        :keyword bool field_types: if `True` the type of the :class:`Field`
+            is appended to its path string with the '|' sign as delimiter.
 
         Example:
 
@@ -366,44 +370,43 @@ class Container(metaclass=abc.ABCMeta):
 
 class Structure(OrderedDict, Container):
     """A `Structure` is an :class:`ordered dictionary <collections.OrderedDict>`
-    whereby the dictionary `key` describes the name of a member of the
-    `Structure` and the `value` of a dictionary `key` describes the type of
-    a member of the `Structure`. Allowed members are `Structure`, `Sequence`,
-    `Array` or `Field` instances.
+    whereby the dictionary `key` describes the *name* of a `member` of the
+    `Structure` and the `value` of a dictionary `key` describes the *type* of
+    a `member` of the `Structure`. Allowed members are :class:`Structure`,
+    :class:`Sequence`, :class:`Array` or :class:`Field` instances.
 
     The `Structure` class extends the :class:`ordered dictionary
     <collections.OrderedDict>` from the Python standard module :mod:`collections`
     with the :class:`Container` class and attribute getter and setter for the
-    `key`, `value` pairs to access and to assign  the members of a `Structure`
+    ``{'key': value}`` pairs to access and to assign  the members of a `Structure`
     easier, but this comes with the cost that the dictionary `keys` must be valid
     Python attribute names.
 
     A `Structure` has additional methods for reading, decoding, encoding and
     viewing binary data:
 
-    *   **Read** from a `Provider` the necessary bytes for each `data`
-        object referenced by the `Pointer` fields in a `Structure`
+    *   **Read** from a :class:`Provider` the necessary bytes for each `data`
+        object referenced by the :class:`Pointer` fields in a `Structure`
         via :meth:`read_from()`.
-    *   **Decode** the *field values* of a `Structure` from a byte stream
-        via :meth:`decode()`.
-    *   **Encode** the *field values* of a `Structure` to a byte stream
-        via :meth:`encode()`.
-    *   Get the **next index** after the last *field* of a `Structure`
-        via :meth:`next_index()`.
-    *   Get the **first field** of a `Structure`
+    *   **Decode** the :class:`Field` values of the `Structure` from a
+        byte stream via :meth:`decode()`.
+    *   **Encode** the :class:`Field` values of the `Structure` to a
+        byte stream via :meth:`encode()`.
+    *   Get the **next** :class:`Index` after the last :class:`Field` of the
+        `Structure` via :meth:`next_index()`.
+    *   Get the **first** :class:`Field` of the `Structure`
         via :meth:`first_field()`.
-    *   Get the accumulated **length** of all *fields* in a `Structure`
-        via :meth:`field_length()`.
-    *   View the **index** for each *field* in a `Structure`
+    *   Get the accumulated **length** of all :class:`Field`'s in the
+        `Structure` via :meth:`field_length()`.
+    *   View the **index** for each :class:`Field` in the `Structure`
         via :meth:`field_indexes()`.
-    *   View the **type** for each *field* in a `Structure`
+    *   View the **type** for each :class:`Field` in the `Structure`
         via :meth:`field_types()`.
-    *   View the **value** for each *field* in a `Structure`
+    *   View the **value** for each :class:`Field` in the `Structure`
         via :meth:`field_values()`.
-    *   List the **item** and its path for each *field* in a `Structure`
+    *   List the **item** and its path for each :class:`Field` in the `Structure`
         as a flat list via :meth:`field_items()`.
-    *   Get a **blueprint** of a `Structure` and its items
-        via :meth:`blueprint()`.
+    *   Get a **blueprint** of the `Structure` via :meth:`blueprint()`.
     """
     item_type = ItemClass.Structure
 
@@ -430,7 +433,7 @@ class Structure(OrderedDict, Container):
             raise TypeError(name, item)
 
     def __getattr__(self, name):
-        """Returns the field of the `Structure` member whose dictionary key
+        """Returns the :class:`Field` of the `Structure` member whose dictionary key
         is equal to the *name*.
 
         If the attribute *name* is in the namespace of the `Ordered Dictionary`
@@ -469,17 +472,17 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def read_from(self, provider, **options):
-        """All `Pointer` fields of a `Structure` read the necessary amount of
-        bytes from the data *provider* for their *nested* `data` object fields.
-        Null pointer will be ignored.
+        """All :class:`Pointer` fields of the `Structure` read the necessary
+        amount of bytes from the data :class:`Provider` for their *nested*
+        :attr:`~Pointer.data` object fields. Null pointer are ignored.
 
         :param provider: data :class:`Provider`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` objects of all `Pointer` fields of a `Structure` reads their
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the `data`
+            objects of all :class:`Pointer` fields of the `Structure` reads their
             *nested* `data` object fields as well (chained method call).
-            A `Pointer` field stores the bytes for the *nested* `data` object
-            in its own `bytestream`.
+            Each :class:`Pointer` field stores the bytes for its *nested*
+            :attr:`~Pointer.data` object in its own :attr:`~Pointer.bytestream`.
         """
         for item in self.values():
             # Container or Pointer
@@ -491,25 +494,25 @@ class Structure(OrderedDict, Container):
     def decode(self, buffer=bytes(), index=zero(), **options):
         """Decodes sequential bytes from a *buffer* starting at the begin
         of the *buffer* or with a given *index* by mapping the bytes to the
-        `Fields` of a `Structure` in accordance with the decoding `Byteorder`
-        of the *buffer* and the `Field`.
+        :class:`Field`'s of the `Structure` in accordance with the decoding
+        *byte order* of the *buffer* and the :class:`Field`.
 
-        A specific coding byte order of a `Field` overrules the decoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of a :class:`Field` overrules the
+        decoding *byte order* of the *buffer*.
 
-        Returns the :class:`Index` of the *buffer* after the last `Field`
-        of the `Structure`.
+        Returns the :class:`Index` of the *buffer* after the last
+        :class:`Field` of the `Structure`.
 
-        Optional the decoding of the `data` objects of all `Pointer` fields
-        of a `Structure` can be enabled.
+        Optional the decoding of the *nested* :attr:`~Pointer.data` objects
+        of all :class:`Pointer` fields of the `Structure` can be enabled.
 
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
             `Structure` decodes their *nested* `data` object fields as well
             (chained method call).
-            A `Pointer` field uses for the decoding of the *nested* `data`
-            object its own `bytestream`.
+            Each :class:`Pointer` field uses for the decoding of its *nested*
+            :attr:`~Pointer.data` object its own :attr:`~Pointer.bytestream`.
         """
         for item in self.values():
             index = item.decode(buffer, index, **options)
@@ -519,26 +522,26 @@ class Structure(OrderedDict, Container):
     @nested_option()
     def encode(self, buffer=bytearray(), index=zero(), **options):
         """Encodes sequential bytes to a *buffer* starting at the begin of
-        the *buffer* or with a given *index* by mapping the values of the
-        `Fields` of a `Structure` to the bytes in accordance with the
-        encoding `Byteorder` of the *buffer* and the `Field`.
+        the *buffer* or with a given *index* by mapping the *values* of the
+        :class:`Field`'s of the `Structure` to the bytes in accordance with
+        the encoding *byte order* of the *buffer* and the :class:`Field`.
 
-        A specific coding byte order of a `Field` overrules the encoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of a :class:`Field` overrules the
+        encoding *byte order* of the *buffer*.
 
-        Returns the :class:`Index` of the *buffer* after the last `Field`
-        of the `Structure`.
+        Returns the :class:`Index` of the *buffer* after the last
+        :class:`Field` of the `Structure`.
 
-        Optional the encoding of the *nested* `data` objects of all `Pointer`
-        fields of a `Structure` can be enabled.
+        Optional the encoding of the *nested* :attr:`~Pointer.data` objects
+        of all :class:`Pointer` fields of the `Structure` can be enabled.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields of the
             `Structure` encodes their *nested* `data` object fields as well
             (chained method call).
-            A `Pointer` field uses for the encoding of the *nested* `data`
-            object its own `bytestream`.
+            Each :class:`Pointer` field uses for the encoding of its *nested*
+            :attr:`~Pointer.data` object its own :attr:`~Pointer.bytestream`.
         """
         for item in self.values():
             index = item.encode(buffer, index, **options)
@@ -546,11 +549,13 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def next_index(self, index=zero(), **options):
-        """Returns the :class:`Index` after the last `Field` of a `Structure`.
+        """Returns the :class:`Index` after the last :class:`Field`
+        of the `Structure`.
 
-        :param index: :class:`Index` for the first `Field` of a `Structure`.
+        :param index: :class:`Index` of the first :class:`Field`
+            of the `Structure`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields of the
             `Structure` indexes their *nested* `data` object fields as well
             (chained method call).
         """
@@ -570,8 +575,8 @@ class Structure(OrderedDict, Container):
         return index
 
     def first_field(self):
-        """Returns the first field of a `Structure` or `None` for an empty
-        `Structure`.
+        """Returns the first :class:`Field` of the `Structure` or `None` for
+        an empty `Structure`.
         """
         for item in self.values():
             # Container
@@ -588,7 +593,7 @@ class Structure(OrderedDict, Container):
         return None
 
     def field_length(self):
-        """Returns the length of a `Structure` as a tuple in the form of
+        """Returns the length of the `Structure` as a tuple in the form of
         ``(number of bytes, remaining number of bits)``.
         """
         length = 0
@@ -607,12 +612,12 @@ class Structure(OrderedDict, Container):
     @nested_option()
     def field_indexes(self, index=zero(), **options):
         """Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the `name`, `index` pairs for each `Field` of the
-        `Structure`.
+        which contains the ``{'name': index}`` pairs for each :class:`Field`
+        of the `Structure`.
 
         :param index: optional start :class:`Index` of the `Structure`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields of the
             `Structure` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -637,10 +642,10 @@ class Structure(OrderedDict, Container):
     @nested_option()
     def field_types(self, **options):
         """Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the `name`, `type` pairs for each `Field` of a
-        `Structure`.
+        which contains the ``{'name': type}`` pairs for each :class:`Field`
+        of the `Structure`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields of the
             `Structure` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -662,10 +667,10 @@ class Structure(OrderedDict, Container):
     @nested_option()
     def field_values(self, **options):
         """Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the `name`, `value` pairs for each `Field` of a
-        `Structure`.
+        which contains the ``{'name': value}`` pairs for each :class:`Field`
+        of the `Structure`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields of the
             `Structure` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -686,14 +691,15 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def field_items(self, root=None, **options):
-        """Returns a **flat** list which contains tuples in the form of
-        ``(path, item)`` for each `Field` of a `Structure`.
+        """Returns a **flat** list which contains the ``(path, item)`` tuples
+        for each :class:`Field` of the `Structure`.
 
         :param str root: root path.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` objects of all `Pointer` fields of a `Structure` list their
-            *nested* `data` object fields as well (chained method call).
+            `data` objects of all :class:`Pointer` fields of the `Structure`
+            list their *nested* `data` object fields as well
+            (chained method call).
         """
         base = root if root else str()
 
@@ -717,7 +723,7 @@ class Structure(OrderedDict, Container):
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
-        """Returns the blue print of a `Structure` as an
+        """Returns the **blueprint** of the `Structure` as an
         :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
@@ -734,7 +740,7 @@ class Structure(OrderedDict, Container):
 
         :param str name: optional name for the `Structure`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields of the
             `Structure` lists their *nested* `data` object fields as well
             (chained method call). Default is `True`.
         """
@@ -766,61 +772,55 @@ class Sequence(MutableSequence, Container):
 
     A `Sequence` is:
 
-    *   *containable*: ``item in self`` returns `True` if *item* is part
-        of the `Sequence`.
+    *   *containable*: ``item in self`` returns `True` if *item* is in the
+        `Sequence`.
     *   *sized*: ``len(self)`` returns the number of items in the `Sequence`.
     *   *subscriptable* ``self[index]`` returns the *item* at the *index*
         of the `Sequence`.
-    *   *iterable* ``iter(self)`` iterates over the *items* of the `Sequence`
+    *   *iterable* ``iter(self)`` iterates over the *items* in the `Sequence`
 
     A `Sequence` supports the usual methods:
 
-    *   **Append** a item to a `Sequence`
-        via :meth:`append()`.
-    *   **Insert** a item before the *index* into a `Sequence`
+    *   **Append** an item to the `Sequence` via :meth:`append()`.
+    *   **Insert** an item before the *index* into the `Sequence`
         via :meth:`insert()`.
-    *   **Extend** a `Sequence` with items
-        via :meth:`extend()`.
-    *   **Clear** a `Sequence`
-        via :meth:`clear()`.
-    *   **Pop** a item with the *index* from a `Sequence`
-        via :meth:`pop()`.
-    *   **Remove**  the first occurrence of an *item* from a `Sequence`
+    *   **Extend** the `Sequence` with items via :meth:`extend()`.
+    *   **Clear** the `Sequence` via :meth:`clear()`.
+    *   **Pop** an item with the *index* from the `Sequence` via :meth:`pop()`.
+    *   **Remove** the first occurrence of an *item* from the `Sequence`
         via :meth:`remove()`.
-    *   **Reverse** all items in a `Sequence`
-        via :meth:`reverse()`.
+    *   **Reverse** all items in the `Sequence` via :meth:`reverse()`.
 
     A `Sequence` has additional methods for reading, decoding, encoding and
     viewing binary data:
 
-    *   **Read** from a `Provider` the necessary bytes for each `data`
-        object referenced by the `Pointer` fields in a `Sequence`
+    *   **Read** from a :class:`Provider` the necessary bytes for each `data`
+        object referenced by the :class:`Pointer` fields in the `Sequence`
         via :meth:`read_from()`.
-    *   **Decode** the *field values* of a `Sequence` from a byte stream
+    *   **Decode** the :class:`Field` values in the `Sequence` from a byte stream
         via :meth:`decode()`.
-    *   **Encode** the *field values* of a `Sequence` to a byte stream
+    *   **Encode** the :class:`Field` values in the `Sequence` to a byte stream
         via :meth:`encode()`.
-    *   Get the **next index** after the last *field* of a `Sequence`
-        via :meth:`next_index()`.
-    *   Get the **first field** of a `Sequence`
-        via :meth:`first_field()`.
-    *   Get the accumulated **length** of all *fields* in a `Sequence`
+    *   Get the **next** :class:`Index` after the last :class:`Field` in the
+        `Sequence` via :meth:`next_index()`.
+    *   Get the **first** :class:`Field` in the `Sequence` via
+        :meth:`first_field()`.
+    *   Get the accumulated **length** of all :class:`Field`'s in a `Sequence`
         via :meth:`field_length()`.
-    *   View the **index** for each *field* in a `Sequence`
+    *   View the **index** for each :class:`Field` in the `Sequence`
         via :meth:`field_indexes()`.
-    *   View the **type** for each *field* in a `Sequence`
+    *   View the **type** for each :class:`Field` in the `Sequence`
         via :meth:`field_types()`.
-    *   View the **value** for each *field* in a `Sequence`
+    *   View the **value** for each :class:`Field` in the `Sequence`
         via :meth:`field_values()`.
-    *   List the **item** and its path for each *field* in a `Sequence`
+    *   List the **item** and its path for each :class:`Field` in the `Sequence`
         as a flat list via :meth:`field_items()`.
-    *   Get a **blueprint** of a `Sequence` and its items
-        via :meth:`blueprint()`.
+    *   Get a **blueprint** of the `Sequence` via :meth:`blueprint()`.
 
-    :param iterable: any *iterable* that contains items of `Structure`,
-        `Sequence`, `Array` or `Field` instances. If the *iterable* is one
-        of these instances itself then the *iterable* itself is appended
-        to the `Sequence`.
+    :param iterable: any *iterable* that contains items of :class:`Structure`,
+        :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
+        *iterable* is one of these instances itself then the *iterable* itself
+        is appended to the `Sequence`.
     """
 
     item_type = ItemClass.Sequence
@@ -868,7 +868,8 @@ class Sequence(MutableSequence, Container):
     def append(self, item):
         """Appends the *item* to the end of the `Sequence`.
 
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         if not is_any(item):
             raise TypeError(item)
@@ -878,7 +879,8 @@ class Sequence(MutableSequence, Container):
         """Inserts the *item* before the *index* into the `Sequence`.
 
         :param int index: `Sequence` index.
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         if not is_any(item):
             raise TypeError(item)
@@ -898,7 +900,8 @@ class Sequence(MutableSequence, Container):
     def remove(self, item):
         """Removes the first occurrence of an *item* from the `Sequence`.
 
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         self._data.remove(item)
 
@@ -909,10 +912,10 @@ class Sequence(MutableSequence, Container):
     def extend(self, iterable):
         """Extends the `Sequence` by appending items from the *iterable*.
 
-        :param iterable: any *iterable* that contains items of `Structure`,
-            `Sequence`, `Array` or `Field` instances. If the *iterable* is one
-            of these instances itself then the *iterable* itself is appended
-            to the `Sequence`.
+        :param iterable: any *iterable* that contains items of :class:`Structure`,
+            :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
+            *iterable* is one of these instances itself then the *iterable* itself
+            is appended to the `Sequence`.
         """
         # Sequence
         if is_sequence(iterable):
@@ -929,17 +932,17 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def read_from(self, provider, **options):
-        """All `Pointer` fields of a `Sequence` read the necessary amount of
-        bytes from the data *provider* for their *nested* `data` object fields.
-        Null pointer will be ignored.
+        """All :class:`Pointer` fields in the `Sequence` read the necessary
+        amount of bytes from the data :class:`Provider` for their *nested*
+        :attr:`~Pointer.data` object fields. Null pointer are ignored.
 
         :param provider: data :class:`Provider`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` objects of all `Pointer` fields of a `Sequence` reads their
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the `data`
+            objects of all :class:`Pointer` fields in the `Sequence`  reads their
             *nested* `data` object fields as well (chained method call).
-            A `Pointer` field stores the bytes for the *nested* `data` object
-            in its own `bytestream`.
+            Each :class:`Pointer` field stores the bytes for its *nested*
+            :attr:`~Pointer.data` object in its own :attr:`~Pointer.bytestream`.
         """
         for item in iter(self):
             # Container or Pointer
@@ -949,27 +952,27 @@ class Sequence(MutableSequence, Container):
     @byte_order_option()
     @nested_option()
     def decode(self, buffer=bytes(), index=zero(), **options):
-        """Decodes sequential bytes from a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the bytes to the
-        `Fields` of a `Sequence` in accordance with the decoding `Byteorder`
-        of the *buffer* and the `Field`.
+        """Decodes sequential bytes from a *buffer* starting at the begin of
+        the *buffer* or with a given *index* by mapping the bytes to the
+        :class:`Field`'s in the `Sequence` in accordance with the decoding
+        *byte order* of the *buffer* and the :class:`Field`.
 
-        A specific coding byte order of a `Field` overrules the decoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of a :class:`Field` overrules the
+        decoding *byte order* of the *buffer*.
 
-        Returns the :class:`Index` of the *buffer* after the last `Field`
-        of the `Sequence`.
+        Returns the :class:`Index` of the *buffer* after the last
+        :class:`Field` in the `Sequence`.
 
-        Optional the decoding of the *nested* `data` objects of all `Pointer`
-        fields of a `Sequence` can be enabled.
+        Optional the decoding of the *nested* :attr:`~Pointer.data` objects
+        of all :class:`Pointer` fields in the `Sequence` can be enabled.
 
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Sequence` decodes their *nested* `data` object fields as well
             (chained method call).
-            A `Pointer` field uses for the decoding of the *nested* `data`
-            object its own `bytestream`.
+            Each :class:`Pointer` field uses for the decoding of its *nested*
+            :attr:`~Pointer.data` object its own :attr:`~Pointer.bytestream`.
         """
         for item in iter(self):
             index = item.decode(buffer, index, **options)
@@ -979,26 +982,26 @@ class Sequence(MutableSequence, Container):
     @nested_option()
     def encode(self, buffer=bytearray(), index=zero(), **options):
         """Encodes sequential bytes to a *buffer* starting at the begin of
-        the *buffer* or with a given *index* by mapping the values of the
-        `Fields` of a `Sequence` to the bytes in accordance with the
-        encoding `Byteorder` of the *buffer* and the `Field`.
+        the *buffer* or with a given *index* by mapping the *values* of the
+        :class:`Field`'s in the `Sequence` to the bytes in accordance with the
+        encoding *byte order* of the *buffer* and the :class:`Field`.
 
-        A specific coding byte order of a `Field` overrules the encoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of a :class:`Field` overrules the
+        encoding *byte order* of the *buffer*.
 
-        Returns the :class:`Index` of the *buffer* after the last `Field`
-        of the `Sequence`.
+        Returns the :class:`Index` of the *buffer* after the last
+        :class:`Field` in the `Sequence`.
 
-        Optional the encoding of the *nested* `data` objects of all `Pointer`
-        fields of a `Sequence` can be enabled.
+        Optional the encoding of the *nested* :attr:`~Pointer.data` objects
+        of all :class:`Pointer` fields in the `Sequence` can be enabled.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Sequence` encodes their *nested* `data` object fields as well
-            (chained method call).
-            A `Pointer` field uses for the encoding of the *nested* `data`
-            object its own `bytestream`.
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `Sequence` encodes their *nested* :attr:`~Pointer.data` object
+            fields as well (chained method call).
+            Each :class:`Pointer` field uses for the encoding of its *nested*
+            :attr:`~Pointer.data` object its own :attr:`~Pointer.bytestream`.
         """
         for item in iter(self):
             index = item.encode(buffer, index, **options)
@@ -1006,11 +1009,13 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def next_index(self, index=zero(), **options):
-        """Returns the :class:`Index` after the last `Field` of a `Sequence`.
+        """Returns the :class:`Index` after the last :class:`Field`
+        in the `Sequence`.
 
-        :param index: :class:`Index` for the first `Field` of a `Sequence`.
+        :param index: :class:`Index` of the first :class:`Field`
+            in the `Sequence`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Sequence` indexes their *nested* `data` object fields as well
             (chained method call).
         """
@@ -1030,8 +1035,8 @@ class Sequence(MutableSequence, Container):
         return index
 
     def first_field(self):
-        """Returns the first field of a `Sequence` or `None` for an empty
-        `Sequence`.
+        """Returns the first :class:`Field` in the `Sequence` or `None` for
+        an empty `Sequence`.
         """
         for item in iter(self):
             # Container
@@ -1048,7 +1053,7 @@ class Sequence(MutableSequence, Container):
         return None
 
     def field_length(self):
-        """Returns the length of a `Sequence` as a tuple in the form of
+        """Returns the length of the `Sequence` as a tuple in the form of
         ``(number of bytes, remaining number of bits)``.
         """
         length = 0
@@ -1067,11 +1072,11 @@ class Sequence(MutableSequence, Container):
     @nested_option()
     def field_indexes(self, index=zero(), **options):
         """Returns a list which contains ``(name, index)`` tuples for each
-        `Field` of a `Sequence`.
+        :class:`Field` in the `Sequence`.
 
         :param index: optional start :class:`Index` of the `Sequence`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Sequence` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -1096,9 +1101,9 @@ class Sequence(MutableSequence, Container):
     @nested_option()
     def field_types(self, **options):
         """Returns a list which contains ``(name, type)`` tuples for each
-        `Field` of a `Sequence`.
+        :class:`Field` in the `Sequence`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Sequence` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -1120,9 +1125,9 @@ class Sequence(MutableSequence, Container):
     @nested_option()
     def field_values(self, **options):
         """Returns a list which contains ``(name, value)`` tuples for each
-        `Field` of a `Sequence`.
+        :class:`Field` in the `Sequence`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Sequence` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -1143,14 +1148,15 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def field_items(self, root=str(), **options):
-        """Returns a **flat** list which contains tuples in the form of
-        ``(path, field)`` for each `Field` of a `Sequence`.
+        """Returns a **flat** list which contains the ``(path, item)`` tuples
+        for each :class:`Field` in the `Sequence`.
 
         :param str root: root path.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` objects of all `Pointer` fields of a `Sequence` list their
-            *nested* `data` object fields as well (chained method call).
+            `data` objects of all :class:`Pointer` fields in the `Sequence`
+            list their *nested* `data` object fields as well
+            (chained method call).
         """
         base = root if root else str()
 
@@ -1174,7 +1180,7 @@ class Sequence(MutableSequence, Container):
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
-        """Returns the blue print of a `Sequence` as an
+        """Returns the **blueprint** of the `Sequence` as an
         :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
@@ -1191,7 +1197,7 @@ class Sequence(MutableSequence, Container):
 
         :param str name: optional name for the `Sequence`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Sequence` lists their *nested* `data` object fields as well
             (chained method call). Default is `True`.
         """
@@ -1226,34 +1232,35 @@ class Sequence(MutableSequence, Container):
 
 class Array(Sequence):
     """A `Array` is a :class:`Sequence` which contains *elements* of one type.
-    The *template* for the `Array` element can be any `Field` instance or a
-    callable which returns a `Structure`, `Sequence`, `Array` or any `Field`
-    instance.
+    The *template* for the `Array` element can be any :class:`Field` instance
+    or a *callable* which returns a :class:`Structure`, :class:`Sequence`,
+    :class:`Array` or any :class:`Field` instance.
 
     The constructor method is necessary to ensure that the internal constructor
     for the `Array` element produces complete copies for each `Array` element
     including the *nested* objects in the *template* for the `Array` element.
 
-    A `Array` of `Pointer` should use a constructor method instead of assigning
-    a `Pointer` instance directly as the `Array` element *template* to ensure
-    that the *nested* `data` object of a `Pointer` is also complete copied for
-    each `Array` element.
+    A `Array` of :class:`Pointer` fields should use a constructor method
+    instead of assigning a :class:`Pointer` field instance directly as the
+    `Array` element *template* to ensure that the *nested* :attr:`~Pointer.data`
+    object of a :class:`Pointer` field is also complete copied for each
+    `Array` element.
 
-    A `Array` adapts and extends a `Sequence` with the following features:
+    A `Array` adapts and extends a :class:`Sequence` with the following
+    features:
 
-    *   **Append** a new `Array` element to a `Array`
-        via :meth:`append()`.
+    *   **Append** a new `Array` element to a `Array` via :meth:`append()`.
     *   **Insert** a new `Array` element before the *index* into a `Array`
         via :meth:`insert()`.
-    *   **Re-size** a `Array`
-        via :meth:`resize()`.
+    *   **Re-size** a `Array` via :meth:`resize()`.
 
-    A `Array` replaces the ``type`` key of the `Blueprint` of a `Sequence` with
-    its own `item` type.
+    A `Array` replaces the ``type`` key of the :attr:`~Sequence.blueprint`
+    of a :class:`Sequence` with its own `item` type.
 
     :param template: template for the `Array` element.
-        The *template* can be any `Field` instance or any *callable* that
-        returns a `Structure`, `Sequence`, `Array` or any `Field` instance.
+        The *template* can be any :class:`Field` instance or any *callable*
+        that returns a :class:`Structure`, :class:`Sequence`, :class:`Array`
+        or any :class:`Field` instance.
 
     :param int size: size of the `Array` in number of `Array` elements.
     """
@@ -1321,9 +1328,9 @@ class Array(Sequence):
 
 
 class Field(metaclass=abc.ABCMeta):
-    """The abstract `Field` class is the meta class for all field classes.
+    """The `Field` class is the meta class for all field classes.
 
-    A `Field` class
+    A `Field` class ...
 
     :param int bit_size: is the *size* of the `Field` in bits,
         can be between *1* and *64*.
@@ -1332,7 +1339,7 @@ class Field(metaclass=abc.ABCMeta):
         can be between *1* and *8*.
 
     :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+        Default is :class:`~Byteorder.auto`.
     """
     item_type = ItemClass.Field
 
@@ -1364,19 +1371,19 @@ class Field(metaclass=abc.ABCMeta):
 
     @property
     def alignment(self):
-        """Field alignment as a tuple in the form of
-        ``(aligns to bytes, bit offset within the aligned bytes)``
+        """Returns the alignment of the `Field` (read-only) as a tuple in the
+        form of ``(aligns to bytes, bit offset within the aligned bytes)``
         """
         return self._align_to_byte_size, self._align_to_bit_offset
 
     @property
     def bit_size(self):
-        """Field size in bits."""
+        """Returns the size of the `Field` in bits (read-only)."""
         return self._bit_size
 
     @property
     def byte_order(self):
-        """Field coding :class:`Byteorder`."""
+        """Coding :class:`Byteorder` of the `Field`."""
         return self._byte_order
 
     @byte_order.setter
@@ -1387,7 +1394,7 @@ class Field(metaclass=abc.ABCMeta):
 
     @property
     def index(self):
-        """Field :class:`Index`."""
+        """:class:`Index` of the `Field`."""
         return self._index
 
     @index.setter
@@ -1407,7 +1414,7 @@ class Field(metaclass=abc.ABCMeta):
         size, offset = self.alignment
         if length > size:
             raise ValueError(value)
-        # Bit field: Check field alignment
+        # Bit field: Check field bit alignment
         if self.is_bit():
             if offset != bit:
                 raise ValueError(value)
@@ -1425,7 +1432,7 @@ class Field(metaclass=abc.ABCMeta):
 
     @property
     def name(self):
-        """Field type."""
+        """Returns the type name of the `Field` (read-only)."""
         return self.item_type.name.capitalize() + str(self.bit_size)
 
     @property
@@ -1475,12 +1482,12 @@ class Field(metaclass=abc.ABCMeta):
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=zero(), **options):
         """Unpacks the bytes and bits from a *buffer* starting at the given
-        *index* by mapping the bytes and bits to the `Field` value in
-        accordance with the decoding `Byteorder` of the *buffer* and the
-        `Field`.
+        *index* by mapping the bytes and bits to the *value*  of the `Field`
+        in accordance with the decoding *byte order* of the *buffer* and
+        the `Field`.
 
-        A specific coding byte order of a `Field` overrules the decoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of a `Field` overrules the decoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Field`.
 
@@ -1495,14 +1502,14 @@ class Field(metaclass=abc.ABCMeta):
     @byte_order_option()
     def pack(self, buffer=bytearray(), **options):
         """Packs the bytes and bits for a *buffer* starting at the *index*
-        of the `Field` by mapping the value of the `Field` to bytes in
-        accordance with the encoding `Byteorder` of the *buffer* and the
+        of the `Field` by mapping the *value* of the `Field` to the bytes in
+        accordance with the encoding *byte order* of the *buffer* and the
         `Field`.
 
-        A specific coding byte order of a `Field` overrules the encoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of a `Field` overrules the encoding
+        *byte order* of the *buffer*.
 
-        Returns the encoded :class:`bytes` for its field value.
+        Returns the encoded :class:`bytes` for its field *value*.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
@@ -1517,23 +1524,23 @@ class Field(metaclass=abc.ABCMeta):
     def decode(self, buffer=bytes(), index=zero(), **options):
         """Decodes sequential bytes from a *buffer* starting at the begin
         of the *buffer* or with a given *index* by mapping the bytes to the
-        value of the `Field` in accordance with the decoding `Byteorder` of
-        the *buffer* and the `Field`.
+        *value* of the `Field` in accordance with the decoding *byte order*
+        of the *buffer* and the `Field`.
 
-        A specific coding byte order of a `Field` overrules the decoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of a `Field` overrules the decoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Field`.
 
-        Optional the decoding of the *nested* `data` object of a `Pointer`
-        field can be enabled.
+        Optional the decoding of the *nested* :attr:`~Pointer.data` object
+        of a :class:`Pointer` field can be enabled.
 
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` a :class:`Pointer` field decodes its
             *nested* `data` object fields as well (chained method call).
-            A `Pointer` field uses for the decoding of the *nested* `data`
-            object its own `bytestream`.
+            Each :class:`Pointer` field uses for the decoding of its *nested*
+            :attr:`~Pointer.data` object its own :attr:`~Pointer.bytestream`.
         """
         self.index = index
         self._value = self.unpack(buffer, index, **options)
@@ -1543,24 +1550,24 @@ class Field(metaclass=abc.ABCMeta):
     @nested_option()
     def encode(self, buffer=bytearray(), index=zero(), **options):
         """Encodes sequential bytes to a *buffer* starting at the begin of
-        the *buffer* or with a given *index* by mapping the value of the
-        `Field` to the bytes in accordance with the encoding `Byteorder` of
-        the *buffer* and the `Field`.
+        the *buffer* or with a given *index* by mapping the *value* of the
+        `Field` to the bytes in accordance with the encoding *byte order*
+        of the *buffer* and the `Field`.
 
-        A specific coding byte order of a `Field` overrules the encoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of a `Field` overrules the encoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Field`.
 
-        Optional the encoding of the *nested* `data` object of a `Pointer`
-        field can be enabled.
+        Optional the encoding of the *nested* :attr:`~Pointer.data` object
+        of a :class:`Pointer` field can be enabled.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` a :class:`Pointer` field encodes its
             *nested* `data` object fields as well (chained method call).
-            A `Pointer` field uses for the encoding of the *nested* `data`
-            object its own `bytestream`.
+            Each :class:`Pointer` field uses for the encoding of its *nested*
+            :attr:`~Pointer.data` object its own :attr:`~Pointer.bytestream`.
         """
         self.index = index
         buffer += self.pack(buffer, **options)
@@ -1589,12 +1596,12 @@ class Field(metaclass=abc.ABCMeta):
                 address += self._align_to_byte_size
             # Bad aligned field
             else:
-                raise IndexError(index, byte_length, bit_length)
+                raise AlignmentError(index, byte_length, bit_length)
         return Index(byte, bit, address, base, update)
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
-        """Returns the blue print of a `Field` as an
+        """Returns the **blueprint** of a `Field` as an
         :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
@@ -1614,8 +1621,8 @@ class Field(metaclass=abc.ABCMeta):
         :param str name: optional name for the `Field`.
 
         :keyword bool nested: if `True` a :class:`Pointer` field lists its
-            *nested* `data` object fields as well (chained method call).
-            Default is `True`.
+            *nested* :attr:`~Pointer.data` object fields as well
+            (chained method call). Default is `True`.
         """
         obj = {
             'address': self.index.address,
@@ -1648,7 +1655,7 @@ class Stream(Field):
     *   *iterable* ``iter(self)`` iterates over the bytes of the `Stream`
         field.
 
-    :param int size: is the *size* of the field in bytes.
+    :param int size: is the *size* of the `Stream` field in bytes.
 
     Example:
 
@@ -1739,6 +1746,7 @@ class Stream(Field):
 
     @property
     def name(self):
+        """Returns the type name of the `Stream` field (read-only)."""
         size = len(self)
         if size > 0:
             return self.item_type.name.capitalize() + str(size)
@@ -1747,6 +1755,7 @@ class Stream(Field):
 
     @property
     def value(self):
+        """Field value."""
         return hexlify(self._value)
 
     @value.setter
@@ -1778,7 +1787,7 @@ class Stream(Field):
     def unpack(self, buffer=bytes(), index=zero(), **options):
         # Bad aligned field
         if index.bit:
-            raise IndexError(index)
+            raise AlignmentError(index)
 
         offset = self.index.byte
         size = offset + len(self)
@@ -1788,7 +1797,7 @@ class Stream(Field):
     def pack(self, buffer=bytearray(), **options):
         # Bad aligned field
         if self.index.bit:
-            raise IndexError(self.index)
+            raise AlignmentError(self.index)
 
         return self._value
 
@@ -1832,7 +1841,7 @@ class String(Stream):
     *   *iterable* ``iter(self)`` iterates over the bytes of the `String`
         field.
 
-    :param int size: is the *size* of the field in bytes.
+    :param int size: is the *size* of the `String` field in bytes.
 
     Example:
 
@@ -1841,6 +1850,8 @@ class String(Stream):
     True
     >>> string.is_string()
     True
+    >>> string.is_terminated()
+    False
     >>> string.name
     'String'
     >>> string.alignment
@@ -1909,6 +1920,7 @@ class String(Stream):
 
     @property
     def value(self):
+        """Field value."""
         length = self._value.find(b'\x00')
         if length >= 0:
             return self._value[:length].decode('ascii')
@@ -1924,6 +1936,10 @@ class String(Stream):
         """Returns `True`."""
         return True
 
+    def is_terminated(self):
+        """Returns `True` if `String` field is zero-terminated."""
+        return self._value.find(b'\x00') >= 0
+
 
 class Float(Field):
     """A `Float` field is a :class:`Field` with a fix *size* of four bytes
@@ -1932,11 +1948,11 @@ class Float(Field):
     Internally a `Float` field uses a :class:`float` class to store the
     data of its field *value*.
 
-    A `Float` field extends the `Blueprint` of a `Field` with a ``max`` and
-    ``min`` key for its maximum and minimum possible field value.
+    A `Float` field extends the :attr:`~Field.blueprint` of a :class:`Field`
+    with a ``max`` and ``min`` key for its maximum and minimum possible field
+    *value*.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Float` field.
 
     Example:
 
@@ -1996,6 +2012,7 @@ class Float(Field):
 
     @property
     def value(self):
+        """Field value."""
         return float(self._value)
 
     @value.setter
@@ -2020,19 +2037,19 @@ class Float(Field):
 
     @staticmethod
     def max():
-        """Returns the maximal possible field value."""
+        """Returns the maximal possible field *value* of the `Float` field."""
         return (1 - Float.epsilon()) * 2 ** 128
 
     @staticmethod
     def min():
-        """Returns the minimal possible field value."""
+        """Returns the minimal possible field *value* of the `Float` field."""
         return -(1 - Float.epsilon()) * 2 ** 128
 
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=zero(), **options):
         # Bad aligned field
         if index.bit:
-            raise IndexError(index)
+            raise AlignmentError(index)
 
         # A coding byte order of a field overrules
         # the coding byte order of a buffer
@@ -2056,7 +2073,7 @@ class Float(Field):
     def pack(self, buffer=bytearray(), **options):
         # Bad aligned field
         if self.index.bit:
-            raise IndexError(self.index)
+            raise AlignmentError(self.index)
 
         # A coding byte order of a field overrules
         # the coding byte order of a buffer
@@ -2078,28 +2095,29 @@ class Float(Field):
 
 class Decimal(Field):
     """A `Decimal` field is a :class:`Field` with a variable *size*
-    and returns its field value as a integer number.
+    and returns its field *value* as a integer number.
 
     Internally a `Decimal` field uses a :class:`int` class to store the
     data of its field *value*.
 
-    A `Decimal` field extends the `Blueprint` of a `Field` with a ``max``
-    and ``min`` key for its maximum and minimum possible field value and
-    a ``sigend`` key to mark the decimal number as signed or unsigned.
+    A `Decimal` field extends the :attr:`~Field.blueprint` of a :class:`Field`
+    with a ``max`` and ``min`` key for its maximum and minimum possible field
+    *value* and a ``sigend`` key to mark the decimal number as signed or
+    unsigned.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Decimal` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Decimal` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Decimal` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Decimal` field.
 
-    :param bool signed: if `True` the decimal number is signed otherwise
+    :param bool signed: if `True` the `Decimal` field is signed otherwise
         unsigned.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Decimal` field.
 
     Example:
 
@@ -2237,6 +2255,7 @@ class Decimal(Field):
 
     @property
     def value(self):
+        """Field value."""
         return int(self._value)
 
     @value.setter
@@ -2245,7 +2264,7 @@ class Decimal(Field):
 
     @property
     def signed(self):
-        """Field signed."""
+        """Returns `True` if the `Decimal` field is signed."""
         return self._signed
 
     @signed.setter
@@ -2283,15 +2302,15 @@ class Decimal(Field):
 
         # Not allowed alignment size?
         if byte not in (1, 2, 3, 4, 5, 6, 7, 8):
-            raise OutOfRange(self, byte)
+            raise RangeError(self, byte)
 
         # Field alignment is out of range?
         if bit < 0 or bit > 63:
-            raise OutOfRange(self, bit)
+            raise RangeError(self, bit)
 
         # Bad aligned field?
         if bit >= byte * 8:
-            raise BadAligned(self, byte, bit)
+            raise AlignmentError(self, byte, bit)
 
         # Set field alignment
         self._align_to_byte_size = byte
@@ -2301,11 +2320,11 @@ class Decimal(Field):
         bit_size = int(size)
         # Field size is not a multiple of step?
         if bit_size % step != 0:
-            raise InvalidSize(self, bit_size, step)
+            raise SizeError(self, bit_size, step)
 
         # Field size is out of range?
         if bit_size < 1 or bit_size > 64:
-            raise OutOfRange(self, bit_size)
+            raise RangeError(self, bit_size)
 
         byte_size, bit_offset = divmod(bit_size, 8)
         # Auto alignment? -> align to field size
@@ -2316,7 +2335,7 @@ class Decimal(Field):
                 self._align_to_byte_size = byte_size
         # Bad aligned?
         elif byte_size > self._align_to_byte_size:
-            raise BadAligned(self, self._align_to_byte_size, byte_size)
+            raise AlignmentError(self, self._align_to_byte_size, byte_size)
         # Set field size
         self._bit_size = bit_size
 
@@ -2324,14 +2343,14 @@ class Decimal(Field):
         return 2 ** self._bit_size - 1
 
     def max(self):
-        """Returns the maximal possible field value."""
+        """Returns the maximal possible field *value* of the `Decimal` field."""
         if self._signed:
             return 2 ** (self._bit_size - 1) - 1
         else:
             return 2 ** self._bit_size - 1
 
     def min(self):
-        """Returns the minimal possible field value."""
+        """Returns the minimal possible field *value* of the `Decimal` field."""
         if self._signed:
             return -2 ** (self._bit_size - 1)
         else:
@@ -2363,7 +2382,7 @@ class Decimal(Field):
             pass
         elif bit != 0:
             # Bad aligned field
-            raise BadAligned(self, byte, bit)
+            raise AlignmentError(self, byte, bit)
         elif byte == 1:
             # Byte order not relevant for field's with one byte
             pass
@@ -2390,7 +2409,7 @@ class Decimal(Field):
         elif byte < 1:
             pass
         elif bit != 0:
-            raise BadAligned(self, byte, bit)
+            raise AlignmentError(self, byte, bit)
         elif byte == 1:
             pass
         else:
@@ -2426,8 +2445,11 @@ class Bit(Decimal):
     """A `Bit` field is an unsigned :class:`Decimal` with a *size* of
     one bit and returns its field *value* as an unsigned integer number.
 
-    :param int number: is the bit offset of the field within the aligned
-        bytes, can be between *0* and *63*.
+    :param int number: is the bit offset of the `Bit` field within the
+        aligned bytes, can be between *0* and *63*.
+
+    :param int align_to: aligns the `Bit` field to the number of bytes,
+        can be between *1* and *8*.
 
     Example:
 
@@ -2502,6 +2524,7 @@ class Bit(Decimal):
 
     @property
     def name(self):
+        """Returns the type name of the `Bit` field (read-only)."""
         return self.item_type.name.capitalize()
 
     @staticmethod
@@ -2514,10 +2537,11 @@ class Byte(Decimal):
     """A `Byte` field is an unsigned :class:`Decimal` field with a *size* of
     one byte and returns its field *value* as a hexadecimal encoded string.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Byte` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Byte` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Byte` field.
 
     Example:
 
@@ -2585,10 +2609,12 @@ class Byte(Decimal):
 
     @property
     def name(self):
+        """Returns the type name of the `Byte` field (read-only)."""
         return self.item_type.name.capitalize()
 
     @property
     def value(self):
+        """Field value."""
         return hex(self._value)
 
     @value.setter
@@ -2600,10 +2626,11 @@ class Char(Decimal):
     """A `Char` field is an unsigned :class:`Decimal` field with a *size* of
     one byte and returns its field *value* as a unicode encoded string.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Char` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Char` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Char` field.
 
     Example:
 
@@ -2671,10 +2698,12 @@ class Char(Decimal):
 
     @property
     def name(self):
+        """Returns the type name of the `Char` field (read-only)."""
         return self.item_type.name.capitalize()
 
     @property
     def value(self):
+        """Field value."""
         return chr(self._value)
 
     @value.setter
@@ -2686,16 +2715,16 @@ class Signed(Decimal):
     """A `Signed` field is a signed :class:`Decimal` field with a variable
     *size* and returns its field *value* as a signed integer number.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Signed` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Signed` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Signed` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Signed` field.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Signed` field.
 
     Example:
 
@@ -2767,16 +2796,16 @@ class Unsigned(Decimal):
     variable *size* and returns its field *value* as a hexadecimal encoded
     string.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Unsigned` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Unsigned` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Unsigned` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Unsigned` field.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Unsigned` field.
 
     Example:
 
@@ -2844,6 +2873,7 @@ class Unsigned(Decimal):
 
     @property
     def value(self):
+        """Field value."""
         return hex(self._value)
 
     @value.setter
@@ -2855,16 +2885,16 @@ class Bitset(Decimal):
     """A `Bitset` field is an unsigned :class:`Decimal` field with a variable
     *size* and returns its field *value* as a binary encoded string.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Bitset` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Bitset` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Bitset` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Bitset` field.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Bitset` field.
 
     Example:
 
@@ -2932,6 +2962,7 @@ class Bitset(Decimal):
 
     @property
     def value(self):
+        """Field value."""
         return '{0:#0{1}b}'.format(self._value, self.bit_size + 2)
 
     @value.setter
@@ -2943,16 +2974,16 @@ class Bool(Decimal):
     """A `Bool` field is an unsigned :class:`Decimal` field with a variable
     *size* and returns its field *value* as a boolean.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Bool` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Bool` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Bool` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Bool` field.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Bool` field.
 
     Example:
 
@@ -3022,6 +3053,7 @@ class Bool(Decimal):
 
     @property
     def value(self):
+        """Field value."""
         return bool(self._value)
 
     @value.setter
@@ -3038,22 +3070,22 @@ class Enum(Decimal):
     """A `Enum` field is an unsigned :class:`Decimal` field with a variable
     *size* and returns its field *value* as a integer number.
 
-    If an *enumeration* is available and a member matches the integer number
-    then the member name string is returned otherwise the integer number is
-    returned.
+    If an :class:`Enumeration` is available and a member matches the integer
+    number then the member name string is returned otherwise the integer number
+    is returned.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Enum` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Enum` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Enum` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Enum` field.
 
-    :param enumeration: :class:`Enumeration` definition of the field.
+    :param enumeration: :class:`Enumeration` definition of the `Enum` field.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Enum` field.
 
     Example:
 
@@ -3135,6 +3167,7 @@ class Enum(Decimal):
 
     @property
     def value(self):
+        """Field value."""
         if self._enum and issubclass(self._enum, Enumeration):
             name = self._enum.get_name(self._value)
             if name:
@@ -3174,21 +3207,21 @@ class Scaled(Decimal):
 
         ``2 ** (field size - 1) / 2``
 
-    A `Scaled` field extends the `Blueprint` of a `Decimal` with a ``scale``
-    key for its scaling factor.
+    A `Scaled` field extends the :attr:`~Field.blueprint` of a :class:`Decimal`
+    with a ``scale`` key for its scaling factor.
 
-    :param float scale: scaling factor of the field.
+    :param float scale: scaling factor of the `Scaled` field.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Scaled` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Scaled` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Scaled` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Scaled` field.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Scaled` field.
 
     Example:
 
@@ -3264,6 +3297,7 @@ class Scaled(Decimal):
 
     @property
     def value(self):
+        """Field value."""
         return self.as_float(self._value)
 
     @value.setter
@@ -3278,7 +3312,7 @@ class Scaled(Decimal):
 
     @property
     def scale(self):
-        """Field scaling factor."""
+        """Scaling factor of the `Scaled` field."""
         return self._scale
 
     @scale.setter
@@ -3286,7 +3320,7 @@ class Scaled(Decimal):
         self._scale = float(value)
 
     def scaling_base(self):
-        """Field scaling base."""
+        """Returns the scaling base of the `Scaled` field."""
         return 2 ** (self.bit_size - 1) / 2
 
     def blueprint(self, name=None, **options):
@@ -3322,21 +3356,22 @@ class Fraction(Decimal):
     A fractional number is multiplied by hundred.
 
     :param int bits_integer: number of bits for the integer part of the
-        fraction number, can be between *1* and the field *size*.
+        fraction number, can be between *1* and the *size* of the
+        `Fraction` field.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Fraction` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Fraction` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Fraction` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Fraction` field.
 
-    :param bool signed: if `True` the fraction number is signed otherwise
+    :param bool signed: if `True` the `Fraction` field is signed otherwise
         unsigned.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Fraction` field
 
     Example:
 
@@ -3483,12 +3518,14 @@ class Fraction(Decimal):
 
     @property
     def name(self):
+        """Returns the type name of the `Fraction` field (read-only)."""
         return "{0}{1}.{2}".format(self.item_type.name.capitalize(),
                                    self._bits_integer,
                                    self.bit_size)
 
     @property
     def value(self):
+        """Field value."""
         return self.as_float(self._value)
 
     @value.setter
@@ -3539,18 +3576,19 @@ class Bipolar(Fraction):
     *size* and returns its fractional field value as a float.
 
     :param int bits_integer: number of bits for the integer part of the
-        fraction number, can be between *1* and the field *size*.
+        fraction number, can be between *1* and the *size* of the
+        `Bipolar` field.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Bipolar` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Bipolar` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Bipolar` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Bipolar` field.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Bipolar` field.
 
     Example:
 
@@ -3627,18 +3665,19 @@ class Unipolar(Fraction):
     *size* and returns its fractional field *value* as a float.
 
     :param int bits_integer: number of bits for the integer part of the
-        fraction number, can be between *1* and the field *size*.
+        fraction number, can be between *1* and the *size* of the
+        `Unipolar` field.
 
-    :param int bit_size: is the *size* of the field in bits,
+    :param int bit_size: is the *size* of the `Unipolar` field in bits,
         can be between *1* and *64*.
 
-    :param int align_to: aligns the field to the number of bytes,
+    :param int align_to: aligns the `Unipolar` field to the number of bytes,
         can be between *1* and *8*.
-        If no field *alignment* is set the field aligns itself to the next
-        matching byte size corresponding to the field *size*.
+        If no field *alignment* is set the `Unipolar` field  aligns itself
+        to the next matching byte size corresponding to the *size* of the
+        `Unipolar` field.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Unipolar` field.
 
     Example:
 
@@ -3715,8 +3754,7 @@ class Datetime(Decimal):
     *size* of four bytes and returns its field *value* as a UTC datetime
     encoded string in the format *YYYY-mm-dd HH:MM:SS*.
 
-    :param byte_order: coding :class:`Byteorder` of the field.
-        Default is 'auto'.
+    :param byte_order: coding :class:`Byteorder` of the `Datetime` field.
 
     Example:
 
@@ -3782,6 +3820,7 @@ class Datetime(Decimal):
 
     @property
     def value(self):
+        """Field value."""
         return str(datetime.datetime.utcfromtimestamp(self._value))
 
     @value.setter
@@ -3797,40 +3836,47 @@ class Pointer(Decimal, Container):
     """A `Pointer` field is an unsigned :class:`Decimal` field with a *size* of
     four bytes and returns its field *value* as a hexadecimal encoded string.
 
-    A `Pointer` field refers absolutely to a `data` object of a data
+    A `Pointer` field refers absolutely to a :attr:`data` object of a data
     :class:`Provider`.
 
     The `Pointer` class extends the :class:`Decimal` field with the
-    :class:`Container` class for its referenced *data object*.
+    :class:`Container` class for its referenced :attr:`data` object.
 
-    A `Pointer` provides additional features:
+    A `Pointer` field provides additional features:
 
-    *   **Read** from a `Provider` the necessary amount of bytes for
-        the referenced `data` object of the `Pointer` via :meth:`read_from()`.
-    *   **Write** to a `Provider` the necessary amount of bytes for
-        the referenced `data` object of the `Pointer` via :meth:`write_to()`.
-    *   View the **index** of the `Pointer` field and for each *field*
-        in the referenced `data` object of the `Pointer`
+    *   **Refresh** each :class:`Field` in the :attr:`data` object
+        with the internal :attr:`bytestream` of the `Pointer` field
+        via :meth:`refresh()`.
+    *   **Read** from a :class:`Provider` the necessary amount of bytes for
+        the referenced :attr:`data` object of the `Pointer` field
+        via :meth:`read_from()`.
+    *   **Write** to a :class:`Provider` the necessary amount of bytes for
+        the referenced :attr:`data` object of the `Pointer` field
+        via :meth:`write_to()`.
+    *   **Indexes** each :class:`Field` in the :attr:`data` object referenced
+        by the `Pointer` field via :meth:`subscript()`.
+    *   View the **index** of the `Pointer` field and for each :class:`Field`
+        in the referenced :attr:`data` object of the `Pointer` field
         via :meth:`field_indexes()`.
-    *   View the **type** of the `Pointer` field and for each *field*
-        in the referenced `data` object of the `Pointer`
+    *   View the **type** of the `Pointer` field and for each :class:`Field`
+        in the referenced :attr:`data` object of the `Pointer` field
         via :meth:`field_types()`.
-    *   View the **value** of the `Pointer` field and for each *field*
-        in the referenced `data` object of the `Pointer`
+    *   View the **value** of the `Pointer` field and for each :class:`Field`
+        in the referenced :attr:`data` object of the `Pointer` field
         via :meth:`field_values()`.
     *   List the **item** and its path for the `Pointer` field and for each
-        *field* in the referenced `data` object of the `Pointer` as a flat
-        list via :meth:`field_items()`.
-    *   Get a **blueprint** of a `Structure` and its items
-        via :meth:`blueprint()`,
+        :class:`Field` in the referenced :attr:`data` object of the `Pointer`
+        field as a flat list via :meth:`field_items()`.
+    *   Get a **blueprint** of the `Pointer` field via :meth:`blueprint()`.
 
-    :param template: template for the `data` object referenced by the pointer.
+    :param template: template for the :attr:`data` object referenced by
+        the `Pointer` field.
 
-    :param int address: absolute address of the `data` object referenced by
-        the pointer.
+    :param int address: absolute address of the :attr:`data` object
+        referenced by the `Pointer` field.
 
-    :param byte_order: coding :class:`Byteorder` of the `data` object
-        referenced by the pointer.
+    :param byte_order: coding :class:`Byteorder` of the :attr:`bytestream`
+        of the `Pointer` field.
 
     Example:
 
@@ -3946,17 +3992,23 @@ class Pointer(Decimal, Container):
 
     @property
     def address(self):
-        """`Data` objects absolute address."""
+        """Returns the absolute address of the :attr:`data` object
+        referenced by the `Pointer` field (read-only).
+        """
         return self._value
 
     @property
     def base_address(self):
-        """Data `providers` base address."""
+        """Returns the base address of the data :class:`Provider` for the
+        :attr:`data` object referenced by the `Pointer` field (read-only).
+        """
         return self._value
 
     @property
     def bytestream(self):
-        """`Data` objects bytestream."""
+        """Bytestream of the `Pointer` field for the referenced :attr:`data`
+        object. Returned as a hexadecimal encoded string.
+        """
         return hexlify(self._data_stream)
 
     @bytestream.setter
@@ -3970,7 +4022,7 @@ class Pointer(Decimal, Container):
 
     @property
     def data(self):
-        """`Data` object referenced by the pointer."""
+        """`Data` object referenced by the `Pointer` field."""
         return self._data
 
     @data.setter
@@ -3984,20 +4036,22 @@ class Pointer(Decimal, Container):
 
     @property
     def order(self):
-        """`Data` objects coding :class:`Byteorder`."""
+        """Coding  :class:`Byteorder` of the :attr:`bytestream`
+        of the `Pointer` field.
+        """
         return self._data_byte_order
 
     @order.setter
-    def order(self, value):
-        if not isinstance(value, Byteorder):
-            raise TypeError(value)
-        if value.value not in (Byteorder.big.value, Byteorder.little.value):
-            raise ValueError(value.value)
-        self._data_byte_order = value
+    def order(self, byteorder):
+        if not isinstance(byteorder, Byteorder):
+            raise TypeError(byteorder)
+        if byteorder not in (Byteorder.big, Byteorder.little):
+            raise ValueError(byteorder.value)
+        self._data_byte_order = byteorder
 
     @property
     def size(self):
-        """`Data` objects size in bytes."""
+        """Returns the size of the :attr:`data` object in bytes (read-only)."""
         # Container
         if is_container(self._data):
             byte_length, bit_length = self._data.field_length()
@@ -4023,9 +4077,10 @@ class Pointer(Decimal, Container):
         return True
 
     def refresh(self):
-        """Refresh the fields of the `data` object with the internal `bytestream`
-        and returns the :class:`Index` of the `bytestream` after the last `Field`
-        of the `data` object.
+        """Refresh each :class:`Field` in the :attr:`data` object with the
+        internal :attr:`bytestream` of the `Pointer` field and returns the
+        :class:`Index` of the :attr:`bytestream` after the last :class:`Field`
+        in the :attr:`data` object.
         """
         index = Index(0, 0, self.address, self.base_address, False)
         if self._data:
@@ -4047,11 +4102,11 @@ class Pointer(Decimal, Container):
 
     @nested_option(True)
     def read_from(self, provider, null_allowed=False, **options):
-        """Reads from the data *provider* the necessary amount of bytes for
-        the nested `data` object of a `Pointer` field.
+        """Reads from the data :class:`Provider` the necessary amount of bytes
+        for the nested :attr:`data` object of the `Pointer` field.
 
-        A `Pointer` field has its own `bytestream` to store the binary data
-        from the data *provider*.
+        A `Pointer` field has its own :attr:`bytestream` to store the binary data
+        from the data :class:`Provider`.
 
         :param provider: data :class:`Provider`.
 
@@ -4059,10 +4114,10 @@ class Pointer(Decimal, Container):
             is allowed.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` object of the `Pointer` reads their *nested* `data` object
-            fields as well (chained method call).
-            A `Pointer` field stores the bytes for the *nested* `data`
-            object in its own `bytestream`.
+            :attr:`data` object of the `Pointer` field reads their *nested*
+            :attr:`~Pointer.data` object fields as well (chained method call).
+            Each `Pointer` field stores the bytes for its *nested*
+            :attr:`data` object in its own :attr:`bytestream`.
         """
         if self._data is None:
             pass
@@ -4074,7 +4129,7 @@ class Pointer(Decimal, Container):
                     self.bytestream = provider.read(self.address, self.size)
                     index = self.refresh()
                     if index.bit != 0:
-                        raise IndexError(index)
+                        raise AlignmentError(index)
                     if not index.update:
                         break
                 if is_mixin(self._data) and get_nested(options):
@@ -4087,7 +4142,7 @@ class Pointer(Decimal, Container):
 
     def patch(self, item, byte_order=BYTEORDER):
         """Returns a memory :class:`Patch` for the given *item* that shall be
-        patched in the data source.
+        patched in the data `source`.
 
         :param item: item to patch.
 
@@ -4101,7 +4156,7 @@ class Pointer(Decimal, Container):
             byte_length, bits = item.field_length()
             # Bad aligned container
             if bits != 0:
-                raise BadAligned(byte_length, bits)
+                raise AlignmentError(byte_length, bits)
 
             # Empty container?
             field = item.first_field()
@@ -4111,7 +4166,7 @@ class Pointer(Decimal, Container):
             # Bad aligned field
             index = field.index
             if index.bit != 0:
-                raise BadAligned(index)
+                raise AlignmentError(index)
 
             # Create a dummy byte array filled with zero bytes.
             # The dummy byte array is necessary because the length of
@@ -4141,7 +4196,7 @@ class Pointer(Decimal, Container):
             index = item.index
             # Bad aligned field?
             if index.bit != bit_offset:
-                raise BadAligned(index)
+                raise AlignmentError(index)
 
             # Create a dummy byte array filled with zero bytes.
             # The dummy byte array is necessary because the length of
@@ -4191,8 +4246,8 @@ class Pointer(Decimal, Container):
             raise TypeError(item)
 
     def write_to(self, provider, item, byte_order=BYTEORDER):
-        """Writes via a data *provider* the `Field` values of the given
-        *item* to the data source.
+        """Writes via a data :class:`Provider` the :class:`Field` values of
+        the given *item* to the data `source`.
 
         :param provider: data :class:`Provider`.
 
@@ -4235,23 +4290,23 @@ class Pointer(Decimal, Container):
     def decode(self, buffer=bytes(), index=zero(), **options):
         """Decodes sequential the bytes from a *buffer* starting at the begin
         of the *buffer* or with a given *index* by mapping the bytes to the
-        value of the `Pointer` by considering the decoding `Byteorder` of the
-        *buffer* and the `Pointer`.
+        *value* of the `Pointer` field by considering the decoding *byte order*
+        of the *buffer* and the `Pointer` field.
 
-        A specific coding byte order of the `Pointer` overrules the decoding
-        byte order of the *buffer*.
+        A specific coding *byte order* of the `Pointer` field overrules the
+        decoding *byte order* of the *buffer*.
 
-        Returns the :class:`Index` of the *buffer* after the `Pointer`.
+        Returns the :class:`Index` of the *buffer* after the `Pointer` field.
 
-        Optional the decoding of the *nested* `data` object of a `Pointer`
-        field can be enabled.
+        Optional the decoding of the *nested* :attr:`data` object of the
+        `Pointer` field can be enabled.
 
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
-        :keyword bool nested: if `True` a :class:`Pointer` field decodes its
-            *nested* `data` object fields as well (chained method call).
-            A `Pointer` field uses for the decoding of the *nested* `data`
-            object its own `bytestream`.
+        :keyword bool nested: if `True` a `Pointer` field decodes its *nested*
+            :attr:`data` object fields as well (chained method call).
+            Each :class:`Pointer` field uses for the decoding of its *nested*
+            :attr:`data` object its own :attr:`bytestream`.
         """
         # Field
         index = super().decode(buffer, index, **options)
@@ -4269,24 +4324,24 @@ class Pointer(Decimal, Container):
     @nested_option()
     def encode(self, buffer=bytearray(), index=zero(), **options):
         """Encodes sequential the bytes to a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the value of the
-        `Pointer` to the bytes by considering the encoding `Byteorder` of the
-        *buffer* and the `Pointer`.
+        of the *buffer* or with a given *index* by mapping the *value* of the
+        `Pointer` field to the bytes by considering the encoding *byte order*
+        of the *buffer* and the `Pointer` field.
 
-        A specific coding byte order of the `Pointer` overrules the encoding
-        byte order of the *buffer*.
+        A specific coding *byte order*  of the `Pointer` field overrules the
+        encoding *byte order* of the *buffer*.
 
-        Returns the :class:`Index` of the *buffer* after the `Pointer`.
+        Returns the :class:`Index` of the *buffer* after the `Pointer` field.
 
-        Optional the encoding of the *nested* `data` object of a `Pointer`
-        field can be enabled.
+        Optional the encoding of the *nested* :attr:`data` object of the
+        `Pointer` field can be enabled.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
-        :keyword bool nested: if `True` a :class:`Pointer` field encodes its
-            *nested* `data` object fields as well (chained method call).
-            A `Pointer` field uses for the encoding of the *nested* `data`
-            object its own `bytestream`.
+        :keyword bool nested: if `True` a `Pointer` field encodes its *nested*
+            :attr:`data` object fields as well (chained method call).
+            Each :class:`Pointer` field uses for the encoding of its *nested*
+            :attr:`data` object its own :attr:`bytestream`.
         """
         # Field
         index = super().encode(buffer, index, **options)
@@ -4303,6 +4358,9 @@ class Pointer(Decimal, Container):
         return index
 
     def subscript(self):
+        """Indexes each :class:`Field` in the :attr:`data` object referenced
+        by the `Pointer` field.
+        """
         # Start index for the Data Object
         index = Index(0, 0, self.address, self.base_address, False)
         # Container
@@ -4320,13 +4378,13 @@ class Pointer(Decimal, Container):
     def field_indexes(self, index=zero(), **options):
         """Returns an :class:`ordered dictionary <collections.OrderedDict>`
         with two keys.
-        The ``['value']`` key contains the field *index* of the `Pointer` and
-        the ``['data']`` key contains the field *indexes* of the `data` object
-        of a `Pointer`.
+        The ``['value']`` key contains the *index* of the `Pointer` field and
+        the ``['data']`` key contains the *indexes* for each :class:`Field`
+        in the :attr:`data` object of the `Pointer` field.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` object of the `Pointer` lists their *nested* `data` object
-            fields as well (chained method call).
+            :attr:`data` object of the `Pointer` field lists their *nested*
+            :attr:`~Pointer.data` object fields as well (chained method call).
         """
         self.next_index(index)
 
@@ -4358,13 +4416,13 @@ class Pointer(Decimal, Container):
     def field_types(self, **options):
         """Returns an :class:`ordered dictionary <collections.OrderedDict>`
         with two keys.
-        The ``['value']`` key contains the field *type* of the `Pointer` and
-        the ``['data']`` key contains the field *types* of the `data` object
-        of a `Pointer`.
+        The ``['value']`` key contains the *type* of the `Pointer` field and
+        the ``['data']`` key contains the *types* for each :class:`Field`
+        in the :attr:`data` object of the `Pointer` field.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` object of the `Pointer` lists their *nested* `data` object
-            fields as well (chained method call).
+            :attr:`data` object of the `Pointer` field lists their *nested*
+            :attr:`~Pointer.data` object fields as well (chained method call).
         """
         types = OrderedDict()
         types['value'] = self.name
@@ -4385,13 +4443,13 @@ class Pointer(Decimal, Container):
     def field_values(self, **options):
         """Returns an :class:`ordered dictionary <collections.OrderedDict>`
         with two keys.
-        The ``['value']`` key contains the field *value* of the `Pointer` and
-        the ``['data']`` key contains the field *values* of the `data` object
-        of a `Pointer`.
+        The ``['value']`` key contains the *value* of the `Pointer` field and
+        the ``['data']`` key contains the *values* for each :class:`Field`
+        in the :attr:`data` object of the `Pointer` field.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` object of the `Pointer` lists their *nested* `data` object
-            fields as well (chained method call).
+            :attr:`data` object of the `Pointer` field lists their *nested*
+            :attr:`~Pointer.data` object fields as well (chained method call).
         """
         values = OrderedDict()
         values['value'] = self.value
@@ -4410,14 +4468,14 @@ class Pointer(Decimal, Container):
 
     @nested_option()
     def field_items(self, root=str(), **options):
-        """Returns a **flat** list which contains tuples in the form of
-        ``(path, item)`` for each `Field` of a `Pointer`.
+        """Returns a **flat** list which contains the ``(path, item)`` tuples
+        for each :class:`Field` of the `Pointer` field.
 
         :param str root: root path.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` object of the `Pointer` list their *nested* `data` object
-            fields as well (chained method call).
+            :attr:`data` object of the `Pointer` field lists their *nested*
+            :attr:`~Pointer.data` object fields as well (chained method call).
         """
         items = list()
         # Field
@@ -4440,7 +4498,7 @@ class Pointer(Decimal, Container):
 
     @nested_option(True)
     def blueprint(self, name=str(), **options):
-        """Returns the blue print of a `Pointer` as an
+        """Returns the **blueprint** of a `Pointer` as an
         :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
@@ -4460,10 +4518,10 @@ class Pointer(Decimal, Container):
                 'member': [self.data.blueprint()]
             }
 
-        :param str name: optional name for the `Pointer`.
+        :param str name: optional name for the `Pointer` field.
 
         :keyword bool nested: if `True` a :class:`Pointer` field lists its
-            *nested* `data` object fields as well (chained method call).
+            *nested* :attr:`data` object fields as well (chained method call).
             Default is `True`.
         """
         obj = super().blueprint(name, **options)
@@ -4472,7 +4530,7 @@ class Pointer(Decimal, Container):
         obj['type'] = Pointer.item_type.name
         if is_any(self._data) and get_nested(options):
             obj['member'] = list()
-            obj['member'].append(self._data.blueprint(None, **options))
+            obj['member'].append(self._data.blueprint('data', **options))
         return obj
 
 
@@ -4481,13 +4539,13 @@ class StructurePointer(Pointer):
     to a :class:`Structure`.
 
     :param template: template for the `data` object.
-        The *template* must be a `Structure` instance.
+        The *template* must be a :class:`Structure` instance.
 
     :param int address: absolute address of the `data` object referenced by
-        the pointer.
+        the `StructurePointer` field.
 
-    :param byte_order: coding :class:`Byteorder` of the `data` object
-        referenced by the pointer.
+    :param byte_order: coding :class:`Byteorder` of the `bytestream`
+        of the `StructurePointer` field.
 
     Example:
 
@@ -4566,7 +4624,7 @@ class StructurePointer(Pointer):
      'type': 'Pointer',
      'value': '0xffffffff',
      'member': [{'class': 'Structure',
-                 'name': 'Structure',
+                 'name': 'data',
                  'size': 0,
                  'type': 'Structure',
                  'member': []}]}
@@ -4624,45 +4682,47 @@ class StructurePointer(Pointer):
 
 
 class SequencePointer(Pointer):
-    """A `SequencePointer` field is a :class:`Pointer` which refers
-    to a :class:`Sequence`.
+    """A `SequencePointer` field is a :class:`Pointer` field which
+    refers to a :class:`Sequence`.
 
-    A `SequencePointer` is:
+    A `SequencePointer` field is:
 
     *   *containable*: ``item in self`` returns `True` if *item* is part
-        of the `Sequence`.
-    *   *sized*: ``len(self)`` returns the number of items in the `Sequence`.
+        of the :class:`Sequence`.
+    *   *sized*: ``len(self)`` returns the number of items in the
+        :class:`Sequence`.
     *   *subscriptable* ``self[index]`` returns the *item* at the *index*
-        of the `Sequence`.
-    *   *iterable* ``iter(self)`` iterates over the *items* of the `Sequence`
+        of the :class:`Sequence`.
+    *   *iterable* ``iter(self)`` iterates over the *items* of the
+        :class:`Sequence`
 
-    A `SequencePointer` supports the usual methods:
+    A `SequencePointer` field supports the usual methods:
 
-    *   **Append** a item to a `Sequence`
+    *   **Append** a item to a :class:`Sequence`
         via :meth:`append()`.
-    *   **Insert** a item before the *index* into a `Sequence`
+    *   **Insert** a item before the *index* into a :class:`Sequence`
         via :meth:`insert()`.
-    *   **Extend** a `Sequence` with items
+    *   **Extend** a :class:`Sequence` with items
         via :meth:`extend()`.
-    *   **Clear** a `Sequence`
+    *   **Clear** a :class:`Sequence`
         via :meth:`clear()`.
-    *   **Pop** a item with the *index* from a `Sequence`
+    *   **Pop** a item with the *index* from a :class:`Sequence`
         via :meth:`pop()`.
-    *   **Remove**  the first occurrence of an *item* from a `Sequence`
+    *   **Remove**  the first occurrence of an *item* from a :class:`Sequence`
         via :meth:`remove()`.
-    *   **Reverse** all items in a `Sequence`
+    *   **Reverse** all items in a :class:`Sequence`
         via :meth:`reverse()`.
 
-    :param iterable: any *iterable* that contains items of `Structure`,
-        `Sequence`, `Array` or `Field` instances. If the *iterable* is one
-        of these instances itself then the *iterable* itself is appended
-        to the `Sequence`.
+    :param iterable: any *iterable* that contains items of :class:`Structure`,
+        :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
+        *iterable* is one of these instances itself then the *iterable* itself
+        is appended to the :class:`Sequence`.
 
     :param int address: absolute address of the `data` object referenced by
-        the pointer.
+        the `SequencePointer` field.
 
-    :param byte_order: coding :class:`Byteorder` of the `data` object
-        referenced by the pointer.
+    :param byte_order: coding :class:`Byteorder` of the `bytestream`
+        of the `SequencePointer` field.
     """
 
     def __init__(self, iterable=None, address=None, byte_order=BYTEORDER):
@@ -4684,78 +4744,84 @@ class SequencePointer(Pointer):
         del self._data[index]
 
     def append(self, item):
-        """Appends the *item* to the end of the `Sequence`.
+        """Appends the *item* to the end of the :class:`Sequence`.
 
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         self._data.append(item)
 
     def insert(self, index, item):
-        """Inserts the *item* before the *index* into the `Sequence`.
+        """Inserts the *item* before the *index* into the :class:`Sequence`.
 
-        :param int index: `Sequence` index.
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param int index: :class:`Sequence` index.
+
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         self._data.insert(index, item)
 
     def pop(self, index=-1):
-        """Removes and returns the item at the *index* from the `Sequence`.
+        """Removes and returns the item at the *index* from the
+        :class:`Sequence`.
 
-        :param int index: `Sequence` index.
+        :param int index: :class:`Sequence` index.
         """
         return self._data.pop(index)
 
     def clear(self):
-        """Remove all items from the `Sequence`."""
+        """Remove all items from the :class:`Sequence`."""
         self._data.clear()
 
     def remove(self, item):
-        """Removes the first occurrence of an *item* from the `Sequence`.
+        """Removes the first occurrence of an *item* from the :class:`Sequence`.
 
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         self._data.remove(item)
 
     def reverse(self):
-        """In place reversing of the `Sequence` items."""
+        """In place reversing of the :class:`Sequence` items."""
         self._data.reverse()
 
     def extend(self, iterable):
-        """Extends the `Sequence` by appending items from the *iterable*.
+        """Extends the :class:`Sequence` by appending items from the *iterable*.
 
-        :param iterable: any *iterable* that contains items of `Structure`,
-            `Sequence`, `Array` or `Field` instances. If the *iterable* is one
-            of these instances itself then the *iterable* itself is appended
-            to the `Sequence`.
+        :param iterable: any *iterable* that contains items of :class:`Structure`,
+            :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
+            *iterable* is one of these instances itself then the *iterable* itself
+            is appended to the :class:`Sequence`.
         """
         self._data.extend(iterable)
 
 
 class ArrayPointer(SequencePointer):
-    """A `ArrayPointer` field is a :class:`SequencePointer` which refers
-    to a :class:`Array`.
+    """A `ArrayPointer` field is a :class:`SequencePointer` field which
+    refers to a :class:`Array`.
 
-    A `ArrayPointer` adapts and extends a `SequencePointer` with the following
-    features:
+    A `ArrayPointer` field adapts and extends a :class:`SequencePointer`
+    field with the following features:
 
-    *   **Append** a new `Array` element to a `Array`
+    *   **Append** a new :class:`Array` element to a :class:`Array`
         via :meth:`append()`.
-    *   **Insert** a new `Array` element before the *index* into a `Array`
-        via :meth:`insert()`.
-    *   **Re-size** a `Array`
-        via :meth:`resize()`.
+    *   **Insert** a new :class:`Array` element before the *index*
+        into a :class:`Array` via :meth:`insert()`.
+    *   **Re-size** a :class:`Array` via :meth:`resize()`.
 
-    :param template: template for the `Array` element.
-        The *template* can be any `Field` instance or any *callable* that
-        returns a `Structure`, `Sequence`, `Array` or any `Field` instance.
+    :param template: template for the :class:`Array` element.
+        The *template* can be any :class:`Field` instance or any *callable*
+        that returns a :class:`Structure`, :class:`Sequence`, :class:`Array`
+        or any :class:`Field` instance.
 
-    :param int size: is the size of the `Array` in number of `Array` elements.
+    :param int size: is the size of the :class:`Array` in number of
+        :class:`Array` elements.
 
     :param int address: absolute address of the `data` object referenced by
-        the pointer.
+        the `ArrayPointer` field.
 
-    :param byte_order: coding :class:`Byteorder` of the `data` object
-        referenced by the pointer.
+    :param byte_order: coding :class:`Byteorder` of the `bytestream`
+        of the `ArrayPointer` field.
     """
 
     def __init__(self, template, size=0, address=None, byte_order=BYTEORDER):
@@ -4763,45 +4829,47 @@ class ArrayPointer(SequencePointer):
         self._data = Array(template, size)
 
     def append(self):
-        """Appends a new `Array` element to the `Array`."""
+        """Appends a new :class:`Array` element to the :class:`Array`."""
         self._data.append()
 
     def insert(self, index):
-        """Inserts a new `Array` element before the *index* of the `Array`.
+        """Inserts a new :class:`Array` element before the *index*
+        of the :class:`Array`.
 
-        :param int index: `Array` index.
+        :param int index: :class:`Array` index.
         """
         self._data.insert(index)
 
     def resize(self, size):
-        """Re-sizes the `Array` by appending new `Array` elements or
-        removing `Array` elements from the end.
+        """Re-sizes the :class:`Array` by appending new :class:`Array` elements
+        or removing :class:`Array` elements from the end.
 
-        :param int size: new size of the `Array` in number of `Array`
-            elements.
+        :param int size: new size of the :class:`Array` in number of
+            :class:`Array` elements.
         """
         if isinstance(self._data, Array):
             self._data.resize(size)
 
 
 class StreamPointer(Pointer):
-    """A `StreamPointer` field is a :class:`Pointer` which refers
-    to a :class:`Stream` field.
+    """A `StreamPointer` field is a :class:`Pointer` field which
+    refers to a :class:`Stream` field.
 
     A `StreamPointer` field is:
 
     *   *containable*: ``item in self`` returns `True` if *item* is part
-        of the `Stream` field.
-    *   *sized*: ``len(self)`` returns the length of the `Stream` field.
+        of the :class:`Stream` field.
+    *   *sized*: ``len(self)`` returns the length of the
+        :class:`Stream` field.
     *   *subscriptable* ``self[index]`` returns the *byte* at the *index*
-        of the `Stream` field.
-    *   *iterable* ``iter(self)`` iterates over the bytes of the `Stream`
-        field.
+        of the :class:`Stream` field.
+    *   *iterable* ``iter(self)`` iterates over the bytes of the
+        :class:`Stream` field.
 
-    :param int size: is the size of the `Stream` field in bytes.
+    :param int size: is the size of the :class:`Stream` field in bytes.
 
     :param int address: absolute address of the `data` object referenced by
-        the pointer.
+        the `StreamPointer` field.
 
     Example:
 
@@ -4912,7 +4980,7 @@ class StreamPointer(Pointer):
                  'alignment': [10, 0],
                  'class': 'Stream10',
                  'index': [0, 0],
-                 'name': 'Stream10',
+                 'name': 'data',
                  'order': 'auto',
                  'size': 80,
                  'type': 'Field',
@@ -4963,23 +5031,23 @@ class StreamPointer(Pointer):
         return iter(self._data)
 
     def resize(self, size):
-        """Re-sizes the `Stream` field by appending zero bytes or
+        """Re-sizes the :class:`Stream` field by appending zero bytes or
         removing bytes from the end.
 
-        :param int size: `Stream` size in number of bytes.
+        :param int size: :class:`Stream` size in number of bytes.
         """
         if isinstance(self._data, Stream):
             self._data.resize(size)
 
 
 class StringPointer(StreamPointer):
-    """A `StringPointer` field is a :class:`StreamPointer` which refers
-    to a :class:`String` field.
+    """A `StringPointer` field is a :class:`StreamPointer` field  which
+    refers to a :class:`String` field.
 
-    :param int size: is the *size* of the `String` field in bytes.
+    :param int size: is the *size* of the :class:`String` field in bytes.
 
     :param int address: absolute address of the `data` object referenced by
-        the pointer.
+        the `StringPointer` field.
 
     Example:
 
@@ -5090,7 +5158,7 @@ class StringPointer(StreamPointer):
                  'alignment': [10, 0],
                  'class': 'String10',
                  'index': [0, 0],
-                 'name': 'String10',
+                 'name': 'data',
                  'order': 'auto',
                  'size': 80,
                  'type': 'Field',
@@ -5129,18 +5197,208 @@ class StringPointer(StreamPointer):
         self._data = String(size)
 
 
+class AutoStringPointer(StringPointer):
+    """A `AutoStringPointer` field is a :class:`StringPointer` field which
+    refers to a auto-sized :class:`String` field.
+
+    :param int address: absolute address of the `data` object referenced by
+        the `AutoStringPointer` field.
+
+    Example:
+
+    >>> pointer = AutoStringPointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+           alignment=(64, 0),
+           bit_size=512,
+           value='')
+    >>> pointer.size
+    64
+    >>> len(pointer)
+    64
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> pointer.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
+    >>> pointer.resize(10)
+    >>> pointer.size
+    10
+    >>> len(pointer)
+    10
+    >>> pointer.bytestream = b'KonFoo is Fun'
+    >>> pointer.bytestream
+    b'4b6f6e466f6f2069732046756e'
+    >>> hexlify(pointer.as_bytestream())
+    b'00000000000000000000'
+    >>> pointer.refresh()
+    Index(byte=10, bit=0, address=4294967305, base_address=4294967295, update=False)
+    >>> pointer.as_bytestream()
+    bytearray(b'KonFoo is ')
+    >>> [byte for byte in pointer]  # converts to int
+    [75, 111, 110, 70, 111, 111, 32, 105, 115, 32]
+    >>> [chr(byte) for byte in pointer]  # converts to int
+    ['K', 'o', 'n', 'F', 'o', 'o', ' ', 'i', 's', ' ']
+    >>> chr(pointer[5])  # converts to int -> chr
+    'o'
+    >>> ord(' ') in pointer
+    True
+    >>> 0x0 in pointer
+    False
+    >>> pointer[:6]  # converts to bytes
+    b'KonFoo'
+    >>> pointer[3:6]  # converts to bytes
+    b'Foo'
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'AutoStringPointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'AutoStringPointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'address': 4294967295,
+                 'alignment': [10, 0],
+                 'class': 'String10',
+                 'index': [0, 0],
+                 'name': 'data',
+                 'order': 'auto',
+                 'size': 80,
+                 'type': 'Field',
+                 'value': 'KonFoo is '}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      AutoStringPointer(index=Index(byte=0, bit=0,
+                                address=0, base_address=0,
+                                update=False),
+                        alignment=(4, 0),
+                        bit_size=32,
+                        value='0xffffffff')),
+     ('data',
+      String(index=Index(byte=0, bit=0,
+                         address=4294967295, base_address=4294967295,
+                         update=False),
+             alignment=(10, 0),
+             bit_size=80,
+             value='KonFoo is '))]
+    >>> pprint(pointer.to_list())
+    [('AutoStringPointer.value', '0xffffffff'),
+     ('AutoStringPointer.data', 'KonFoo is ')]
+    >>> pprint(pointer.to_dict())
+    {'AutoStringPointer': {'value': '0xffffffff',
+                           'data': 'KonFoo is '}}
+    """
+    BLOCK_SIZE = 64
+    MAX_ADDRESS = 0xffffffff
+
+    def __init__(self, address=None):
+        super().__init__(size=AutoStringPointer.BLOCK_SIZE, address=address)
+
+    @nested_option(True)
+    def read_from(self, provider, null_allowed=False, **options):
+        if self._data is None:
+            pass
+        elif is_provider(provider):
+            if self._value < 0:
+                pass
+            elif null_allowed or self._value > 0:
+                self._data_stream = bytes()
+                self.resize(0)
+                for address in range(self.address,
+                                     AutoStringPointer.MAX_ADDRESS,
+                                     AutoStringPointer.BLOCK_SIZE):
+                    count = limiter(AutoStringPointer.BLOCK_SIZE,
+                                   0,
+                                   (AutoStringPointer.MAX_ADDRESS - address))
+                    self._data_stream += provider.read(address, count)
+                    self.resize(len(self) + count)
+                    index = self.refresh()
+                    if index.bit != 0:
+                        raise AlignmentError(index)
+                    # Terminated?
+                    if self.data.is_terminated():
+                        self.resize(len(self.data.value) + 1)
+                        break
+            else:
+                self._data_stream = bytes()
+                self.resize(0)
+                self.refresh()
+        else:
+            raise TypeError(provider)
+
+
 class RelativePointer(Pointer):
     """A `RelativePointer` field is a :class:`Pointer` field which refers
-    to a `data` object relatively to a base address of a data :class:`Provider`.
+    to a `data` object relatively to a *base address* of a data
+    :class:`Provider`.
 
     :param template: template for the `data` object referenced by the
-        pointer.
+        `RelativePointer` field.
 
     :param address: relative address of the `data` object referenced
-        by the pointer.
+        by the `RelativePointer` field.
 
-    :param byte_order: coding :class:`Byteorder` of the `data` object
-        referenced by the pointer.
+    :param byte_order: coding :class:`Byteorder` of the `bytestream`
+        of the `RelativePointer` field.
 
     Example:
 
@@ -5250,12 +5508,16 @@ class RelativePointer(Pointer):
 
     @property
     def address(self):
-        """`Data` objects absolute address."""
+        """Returns the absolute address of the `data` object
+        referenced by the `RelativePointer` field (read-only).
+        """
         return self._value + self.base_address
 
     @property
     def base_address(self):
-        """Data `Provider` base address."""
+        """Returns the base address of the data :class:`Provider` for the
+        `data` object referenced by the `RelativePointer` field (read-only).
+        """
         return self.index.base_address
 
 
@@ -5264,13 +5526,114 @@ class StructureRelativePointer(RelativePointer):
     refers to a :class:`Structure`.
 
     :param template: template for the `data` object.
-        The *template* must be a `Structure` instance.
+        The *template* must be a :class:`Structure` instance.
 
     :param address: relative address of the `data` object referenced
-        by the pointer.
+        by the `StructureRelativePointer` field.
 
-    :param byte_order: coding :class:`Byteorder` of the `data` object
-        referenced by the pointer.
+    :param byte_order: coding :class:`Byteorder` of the `bytestream`
+        of the `StructureRelativePointer` field.
+
+    Example:
+
+    >>> pointer = StructureRelativePointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data
+    Structure()
+    >>> pointer.size
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(unhexlify('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> len(pointer)
+    0
+    >>> [name for name in pointer.keys()]
+    []
+    >>> [member.value for member in pointer.values()]
+    []
+    >>> [(name, member.value) for name, member in pointer.items()]
+    []
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StructureRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StructureRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'class': 'Structure',
+                 'name': 'data',
+                 'size': 0,
+                 'type': 'Structure',
+                 'member': []}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': OrderedDict()}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', OrderedDict())])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      StructureRelativePointer(index=Index(byte=0, bit=0,
+                                           address=0, base_address=0,
+                                           update=False),
+                               alignment=(4, 0),
+                               bit_size=32,
+                               value='0xffffffff'))]
+    >>> pprint(pointer.to_list(nested=True))
+    [('StructureRelativePointer.value', '0xffffffff')]
+    >>> pprint(pointer.to_dict(nested=True))
+    {'StructureRelativePointer': OrderedDict([('value', '0xffffffff')])}
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -5312,39 +5675,41 @@ class SequenceRelativePointer(RelativePointer):
     A `SequenceRelativePointer` is:
 
     *   *containable*: ``item in self`` returns `True` if *item* is part
-        of the `Sequence`.
-    *   *sized*: ``len(self)`` returns the number of items in the `Sequence`.
+        of the :class:`Sequence`.
+    *   *sized*: ``len(self)`` returns the number of items in the
+        :class:`Sequence`.
     *   *subscriptable* ``self[index]`` returns the *item* at the *index*
-        of the `Sequence`.
-    *   *iterable* ``iter(self)`` iterates over the *items* of the `Sequence`
+        of the :class:`Sequence`.
+    *   *iterable* ``iter(self)`` iterates over the *items* of the
+        :class:`Sequence`
 
-    A `SequencePointer` supports the usual methods:
+    A `SequenceRelativePointer` supports the usual methods:
 
-    *   **Append** an item to a `Sequence`
+    *   **Append** a item to a :class:`Sequence`
         via :meth:`append()`.
-    *   **Insert** an item before the *index* into a `Sequence`
+    *   **Insert** a item before the *index* into a :class:`Sequence`
         via :meth:`insert()`.
-    *   **Extend** a `Sequence` with items
+    *   **Extend** a :class:`Sequence` with items
         via :meth:`extend()`.
-    *   **Clear** a `Sequence`
+    *   **Clear** a :class:`Sequence`
         via :meth:`clear()`.
-    *   **Pop** a item with the *index* from a `Sequence`
+    *   **Pop** a item with the *index* from a :class:`Sequence`
         via :meth:`pop()`.
-    *   **Remove**  the first occurrence of an *item* from a `Sequence`
+    *   **Remove**  the first occurrence of an *item* from a :class:`Sequence`
         via :meth:`remove()`.
-    *   **Reverse** all items in a `Sequence`
+    *   **Reverse** all items in a :class:`Sequence`
         via :meth:`reverse()`.
 
-    :param iterable: any *iterable* that contains items of `Structure`,
-        `Sequence`, `Array` or `Field` instances. If the *iterable* is one
-        of these instances itself then the *iterable* itself is appended
-        to the `Sequence`.
+    :param iterable: any *iterable* that contains items of :class:`Structure`,
+        :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
+        *iterable* is one of these instances itself then the *iterable* itself
+        is appended to the :class:`Sequence`.
 
     :param address: relative address of the `data` object referenced
-        by the pointer.
+        by the `SequenceRelativePointer` field.
 
-    :param byte_order: coding :class:`Byteorder` of the `data` object
-        referenced by the pointer.
+    :param byte_order: coding :class:`Byteorder` of the `bytestream`
+        of the `SequenceRelativePointer` field.
     """
 
     def __init__(self, iterable=None, address=None, byte_order=BYTEORDER):
@@ -5366,49 +5731,54 @@ class SequenceRelativePointer(RelativePointer):
         del self._data[index]
 
     def append(self, item):
-        """Appends the *item* to the end of the `Sequence`.
+        """Appends the *item* to the end of the :class:`Sequence`.
 
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         self._data.append(item)
 
     def insert(self, index, item):
-        """Inserts the *item* before the *index* into the `Sequence`.
+        """Inserts the *item* before the *index* into the :class:`Sequence`.
 
-        :param int index: `Sequence` index.
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param int index: :class:`Sequence` index.
+
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         self._data.insert(index, item)
 
     def pop(self, index=-1):
-        """Removes and returns the item at the *index* from the `Sequence`.
+        """Removes and returns the item at the *index* from the
+        :class:`Sequence`.
 
-        :param int index: `Sequence` index.
+        :param int index: :class:`Sequence` index
         """
         return self._data.pop(index)
 
     def clear(self):
-        """Remove all items from the `Sequence`."""
+        """Remove all items from the :class:`Sequence`."""
         self._data.clear()
 
     def remove(self, item):
-        """Removes the first occurrence of an *item* from the `Sequence`.
+        """Removes the first occurrence of an *item* from the :class:`Sequence`.
 
-        :param item: any `Structure`, `Sequence`, `Array` or `Field` instance.
+        :param item: any :class:`Structure`, :class:`Sequence`, :class:`Array`
+            or :class:`Field` instance.
         """
         self._data.remove(item)
 
     def reverse(self):
-        """In place reversing of the `Sequence` items."""
+        """In place reversing of the :class:`Sequence` items."""
         self._data.reverse()
 
     def extend(self, iterable):
-        """Extends the `Sequence` by appending items from the *iterable*.
+        """Extends the :class:`Sequence` by appending items from the *iterable*.
 
-        :param iterable: any *iterable* that contains items of `Structure`,
-            `Sequence`, `Array` or `Field` instances. If the *iterable* is one
-            of these instances itself then the *iterable* itself is appended
-            to the `Sequence`.
+        :param iterable: any *iterable* that contains items of :class:`Structure`,
+            :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
+            *iterable* is one of these instances itself then the *iterable* itself
+            is appended to the :class:`Sequence`.
         """
         self._data.extend(iterable)
 
@@ -5417,27 +5787,28 @@ class ArrayRelativePointer(SequenceRelativePointer):
     """A `ArrayRelativePointer` field is a :class:`SequenceRelativePointer`
     which refers to a :class:`Array`.
 
-    A `ArrayRelativePointer` adapts and extends a `SequenceRelativePointer` with
-    the following features:
+    A `ArrayRelativePointer` adapts and extends a :class:`SequenceRelativePointer`
+    with the following features:
 
-    *   **Append** a new `Array` element to a `Array`
+    *   **Append** a new :class:`Array` element to a :class:`Array`
         via :meth:`append()`.
-    *   **Insert** a new `Array` element before the *index* into a `Array`
-        via :meth:`insert()`.
-    *   **Re-size** a `Array`
-        via :meth:`resize()`.
+    *   **Insert** a new :class:`Array` element before the *index*
+        into a :class:`Array` via :meth:`insert()`.
+    *   **Re-size** a :class:`Array` via :meth:`resize()`.
 
-    :param template: template for the `Array` element.
-        The *template* can be any `Field` instance or any *callable* that
-        returns a `Structure`, `Sequence`, `Array` or any `Field` instance.
+    :param template: template for the :class:`Array` element.
+        The *template* can be any :class:`Field` instance or any *callable*
+        that returns a :class:`Structure`, :class:`Sequence`, :class:`Array`
+        or any :class:`Field` instance.
 
-    :param int size: is the size of the `Array` in number of `Array` elements.
+    :param int size: is the size of the :class:`Array` in number of
+        :class:`Array` elements.
 
     :param address: relative address of the `data` object referenced
-        by the pointer.
+        by the `ArrayRelativePointer` field.
 
-    :param byte_order: coding :class:`Byteorder` of the `data` object
-        referenced by the pointer.
+    :param byte_order: coding :class:`Byteorder` of the `bytestream`
+        of the `ArrayRelativePointer` field.
     """
 
     def __init__(self, template, size=0, address=None, byte_order=BYTEORDER):
@@ -5445,22 +5816,23 @@ class ArrayRelativePointer(SequenceRelativePointer):
         self._data = Array(template, size)
 
     def append(self):
-        """Appends a new `Array` element to the `Array`."""
+        """Appends a new :class:`Array` element to the :class:`Array`."""
         self._data.append()
 
     def insert(self, index):
-        """Inserts a new `Array` element before the *index* of the `Array`.
+        """Inserts a new :class:`Array` element before the *index*
+        of the :class:`Array`.
 
-        :param int index: `Array` index.
+        :param int index: :class:`Array` index.
         """
         self._data.insert(index)
 
     def resize(self, size):
-        """Re-sizes the `Array` by appending new `Array` elements or
-        removing `Array` elements from the end.
+        """Re-sizes the :class:`Array` by appending new :class:`Array` elements
+        or removing :class:`Array` elements from the end.
 
-        :param int size: new size of the `Array` in number of `Array`
-            elements.
+        :param int size: new size of the :class:`Array` in number of
+            :class:`Array` elements.
         """
         if isinstance(self._data, Array):
             self._data.resize(size)
@@ -5473,17 +5845,18 @@ class StreamRelativePointer(RelativePointer):
     A `StreamRelativePointer` field is:
 
     *   *containable*: ``item in self`` returns `True` if *item* is part
-        of the `Stream` field.
-    *   *sized*: ``len(self)`` returns the length of the `Stream` field.
+        of the :class:`Stream` field.
+    *   *sized*: ``len(self)`` returns the length of the
+        :class:`Stream` field.
     *   *subscriptable* ``self[index]`` returns the *byte* at the *index*
-        of the `Stream` field.
-    *   *iterable* ``iter(self)`` iterates over the bytes of the `Stream`
-        field.
+        of the :class:`Stream` field.
+    *   *iterable* ``iter(self)`` iterates over the bytes of the
+        :class:`Stream` field.
 
-    :param int size: is the size of the `Stream` field in bytes.
+    :param int size: is the size of the :class:`Stream` field in bytes.
 
     :param address: relative address of the `data` object referenced
-        by the pointer.
+        by the `StreamRelativePointer` field.
 
     Example:
 
@@ -5594,7 +5967,7 @@ class StreamRelativePointer(RelativePointer):
                  'alignment': [10, 0],
                  'class': 'Stream10',
                  'index': [0, 0],
-                 'name': 'Stream10',
+                 'name': 'data',
                  'order': 'auto',
                  'size': 80,
                  'type': 'Field',
@@ -5645,10 +6018,10 @@ class StreamRelativePointer(RelativePointer):
         return iter(self._data)
 
     def resize(self, size):
-        """Re-sizes the `Stream` field by appending zero bytes or
+        """Re-sizes the :class:`Stream` field by appending zero bytes or
         removing bytes from the end.
 
-        :param int size: `Stream` size in number of bytes.
+        :param int size: :class:`Stream` size in number of bytes.
         """
         if isinstance(self._data, Stream):
             self._data.resize(size)
@@ -5658,10 +6031,10 @@ class StringRelativePointer(StreamRelativePointer):
     """A `StringRelativePointer` field is a :class:`StreamRelativePointer`
     which refers to a :class:`String` field.
 
-    :param int size: is the *size* of the `String` field in bytes.
+    :param int size: is the *size* of the :class:`String` field in bytes.
 
     :param address: relative address of the `data` object referenced
-        by the pointer.
+        by the `StringRelativePointer` field.
 
     Example:
 
@@ -5772,7 +6145,7 @@ class StringRelativePointer(StreamRelativePointer):
                  'alignment': [10, 0],
                  'class': 'String10',
                  'index': [0, 0],
-                 'name': 'String10',
+                 'name': 'data',
                  'order': 'auto',
                  'size': 80,
                  'type': 'Field',

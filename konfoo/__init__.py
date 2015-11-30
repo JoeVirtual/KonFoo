@@ -22,8 +22,8 @@ from .categories import Category
 from .globals import Byteorder, BYTEORDER
 
 # Exceptions
-from .exceptions import KonFooException, FileError, OutOfRange, \
-    InvalidIndex, InvalidSize, InvalidLength, BadAligned, BadOffset
+from .exceptions import KonFooError, FileError, RangeError, \
+    SizeError, LengthError, AlignmentError, OffsetError
 
 # Providers
 from .providers import Provider, FileProvider
@@ -34,7 +34,7 @@ from .core import is_any, is_field, is_container, is_pointer, is_mixin, \
     Field, Stream, String, Float, Decimal, Bit, Byte, Char, Signed, Unsigned, \
     Bitset, Bool, Enum, Scaled, Fraction, Bipolar, Unipolar, Datetime, \
     Pointer, StructurePointer, SequencePointer, ArrayPointer, StreamPointer, \
-    StringPointer, RelativePointer, StructureRelativePointer, \
+    StringPointer, AutoStringPointer, RelativePointer, StructureRelativePointer, \
     SequenceRelativePointer, ArrayRelativePointer, StreamRelativePointer, \
     StringRelativePointer
 
@@ -79,9 +79,9 @@ __all__ = [
     'Byteorder', 'BYTEORDER',
 
     # Exceptions
-    'KonFooException',
-    'FileError', 'OutOfRange', 'InvalidIndex', 'InvalidSize',
-    'InvalidLength', 'BadAligned', 'BadOffset',
+    'KonFooError',
+    'FileError', 'RangeError', 'SizeError', 'LengthError',
+    'AlignmentError', 'OffsetError',
 
     # Provider
     'Provider', 'FileProvider',
@@ -98,7 +98,7 @@ __all__ = [
     'Bipolar', 'Unipolar', 'Datetime',
 
     'Pointer', 'StructurePointer', 'SequencePointer', 'ArrayPointer',
-    'StreamPointer', 'StringPointer',
+    'StreamPointer', 'StringPointer', 'AutoStringPointer',
 
     'RelativePointer', 'StructureRelativePointer', 'SequenceRelativePointer',
     'ArrayRelativePointer', 'StreamRelativePointer', 'StringRelativePointer',
@@ -139,4 +139,4 @@ __all__ = [
     'd3json', 'HexViewer',
 ]
 
-__version__ = '0.0-dev'
+__version__ = '0.1.dev0'

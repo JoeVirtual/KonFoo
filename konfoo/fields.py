@@ -126,37 +126,37 @@ class Unsigned32(Unsigned):
 
 class Bitset8(Bitset):
     """A `Bitset8` field is a :class:`Bitset` field with a *size* of
-    one byte and the coding byteorder is 'little' endian.
+    one byte.
     """
 
-    def __init__(self, byte_order=Byteorder.little):
+    def __init__(self, byte_order=Byteorder.auto):
         super().__init__(bit_size=8, byte_order=byte_order)
 
 
 class Bitset16(Bitset):
     """A `Bitset16` field is a :class:`Bitset` field with a *size* of
-    two bytes and the default coding byteorder is 'little' endian.
+    two bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.little):
+    def __init__(self, byte_order=Byteorder.auto):
         super().__init__(bit_size=16, byte_order=byte_order)
 
 
 class Bitset24(Bitset):
     """A `Bitset24` field is a :class:`Bitset` field with a *size* of
-    three bytes and the coding default byteorder is 'little' endian.
+    three bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.little):
+    def __init__(self, byte_order=Byteorder.auto):
         super().__init__(bit_size=24, byte_order=byte_order)
 
 
 class Bitset32(Bitset):
     """A `Bitset32` field is a :class:`Bitset` field with a *size* of
-    four bytes and the default coding byteorder is 'little' endian.
+    four bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.little):
+    def __init__(self, byte_order=Byteorder.auto):
         super().__init__(bit_size=32, byte_order=byte_order)
 
 

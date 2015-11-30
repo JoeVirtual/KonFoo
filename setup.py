@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 KonF'00'
 ~~~~~~~~
@@ -11,7 +12,8 @@ Setup
 -----
 
 .. code:: bash
-    $ pip install KonFoo
+
+    > pip install KonFoo
 
 Links
 -----

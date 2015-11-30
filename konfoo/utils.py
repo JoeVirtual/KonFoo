@@ -185,8 +185,8 @@ def d3json(blueprint, **options):
             "children": []
         }
 
-    :param dict blueprint: blueprint generated from a `Structure`,
-        `Sequence`, `Array` or any `Field` instance.
+    :param dict blueprint: blueprint generated from a :class:`Structure`,
+        :class:`Sequence`, :class:`Array` or any :class:`Field` instance.
 
     :keyword int indent: indentation for the JSON string. Default is *2*.
     """
