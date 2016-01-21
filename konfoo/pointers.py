@@ -5,19 +5,21 @@
     <Add description of the module here>.
     
     :copyright: (c) 2015 by Jochen Gerhaeusser.
-    :license: BSD-style, see LICENSE for details
+    :license: BSD, see LICENSE for details
 """
 
 from .globals import BYTEORDER
 
-from .core import Pointer, StructurePointer, ArrayPointer, StreamPointer, \
-    StringPointer, \
-    RelativePointer, StructureRelativePointer, ArrayRelativePointer, \
-    StreamRelativePointer, StringRelativePointer, \
-    Float
+from .core import (
+    Pointer, StructurePointer, ArrayPointer, StreamPointer,
+    StringPointer,
+    RelativePointer, StructureRelativePointer, ArrayRelativePointer,
+    StreamRelativePointer, StringRelativePointer,
+    Float)
 
-from .fields import Signed8, Signed16, Signed32, \
-    Unsigned8, Unsigned16, Unsigned32
+from .fields import (
+    Signed8, Signed16, Signed32,
+    Unsigned8, Unsigned16, Unsigned32)
 
 
 class Pointer8(Pointer):

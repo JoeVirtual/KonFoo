@@ -84,12 +84,16 @@ method, this part of the documentation is for you.
    api
 
 
-Miscellaneous Pages
--------------------
-
 .. toctree::
    :maxdepth: 2
+   :caption: Miscellaneous Pages
 
    changelog
    upgrading
    license
+
+
+Index
+-----
+
+* :ref:`genindex`

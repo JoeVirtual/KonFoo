@@ -5,7 +5,7 @@
     <Add description of the module here>.
     
     :copyright: (c) 2015 by Jochen Gerhaeusser.
-    :license: BSD-style, see LICENSE for details
+    :license: BSD, see LICENSE for details
 """
 
 from .enums import Enumeration
@@ -13,7 +13,6 @@ from .enums import Enumeration
 
 class KonFooError(Exception):
     """An exception that KonF'00' can handle and show to the user."""
-    pass
 
 
 class FileError(KonFooError):

@@ -6,6 +6,7 @@
     from binascii import hexlify
     from konfoo import *
 
+
 .. _structure_template:
 
 Structure template
@@ -15,6 +16,7 @@ KonFoo ships with a :class:`Structure` class and many :class:`Field` classes to
 declare the mapping part of a *byte stream mapper*. The order how you declare the
 fields in the :class:`Structure` defines the order how the fields are decoded and
 encoded by the built-in decoding and encoding engine.
+
 
 Define a Structure
 ------------------
@@ -225,7 +227,7 @@ You can **re-use** a declared template on the fly in other templates on the fly.
 View a template
 ---------------
 
-You can **view** a template with
+You can **view** the :class:`Structure` with
 
     >>> structure = Structure()
     >>> structure.version = Byte()
@@ -261,8 +263,8 @@ You can **view** a template with
 Blueprint of a template
 -----------------------
 
-You can get the :ref:`blueprint <blueprint>` of a template by calling the
-method :meth:`~Structure.blueprint`.
+You can get the :ref:`blueprint <blueprint>` of the :class:`Structure` by
+calling the method :meth:`~Structure.blueprint`.
 
     >>> pprint(structure.blueprint())
     {'class': 'Structure',
@@ -319,10 +321,10 @@ method :meth:`~Structure.blueprint`.
                  'value': '\x00'}]}
 
 
-Length of a template
---------------------
+Length of a Structure
+---------------------
 
-You can get the **length** of the template as a tuple in the form of
+You can get the **length** of the :class:`Structure` as a tuple in the form of
 ``(number of bytes, remaining bits)`` by calling the method
 :meth:`~Structure.field_length`.
 
@@ -375,11 +377,11 @@ You can **encode** a byte stream with a template by calling the method
     b'01020946'
 
 
-Accessing a member
-------------------
+Access a Member
+---------------
 
-You can **access** a :ref:`member <template_member>` in a template with its
-name.
+You can **access** a :ref:`member <template_member>` in a :class:`Structure`
+with its name.
 
     >>> structure.version # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -392,8 +394,12 @@ name.
          bit_size=8,
          value='0x1')
 
+
+Properties of a Member Field
+----------------------------
+
 You can **access** the :class:`Field` properties of a :ref:`member
-<template_member>` in a template with the property names.
+<template_member>` in a :class:`Structure` with the property names.
 
     >>> structure.version.name
     'Byte'
@@ -441,17 +447,17 @@ You can **access** the :class:`Field` properties of a :ref:`member
     False
 
 
-Iterating over members
-----------------------
+Iterate over Members
+--------------------
 
 You can **iterate** over the :ref:`member <template_member>` names
-of a template.
+of the :class:`Structure`.
 
     >>> [key for key in structure.keys()]
     ['version', 'id', 'length', 'module']
 
 You can **iterate** over all kind of :ref:`member <template_member>` items
-of a template.
+of the :class:`Structure`.
 
     >>> pprint([(key, value.item_type) for key, value in structure.items()])
     [('version', ItemClass.Byte = 42),
@@ -459,8 +465,8 @@ of a template.
      ('length', ItemClass.Decimal = 40),
      ('module', ItemClass.Char = 43)]
 
-You can **iterate** over all :ref:`members <template_member>`
-of a template.
+You can **iterate** over all kind of :ref:`members <template_member>`
+of the :class:`Structure`.
 
     >>> pprint([value.item_type for value in structure.values()])
     [ItemClass.Byte = 42,
@@ -468,18 +474,59 @@ of a template.
      ItemClass.Decimal = 40,
      ItemClass.Char = 43]
 
-You can **iterate** over :class:`Field` members of a template.
+You can **iterate** over all :class:`Field` members of the :class:`Structure`.
 
     >>> [value.name for value in structure.values() if is_field(value)]
     ['Byte', 'Unsigned8', 'Decimal8', 'Char']
 
 
+List field indexes
+------------------
 
-List fields
------------
+You can list the :class:`Index` of each :class:`Field` of the :class:`Structure`
+as a **nested** ordered dictionary by calling the method
+:meth:`~Structure.field_indexes`.
 
-You can list all :class:`Field` items in the template as a **flat** list
-by calling the method :meth:`~Structure.field_items`.
+    >>> pprint(structure.field_indexes())
+    {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'id': Index(byte=1, bit=0, address=1, base_address=0, update=False),
+     'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
+     'module': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
+
+
+List field types
+----------------
+
+You can list the **types** of each :class:`Field` of the :class:`Structure`
+as a **nested** ordered dictionary by calling the method
+:meth:`~Structure.field_types`.
+
+    >>> pprint(structure.field_types())
+    {'version': 'Byte',
+     'id': 'Unsigned8',
+     'length': 'Decimal8',
+     'module': 'Char'}
+
+
+List field values
+-----------------
+
+You can list the **values** of each :class:`Field` of the :class:`Structure`
+as a **nested** ordered dictionary by calling the method
+:meth:`~Structure.field_values`.
+
+    >>> pprint(structure.field_values())
+    {'version': '0x1',
+     'id': '0x2',
+     'length': 9,
+     'module': 'F'}
+
+
+List field items
+----------------
+
+You can list all :class:`Field` items of the :class:`Structure` as a **flat**
+list by calling the method :meth:`~Structure.field_items`.
 
     >>> pprint(structure.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('version',
@@ -503,51 +550,11 @@ by calling the method :meth:`~Structure.field_items`.
           bit_size=8,
           value='F'))]
 
-
-List field indexes
-------------------
-
-You can list the :class:`Index` of each :class:`Field` in the template as a
-**nested** ordered dictionary by calling the method
-:meth:`~Structure.field_indexes`.
-
-    >>> pprint(structure.field_indexes())
-    {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'id': Index(byte=1, bit=0, address=1, base_address=0, update=False),
-     'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
-     'module': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
-
-
-List field types
-----------------
-
-You can list the **types** of each :class:`Field` in the template as a
-**nested** ordered dictionary by calling the method
-:meth:`~Structure.field_types`.
-
-    >>> pprint(structure.field_types())
-    {'version': 'Byte',
-     'id': 'Unsigned8',
-     'length': 'Decimal8',
-     'module': 'Char'}
-
-
-List field values
+View field values
 -----------------
 
-You can list the **values** of each :class:`Field` in the template as a
-**nested** ordered dictionary by calling the method
-:meth:`~Structure.field_values`.
-
-    >>> pprint(structure.field_values())
-    {'version': '0x1',
-     'id': '0x2',
-     'length': 9,
-     'module': 'F'}
-
-
-You can list the **values** of each :class:`Field` in the template as a
-**flat** list by calling the method :meth:`~Container.to_list`.
+You can **view** the *values* of each :class:`Field` of the :class:`Structure`
+as a **flat** list by calling the method :meth:`~Container.to_list`.
 
     >>> pprint(structure.to_list())
     [('Structure.version', '0x1'),
@@ -561,8 +568,9 @@ You can list the **values** of each :class:`Field` in the template as a
     *name* is given.
 
 
-You can list the **values** of each :class:`Field` in the template as a
-**flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
+You can **view** the *values* of each :class:`Field` of the :class:`Structure`
+as a **flat** ordered dictionary by calling the method
+:meth:`~Container.to_dict`.
 
     >>> pprint(structure.to_dict())
     {'Structure': {'version': '0x1',
@@ -579,8 +587,8 @@ You can list the **values** of each :class:`Field` in the template as a
 Save field values
 -----------------
 
-You can **save** the values of each :class:`Field` in the template to an
-INI file by calling the method :meth:`~Container.save`.
+You can **save** the *values* of each :class:`Field` of the :class:`Structure`
+to an INI file by calling the method :meth:`~Container.save`.
 
     >>> structure.save("_static/structure.ini")
 
@@ -593,8 +601,8 @@ INI file by calling the method :meth:`~Container.save`.
 Load field values
 -----------------
 
-You can **load** the values of each :class:`Field` in the template from an
-INI file by calling the method :meth:`~Container.load`.
+You can **load** the *values* of each :class:`Field` of the :class:`Structure`
+from an INI file by calling the method :meth:`~Container.load`.
 
     >>> structure.load("_static/structure.ini")
     [Structure]

@@ -5,7 +5,7 @@
     <Add description of the module here>.
 
     :copyright: (c) 2015 by Jochen Gerhaeusser.
-    :license: BSD-style, see LICENSE for details
+    :license: BSD, see LICENSE for details
 """
 
 import math
@@ -17,10 +17,9 @@ import calendar
 from collections import Mapping, namedtuple, OrderedDict
 from collections.abc import MutableSequence
 from configparser import ConfigParser
-from binascii import hexlify, unhexlify
+from binascii import hexlify
 import abc
 from pprint import pprint
-
 from konfoo.enums import Enumeration
 from konfoo.globals import ItemClass, Byteorder, BYTEORDER, limiter
 from konfoo.options import Option, byte_order_option, get_byte_order, \
@@ -48,6 +47,10 @@ def is_container(obj):
 
 def is_sequence(obj):
     return isinstance(obj, Sequence)
+
+
+def is_array(obj):
+    return isinstance(obj, Array)
 
 
 def is_structure(obj):
@@ -106,11 +109,11 @@ Index = namedtuple('Index', [
 normally provided by a :class:`Pointer` field. The `data source` is normally
 accessed via a data :class:`Provider` by a :class:`Pointer` field.
 
-:param int byte: byte offset of the `Field` in the byte stream.
+:param int byte: byte offset of the :class:`Field` in the byte stream.
 
-:param int bit: bit offset of the `Field` relative to its byte offset.
+:param int bit: bit offset of the :class:`Field` relative to its byte offset.
 
-:param int address: address of the `Field` in the data source.
+:param int address: address of the :class:`Field` in the data source.
 
 :param int base_address: base address of the data source.
 
@@ -123,13 +126,13 @@ def zero():
 
 
 class Container(metaclass=abc.ABCMeta):
-    """The `Container` class is a meta class for all classes which
-    can contain :class:`Field` items. Container classes are :class:`Structures
-    <Structure>`, :class:`Sequences <Sequence>`, :class:`Arrays <Array>` and
-    :class:`Pointers <Pointer>`.
+    """The `Container` class is a meta class for all classes which can contain
+    :class:`Field` items. Container classes are :class:`Structures <Structure>`,
+    :class:`Sequences <Sequence>`, :class:`Arrays <Array>` and :class:`Pointers
+    <Pointer>`.
 
-    The `Container` class provides core features to **save**, to **load** and
-    to **view** the *values* of the :class:`Field` items in a `Container` class.
+    The `Container` class provides core features to **view**, **save** and
+    **load** the *values* of the :class:`Field` items in the `Container`.
     """
 
     def field_items(self, root=str(), **options):
@@ -139,13 +142,11 @@ class Container(metaclass=abc.ABCMeta):
         :param str root: root path.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
-            `data` objects of all :class:`Pointer` fields of a `Container`
+            `data` objects of all :class:`Pointer` fields in the `Container`
             list their  *nested* `data` object fields as well
             (chained method call).
 
-        .. note::
-
-           This method must be overwritten by a derived class.
+        .. note:: This method must be overwritten by a derived class.
         """
         return list()
 
@@ -161,7 +162,7 @@ class Container(metaclass=abc.ABCMeta):
         :param str name: name of the `Container`.
             Default is the class name of the instance.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Container` lists their *nested* `data` object fields as well
             (chained method call).
 
@@ -195,7 +196,7 @@ class Container(metaclass=abc.ABCMeta):
         :param str name: name of the `Container`.
             Default is the class name of the instance.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Container` lists their *nested* `data` object fields as well
             (chained method call).
 
@@ -219,6 +220,58 @@ class Container(metaclass=abc.ABCMeta):
 
     @nested_option()
     @field_types_option()
+    def save(self, file, section=str(), **options):
+        """Saves the *values* of the :class:`Field`'s in the `Container` to
+        an INI *file*.
+
+        :param str file: name and location of the INI *file*.
+
+        :param str section: section in the INI file to look for the
+            :class:`Field` values of the `Container`. If no *section* is
+            specified the class name of the instance is used.
+
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+            `Container` saves their *nested* `data` object fields as well
+            (chained method call).
+
+        :keyword bool field_types: if `True` the type of the :class:`Field`
+            is appended to its path string with the '|' sign as delimiter.
+
+        Example:
+
+        >>> class Foo(Structure):
+        ...     def __init__(self):
+        ...         super().__init__()
+        ...         self.stream = Stream()
+        ...         self.float = Float()
+        ...         self.structure = Structure()
+        ...         self.structure.decimal = Decimal(8)
+        ...         self.array = Array(Byte, 3)
+        ...         self.pointer = Pointer()
+        >>> foo = Foo()
+        >>> foo.save('foo.ini')
+
+        File `foo.ini`:
+
+        .. code-block:: ini
+
+            [Foo]
+            stream = b''
+            float = 0.0
+            structure.decimal = 0
+            array[0] = 0x0
+            array[1] = 0x0
+            array[2] = 0x0
+            pointer = 0x0
+        """
+        parser = ConfigParser()
+        parser.read_dict(self.to_dict(section, **options))
+        with open(file, 'w') as handle:
+            parser.write(handle)
+        handle.close()
+
+    @nested_option()
+    @field_types_option()
     @verbose_option(True)
     def load(self, file, section=str(), **options):
         """Loads the *values* of the :class:`Field`'s in the `Container` from
@@ -227,10 +280,10 @@ class Container(metaclass=abc.ABCMeta):
         :param str file: name and location of the INI *file*.
 
         :param str section: section in the INI *file* to look for the
-            :class:`Field` values of a `Container`. If no *section* is
+            :class:`Field` values of the `Container`. If no *section* is
             specified the class name of the instance is used.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if `True` all :class:`Pointer` fields in the
             `Container` load their *nested* `data` object fields as well
             (chained method call).
 
@@ -301,8 +354,8 @@ class Container(metaclass=abc.ABCMeta):
                     # Stream fields
                     elif field.is_stream():
                         value = parser.get(section, option)
-                        stream = unhexlify(value.replace("b'", '').
-                                           replace("'", ""))
+                        stream = bytes.fromhex(value.replace("b'", '').
+                                               replace("'", ""))
                         # Auto size a zero sized stream field to
                         # the current stream length
                         if not len(field):
@@ -315,75 +368,23 @@ class Container(metaclass=abc.ABCMeta):
         else:
             verbose(options, "No section [{0}] found.".format(section))
 
-    @nested_option()
-    @field_types_option()
-    def save(self, file, section=str(), **options):
-        """Saves the *values* of the :class:`Field`'s in the `Container` to
-        an INI *file*.
-
-        :param str file: name and location of the INI *file*.
-
-        :param str section: section in the INI file to look for the
-            :class:`Field` values of a `Container`. If no *section* is
-            specified the class name of the instance is used.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
-            `Container` saves their *nested* `data` object fields as well
-            (chained method call).
-
-        :keyword bool field_types: if `True` the type of the :class:`Field`
-            is appended to its path string with the '|' sign as delimiter.
-
-        Example:
-
-        >>> class Foo(Structure):
-        ...     def __init__(self):
-        ...         super().__init__()
-        ...         self.stream = Stream()
-        ...         self.float = Float()
-        ...         self.structure = Structure()
-        ...         self.structure.decimal = Decimal(8)
-        ...         self.array = Array(Byte, 3)
-        ...         self.pointer = Pointer()
-        >>> foo = Foo()
-        >>> foo.save('foo.ini')
-
-        File `foo.ini`:
-
-        .. code-block:: ini
-
-            [Foo]
-            stream = b''
-            float = 0.0
-            structure.decimal = 0
-            array[0] = 0x0
-            array[1] = 0x0
-            array[2] = 0x0
-            pointer = 0x0
-        """
-        parser = ConfigParser()
-        parser.read_dict(self.to_dict(section, **options))
-        with open(file, 'w') as handle:
-            parser.write(handle)
-        handle.close()
-
 
 class Structure(OrderedDict, Container):
     """A `Structure` is an :class:`ordered dictionary <collections.OrderedDict>`
-    whereby the dictionary `key` describes the *name* of a `member` of the
-    `Structure` and the `value` of a dictionary `key` describes the *type* of
-    a `member` of the `Structure`. Allowed members are :class:`Structure`,
-    :class:`Sequence`, :class:`Array` or :class:`Field` instances.
+    whereby the dictionary `key` describes the *name* of a *member* of the
+    `Structure` and the `value` of the dictionary `key` describes the *type* of
+    the *member*. Allowed *members* are :class:`Structure`, :class:`Sequence`,
+    :class:`Array` or :class:`Field` instances.
 
     The `Structure` class extends the :class:`ordered dictionary
     <collections.OrderedDict>` from the Python standard module :mod:`collections`
     with the :class:`Container` class and attribute getter and setter for the
-    ``{'key': value}`` pairs to access and to assign  the members of a `Structure`
-    easier, but this comes with the cost that the dictionary `keys` must be valid
-    Python attribute names.
+    ``{'key': value}`` pairs to access and to assign  the *members* of the
+    `Structure` easier, but this comes with the cost that the dictionary `keys`
+    must be valid Python attribute names.
 
-    A `Structure` has additional methods for reading, decoding, encoding and
-    viewing binary data:
+    A `Structure` has additional methods to **read**, **decode**, **encode**
+    and **view** binary data:
 
     *   **Read** from a :class:`Provider` the necessary bytes for each `data`
         object referenced by the :class:`Pointer` fields in a `Structure`
@@ -506,6 +507,10 @@ class Structure(OrderedDict, Container):
         Optional the decoding of the *nested* :attr:`~Pointer.data` objects
         of all :class:`Pointer` fields of the `Structure` can be enabled.
 
+        :param bytes buffer: bytestream.
+
+        :param index: current read :class:`Index` within the *buffer*.
+
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields of a
@@ -534,6 +539,10 @@ class Structure(OrderedDict, Container):
 
         Optional the encoding of the *nested* :attr:`~Pointer.data` objects
         of all :class:`Pointer` fields of the `Structure` can be enabled.
+
+        :param bytearray buffer: bytestream.
+
+        :param index: current write :class:`Index` within the *buffer*.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
@@ -573,6 +582,24 @@ class Structure(OrderedDict, Container):
             else:
                 raise TypeError(index, item)
         return index
+
+    def initialize(self, content):
+        """Initializes the :class:`Field` members in the `Structure` with
+        the *values* in the *content* dictionary.
+
+        :param dct content: a dictionary contains the :class:`Field`
+            values for each member in the `Structure`.
+        """
+        for name, value in content.items():
+            item = self[name]
+            # Container or Pointer
+            if is_mixin(item):
+                item.initialize(value)
+            # Fields
+            elif is_field(item):
+                item.value = value
+            else:
+                raise TypeError(name, item)
 
     def first_field(self):
         """Returns the first :class:`Field` of the `Structure` or `None` for
@@ -768,7 +795,9 @@ class Structure(OrderedDict, Container):
 
 
 class Sequence(MutableSequence, Container):
-    """A `Sequence` contains
+    """A `Sequence` contains a list of different *items*. Allowed *items* are
+    :class:`Structure`, :class:`Sequence`, :class:`Array` or :class:`Field`
+    instances.
 
     A `Sequence` is:
 
@@ -779,7 +808,7 @@ class Sequence(MutableSequence, Container):
         of the `Sequence`.
     *   *iterable* ``iter(self)`` iterates over the *items* in the `Sequence`
 
-    A `Sequence` supports the usual methods:
+    A `Sequence` supports the usual methods for sequences:
 
     *   **Append** an item to the `Sequence` via :meth:`append()`.
     *   **Insert** an item before the *index* into the `Sequence`
@@ -791,8 +820,8 @@ class Sequence(MutableSequence, Container):
         via :meth:`remove()`.
     *   **Reverse** all items in the `Sequence` via :meth:`reverse()`.
 
-    A `Sequence` has additional methods for reading, decoding, encoding and
-    viewing binary data:
+    A `Sequence` has additional methods to **read**, **decode**, **encode**
+    and **view** binary data:
 
     *   **Read** from a :class:`Provider` the necessary bytes for each `data`
         object referenced by the :class:`Pointer` fields in the `Sequence`
@@ -966,6 +995,10 @@ class Sequence(MutableSequence, Container):
         Optional the decoding of the *nested* :attr:`~Pointer.data` objects
         of all :class:`Pointer` fields in the `Sequence` can be enabled.
 
+        :param bytes buffer: bytestream.
+
+        :param index: current read :class:`Index` within the *buffer*.
+
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
@@ -994,6 +1027,10 @@ class Sequence(MutableSequence, Container):
 
         Optional the encoding of the *nested* :attr:`~Pointer.data` objects
         of all :class:`Pointer` fields in the `Sequence` can be enabled.
+
+        :param bytearray buffer: bytestream.
+
+        :param index: current write :class:`Index` within the *buffer*.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
@@ -1033,6 +1070,24 @@ class Sequence(MutableSequence, Container):
             else:
                 raise TypeError(index, item)
         return index
+
+    def initialize(self, content):
+        """Initializes the :class:`Field` items in the `Sequence` with
+        the *values* in the *content* list.
+
+        :param list content: a list contains the :class:`Field` values for each
+            item in the `Sequence`.
+        """
+        for pair in zip(self, content):
+            item, value = pair
+            # Container or Pointer
+            if is_mixin(item):
+                item.initialize(value)
+            # Fields
+            elif is_field(item):
+                item.value = value
+            else:
+                raise TypeError(item)
 
     def first_field(self):
         """Returns the first :class:`Field` in the `Sequence` or `None` for
@@ -1249,10 +1304,10 @@ class Array(Sequence):
     A `Array` adapts and extends a :class:`Sequence` with the following
     features:
 
-    *   **Append** a new `Array` element to a `Array` via :meth:`append()`.
-    *   **Insert** a new `Array` element before the *index* into a `Array`
+    *   **Append** a new `Array` element to the `Array` via :meth:`append()`.
+    *   **Insert** a new `Array` element before the *index* into the `Array`
         via :meth:`insert()`.
-    *   **Re-size** a `Array` via :meth:`resize()`.
+    *   **Re-size** the `Array` via :meth:`resize()`.
 
     A `Array` replaces the ``type`` key of the :attr:`~Sequence.blueprint`
     of a :class:`Sequence` with its own `item` type.
@@ -1289,6 +1344,43 @@ class Array(Sequence):
         # Callable: Array element factory
         else:
             return self._template()
+
+    def initialize(self, content):
+        """Initializes the :class:`Field` elements in the `Array` with the
+        *values* in the *content* list.
+
+        If the *content* list is shorter than the `Array` then the *content*
+        list is used as a rotating fill pattern for the :class:`Field` elements
+        in the `Array`.
+
+        :param list content: a list contains the :class:`Field` values for each
+            element in the `Array` or one :class:`Field` value for all elements
+            in the `Array`.
+        """
+
+        if isinstance(content, (list, tuple)):
+            size = len(content)
+            for i in range(0, len(self), size):
+                for pair in zip(self[i:i + size], content):
+                    item, value = pair
+                    # Container or Pointer
+                    if is_mixin(item):
+                        item.initialize(value)
+                    # Fields
+                    elif is_field(item):
+                        item.value = value
+                    else:
+                        raise TypeError(item)
+        else:
+            for item in iter(self):
+                # Container or Pointer
+                if is_mixin(item):
+                    item.initialize(content)
+                # Fields
+                elif is_field(item):
+                    item.value = content
+                else:
+                    raise TypeError(item)
 
     def append(self):
         """Appends a new `Array` element to the `Array`."""
@@ -1491,6 +1583,10 @@ class Field(metaclass=abc.ABCMeta):
 
         Returns the :class:`Index` of the *buffer* after the `Field`.
 
+        :param bytes buffer: bytestream.
+
+        :param index: current read :class:`Index` within the *buffer*.
+
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         .. note::
@@ -1510,6 +1606,8 @@ class Field(metaclass=abc.ABCMeta):
         *byte order* of the *buffer*.
 
         Returns the encoded :class:`bytes` for its field *value*.
+
+        :param bytearray buffer: bytestream.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
@@ -1534,6 +1632,10 @@ class Field(metaclass=abc.ABCMeta):
 
         Optional the decoding of the *nested* :attr:`~Pointer.data` object
         of a :class:`Pointer` field can be enabled.
+
+        :param bytes buffer: bytestream.
+
+        :param index: current read :class:`Index` within the *buffer*.
 
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
@@ -1561,6 +1663,10 @@ class Field(metaclass=abc.ABCMeta):
 
         Optional the encoding of the *nested* :attr:`~Pointer.data` object
         of a :class:`Pointer` field can be enabled.
+
+        :param bytearray buffer: bytestream.
+
+        :param index: current write :class:`Index` of the *buffer*.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
@@ -1770,7 +1876,7 @@ class Stream(Field):
     def to_stream(self, value, encoding='hex'):
         if isinstance(value, str):
             if encoding == 'hex':
-                bytestream = unhexlify(value)
+                bytestream = bytes.fromhex(value)
             elif encoding == 'ascii':
                 bytestream = value.encode('ascii')
             else:
@@ -2144,7 +2250,7 @@ class Decimal(Field):
     False
     >>> unsigned.value
     0
-    >>> unsigned.decode(unhexlify('0080'))
+    >>> unsigned.decode(bytes.fromhex('0080'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unsigned.value
     32768
@@ -2203,7 +2309,7 @@ class Decimal(Field):
     True
     >>> signed.value
     0
-    >>> signed.decode(unhexlify('00c0'))
+    >>> signed.decode(bytes.fromhex('00c0'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> signed.value
     -16384
@@ -2472,7 +2578,7 @@ class Bit(Decimal):
     False
     >>> bit.value
     0
-    >>> bit.decode(unhexlify('01'))
+    >>> bit.decode(bytes.fromhex('01'))
     Index(byte=0, bit=1, address=0, base_address=0, update=False)
     >>> bit.value
     1
@@ -2568,7 +2674,7 @@ class Byte(Decimal):
     False
     >>> byte.value
     '0x0'
-    >>> byte.decode(unhexlify('20'))
+    >>> byte.decode(bytes.fromhex('20'))
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> byte.value
     '0x20'
@@ -2657,7 +2763,7 @@ class Char(Decimal):
     False
     >>> ord(char.value)
     0
-    >>> char.decode(unhexlify('41'))
+    >>> char.decode(bytes.fromhex('41'))
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> char.value
     'A'
@@ -2751,7 +2857,7 @@ class Signed(Decimal):
     True
     >>> signed.value
     0
-    >>> signed.decode(unhexlify('00c0'))
+    >>> signed.decode(bytes.fromhex('00c0'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> signed.value
     -16384
@@ -2832,7 +2938,7 @@ class Unsigned(Decimal):
     False
     >>> unsigned.value
     '0x0'
-    >>> unsigned.decode(unhexlify('00c0'))
+    >>> unsigned.decode(bytes.fromhex('00c0'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unsigned.value
     '0xc000'
@@ -2921,7 +3027,7 @@ class Bitset(Decimal):
     False
     >>> bitset.value
     '0b0000000000000000'
-    >>> bitset.decode(unhexlify('f00f'))
+    >>> bitset.decode(bytes.fromhex('f00f'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bitset.value
     '0b0000111111110000'
@@ -3012,7 +3118,7 @@ class Bool(Decimal):
     False
     >>> boolean.value
     False
-    >>> boolean.decode(unhexlify('0f00'))
+    >>> boolean.decode(bytes.fromhex('0f00'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> boolean.value
     True
@@ -3112,7 +3218,7 @@ class Enum(Decimal):
     False
     >>> enum.value
     0
-    >>> enum.decode(unhexlify('2800'))
+    >>> enum.decode(bytes.fromhex('2800'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> enum.value
     'Decimal'
@@ -3252,7 +3358,7 @@ class Scaled(Decimal):
     True
     >>> scaled.value
     0.0
-    >>> scaled.decode(unhexlify('0040'))
+    >>> scaled.decode(bytes.fromhex('0040'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> scaled.value
     100.0
@@ -3398,7 +3504,7 @@ class Fraction(Decimal):
     False
     >>> unipolar.value
     0.0
-    >>> unipolar.decode(unhexlify('0080'))
+    >>> unipolar.decode(bytes.fromhex('0080'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unipolar.value
     200.0
@@ -3461,7 +3567,7 @@ class Fraction(Decimal):
     False
     >>> bipolar.value
     0.0
-    >>> bipolar.decode(unhexlify('0040'))
+    >>> bipolar.decode(bytes.fromhex('0040'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bipolar.value
     100.0
@@ -3704,7 +3810,7 @@ class Unipolar(Fraction):
     False
     >>> unipolar.value
     0.0
-    >>> unipolar.decode(unhexlify('0080'))
+    >>> unipolar.decode(bytes.fromhex('0080'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unipolar.value
     200.0
@@ -3781,7 +3887,7 @@ class Datetime(Decimal):
     False
     >>> datetime.value
     '1970-01-01 00:00:00'
-    >>> datetime.decode(unhexlify('ffffffff'))
+    >>> datetime.decode(bytes.fromhex('ffffffff'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> datetime.value
     '2106-02-07 06:28:15'
@@ -3842,7 +3948,8 @@ class Pointer(Decimal, Container):
     The `Pointer` class extends the :class:`Decimal` field with the
     :class:`Container` class for its referenced :attr:`data` object.
 
-    A `Pointer` field provides additional features:
+    A `Pointer` field has additional features to **read**, **write**, **decode**,
+    **encode** and **view** binary data:
 
     *   **Refresh** each :class:`Field` in the :attr:`data` object
         with the internal :attr:`bytestream` of the `Pointer` field
@@ -3916,7 +4023,7 @@ class Pointer(Decimal, Container):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'
@@ -4014,7 +4121,7 @@ class Pointer(Decimal, Container):
     @bytestream.setter
     def bytestream(self, value):
         if isinstance(value, str):
-            self._data_stream = unhexlify(value)
+            self._data_stream = bytes.fromhex(value)
         elif isinstance(value, (bytearray, bytes)):
             self._data_stream = bytes(value)
         else:
@@ -4146,7 +4253,7 @@ class Pointer(Decimal, Container):
 
         :param item: item to patch.
 
-        :keyword byte_order: encoding :class:`Byteorder` for the item.
+        :param byte_order: encoding :class:`Byteorder` for the item.
         """
         # Re-index the data object
         self.subscript()
@@ -4301,6 +4408,10 @@ class Pointer(Decimal, Container):
         Optional the decoding of the *nested* :attr:`data` object of the
         `Pointer` field can be enabled.
 
+        :param bytes buffer: bytestream.
+
+        :param index: current read :class:`Index` within the *buffer*.
+
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         :keyword bool nested: if `True` a `Pointer` field decodes its *nested*
@@ -4335,6 +4446,10 @@ class Pointer(Decimal, Container):
 
         Optional the encoding of the *nested* :attr:`data` object of the
         `Pointer` field can be enabled.
+
+        :param bytearray buffer: bytestream.
+
+        :param index: current write :class:`Index` within the *buffer*.
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
@@ -4374,6 +4489,31 @@ class Pointer(Decimal, Container):
         elif is_field(self._data):
             self._data.next_index(index)
 
+    def initialize(self, content):
+        """Initializes the `Pointer` field itself and the :class:`Field` items
+        of the :attr:`data` object of the `Pointer` field with the *values*
+        in the *content* dictionary.
+
+        The ``'value'`` key in the *content* dictionary refers to the `Pointer`
+        field itself and with the ``'data'`` key is the :attr:`data` object of
+        the `Pointer` field referenced.
+
+        :param dct content: a dictionary contains the :class:`Field` value for
+            the `Pointer` field and the :class:`Field` values for each item
+            in the :attr:`data` object of the `Pointer` field.
+        """
+        for name, value in content.items():
+            # Container or Pointer
+            if name is 'value':
+                self.value = value
+            elif name is 'data':
+                # Container or Pointer
+                if is_mixin(self._data):
+                    self._data.initialize(value)
+                # Field
+                elif is_field(self._data):
+                    self._data.value = value
+
     @nested_option()
     def field_indexes(self, index=zero(), **options):
         """Returns an :class:`ordered dictionary <collections.OrderedDict>`
@@ -4381,6 +4521,8 @@ class Pointer(Decimal, Container):
         The ``['value']`` key contains the *index* of the `Pointer` field and
         the ``['data']`` key contains the *indexes* for each :class:`Field`
         in the :attr:`data` object of the `Pointer` field.
+
+        :param index: optional start :class:`Index` of the `Pointer`.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the
             :attr:`data` object of the `Pointer` field lists their *nested*
@@ -4586,7 +4728,7 @@ class StructurePointer(Pointer):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'
@@ -4696,22 +4838,18 @@ class SequencePointer(Pointer):
     *   *iterable* ``iter(self)`` iterates over the *items* of the
         :class:`Sequence`
 
-    A `SequencePointer` field supports the usual methods:
+    A `SequencePointer` field supports the usual methods for sequences:
 
-    *   **Append** a item to a :class:`Sequence`
-        via :meth:`append()`.
-    *   **Insert** a item before the *index* into a :class:`Sequence`
+    *   **Append** an item to the :class:`Sequence` via :meth:`append()`.
+    *   **Insert** an item before the *index* into the :class:`Sequence`
         via :meth:`insert()`.
-    *   **Extend** a :class:`Sequence` with items
-        via :meth:`extend()`.
-    *   **Clear** a :class:`Sequence`
-        via :meth:`clear()`.
-    *   **Pop** a item with the *index* from a :class:`Sequence`
+    *   **Extend** the :class:`Sequence` with items via :meth:`extend()`.
+    *   **Clear** the :class:`Sequence` via :meth:`clear()`.
+    *   **Pop** an item with the *index* from the :class:`Sequence`
         via :meth:`pop()`.
-    *   **Remove**  the first occurrence of an *item* from a :class:`Sequence`
-        via :meth:`remove()`.
-    *   **Reverse** all items in a :class:`Sequence`
-        via :meth:`reverse()`.
+    *   **Remove** the first occurrence of an *item* from the
+        :class:`Sequence` via :meth:`remove()`.
+    *   **Reverse** all items in the :class:`Sequence` via :meth:`reverse()`.
 
     :param iterable: any *iterable* that contains items of :class:`Structure`,
         :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
@@ -4803,11 +4941,11 @@ class ArrayPointer(SequencePointer):
     A `ArrayPointer` field adapts and extends a :class:`SequencePointer`
     field with the following features:
 
-    *   **Append** a new :class:`Array` element to a :class:`Array`
+    *   **Append** a new :class:`Array` element to the :class:`Array`
         via :meth:`append()`.
     *   **Insert** a new :class:`Array` element before the *index*
-        into a :class:`Array` via :meth:`insert()`.
-    *   **Re-size** a :class:`Array` via :meth:`resize()`.
+        into the :class:`Array` via :meth:`insert()`.
+    *   **Re-size** the :class:`Array` via :meth:`resize()`.
 
     :param template: template for the :class:`Array` element.
         The *template* can be any :class:`Field` instance or any *callable*
@@ -4915,7 +5053,7 @@ class StreamPointer(Pointer):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'
@@ -5093,7 +5231,7 @@ class StringPointer(StreamPointer):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'
@@ -5248,7 +5386,7 @@ class AutoStringPointer(StringPointer):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'
@@ -5347,7 +5485,9 @@ class AutoStringPointer(StringPointer):
     {'AutoStringPointer': {'value': '0xffffffff',
                            'data': 'KonFoo is '}}
     """
+    #: Block size in *bytes* to read for the :class:`String` field.
     BLOCK_SIZE = 64
+    #: Maximal allowed address of the :class:`String` field.
     MAX_ADDRESS = 0xffffffff
 
     def __init__(self, address=None):
@@ -5367,8 +5507,8 @@ class AutoStringPointer(StringPointer):
                                      AutoStringPointer.MAX_ADDRESS,
                                      AutoStringPointer.BLOCK_SIZE):
                     count = limiter(AutoStringPointer.BLOCK_SIZE,
-                                   0,
-                                   (AutoStringPointer.MAX_ADDRESS - address))
+                                    0,
+                                    (AutoStringPointer.MAX_ADDRESS - address))
                     self._data_stream += provider.read(address, count)
                     self.resize(len(self) + count)
                     index = self.refresh()
@@ -5438,7 +5578,7 @@ class RelativePointer(Pointer):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'
@@ -5573,7 +5713,7 @@ class StructureRelativePointer(RelativePointer):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'
@@ -5685,20 +5825,16 @@ class SequenceRelativePointer(RelativePointer):
 
     A `SequenceRelativePointer` supports the usual methods:
 
-    *   **Append** a item to a :class:`Sequence`
-        via :meth:`append()`.
-    *   **Insert** a item before the *index* into a :class:`Sequence`
+    *   **Append** an item to the :class:`Sequence` via :meth:`append()`.
+    *   **Insert** an item before the *index* into the :class:`Sequence`
         via :meth:`insert()`.
-    *   **Extend** a :class:`Sequence` with items
-        via :meth:`extend()`.
-    *   **Clear** a :class:`Sequence`
-        via :meth:`clear()`.
-    *   **Pop** a item with the *index* from a :class:`Sequence`
+    *   **Extend** the :class:`Sequence` with items via :meth:`extend()`.
+    *   **Clear** the :class:`Sequence` via :meth:`clear()`.
+    *   **Pop** an item with the *index* from the :class:`Sequence`
         via :meth:`pop()`.
-    *   **Remove**  the first occurrence of an *item* from a :class:`Sequence`
-        via :meth:`remove()`.
-    *   **Reverse** all items in a :class:`Sequence`
-        via :meth:`reverse()`.
+    *   **Remove** the first occurrence of an *item* from the
+        :class:`Sequence` via :meth:`remove()`.
+    *   **Reverse** all items in the :class:`Sequence` via :meth:`reverse()`.
 
     :param iterable: any *iterable* that contains items of :class:`Structure`,
         :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
@@ -5790,11 +5926,11 @@ class ArrayRelativePointer(SequenceRelativePointer):
     A `ArrayRelativePointer` adapts and extends a :class:`SequenceRelativePointer`
     with the following features:
 
-    *   **Append** a new :class:`Array` element to a :class:`Array`
+    *   **Append** a new :class:`Array` element to the :class:`Array`
         via :meth:`append()`.
     *   **Insert** a new :class:`Array` element before the *index*
-        into a :class:`Array` via :meth:`insert()`.
-    *   **Re-size** a :class:`Array` via :meth:`resize()`.
+        into the :class:`Array` via :meth:`insert()`.
+    *   **Re-size** the :class:`Array` via :meth:`resize()`.
 
     :param template: template for the :class:`Array` element.
         The *template* can be any :class:`Field` instance or any *callable*
@@ -5902,7 +6038,7 @@ class StreamRelativePointer(RelativePointer):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'
@@ -6080,7 +6216,7 @@ class StringRelativePointer(StreamRelativePointer):
     b''
     >>> pointer.value
     '0x0'
-    >>> pointer.decode(unhexlify('00c0'))
+    >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
     '0xc000'

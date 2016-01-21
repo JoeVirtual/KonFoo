@@ -5,6 +5,7 @@
     from pprint import pprint
     from konfoo import *
 
+
 .. _pointer_template:
 
 Pointer template
@@ -240,8 +241,9 @@ You can index each :class:`Field` in the :attr:`~Pointer.data` object of the
     >>> pointer.subscript()
 
 
-Accessing a member
-------------------
+
+Properties of the Field
+-----------------------
 
 You can **access** the :class:`Field` properties the :class:`Pointer` field
 with the property names.
@@ -290,6 +292,8 @@ with the property names.
     False
 
 
+Properties of the Data Object
+-----------------------------
 
 You can **access** the properties for the :attr:`~Pointer.data` object of the
 :class:`Pointer` field
@@ -298,18 +302,21 @@ You can **access** the properties for the :attr:`~Pointer.data` object of the
     0
     >>> pointer.base_address
     0
-    >>> pointer.order
-    Byteorder.little = 'little'
-    >>> pointer.order.value
-    'little'
     >>> pointer.size
     8
     >>> pointer.bytestream
     b''
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.order.value
+    'little'
 
 
-You can **access** a :ref:`member <template_member>` of the :attr:`~Pointer.data`
-object of the :class:`Pointer` field with its name.
+Access the Data Object
+----------------------
+
+You can **access** the :attr:`~Pointer.data` object of the :class:`Pointer`
+field with its name.
 
     >>> pointer.data  # doctest: +NORMALIZE_WHITESPACE
     Structure([('size',
@@ -326,30 +333,6 @@ object of the :class:`Pointer` field with its name.
                         alignment=(4, 0),
                         bit_size=32,
                         value='0x0'))])
-
-
-List fields
------------
-
-You can list all :class:`Field` items in the template as a **flat** list
-by calling the method :meth:`~Pointer.field_items`.
-
-    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
-    [('value',
-      Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-              alignment=(4, 0),
-              bit_size=32,
-              value='0x0')),
-     ('data.size',
-      Decimal32(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-                alignment=(4, 0),
-                bit_size=32,
-                value=0)),
-     ('data.item',
-      Pointer(index=Index(byte=4, bit=0, address=4, base_address=0, update=False),
-              alignment=(4, 0),
-              bit_size=32,
-              value='0x0'))]
 
 
 List field indexes
@@ -390,7 +373,34 @@ You can list the **values** of each :class:`Field` in the template as a
      'data': OrderedDict([('size', 0), ('item', '0x0')])}
 
 
-You can list the **values** of each :class:`Field` in the template as a
+List field items
+----------------
+
+You can list all :class:`Field` items in the template as a **flat** list
+by calling the method :meth:`~Pointer.field_items`.
+
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+              alignment=(4, 0),
+              bit_size=32,
+              value='0x0')),
+     ('data.size',
+      Decimal32(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+                alignment=(4, 0),
+                bit_size=32,
+                value=0)),
+     ('data.item',
+      Pointer(index=Index(byte=4, bit=0, address=4, base_address=0, update=False),
+              alignment=(4, 0),
+              bit_size=32,
+              value='0x0'))]
+
+
+View field values
+-----------------
+
+You can **view** the *values* of each :class:`Field` in the template as a
 **flat** list by calling the method :meth:`~Container.to_list`.
 
     >>> pprint(pointer.to_list())
@@ -404,7 +414,7 @@ You can list the **values** of each :class:`Field` in the template as a
     *name* is given.
 
 
-You can list the **values** of each :class:`Field` in the template as a
+You can **view** the *values* of each :class:`Field` in the template as a
 **flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 
     >>> pprint(pointer.to_dict())
@@ -421,7 +431,7 @@ You can list the **values** of each :class:`Field` in the template as a
 Save field values
 -----------------
 
-You can **save** the values of each :class:`Field` in the template to an
+You can **save** the *values* of each :class:`Field` in the template to an
 INI file by calling the method :meth:`~Container.save`.
 
     >>> pointer.save("_static/pointer.ini", nested=True)
@@ -435,7 +445,7 @@ INI file by calling the method :meth:`~Container.save`.
 Load field values
 -----------------
 
-You can **load** the values of each :class:`Field` in the template from an
+You can **load** the *values* of each :class:`Field` in the template from an
 INI file by calling the method :meth:`~Container.load`.
 
     >>> pointer.load("_static/pointer.ini", nested=True)

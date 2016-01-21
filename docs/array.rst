@@ -74,16 +74,6 @@ Define a array in a template by calling a factory class or function.
             self.entry = Array(Factory(10), 5)  # Array
 
 
-List fields
------------
-
-You can list all :class:`Field` items in the template as a **flat** list
-by calling the method :meth:`~Sequence.field_items`.
-
-    >>> pprint(array.field_items()) # doctest: +NORMALIZE_WHITESPACE
-    []
-
-
 List field indexes
 ------------------
 
@@ -118,7 +108,20 @@ You can list the **values** of each :class:`Field` in the template as a
     {}
 
 
-You can list the **values** of each :class:`Field` in the template as a
+List field items
+----------------
+
+You can list all :class:`Field` items in the template as a **flat** list
+by calling the method :meth:`~Sequence.field_items`.
+
+    >>> pprint(array.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    []
+
+
+View field values
+-----------------
+
+You can **view** the *values* of each :class:`Field` in the template as a
 **flat** list by calling the method :meth:`~Container.to_list`.
 
     >>> pprint(array.to_list())
@@ -130,7 +133,7 @@ You can list the **values** of each :class:`Field` in the template as a
     *name* is given.
 
 
-You can list the **values** of each :class:`Field` in the template as a
+You can **view** the *values* of each :class:`Field` in the template as a
 **flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 
     >>> pprint(array.to_dict())
@@ -145,7 +148,7 @@ You can list the **values** of each :class:`Field` in the template as a
 Save field values
 -----------------
 
-You can **save** the values of each :class:`Field` in the template to an
+You can **save** the *values* of each :class:`Field` in the template to an
 INI file by calling the method :meth:`~Container.save`.
 
     >>> array.save("_static/array.ini", nested=True)
@@ -159,7 +162,7 @@ INI file by calling the method :meth:`~Container.save`.
 Load field values
 -----------------
 
-You can **load** the values of each :class:`Field` in the template from an
+You can **load** the *values* of each :class:`Field` in the template from an
 INI file by calling the method :meth:`~Container.load`.
 
     >>> array.load("_static/array.ini", nested=True)

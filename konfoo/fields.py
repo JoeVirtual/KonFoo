@@ -5,15 +5,15 @@
     <Add description of the module here>.
     
     :copyright: (c) 2015 by Jochen Gerhaeusser.
-    :license: BSD-style, see LICENSE for details
+    :license: BSD, see LICENSE for details
 """
 
 from .enums import Enumeration
 
 from .globals import Byteorder
 
-from .core import Decimal, Signed, Unsigned, Bitset, Bool, Enum, \
-    Scaled, Bipolar, Unipolar
+from .core import (
+    Decimal, Signed, Unsigned, Bitset, Bool, Enum, Scaled, Bipolar, Unipolar)
 
 
 class Decimal8(Decimal):
