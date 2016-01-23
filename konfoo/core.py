@@ -18,13 +18,14 @@ from collections import Mapping, namedtuple, OrderedDict
 from collections.abc import MutableSequence
 from configparser import ConfigParser
 from binascii import hexlify
-import abc
 from pprint import pprint
+
 from konfoo.enums import Enumeration
 from konfoo.globals import ItemClass, Byteorder, BYTEORDER, limiter
-from konfoo.options import Option, byte_order_option, get_byte_order, \
-    nested_option, get_nested, field_types_option, get_field_types, \
-    verbose_option, verbose
+from konfoo.options import (
+    Option,
+    byte_order_option, get_byte_order, nested_option, get_nested,
+    field_types_option, get_field_types, verbose_option, verbose)
 from konfoo.exceptions import RangeError, SizeError, AlignmentError
 from konfoo.providers import Provider
 
@@ -125,7 +126,7 @@ def zero():
     return Index(0, 0, 0, 0, False)
 
 
-class Container(metaclass=abc.ABCMeta):
+class Container:
     """The `Container` class is a meta class for all classes which can contain
     :class:`Field` items. Container classes are :class:`Structures <Structure>`,
     :class:`Sequences <Sequence>`, :class:`Arrays <Array>` and :class:`Pointers
@@ -1419,7 +1420,7 @@ class Array(Sequence):
         return obj
 
 
-class Field(metaclass=abc.ABCMeta):
+class Field:
     """The `Field` class is the meta class for all field classes.
 
     A `Field` class ...
@@ -1493,20 +1494,20 @@ class Field(metaclass=abc.ABCMeta):
     def index(self, value):
         byte, bit, address, base, update = value
 
-        # Check: Field location
+        # Check for invalid field location
         if byte < 0 or bit < 0 or bit > 64:
             raise ValueError(value)
 
-        # Fields required minimal alignment size
-        length, remainder = divmod(self.bit_size + bit, 8)
+        # Calculate minimal required field alignment size
+        required_size, remainder = divmod(self.bit_size + bit, 8)
         if remainder:
-            length += 1
+            required_size += 1
 
-        # Check: Field alignment
-        size, offset = self.alignment
-        if length > size:
+        # Check for required field alignment size is greater than specified
+        specified_size, offset = self.alignment
+        if required_size > specified_size:
             raise ValueError(value)
-        # Bit field: Check field bit alignment
+        # Bit field: Check for invalid field bit alignment
         if self.is_bit():
             if offset != bit:
                 raise ValueError(value)
@@ -2464,18 +2465,19 @@ class Decimal(Field):
 
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=zero(), **options):
+        # Get bytes from buffer
         offset = index.byte
         size = offset + self._align_to_byte_size
         bytestream = buffer[offset:size]
 
+        # Get field value
         byte_order = get_byte_order(options)
-
         value = int.from_bytes(bytestream, byte_order.value)
         value >>= index.bit
         value &= self.bit_mask()
 
+        # Byte order conversion for field value necessary?
         byte, bit = divmod(self.bit_size, 8)
-
         if self.byte_order is Byteorder.auto:
             # No specific field byte order
             pass
@@ -2484,59 +2486,69 @@ class Decimal(Field):
             # decoding byte order of the buffer
             pass
         elif byte < 1:
-            # Byte order not relevant for one byte
+            # Byte order not relevant for field's smaller than one byte
             pass
         elif bit != 0:
-            # Bad aligned field
+            # Bad sized field for independent byte order conversion
             raise AlignmentError(self, byte, bit)
         elif byte == 1:
             # Byte order not relevant for field's with one byte
             pass
         else:
+            # Convert byte order of the field value
             value = int.from_bytes(value.to_bytes(byte, byte_order.value),
                                    self.byte_order.value)
 
+        # Limit field value
         if value > self.max():
             value |= ~self.bit_mask()
         return value
 
     @byte_order_option()
     def pack(self, buffer=bytearray(), **options):
-        byte_order = get_byte_order(options)
-
+        # Get field value
         value = limiter(self._value, self.min(), self.max())
         value &= self.bit_mask()
-        byte, bit = divmod(self.bit_size, 8)
 
+        # Byte order conversion for field value necessary?
+        byte_order = get_byte_order(options)
+        byte, bit = divmod(self.bit_size, 8)
         if self.byte_order is Byteorder.auto:
+            # No specific field byte order
             pass
         elif self.byte_order is byte_order:
+            # Field byte order matches the
+            # decoding byte order of the buffer
             pass
         elif byte < 1:
+            # Byte order not relevant for field's smaller than one byte
             pass
         elif bit != 0:
+            # Bad sized field for independent byte order conversion
             raise AlignmentError(self, byte, bit)
         elif byte == 1:
+            # Byte order not relevant for field's with one byte
             pass
         else:
-            # Create value by taking care of the different byte order's
+            # Convert byte order of the field value
             value = int.from_bytes(value.to_bytes(byte, self.byte_order.value),
                                    byte_order.value)
 
         # Shift value to bit offset
         value <<= self.index.bit
 
+        # Get bytes for the buffer
         offset = self.index.byte
         size = offset + self._align_to_byte_size
-        # Mapping field value into aligned bytes of the buffer
         if len(buffer) == size:
+            # Map field value into aligned bytes of the buffer
             view = memoryview(buffer)
             value |= int.from_bytes(buffer[offset:size], byte_order.value)
             view[offset:size] = value.to_bytes(self._align_to_byte_size,
                                                byte_order.value)
             return bytes()
-        # Extend field value with the aligned bytes
         else:
+            # Extend field value with the aligned bytes
             return value.to_bytes(self._align_to_byte_size, byte_order.value)
 
     def blueprint(self, name=None, **options):
@@ -4030,6 +4042,9 @@ class Pointer(Decimal, Container):
     >>> pointer.value = 0x4000
     >>> pointer.value
     '0x4000'
+    >>> pointer.initialize({'value': 0x8000})
+    >>> pointer.value
+    '0x8000'
     >>> pointer.value = -0x1
     >>> pointer.value
     '0x0'
