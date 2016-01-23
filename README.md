@@ -1,5 +1,7 @@
 # KonF'00'
 
+[![Docs](https://readthedocs.org/projects/konfoo/badge/?version=latest)](http://konfoo.readthedocs.org/en/latest/)
+
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the
 foo of the all well-known memory dumps or hexadecimal views of binary data.
@@ -20,8 +22,6 @@ KonFoo in points:
 -   savable template content including the nested data to an INI file
 -   creatable blueprints from a template class
 -   blueprint converter to JSON to visualise templates with *d3.js*.
-
-Read the docs at http://konfoo.readthedocs.org
 
 This library is far away from stable but it works so far.
 Feedback is very welcomed!
