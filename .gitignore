@@ -6,8 +6,7 @@
 dist
 build
 docs/_build
-tests
-tests/doctests
 konfoo.egg-info
 .tox
 .idea
+.cache

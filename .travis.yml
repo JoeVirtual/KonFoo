@@ -3,5 +3,8 @@ python:
   - "3.4"
   - "3.5"
 
+script:
+    make doctest
+
 notifications:
   email: false
