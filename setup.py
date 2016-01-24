@@ -61,7 +61,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Topic :: Software Development',
         'Topic :: Software Development :: Embedded Systems',
         'Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator',
