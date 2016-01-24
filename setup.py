@@ -20,7 +20,7 @@ Links
 * `website <http://github.com/JoeVirtual/KonFoo/>`_
 * `documentation <http://konfoo.readthedocs.org>`_
 * `development version
-  <http://github.com/JoeVirtual/KonFoo/master>`_
+  <http://github.com/JoeVirtual/KonFoo/zipball/master#egg=konfoo-dev>`_
 
 """
 
@@ -51,7 +51,7 @@ setup(
     install_requires=[],
     tests_require=['pytest'],
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 2 - Pre-Alpha',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
