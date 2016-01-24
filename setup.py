@@ -13,7 +13,7 @@ Setup
 
 .. code:: bash
 
-    > pip install KonFoo
+    > pip install konfoo
 
 Links
 -----
@@ -49,15 +49,19 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[],
+    tests_require=['pytest'],
     classifiers=[
         'Development Status :: 1 - Planning',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Software Development',
         'Topic :: Software Development :: Embedded Systems',
         'Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator',
