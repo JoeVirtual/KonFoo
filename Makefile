@@ -1,5 +1,5 @@
 docs:
-    	@cd docs; make html
+	@cd docs; make html
 
 test:
 	@cd tests; py.test
