@@ -1,11 +1,9 @@
 include CHANGES.md LICENSE
-recursive-include artwork *
-recursive-include docs *
-recursive-include examples *
-recursive-exclude docs *.pyc
-recursive-exclude docs *.pyo
-recursive-exclude tests *.pyc
-recursive-exclude tests *.pyo
-recursive-exclude examples *.pyc
-recursive-exclude examples *.pyo
+
+graft artwork
+graft docs
+graft examples
+graft tests
 prune docs/_build
+
+global-exclude *.py[co]
