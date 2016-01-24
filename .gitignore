@@ -2,6 +2,7 @@
 *.pyo
 *.egg-ignore
 *.egg-info
+*.pypirc
 *.ipynb
 dist
 build
