@@ -588,7 +588,7 @@ class Structure(OrderedDict, Container):
         """Initializes the :class:`Field` members in the `Structure` with
         the *values* in the *content* dictionary.
 
-        :param dct content: a dictionary contains the :class:`Field`
+        :param dict content: a dictionary contains the :class:`Field`
             values for each member in the `Structure`.
         """
         for name, value in content.items():
@@ -969,7 +969,7 @@ class Sequence(MutableSequence, Container):
         :param provider: data :class:`Provider`.
 
         :keyword bool nested: if `True` all :class:`Pointer` fields in the `data`
-            objects of all :class:`Pointer` fields in the `Sequence`  reads their
+            objects of all :class:`Pointer` fields in the `Sequence` reads their
             *nested* `data` object fields as well (chained method call).
             Each :class:`Pointer` field stores the bytes for its *nested*
             :attr:`~Pointer.data` object in its own :attr:`~Pointer.bytestream`.
@@ -1423,7 +1423,12 @@ class Array(Sequence):
 class Field:
     """The `Field` class is the meta class for all field classes.
 
-    A `Field` class ...
+    A `Field` has a specific **name**, **bit size**, **byte order**
+    and can be **aligned to** other `Field`'s.
+
+    A `Field` has methods to **unpack**, **pack**, **decode** and **encode**
+    its field **value** from and to a byte stream and stores its location within
+    the byte stream and the providing data source in its field **index**.
 
     :param int bit_size: is the *size* of the `Field` in bits,
         can be between *1* and *64*.
@@ -4509,16 +4514,15 @@ class Pointer(Decimal, Container):
         of the :attr:`data` object of the `Pointer` field with the *values*
         in the *content* dictionary.
 
-        The ``'value'`` key in the *content* dictionary refers to the `Pointer`
-        field itself and with the ``'data'`` key is the :attr:`data` object of
+        The ``['value']`` key in the *content* dictionary refers to the `Pointer`
+        field itself and with the ``['data']`` key is the :attr:`data` object of
         the `Pointer` field referenced.
 
-        :param dct content: a dictionary contains the :class:`Field` value for
+        :param dict content: a dictionary contains the :class:`Field` value for
             the `Pointer` field and the :class:`Field` values for each item
             in the :attr:`data` object of the `Pointer` field.
         """
         for name, value in content.items():
-            # Container or Pointer
             if name is 'value':
                 self.value = value
             elif name is 'data':
@@ -4876,6 +4880,128 @@ class SequencePointer(Pointer):
 
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `SequencePointer` field.
+
+    Example:
+
+    >>> pointer = SequencePointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data
+    []
+    >>> pointer.size
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(bytes.fromhex('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> len(pointer)
+    0
+    >>> [item for item in pointer]
+    []
+    >>> pointer[:]
+    []
+    >>> pointer.append(Field())
+    >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
+    Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+          alignment=(0, 0),
+          bit_size=0,
+          value=None)
+    >>> len(pointer)
+    1
+    >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
+    Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+          alignment=(0, 0),
+          bit_size=0,
+          value=None)
+    >>> pointer.insert(0, Field())
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    [Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+           alignment=(0, 0),
+           bit_size=0,
+           value=None)]
+    >>> pointer.remove(pointer[0])
+    >>> pointer.data
+    []
+    >>> pointer.clear()
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'SequencePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'SequencePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'class': 'Sequence',
+                 'name': 'data',
+                 'size': 0,
+                 'type': 'Sequence',
+                 'member': []}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': []}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', None)])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', [])])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      SequencePointer(index=Index(byte=0, bit=0,
+                                  address=0, base_address=0,
+                                  update=False),
+                      alignment=(4, 0),
+                      bit_size=32,
+                      value='0xffffffff'))]
+    >>> pprint(pointer.to_list(nested=True))
+    [('SequencePointer.value', '0xffffffff')]
+    >>> pprint(pointer.to_dict(nested=True))
+    OrderedDict([('SequencePointer', OrderedDict([('value', '0xffffffff')]))])
     """
 
     def __init__(self, iterable=None, address=None, byte_order=BYTEORDER):
@@ -4975,6 +5101,131 @@ class ArrayPointer(SequencePointer):
 
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `ArrayPointer` field.
+
+    Example:
+
+    >>> pointer = ArrayPointer(Byte)
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data
+    []
+    >>> pointer.size
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(bytes.fromhex('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> len(pointer)
+    0
+    >>> [item for item in pointer]
+    []
+    >>> pointer[:]
+    []
+    >>> pointer.append()
+    >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
+    Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+         alignment=(1, 0),
+         bit_size=8,
+         value='0x0')
+    >>> len(pointer)
+    1
+    >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
+    Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+         alignment=(1, 0),
+         bit_size=8,
+         value='0x0')
+    >>> pointer.insert(0)
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+          alignment=(1, 0),
+          bit_size=8,
+          value='0x0')]
+    >>> pointer.remove(pointer[0])
+    >>> pointer.data
+    []
+    >>> pointer.resize(10)
+    >>> len(pointer)
+    10
+    >>> pointer.clear()
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'ArrayPointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'ArrayPointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'class': 'Array',
+                 'name': 'data',
+                 'size': 0,
+                 'type': 'Array',
+                 'member': []}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': []}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', None)])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', [])])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      ArrayPointer(index=Index(byte=0, bit=0,
+                               address=0, base_address=0,
+                               update=False),
+                   alignment=(4, 0),
+                   bit_size=32,
+                   value='0xffffffff'))]
+    >>> pprint(pointer.to_list(nested=True))
+    [('ArrayPointer.value', '0xffffffff')]
+    >>> pprint(pointer.to_dict(nested=True))
+    OrderedDict([('ArrayPointer', OrderedDict([('value', '0xffffffff')]))])
     """
 
     def __init__(self, template, size=0, address=None, byte_order=BYTEORDER):
@@ -5861,6 +6112,128 @@ class SequenceRelativePointer(RelativePointer):
 
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `SequenceRelativePointer` field.
+
+    Example:
+
+    >>> pointer = SequenceRelativePointer()
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data
+    []
+    >>> pointer.size
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(bytes.fromhex('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> len(pointer)
+    0
+    >>> [item for item in pointer]
+    []
+    >>> pointer[:]
+    []
+    >>> pointer.append(Field())
+    >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
+    Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+          alignment=(0, 0),
+          bit_size=0,
+          value=None)
+    >>> len(pointer)
+    1
+    >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
+    Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+          alignment=(0, 0),
+          bit_size=0,
+          value=None)
+    >>> pointer.insert(0, Field())
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    [Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+           alignment=(0, 0),
+           bit_size=0,
+           value=None)]
+    >>> pointer.remove(pointer[0])
+    >>> pointer.data
+    []
+    >>> pointer.clear()
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'SequenceRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'SequenceRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'class': 'Sequence',
+                 'name': 'data',
+                 'size': 0,
+                 'type': 'Sequence',
+                 'member': []}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': []}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', None)])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', [])])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      SequenceRelativePointer(index=Index(byte=0, bit=0,
+                                          address=0, base_address=0,
+                                          update=False),
+                              alignment=(4, 0),
+                              bit_size=32,
+                              value='0xffffffff'))]
+    >>> pprint(pointer.to_list(nested=True))
+    [('SequenceRelativePointer.value', '0xffffffff')]
+    >>> pprint(pointer.to_dict(nested=True))
+    {'SequenceRelativePointer': OrderedDict([('value', '0xffffffff')])}
     """
 
     def __init__(self, iterable=None, address=None, byte_order=BYTEORDER):
@@ -5960,6 +6333,131 @@ class ArrayRelativePointer(SequenceRelativePointer):
 
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `ArrayRelativePointer` field.
+
+    Example:
+
+    >>> pointer = ArrayRelativePointer(Byte)
+    >>> pointer.is_decimal()
+    True
+    >>> pointer.is_pointer()
+    True
+    >>> pointer.name
+    'Pointer32'
+    >>> pointer.alignment
+    (4, 0)
+    >>> pointer.byte_order
+    Byteorder.auto = 'auto'
+    >>> pointer.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> pointer.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.bit_size
+    32
+    >>> pointer.min()
+    0
+    >>> pointer.max()
+    4294967295
+    >>> pointer.signed
+    False
+    >>> pointer.address
+    0
+    >>> pointer.base_address
+    0
+    >>> pointer.data
+    []
+    >>> pointer.size
+    0
+    >>> pointer.order
+    Byteorder.little = 'little'
+    >>> pointer.bytestream
+    b''
+    >>> pointer.value
+    '0x0'
+    >>> pointer.decode(bytes.fromhex('00c0'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.value
+    '0xc000'
+    >>> pointer.value = 0x4000
+    >>> pointer.value
+    '0x4000'
+    >>> pointer.value = -0x1
+    >>> pointer.value
+    '0x0'
+    >>> pointer.value = 0x100000000
+    >>> pointer.value
+    '0xffffffff'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> len(pointer)
+    0
+    >>> [item for item in pointer]
+    []
+    >>> pointer[:]
+    []
+    >>> pointer.append()
+    >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
+    Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+         alignment=(1, 0),
+         bit_size=8,
+         value='0x0')
+    >>> len(pointer)
+    1
+    >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
+    Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+         alignment=(1, 0),
+         bit_size=8,
+         value='0x0')
+    >>> pointer.insert(0)
+    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+          alignment=(1, 0),
+          bit_size=8,
+          value='0x0')]
+    >>> pointer.remove(pointer[0])
+    >>> pointer.data
+    []
+    >>> pointer.resize(10)
+    >>> len(pointer)
+    10
+    >>> pointer.clear()
+    >>> pprint(pointer.blueprint())
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'ArrayRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'ArrayRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [{'class': 'Array',
+                 'name': 'data',
+                 'size': 0,
+                 'type': 'Array',
+                 'member': []}]}
+    >>> pprint(pointer.field_indexes())
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': []}
+    >>> pprint(pointer.field_types())
+    OrderedDict([('value', 'Pointer32'), ('data', None)])
+    >>> pprint(pointer.field_values())
+    OrderedDict([('value', '0xffffffff'), ('data', [])])
+    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    [('value',
+      ArrayRelativePointer(index=Index(byte=0, bit=0,
+                                       address=0, base_address=0,
+                                       update=False),
+                           alignment=(4, 0),
+                           bit_size=32,
+                           value='0xffffffff'))]
+    >>> pprint(pointer.to_list(nested=True))
+    [('ArrayRelativePointer.value', '0xffffffff')]
+    >>> pprint(pointer.to_dict(nested=True))
+    OrderedDict([('ArrayRelativePointer', OrderedDict([('value', '0xffffffff')]))])
     """
 
     def __init__(self, template, size=0, address=None, byte_order=BYTEORDER):

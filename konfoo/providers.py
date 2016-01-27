@@ -21,7 +21,12 @@ class Provider:
 
     def __init__(self, source):
         self._source = source
-        self._stream = bytes()
+        self._cache = bytes()
+
+    @property
+    def cache(self):
+        """Returns the internal cache of the data `Provider` (read-only)."""
+        return self._cache
 
     def read(self, address=0, count=0):
         """Reads the *number* of bytes from a data `source` beginning at
@@ -35,7 +40,7 @@ class Provider:
 
            This method must be overwritten by a derived class.
         """
-        return self._stream
+        return self._cache
 
     def write(self, buffer=bytes(), address=0, count=0):
         """Writes the content of the *buffer* to a data `source` beginning
@@ -55,7 +60,11 @@ class Provider:
 
 
 class FileProvider(Provider):
-    """A `FileProvider` is a data :class:`Provider` for binary files.
+    """A `FileProvider` is a data :class:`Provider` for binary files. The file
+    content is internal stored in a cache. The read and write methods only
+    operate on the internal cache.
+
+    Call :meth:`flush` to store the updated file content to a file.
 
     :param str source: file name and location.
     """
@@ -63,13 +72,22 @@ class FileProvider(Provider):
     def __init__(self, source):
         super().__init__(source)
         if isinstance(source, str):
-            self._stream = bytearray(open(source, 'rb').read())
+            self._cache = bytearray(open(source, 'rb').read())
         else:
             raise TypeError(source)
 
     def read(self, address=0, count=0):
-        return self._stream[address:]
+        return self._cache[address:]
 
     def write(self, buffer=bytes(), address=0, count=0):
-        view = memoryview(self._stream)
+        view = memoryview(self._cache)
         view[address:address + count] = buffer
+
+    def flush(self, file=str()):
+        """Flushes the updated file content to the given *file*.
+
+        .. note::  Overwrites an existing file.
+
+        :param str file: file name and location. Default is the original file.
+        """
+        open(file or self._source, 'wb').write(self._cache)
