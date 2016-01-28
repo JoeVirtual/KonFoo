@@ -359,7 +359,7 @@ class Container:
                                                replace("'", ""))
                         # Auto size a zero sized stream field to
                         # the current stream length
-                        if not len(field):
+                        if not field:
                             field.resize(len(stream))
                         field.value = stream
                     # Decimal fields
@@ -1500,7 +1500,7 @@ class Field:
         byte, bit, address, base, update = value
 
         # Check for invalid field location
-        if byte < 0 or bit < 0 or bit > 64:
+        if byte < 0 or not (0 <= bit <= 64):
             raise ValueError(value)
 
         # Calculate minimal required field alignment size
@@ -2417,7 +2417,7 @@ class Decimal(Field):
             raise RangeError(self, byte)
 
         # Field alignment is out of range?
-        if bit < 0 or bit > 63:
+        if not (0 <= bit <= 63):
             raise RangeError(self, bit)
 
         # Bad aligned field?
@@ -2435,7 +2435,7 @@ class Decimal(Field):
             raise SizeError(self, bit_size, step)
 
         # Field size is out of range?
-        if bit_size < 1 or bit_size > 64:
+        if not (1 <= bit_size <= 64):
             raise RangeError(self, bit_size)
 
         byte_size, bit_offset = divmod(bit_size, 8)

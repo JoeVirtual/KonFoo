@@ -193,15 +193,15 @@ def d3json(blueprint, **options):
 
     def convert(root):
         dct = OrderedDict()
-        item_type = root.get('type', None)
-        dct['class'] = root.get('class', None)
-        dct['name'] = root.get('name', None)
+        item_type = root.get('type')
+        dct['class'] = root.get('class')
+        dct['name'] = root.get('name')
 
         if item_type is ItemClass.Field.name:
-            dct['size'] = root.get('size', None)
-            dct['content'] = root.get('value', None)
+            dct['size'] = root.get('size')
+            dct['content'] = root.get('value')
 
-        children = root.get('member', None)
+        children = root.get('member')
         # Any containable class with children
         if children:
             dct['children'] = list()
@@ -210,16 +210,16 @@ def d3json(blueprint, **options):
                 field = OrderedDict()
                 field['class'] = dct['class']
                 field['name'] = '*' + dct['name']
-                field['size'] = root.get('size', None)
-                field['content'] = root.get('value', None)
+                field['size'] = root.get('size')
+                field['content'] = root.get('value')
                 dct['children'].append(field)
             # Recursive function call map(fnc, args).
             for child in map(convert, children):
                 dct['children'].append(child)
         # Null pointer (None pointer)
         elif item_type is ItemClass.Pointer.name:
-            dct['size'] = root.get('size', None)
-            dct['content'] = root.get('value', None)
+            dct['size'] = root.get('size')
+            dct['content'] = root.get('value')
         return dct
 
     options['indent'] = options.get('indent', 2)
