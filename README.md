@@ -2,6 +2,7 @@
 
 [![Docs](https://readthedocs.org/projects/konfoo/badge/?version=latest)](http://konfoo.readthedocs.org/en/latest/)
 [![Build](https://travis-ci.org/JoeVirtual/KonFoo.svg?branch=master)](https://travis-ci.org/JoeVirtual/KonFoo)
+[![PyPi](https://img.shields.io/pypi/v/KonFoo.svg)](https://pypi.python.org/pypi/KonFoo)
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the
