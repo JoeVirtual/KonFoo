@@ -6,113 +6,120 @@
     from konfoo import *
 
 
-.. _pointer_template:
+.. _pointer:
 
-Pointer template
-================
+Pointer
+=======
 
 KonFoo has a :class:`Pointer` class to reference ...
 
-KonFoo provides the following specialized :class:`Pointer` fields
+KonFoo provides the following specialized `pointer`_ fields
 
 * a :class:`StructurePointer` field which refers to a
-  :class:`Structure` template
-* a :class:`SequencePointer` field which refers to a :class:`Sequence`
-* a :class:`ArrayPointer` field which refers to a :class:`Array` with
-  a template for its :ref:`array element <array_element>`
-* a :class:`StreamPointer` field which refers to a :class:`Stream` field
-* a :class:`StringPointer` field which refers to a :class:`String` field
+  :ref:`structure <structure>`
+* a :class:`SequencePointer` field which refers to a
+  :ref:`sequence <sequence>`
+* a :class:`ArrayPointer` field which refers to a
+  :ref:`array <array>`
+* a :class:`StreamPointer` field which refers to a
+  :class:`Stream` :ref:`field <field>`
+* a :class:`StringPointer` field which refers to a
+  :class:`String` :ref:`field <field>`
 
 
-KonFoo has also :class:`RelativePointer` class. The only difference to the
-:class:`Pointer` class is that the :attr:`~Pointer.data` object is relative
-addressed instead of absolute addressed.
+.. _relative pointer:
 
-KonFoo provides the following specialized :class:`RelativePointer` fields
+Relative Pointer
+----------------
+
+KonFoo has a :class:`RelativePointer` class. The only difference between the a
+`pointer`_ field and a `relative pointer`_  field is that the `data object`_
+is relative addressed by a `relative pointer`_ field instead of absolute
+addressed.
+
+KonFoo provides the following specialized `relative pointer`_ fields
 
 * a :class:`StructureRelativePointer` field which refers to a
-  :class:`Structure` template
-* a :class:`SequenceRelativePointer` field which refers to a :class:`Sequence`
-* a :class:`ArrayRelativePointer` field which refers to a :class:`Array` with
-  a template for its :ref:`array element <array_element>`
-* a :class:`StreamRelativePointer` field which refers to a :class:`Stream` field
-* a :class:`StringRelativePointer` field which refers to a :class:`String` field
+  :ref:`structure <structure>`
+* a :class:`SequenceRelativePointer` field which refers to a
+  :ref:`sequence <sequence>`
+* a :class:`ArrayRelativePointer` field which refers to a
+  :ref:`array <array>`
+* a :class:`StreamRelativePointer` field which refers to a
+  :class:`Stream` :ref:`field <field>`
+* a :class:`StringRelativePointer` field which refers to a
+  :class:`String` :ref:`field <field>`
 
 
-.. _pointer_members:
-
-Members
--------
-
-A `Pointer`
-
-
-.. _pointer_data_object:
+.. _data object:
 
 Data object
 -----------
 
+A `data object`_ of a `pointer`_ field can be any :ref:`field <field>` or
+:ref:`container <container>` class.
 
 
+Define a Data Object Pointer
+----------------------------
 
-Define a template
------------------
-
-You can define a template for the :attr:`~Pointer.data` object of the
-:class:`Pointer` field.
+Define the `data object`_:
 
 .. code-block:: python
+    :emphasize-lines: 7
 
-    # Data object template
+    # Data object
     class Container(Structure):
 
         def __init__(self):
             super().__init__()
             self.size = Decimal32()
-            self.item = Pointer()  # No template
+            self.item = Pointer()  # No data object assigned
             self.next_index()
 
 
-You can define a specific :class:`Pointer` field for a specific the
-:attr:`~Pointer.data` object template.
+Define the `pointer`_ for the `data object`_:
 
 .. code-block:: python
+    :emphasize-lines: 5
 
     # Pointer field
     class ContainerPointer(Pointer):
 
         def __init__(self, address=None):
-            super().__init__(Container(), address)  # Data object template
+            super().__init__(Container(), address)  # Data object
 
 
 Nesting
 -------
 
-Nesting pointer templates.
+Nesting `pointer`_ fields.
 
 .. code-block:: python
+    :emphasize-lines: 7
 
-    # Data object template
+    # Data object
     class Container(Structure):
 
         def __init__(self):
             super().__init__()
             self.size = Decimal32()
-            self.item = Pointer(Stream())  # Nested template
+            self.item = Pointer(Stream())  # Nested pointer field
+
 
 .. code-block:: python
 
-    # Pointer template
+    # Pointer
     class ContainerPointer(Pointer):
 
         def __init__(self, address=None):
-            super().__init__(Container(), address)  # Data object template
+            super().__init__(Container(), address)  # Data object
 
 
-Declare a template on the fly
------------------------------
+Declare on the fly
+------------------
 
-You can declare a data object pointer template on the fly.
+You can declare a `data object`_ on the fly.
 
     >>> data = Structure()
     >>> data.size = Decimal32()
@@ -122,7 +129,7 @@ You can declare a data object pointer template on the fly.
      ('Structure.item', '0x0'),
      ('Structure.item.data', b'')]
 
-You can declare a template on the fly.
+You can declare a `pointer`_ on the fly.
 
     >>> pointer = Pointer(data)
     >>> pprint(pointer.to_list(nested=True))
@@ -132,10 +139,10 @@ You can declare a template on the fly.
      ('Pointer.data.item.data', b'')]
 
 
-View a template
----------------
+View a Pointer
+--------------
 
-You can **view** a template with
+You can **view** a `pointer`_ field
 
     >>> pointer # doctest: +NORMALIZE_WHITESPACE
     Pointer(index=Index(byte=0, bit=0,
@@ -146,17 +153,17 @@ You can **view** a template with
             value='0x0')
 
 
-You can **view** the :attr:`~Pointer.data` object template of the
-:class:`Pointer` field with
+You can **view** the `data object`_ of a `pointer`_ with the property
+:attr:`~Pointer.data` of the `pointer`_ field.
 
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     Structure([('size',
                 Decimal32(index=Index(byte=0, bit=0,
                                       address=0, base_address=0,
                                       update=False),
-                alignment=(4, 0),
-                bit_size=32,
-                value=0)),
+                          alignment=(4, 0),
+                          bit_size=32,
+                          value=0)),
                ('item',
                 Pointer(index=Index(byte=0, bit=0,
                                     address=0, base_address=0,
@@ -166,11 +173,11 @@ You can **view** the :attr:`~Pointer.data` object template of the
                         value='0x0'))])
 
 
-Blueprint of a template
------------------------
+Blueprint of a Pointer
+----------------------
 
-You can get the :ref:`blueprint <blueprint>` of a template by calling the
-method :meth:`~Pointer.blueprint`.
+You can get the blueprint of a `pointer`_ by calling the method
+:meth:`~Pointer.blueprint`.
 
     >>> pprint(pointer.blueprint())
     {'address': 0,
@@ -227,26 +234,25 @@ method :meth:`~Pointer.blueprint`.
 Indexing
 --------
 
-You can get the next byte stream :class:`Index` after the :class:`Pointer`
-field by calling the method :meth:`~Field.next_index`.
+You can get the next *byte stream* :class:`Index` after a `pointer`_ field
+by calling the method :meth:`~Field.next_index`.
 
 
     >>> pointer.next_index()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
 
 
-You can index each :class:`Field` in the :attr:`~Pointer.data` object of the
-:class:`Pointer` field by calling the method :meth:`~Pointer.subscript`.
+You can index each member of a `data object`_ of a `pointer`_ field
+by calling the method :meth:`~Pointer.subscript`.
 
     >>> pointer.subscript()
-
 
 
 Properties of the Field
 -----------------------
 
-You can **access** the :class:`Field` properties the :class:`Pointer` field
-with the property names.
+You can **access** the :ref:`field <field>` properties of a `pointer`_ field
+with the following property names:
 
     >>> pointer.name
     'Pointer32'
@@ -295,8 +301,8 @@ with the property names.
 Properties of the Data Object
 -----------------------------
 
-You can **access** the properties for the :attr:`~Pointer.data` object of the
-:class:`Pointer` field
+You can **access** the properties for the `data object`_ of a `pointer`_ field
+with the property names:
 
     >>> pointer.address
     0
@@ -315,8 +321,8 @@ You can **access** the properties for the :attr:`~Pointer.data` object of the
 Access the Data Object
 ----------------------
 
-You can **access** the :attr:`~Pointer.data` object of the :class:`Pointer`
-field with its name.
+You can **access** the `data object`_ of a `pointer`_ field with its
+property name:
 
     >>> pointer.data  # doctest: +NORMALIZE_WHITESPACE
     Structure([('size',
@@ -327,8 +333,8 @@ field with its name.
                 bit_size=32,
                 value=0)),
                ('item',
-                Pointer(index=Index(byte=0, bit=0,
-                                    address=0, base_address=0,
+                Pointer(index=Index(byte=4, bit=0,
+                                    address=4, base_address=0,
                                     update=False),
                         alignment=(4, 0),
                         bit_size=32,
@@ -338,8 +344,8 @@ field with its name.
 List field indexes
 ------------------
 
-You can list the :class:`Index` of each :class:`Field` in the template as a
-**nested** ordered dictionary by calling the method
+You can list the :class:`Index` of each :ref:`field <field>` of a `pointer`_
+as a **nested** ordered dictionary by calling the method
 :meth:`~Pointer.field_indexes`.
 
     >>> pprint(pointer.field_indexes())
@@ -351,7 +357,7 @@ You can list the :class:`Index` of each :class:`Field` in the template as a
 List field types
 ----------------
 
-You can list the **types** of each :class:`Field` in the template as a
+You can list the **types** of each :ref:`field <field>` of a `pointer`_ as a
 **nested** ordered dictionary by calling the method
 :meth:`~Pointer.field_types`.
 
@@ -363,7 +369,7 @@ You can list the **types** of each :class:`Field` in the template as a
 List field values
 -----------------
 
-You can list the **values** of each :class:`Field` in the template as a
+You can list the **values** of each :ref:`field <field>` of a `pointer`_ as a
 **nested** ordered dictionary by calling the method
 :meth:`~Pointer.field_values`.
 
@@ -376,7 +382,7 @@ You can list the **values** of each :class:`Field` in the template as a
 List field items
 ----------------
 
-You can list all :class:`Field` items in the template as a **flat** list
+You can list all :ref:`field <field>` items of a `pointer`_ as a **flat** list
 by calling the method :meth:`~Pointer.field_items`.
 
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
@@ -400,7 +406,7 @@ by calling the method :meth:`~Pointer.field_items`.
 View field values
 -----------------
 
-You can **view** the *values* of each :class:`Field` in the template as a
+You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
 **flat** list by calling the method :meth:`~Container.to_list`.
 
     >>> pprint(pointer.to_list())
@@ -414,7 +420,7 @@ You can **view** the *values* of each :class:`Field` in the template as a
     *name* is given.
 
 
-You can **view** the *values* of each :class:`Field` in the template as a
+You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
 **flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 
     >>> pprint(pointer.to_dict())
@@ -431,8 +437,8 @@ You can **view** the *values* of each :class:`Field` in the template as a
 Save field values
 -----------------
 
-You can **save** the *values* of each :class:`Field` in the template to an
-INI file by calling the method :meth:`~Container.save`.
+You can **save** the *values* of each :ref:`field <field>` of a `pointer`_
+to an INI file by calling the method :meth:`~Container.save`.
 
     >>> pointer.save("_static/pointer.ini", nested=True)
 
@@ -445,8 +451,8 @@ INI file by calling the method :meth:`~Container.save`.
 Load field values
 -----------------
 
-You can **load** the *values* of each :class:`Field` in the template from an
-INI file by calling the method :meth:`~Container.load`.
+You can **load** the *values* of each :ref:`field <field>` of a `pointer`_
+from an INI file by calling the method :meth:`~Container.load`.
 
     >>> pointer.load("_static/pointer.ini", nested=True)
     [Pointer]

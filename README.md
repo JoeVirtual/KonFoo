@@ -2,6 +2,7 @@
 
 [![Docs](https://readthedocs.org/projects/konfoo/badge/?version=latest)](http://konfoo.readthedocs.org/en/latest/)
 [![Build](https://travis-ci.org/JoeVirtual/KonFoo.svg?branch=master)](https://travis-ci.org/JoeVirtual/KonFoo)
+[![PyPi](https://img.shields.io/pypi/v/KonFoo.svg)](https://pypi.python.org/pypi/KonFoo)
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the
@@ -15,14 +16,16 @@ writing binary data from and back to a data provider as easy as possible.
 KonFoo in points:
 
 -   declarative way to describe the mapping of binary data
--   declarative template classes to map, read, decode, encode and write binary data
--   nesting of template classes
--   adaptable template classes on the fly while reading/decoding binary data
--   easy syntax for accessing nested template fields
--   loadable template content including the nested data from an INI file
--   savable template content including the nested data to an INI file
--   creatable blueprints from a template class
--   blueprint converter to JSON to visualise templates with *d3.js*.
+-   declarative classes to map, read, decode, encode and write binary data
+    from and back to a data source
+-   easy adjustable data provider bridge to any kind of data source
+-   nesting of classes
+-   adaptable classes on the fly while reading/decoding binary data
+-   easy syntax for accessing nested fields
+-   loadable mapping content including nested data from an INI file
+-   savable mapping content including nested data to an INI file
+-   easy creatable blueprint of a mapper
+-   blueprint converter to JSON to visualise the mapper with *d3.js*.
 
 This library is far away from stable but it works so far.
 Feedback is very welcomed!

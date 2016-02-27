@@ -7,26 +7,25 @@
     from konfoo import *
 
 
-.. _structure_template:
+.. _structure:
 
-Structure template
-==================
+Structure
+=========
 
-KonFoo ships with a :class:`Structure` class and many :class:`Field` classes to
-declare the mapping part of a *byte stream mapper*. The order how you declare the
-fields in the :class:`Structure` defines the order how the fields are decoded and
-encoded by the built-in decoding and encoding engine.
+KonFoo has a :class:`Structure` class and many :ref:`field <field>` classes to
+declare the mapping part of a *byte stream* :ref:`mapper <mapper>`.
+The order how you declare the fields in the `structure`_ defines the order how
+the fields are decoded and encoded by the built-in decoding and encoding engine.
 
 
 Define a Structure
 ------------------
 
-You can define the :ref:`members <template_member>` of a :class:`Structure`
-by adding them in the constructor method of the :class:`Structure` class.
+You can define members of a `structure`_ by adding them in the
+constructor method of the :class:`Structure` class.
 
 .. code-block:: python
 
-    # Structure template
     class Identifier(Structure):
 
         def __init__(self):
@@ -39,20 +38,19 @@ by adding them in the constructor method of the :class:`Structure` class.
 
 .. warning::
 
-    A **structure template** must always align to full bytes or an exception
-    will be raised when decoding or encoding an incomplete template declaration.
+    A `structure`_ must always align to full bytes or an exception will be
+    raised when decoding or encoding an incomplete `structure`_ declaration.
 
 
-Align fields in a Structure
+Align Fields in a Structure
 ---------------------------
 
-You can :ref:`align <field_alignment>` consecutive fields in a :class:`Structure`
-to each other by using the ``align_to`` parameter of the :class:`Field` class.
+You can :ref:`align <field alignment>` consecutive fields in a `structure`_ to
+each other by using the ``align_to`` parameter of the :class:`Field` class.
 
 .. code-block:: python
-   :emphasize-lines: 6-9
+    :emphasize-lines: 5-8
 
-    # Structure template
     class Identifier(Structure):
 
         def __init__(self):
@@ -64,33 +62,31 @@ to each other by using the ``align_to`` parameter of the :class:`Field` class.
             self.next_index()
 
 
-Re-use a template
------------------
+Re-use a Structure
+------------------
 
-You can re-use a template in other templates.
+You can re-use a `structure`_
 
 .. code-block:: python
-    :emphasize-lines: 6
+    :emphasize-lines: 5
 
-    # Structure template
     class Header(Structure):
 
         def __init__(self):
             super().__init__()
-            self.type = Identifier()  # re-used template
+            self.type = Identifier()  # re-used structure
             self.size = Decimal32()
             self.next_index()
 
 
-Parametrize a template
-----------------------
+Parametrize a Structure
+-----------------------
 
-You can define a template with arguments.
+You can define a `structure`_ with arguments.
 
 .. code-block:: python
-    :emphasize-lines: 6
+    :emphasize-lines: 1-4
 
-    >>> # Template with arguments
     >>> class Parametrized(Structure):
     ...     def __init__(self, arg, *args, **kwargs):
     ...         super().__init__()
@@ -106,15 +102,17 @@ You can define a template with arguments.
                          bit_size=8,
                          value='0x0'))])
 
-Factorize a template
---------------------
+Factorize
+---------
 
-You can factorize a template by defining a **factory** class or function to
-instantiate a template with parameters. This is necessary when you use a
-template with arguments for a :ref:`array element <array_element>` template,
-in this case you assign the class constructor of the **factory** or the
-**factory** function as the :ref:`array element <array_element>` template
-instead of the class constructor of the template.
+You can factorize a `structure`_ by defining a **factory** class to instantiate
+a `structure` with parameters. A **factory** is necessary whenever you use a
+:ref:`mapper <mapper>` with arguments for an :ref:`array element <array element>`,
+in this case you must assign the constructor of the **factory** class as the
+:ref:`array element <array element>`.
+
+.. code-block:: python
+    :emphasize-lines: 11-13, 28
 
     >>> class Parametrized(Structure):
     ...     def __init__(self, arg, *args, **kwargs):
@@ -143,7 +141,7 @@ instead of the class constructor of the template.
                     alignment=(1, 0),
                     bit_size=8,
                     value='0x0'))])
-    >>> array = Array(Factory(Byte), 2)
+    >>> array = Array(Factory(Byte), 2)  # assign the class constructor not an instance!
     >>> [item.field.value for item in array]
     ['0x0', '0x0']
     >>> array[0].field.value = 16
@@ -153,16 +151,16 @@ instead of the class constructor of the template.
 
 .. warning::
 
-    If a factory argument is an **instance** of a :class:`Field` or
-    :class:`Container` class this **instance** will be assigned to more than
-    one :ref:`array element <array_element>`. To avoid this behavior assign
+    If a factory argument is an **instance** of a :ref:`field <field>` or
+    :ref:`container <container>` class this **instance** will be assigned to more
+    than one :ref:`array element <array element>`. To avoid this behavior assign
     the class constructor to the argument instead of an instance.
 
 
-Declare a template on the fly
------------------------------
+Declare on the fly
+------------------
 
-You can **declare** a template on the fly.
+You can **declare** a `structure`_ on the fly.
 
     >>> structure = Structure()
     >>> structure.version = Byte()
@@ -171,13 +169,16 @@ You can **declare** a template on the fly.
     >>> structure.module = Char()
     >>> structure.next_index()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> pprint(structure.field_indexes())
+    >>> pprint(structure.field_indexes()) # doctest: +NORMALIZE_WHITESPACE
     {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
      'id': Index(byte=1, bit=0, address=1, base_address=0, update=False),
      'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
      'module': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
 
-You can **nest** templates on the fly.
+You can **nest** `structure`_ 's on the fly.
+
+.. code-block:: python
+    :emphasize-lines: 2-6
 
     >>> structure = Structure()
     >>> structure.type = Structure()
@@ -186,7 +187,7 @@ You can **nest** templates on the fly.
     >>> structure.type.length = Decimal8()
     >>> structure.type.module = Char()
     >>> structure.size = Decimal32()
-    >>> pprint(structure.to_list())
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.type.version', '0x0'),
      ('Structure.type.id', '0x0'),
      ('Structure.type.length', 0),
@@ -194,8 +195,11 @@ You can **nest** templates on the fly.
      ('Structure.size', 0)]
 
 
-You can declare a template with :ref:`aligned <field_alignment>` fields
-on the fly.
+You can declare a `structure`_ with :ref:`aligned <field alignment>` fields on
+the fly.
+
+.. code-block:: python
+    :emphasize-lines: 2-5
 
     >>> structure = Structure()
     >>> structure.version = Byte(4)
@@ -211,12 +215,15 @@ on the fly.
      'module': Index(byte=0, bit=24, address=0, base_address=0, update=False)}
 
 
-You can **re-use** a declared template on the fly in other templates on the fly.
+You can **assign** a `structure`_ to a member in a other `structure`_ on the fly.
+
+.. code-block:: python
+    :emphasize-lines: 2
 
     >>> reuse = Structure()
-    >>> reuse.type = structure  # re-used template
+    >>> reuse.type = structure  # assign structure
     >>> reuse.size = Decimal32()
-    >>> pprint(reuse.to_list())
+    >>> reuse.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.type.version', '0x0'),
      ('Structure.type.id', '0x0'),
      ('Structure.type.length', 0),
@@ -224,10 +231,13 @@ You can **re-use** a declared template on the fly in other templates on the fly.
      ('Structure.size', 0)]
 
 
-View a template
----------------
+View a Structure
+----------------
 
-You can **view** the :class:`Structure` with
+You can **view** the `structure`_
+
+.. code-block:: python
+    :emphasize-lines: 6
 
     >>> structure = Structure()
     >>> structure.version = Byte()
@@ -260,13 +270,13 @@ You can **view** the :class:`Structure` with
                                 bit_size=8,
                                 value='\x00'))])
 
-Blueprint of a template
------------------------
+Blueprint of a Structure
+------------------------
 
-You can get the :ref:`blueprint <blueprint>` of the :class:`Structure` by
-calling the method :meth:`~Structure.blueprint`.
+You can get the blueprint of the `structure`_ by calling the method
+:meth:`~Structure.blueprint`.
 
-    >>> pprint(structure.blueprint())
+    >>> pprint(structure.blueprint()) # doctest: +NORMALIZE_WHITESPACE
     {'class': 'Structure',
      'name': 'Structure',
      'size': 4,
@@ -283,10 +293,10 @@ calling the method :meth:`~Structure.blueprint`.
                  'size': 8,
                  'type': 'Field',
                  'value': '0x0'},
-                {'address': 0,
+                {'address': 1,
                  'alignment': [1, 0],
                  'class': 'Unsigned8',
-                 'index': [0, 0],
+                 'index': [1, 0],
                  'max': 255,
                  'min': 0,
                  'name': 'id',
@@ -295,10 +305,10 @@ calling the method :meth:`~Structure.blueprint`.
                  'size': 8,
                  'type': 'Field',
                  'value': '0x0'},
-                {'address': 0,
+                {'address': 2,
                  'alignment': [1, 0],
                  'class': 'Decimal8',
-                 'index': [0, 0],
+                 'index': [2, 0],
                  'max': 255,
                  'min': 0,
                  'name': 'length',
@@ -307,10 +317,10 @@ calling the method :meth:`~Structure.blueprint`.
                  'size': 8,
                  'type': 'Field',
                  'value': 0},
-                {'address': 0,
+                {'address': 3,
                  'alignment': [1, 0],
                  'class': 'Char',
-                 'index': [0, 0],
+                 'index': [3, 0],
                  'max': 255,
                  'min': 0,
                  'name': 'module',
@@ -324,7 +334,7 @@ calling the method :meth:`~Structure.blueprint`.
 Length of a Structure
 ---------------------
 
-You can get the **length** of the :class:`Structure` as a tuple in the form of
+You can get the **length** of a `structure`_ as a tuple in the form of
 ``(number of bytes, remaining bits)`` by calling the method
 :meth:`~Structure.field_length`.
 
@@ -333,28 +343,28 @@ You can get the **length** of the :class:`Structure` as a tuple in the form of
 
 .. note::
 
-   The remaining bits must be always zero or the template declaration is
+   The remaining bits must be always zero or the `structure`_ declaration is
    incomplete.
 
 
 Indexing
 --------
 
-You can get the byte stream :class:`Index` after the last :class:`Field`
-of the template by calling the method :meth:`~Structure.next_index`.
+You can get the *byte stream* :class:`Index` after the last :ref:`field <field>`
+of a `structure`_ by calling the method :meth:`~Structure.next_index`.
 
     >>> structure.next_index()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
 
 .. note::
 
-    The method re-indexes all fields in the template as well.
+    The method re-indexes all members of the `structure`_ as well.
 
 
 Decoding
 --------
 
-You can **decode** a byte stream with a template by calling the method
+You can **decode** a byte stream with a `structure`_ by calling the method
 :meth:`~Structure.decode`.
 
     >>> bytestream = bytes.fromhex('01020946f00f00')
@@ -365,7 +375,7 @@ You can **decode** a byte stream with a template by calling the method
 Encoding
 --------
 
-You can **encode** a byte stream with a template by calling the method
+You can **encode** a byte stream with a `structure`_ by calling the method
 :meth:`~Structure.encode`.
 
     >>> bytestream = bytearray()
@@ -380,8 +390,7 @@ You can **encode** a byte stream with a template by calling the method
 Access a Member
 ---------------
 
-You can **access** a :ref:`member <template_member>` in a :class:`Structure`
-with its name.
+You can **access** a member in a `structure`_ with its name.
 
     >>> structure.version # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -398,8 +407,8 @@ with its name.
 Properties of a Member Field
 ----------------------------
 
-You can **access** the :class:`Field` properties of a :ref:`member
-<template_member>` in a :class:`Structure` with the property names.
+You can **access** the :class:`Field` properties of a :ref:`field <field>`
+member in a `structure`_ with the property names:
 
     >>> structure.version.name
     'Byte'
@@ -450,31 +459,28 @@ You can **access** the :class:`Field` properties of a :ref:`member
 Iterate over Members
 --------------------
 
-You can **iterate** over the :ref:`member <template_member>` names
-of the :class:`Structure`.
+You can **iterate** over the member names of a `structure`_.
 
-    >>> [key for key in structure.keys()]
+    >>> [key for key in structure.keys()] # doctest: +NORMALIZE_WHITESPACE
     ['version', 'id', 'length', 'module']
 
-You can **iterate** over all kind of :ref:`member <template_member>` items
-of the :class:`Structure`.
+You can **iterate** over all kind of member items of a `structure`_.
 
-    >>> pprint([(key, value.item_type) for key, value in structure.items()])
+    >>> [(key, value.item_type) for key, value in structure.items()] # doctest: +NORMALIZE_WHITESPACE
     [('version', ItemClass.Byte = 42),
      ('id', ItemClass.Unsigned = 45),
      ('length', ItemClass.Decimal = 40),
      ('module', ItemClass.Char = 43)]
 
-You can **iterate** over all kind of :ref:`members <template_member>`
-of the :class:`Structure`.
+You can **iterate** over all kind of members of a `structure`_.
 
-    >>> pprint([value.item_type for value in structure.values()])
+    >>> [value.item_type for value in structure.values()] # doctest: +NORMALIZE_WHITESPACE
     [ItemClass.Byte = 42,
      ItemClass.Unsigned = 45,
      ItemClass.Decimal = 40,
      ItemClass.Char = 43]
 
-You can **iterate** over all :class:`Field` members of the :class:`Structure`.
+You can **iterate** over all :ref:`field <field>` members of a `structure`_.
 
     >>> [value.name for value in structure.values() if is_field(value)]
     ['Byte', 'Unsigned8', 'Decimal8', 'Char']
@@ -483,11 +489,11 @@ You can **iterate** over all :class:`Field` members of the :class:`Structure`.
 List field indexes
 ------------------
 
-You can list the :class:`Index` of each :class:`Field` of the :class:`Structure`
+You can list the :class:`Index` of each :ref:`field <field>` of a `structure`_
 as a **nested** ordered dictionary by calling the method
 :meth:`~Structure.field_indexes`.
 
-    >>> pprint(structure.field_indexes())
+    >>> pprint(structure.field_indexes()) # doctest: +NORMALIZE_WHITESPACE
     {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
      'id': Index(byte=1, bit=0, address=1, base_address=0, update=False),
      'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
@@ -497,11 +503,11 @@ as a **nested** ordered dictionary by calling the method
 List field types
 ----------------
 
-You can list the **types** of each :class:`Field` of the :class:`Structure`
+You can list the **types** of each :ref:`field <field>` of a `structure`_
 as a **nested** ordered dictionary by calling the method
 :meth:`~Structure.field_types`.
 
-    >>> pprint(structure.field_types())
+    >>> pprint(structure.field_types()) # doctest: +NORMALIZE_WHITESPACE
     {'version': 'Byte',
      'id': 'Unsigned8',
      'length': 'Decimal8',
@@ -511,11 +517,11 @@ as a **nested** ordered dictionary by calling the method
 List field values
 -----------------
 
-You can list the **values** of each :class:`Field` of the :class:`Structure`
+You can list the **values** of each :ref:`field <field>` of a `structure`_
 as a **nested** ordered dictionary by calling the method
 :meth:`~Structure.field_values`.
 
-    >>> pprint(structure.field_values())
+    >>> pprint(structure.field_values()) # doctest: +NORMALIZE_WHITESPACE
     {'version': '0x1',
      'id': '0x2',
      'length': 9,
@@ -525,8 +531,8 @@ as a **nested** ordered dictionary by calling the method
 List field items
 ----------------
 
-You can list all :class:`Field` items of the :class:`Structure` as a **flat**
-list by calling the method :meth:`~Structure.field_items`.
+You can list all :ref:`field <field>` items of a `structure`_
+as a **flat** list by calling the method :meth:`~Structure.field_items`.
 
     >>> pprint(structure.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('version',
@@ -553,10 +559,10 @@ list by calling the method :meth:`~Structure.field_items`.
 View field values
 -----------------
 
-You can **view** the *values* of each :class:`Field` of the :class:`Structure`
+You can **view** the *values* of each :ref:`field <field>` of a `structure`_
 as a **flat** list by calling the method :meth:`~Container.to_list`.
 
-    >>> pprint(structure.to_list())
+    >>> pprint(structure.to_list()) # doctest: +NORMALIZE_WHITESPACE
     [('Structure.version', '0x1'),
      ('Structure.id', '0x2'),
      ('Structure.length', 9),
@@ -568,11 +574,11 @@ as a **flat** list by calling the method :meth:`~Container.to_list`.
     *name* is given.
 
 
-You can **view** the *values* of each :class:`Field` of the :class:`Structure`
+You can **view** the *values* of each :ref:`field <field>` of a `structure`_
 as a **flat** ordered dictionary by calling the method
 :meth:`~Container.to_dict`.
 
-    >>> pprint(structure.to_dict())
+    >>> pprint(structure.to_dict()) # doctest: +NORMALIZE_WHITESPACE
     {'Structure': {'version': '0x1',
                    'id': '0x2',
                    'length': 9,
@@ -587,7 +593,7 @@ as a **flat** ordered dictionary by calling the method
 Save field values
 -----------------
 
-You can **save** the *values* of each :class:`Field` of the :class:`Structure`
+You can **save** the *values* of each :ref:`field <field>` of a `structure`_
 to an INI file by calling the method :meth:`~Container.save`.
 
     >>> structure.save("_static/structure.ini")
@@ -601,7 +607,7 @@ to an INI file by calling the method :meth:`~Container.save`.
 Load field values
 -----------------
 
-You can **load** the *values* of each :class:`Field` of the :class:`Structure`
+You can **load** the *values* of each :ref:`field <field>` of a `structure`_
 from an INI file by calling the method :meth:`~Container.load`.
 
     >>> structure.load("_static/structure.ini")

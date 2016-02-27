@@ -19,15 +19,17 @@ writing binary data from and back to a data provider as easy as possible.
 KonFoo in points:
 
 -   declarative way to describe the mapping of binary data
--   declarative template classes to map, read, decode, encode and write
-    binary data
--   nesting of template classes
--   adaptable template classes on the fly while decoding binary data
--   easy syntax for accessing nested template fields
--   loadable template content including nested data from an INI file
--   savable template content including nested data to an INI file
--   creatable blueprints from a template class
+-   declarative classes to map, read, decode, encode and write binary data
+    from and back to a data source
+-   easy adjustable data provider bridge to any kind of data source
+-   nesting of classes
+-   adaptable classes on the fly while reading/decoding binary data
+-   easy syntax for accessing nested fields
+-   loadable mapping content including nested data from an INI file
+-   savable mapping content including nested data to an INI file
+-   easy creatable blueprint of a mapper
 -   blueprint converter to JSON to visualise templates with `d3js`_.
+
 
 KonFoo runs on `Python 3.4.3 <https://www.python.org/>`_ or higher.
 
@@ -38,6 +40,7 @@ You can get the latest version of KonFoo directly from GitHub:
 You can get the library directly from PyPI::
 
     pip install konfoo
+
 
 Examples
 --------
@@ -59,11 +62,11 @@ usage patterns.
    :maxdepth: 2
 
    concept
-   templates
    structure
    sequence
    array
    pointer
+   provider
    reading
    decoding
    encoding

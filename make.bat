@@ -7,6 +7,7 @@ if "%1" == "help" (
     :help
     echo.Please use `make ^<target^>` where ^<target^> is one of
     echo.  docs       to build the html documentation of the package
+    echo.  doctest    to run all tests for the documentation
     echo.  test       to run all tests for the package
     echo.  build      to build the package
     echo.  release    to release the package on PyPi
@@ -19,6 +20,14 @@ if "%1" == "docs" (
     cd ..
     goto end
 )
+
+if "%1" == "doctest" (
+    cd docs
+    make doctest
+    cd ..
+    goto end
+)
+
 
 if "%1" == "test" (
     cd tests

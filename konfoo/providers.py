@@ -76,6 +76,14 @@ class FileProvider(Provider):
         else:
             raise TypeError(source)
 
+    def __str__(self):
+        return self.name + "({0._source!s}, " \
+                           "{1!s})".format(self, len(self._cache))
+
+    def __repr__(self):
+        return self.__class__.__name__ + "(file={0._source!r}, " \
+                                         "size={1!r})".format(self, len(self._cache))
+
     def read(self, address=0, count=0):
         return self._cache[address:]
 
