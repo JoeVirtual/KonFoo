@@ -28,7 +28,6 @@ if "%1" == "doctest" (
     goto end
 )
 
-
 if "%1" == "test" (
     cd tests
     py.test
@@ -42,6 +41,7 @@ if "%1" == "build" (
 )
 
 if "%1" == "release" (
+    set HOME=.
     python setup.py sdist bdist_wheel upload
     goto end
 )

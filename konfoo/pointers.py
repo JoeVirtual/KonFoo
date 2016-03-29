@@ -23,7 +23,7 @@ from .fields import (
 
 
 class Pointer8(Pointer):
-    """A `Pointer8` field is a :class:`Pointer` field
+    """ A `Pointer8` field is a :class:`Pointer` field
     with a :class:`Field` *size* of one byte.
     """
 
@@ -36,7 +36,7 @@ class Pointer8(Pointer):
 
 
 class Pointer16(Pointer):
-    """A `Pointer16` field is a :class:`Pointer` field
+    """ A `Pointer16` field is a :class:`Pointer` field
     with a :class:`Field` *size* of two bytes.
     """
 
@@ -49,7 +49,7 @@ class Pointer16(Pointer):
 
 
 class Pointer32(Pointer):
-    """A `Pointer32` field is a :class:`Pointer` field
+    """ A `Pointer32` field is a :class:`Pointer` field
     with a :class:`Field` *size* of four bytes.
     """
 
@@ -62,7 +62,7 @@ class Pointer32(Pointer):
 
 
 class Pointer64(Pointer):
-    """A `Pointer64` field is a :class:`Pointer` field
+    """ A `Pointer64` field is a :class:`Pointer` field
     with a :class:`Field` *size* of eight bytes.
     """
 
@@ -75,7 +75,7 @@ class Pointer64(Pointer):
 
 
 class StructurePointer8(StructurePointer):
-    """A `StructurePointer8` field is a :class:`StructurePointer` field
+    """ A `StructurePointer8` field is a :class:`StructurePointer` field
     with a :class:`Field` *size* of one byte.
     """
 
@@ -88,7 +88,7 @@ class StructurePointer8(StructurePointer):
 
 
 class StructurePointer16(StructurePointer):
-    """A `StructurePointer16` field is a :class:`StructurePointer` field
+    """ A `StructurePointer16` field is a :class:`StructurePointer` field
     with a :class:`Field` *size* of two byte.
     """
 
@@ -101,7 +101,7 @@ class StructurePointer16(StructurePointer):
 
 
 class StructurePointer32(StructurePointer):
-    """A `StructurePointer32` field is a :class:`StructurePointer` field
+    """ A `StructurePointer32` field is a :class:`StructurePointer` field
     with a :class:`Field` *size* of four byte.
     """
 
@@ -114,7 +114,7 @@ class StructurePointer32(StructurePointer):
 
 
 class ArrayPointer8(ArrayPointer):
-    """A `ArrayPointer8` field is a :class:`ArrayPointer` field
+    """ A `ArrayPointer8` field is a :class:`ArrayPointer` field
     with a :class:`Field` *size* of one byte.
     """
 
@@ -127,7 +127,7 @@ class ArrayPointer8(ArrayPointer):
 
 
 class ArrayPointer16(ArrayPointer):
-    """A `ArrayPointer16` field is a :class:`ArrayPointer` field
+    """ A `ArrayPointer16` field is a :class:`ArrayPointer` field
     with a :class:`Field` *size* of two byte.
     """
 
@@ -140,7 +140,7 @@ class ArrayPointer16(ArrayPointer):
 
 
 class ArrayPointer32(ArrayPointer):
-    """A `ArrayPointer32` field is a :class:`ArrayPointer` field
+    """ A `ArrayPointer32` field is a :class:`ArrayPointer` field
     with a :class:`Field` *size* of four byte.
     """
 
@@ -153,7 +153,7 @@ class ArrayPointer32(ArrayPointer):
 
 
 class StreamPointer8(StreamPointer):
-    """A `StreamPointer8` field is a :class:`StreamPointer` field
+    """ A `StreamPointer8` field is a :class:`StreamPointer` field
     with a :class:`Field` *size* of one byte.
     """
 
@@ -166,7 +166,7 @@ class StreamPointer8(StreamPointer):
 
 
 class StreamPointer16(StreamPointer):
-    """A `StreamPointer16` field is a :class:`StreamPointer` field
+    """ A `StreamPointer16` field is a :class:`StreamPointer` field
     with a :class:`Field` *size* of two bytes.
     """
 
@@ -179,7 +179,7 @@ class StreamPointer16(StreamPointer):
 
 
 class StreamPointer32(StreamPointer):
-    """A `StreamPointer32` field is a :class:`StreamPointer` field
+    """ A `StreamPointer32` field is a :class:`StreamPointer` field
     with a :class:`Field` *size* of four bytes.
     """
 
@@ -192,7 +192,7 @@ class StreamPointer32(StreamPointer):
 
 
 class StringPointer8(StringPointer):
-    """A `StringPointer8` field is a :class:`StringPointer` field
+    """ A `StringPointer8` field is a :class:`StringPointer` field
     with a :class:`Field` *size* of one byte.
     """
 
@@ -205,7 +205,7 @@ class StringPointer8(StringPointer):
 
 
 class StringPointer16(StringPointer):
-    """A `StringPointer16` field is a :class:`StringPointer` field
+    """ A `StringPointer16` field is a :class:`StringPointer` field
     with a :class:`Field` *size* of two bytes.
     """
 
@@ -218,7 +218,7 @@ class StringPointer16(StringPointer):
 
 
 class StringPointer32(StringPointer):
-    """A `StringPointer32` field is a :class:`StringPointer` field
+    """ A `StringPointer32` field is a :class:`StringPointer` field
     with a :class:`Field` *size* of four bytes.
     """
 
@@ -231,7 +231,7 @@ class StringPointer32(StringPointer):
 
 
 class FloatPointer(Pointer):
-    """A `FloatPointer` field is a :class:`Pointer` field
+    """ A `FloatPointer` field is a :class:`Pointer` field
     which refers to a :class:`Float` field.
     """
 
@@ -240,7 +240,7 @@ class FloatPointer(Pointer):
 
 
 class Signed8Pointer(Pointer):
-    """A `FloatPointer` field is a :class:`Pointer` field
+    """ A `FloatPointer` field is a :class:`Pointer` field
     which refers to a :class:`Signed8` field.
     """
 
@@ -249,7 +249,7 @@ class Signed8Pointer(Pointer):
 
 
 class Signed16Pointer(Pointer):
-    """A `Signed16Pointer` field is a :class:`Pointer` field
+    """ A `Signed16Pointer` field is a :class:`Pointer` field
     which refers to a :class:`Signed16` field.
     """
 
@@ -258,7 +258,7 @@ class Signed16Pointer(Pointer):
 
 
 class Signed32Pointer(Pointer):
-    """A `Signed32Pointer` field is a :class:`Pointer` field
+    """ A `Signed32Pointer` field is a :class:`Pointer` field
     which refers to a :class:`Signed32` field.
     """
 
@@ -267,7 +267,7 @@ class Signed32Pointer(Pointer):
 
 
 class Unsigned8Pointer(Pointer):
-    """A `Unsigned8Pointer` field is a :class:`Pointer` field
+    """ A `Unsigned8Pointer` field is a :class:`Pointer` field
     which refers to a :class:`Unsigned8` field.
     """
 
@@ -276,7 +276,7 @@ class Unsigned8Pointer(Pointer):
 
 
 class Unsigned16Pointer(Pointer):
-    """A `Unsigned16Pointer` field is a :class:`Pointer` field
+    """ A `Unsigned16Pointer` field is a :class:`Pointer` field
     which refers to a :class:`Unsigned16` field.
     """
 
@@ -285,7 +285,7 @@ class Unsigned16Pointer(Pointer):
 
 
 class Unsigned32Pointer(Pointer):
-    """A `Unsigned32Pointer` field is a :class:`Pointer` field
+    """ A `Unsigned32Pointer` field is a :class:`Pointer` field
     which refers to a :class:`Unsigned32` field.
     """
 
@@ -294,7 +294,7 @@ class Unsigned32Pointer(Pointer):
 
 
 class RelativePointer8(RelativePointer):
-    """A `RelativePointer8` field is a :class:`RelativePointer` field
+    """ A `RelativePointer8` field is a :class:`RelativePointer` field
     with a :class:`Field` *size* of one byte.
     """
 
@@ -307,7 +307,7 @@ class RelativePointer8(RelativePointer):
 
 
 class RelativePointer16(RelativePointer):
-    """A `RelativePointer16` field is a :class:`RelativePointer` field
+    """ A `RelativePointer16` field is a :class:`RelativePointer` field
     with a :class:`Field` *size* of two bytes.
     """
 
@@ -320,7 +320,7 @@ class RelativePointer16(RelativePointer):
 
 
 class RelativePointer32(RelativePointer):
-    """A `RelativePointer32` field is a :class:`RelativePointer` field
+    """ A `RelativePointer32` field is a :class:`RelativePointer` field
     with a :class:`Field` *size* of four bytes.
     """
 
@@ -333,7 +333,7 @@ class RelativePointer32(RelativePointer):
 
 
 class RelativePointer64(RelativePointer):
-    """A `RelativePointer64` field is a :class:`RelativePointer` field
+    """ A `RelativePointer64` field is a :class:`RelativePointer` field
     with a :class:`Field` *size* of eight bytes.
     """
 
@@ -346,7 +346,7 @@ class RelativePointer64(RelativePointer):
 
 
 class StructureRelativePointer8(StructureRelativePointer):
-    """A `StructureRelativePointer8` field is a :class:`StructureRelativePointer`
+    """ A `StructureRelativePointer8` field is a :class:`StructureRelativePointer`
     field with a :class:`Field` *size* of one byte.
     """
 
@@ -359,7 +359,7 @@ class StructureRelativePointer8(StructureRelativePointer):
 
 
 class StructureRelativePointer16(StructureRelativePointer):
-    """A `StructureRelativePointer16` field is a :class:`StructureRelativePointer`
+    """ A `StructureRelativePointer16` field is a :class:`StructureRelativePointer`
     field with a :class:`Field` *size* of two byte.
     """
 
@@ -372,7 +372,7 @@ class StructureRelativePointer16(StructureRelativePointer):
 
 
 class StructureRelativePointer32(StructureRelativePointer):
-    """A `StructureRelativePointer32` field is a :class:`StructureRelativePointer`
+    """ A `StructureRelativePointer32` field is a :class:`StructureRelativePointer`
     field with a :class:`Field` *size* of four byte.
     """
 
@@ -385,7 +385,7 @@ class StructureRelativePointer32(StructureRelativePointer):
 
 
 class ArrayRelativePointer8(ArrayRelativePointer):
-    """A `ArrayRelativePointer8` field is a :class:`ArrayRelativePointer`
+    """ A `ArrayRelativePointer8` field is a :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of one byte.
     """
 
@@ -398,7 +398,7 @@ class ArrayRelativePointer8(ArrayRelativePointer):
 
 
 class ArrayRelativePointer16(ArrayRelativePointer):
-    """A `ArrayRelativePointer16` field is a :class:`ArrayRelativePointer`
+    """ A `ArrayRelativePointer16` field is a :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of two byte.
     """
 
@@ -411,7 +411,7 @@ class ArrayRelativePointer16(ArrayRelativePointer):
 
 
 class ArrayRelativePointer32(ArrayRelativePointer):
-    """A `ArrayRelativePointer32` field is a :class:`ArrayRelativePointer`
+    """ A `ArrayRelativePointer32` field is a :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of four byte.
     """
 
@@ -424,7 +424,7 @@ class ArrayRelativePointer32(ArrayRelativePointer):
 
 
 class StreamRelativePointer8(StreamRelativePointer):
-    """A `StreamRelativePointer8` field is a :class:`StreamRelativePointer`
+    """ A `StreamRelativePointer8` field is a :class:`StreamRelativePointer`
     field with a :class:`Field` *size* of one byte.
     """
 
@@ -437,7 +437,7 @@ class StreamRelativePointer8(StreamRelativePointer):
 
 
 class StreamRelativePointer16(StreamRelativePointer):
-    """A `StreamRelativePointer16` field is a :class:`StreamRelativePointer`
+    """ A `StreamRelativePointer16` field is a :class:`StreamRelativePointer`
     field with a :class:`Field` *size* of two byte.
     """
 
@@ -450,7 +450,7 @@ class StreamRelativePointer16(StreamRelativePointer):
 
 
 class StreamRelativePointer32(StreamRelativePointer):
-    """A `StreamRelativePointer32` field is a :class:`StreamRelativePointer`
+    """ A `StreamRelativePointer32` field is a :class:`StreamRelativePointer`
     field with a :class:`Field` *size* of four byte.
     """
 
@@ -463,7 +463,7 @@ class StreamRelativePointer32(StreamRelativePointer):
 
 
 class StringRelativePointer8(StringRelativePointer):
-    """A `StringRelativePointer8` field is a :class:`StringRelativePointer`
+    """ A `StringRelativePointer8` field is a :class:`StringRelativePointer`
     field with a :class:`Field` *size* of one byte.
     """
 
@@ -476,7 +476,7 @@ class StringRelativePointer8(StringRelativePointer):
 
 
 class StringRelativePointer16(StringRelativePointer):
-    """A `StringRelativePointer16` field is a :class:`StringRelativePointer`
+    """ A `StringRelativePointer16` field is a :class:`StringRelativePointer`
     field with a :class:`Field` *size* of two byte.
     """
 
@@ -489,7 +489,7 @@ class StringRelativePointer16(StringRelativePointer):
 
 
 class StringRelativePointer32(StringRelativePointer):
-    """A `StringRelativePointer32` field is a :class:`StringRelativePointer`
+    """ A `StringRelativePointer32` field is a :class:`StringRelativePointer`
     field with a :class:`Field` *size* of four byte.
     """
 

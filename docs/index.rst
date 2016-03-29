@@ -37,9 +37,11 @@ You can get the latest version of KonFoo directly from GitHub:
 
     `KonFoo @ github <https://github.com/JoeVirtual/KonFoo/>`_
 
-You can get the library directly from PyPI::
+You can get the library directly from PyPI:
 
-    pip install konfoo
+.. code-block:: console
+
+    > pip install konfoo
 
 
 Examples

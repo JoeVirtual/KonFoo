@@ -10,7 +10,7 @@
 
 
 class Provider:
-    """A `Provider` class provides access for the :class:`Pointer` class to
+    """ A `Provider` class provides access for the :class:`Pointer` class to
     **read** and **write** byte streams from and back to a data *source*.
     The `Provider` class servers as a meta class. A derived class must
     implement the two methods :meth:`read` and :meth:`write` for reading
@@ -29,7 +29,7 @@ class Provider:
         return self._cache
 
     def read(self, address=0, count=0):
-        """Reads the *number* of bytes from a data `source` beginning at
+        """ Reads the *number* of bytes from a data `source` beginning at
         the start *address*.
 
         :param int address: start address.
@@ -43,7 +43,7 @@ class Provider:
         return self._cache
 
     def write(self, buffer=bytes(), address=0, count=0):
-        """Writes the content of the *buffer* to a data `source` beginning
+        """ Writes the content of the *buffer* to a data `source` beginning
         at the start *address*.
 
         :param bytes buffer: content to write.
@@ -60,7 +60,7 @@ class Provider:
 
 
 class FileProvider(Provider):
-    """A `FileProvider` is a data :class:`Provider` for binary files. The file
+    """ A `FileProvider` is a data :class:`Provider` for binary files. The file
     content is internal stored in a cache. The read and write methods only
     operate on the internal cache.
 
@@ -92,7 +92,7 @@ class FileProvider(Provider):
         view[address:address + count] = buffer
 
     def flush(self, file=str()):
-        """Flushes the updated file content to the given *file*.
+        """ Flushes the updated file content to the given *file*.
 
         .. note::  Overwrites an existing file.
 

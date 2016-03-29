@@ -17,7 +17,7 @@ from .core import (
 
 
 class Decimal8(Decimal):
-    """A `Decimal8` field is a :class:`Decimal` field with a *size* of
+    """ A `Decimal8` field is a :class:`Decimal` field with a *size* of
     one byte and is by default unsigned.
     """
 
@@ -26,7 +26,7 @@ class Decimal8(Decimal):
 
 
 class Decimal16(Decimal):
-    """A `Decimal16` field is a :class:`Decimal` field with a *size* of
+    """ A `Decimal16` field is a :class:`Decimal` field with a *size* of
     two bytes and is by default unsigned.
     """
 
@@ -35,7 +35,7 @@ class Decimal16(Decimal):
 
 
 class Decimal24(Decimal):
-    """A `Decimal24` field is a :class:`Decimal` field with a *size* of
+    """ A `Decimal24` field is a :class:`Decimal` field with a *size* of
     three bytes and is by default unsigned.
     """
 
@@ -44,7 +44,7 @@ class Decimal24(Decimal):
 
 
 class Decimal32(Decimal):
-    """A `Decimal32` field is a :class:`Decimal` field with a *size* of
+    """ A `Decimal32` field is a :class:`Decimal` field with a *size* of
     four bytes and is by default unsigned.
     """
 
@@ -53,7 +53,7 @@ class Decimal32(Decimal):
 
 
 class Signed8(Signed):
-    """A `Signed8` field is a :class:`Signed` field with a *size* of
+    """ A `Signed8` field is a :class:`Signed` field with a *size* of
     one byte.
     """
 
@@ -62,7 +62,7 @@ class Signed8(Signed):
 
 
 class Signed16(Signed):
-    """A `Signed16` field is a :class:`Signed` field with a *size* of
+    """ A `Signed16` field is a :class:`Signed` field with a *size* of
     two bytes.
     """
 
@@ -71,7 +71,7 @@ class Signed16(Signed):
 
 
 class Signed24(Signed):
-    """A `Signed24` field is a :class:`Signed` field with a *size* of
+    """ A `Signed24` field is a :class:`Signed` field with a *size* of
     three bytes.
     """
 
@@ -80,7 +80,7 @@ class Signed24(Signed):
 
 
 class Signed32(Signed):
-    """A `Signed32` field is a :class:`Signed` field with a *size* of
+    """ A `Signed32` field is a :class:`Signed` field with a *size* of
     four bytes.
     """
 
@@ -89,7 +89,7 @@ class Signed32(Signed):
 
 
 class Unsigned8(Unsigned):
-    """A `Unsigned8` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned8` field is a :class:`Unsigned` field with a *size* of
     one byte.
     """
 
@@ -98,7 +98,7 @@ class Unsigned8(Unsigned):
 
 
 class Unsigned16(Unsigned):
-    """A `Unsigned16` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned16` field is a :class:`Unsigned` field with a *size* of
     two bytes.
     """
 
@@ -107,7 +107,7 @@ class Unsigned16(Unsigned):
 
 
 class Unsigned24(Unsigned):
-    """A `Unsigned24` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned24` field is a :class:`Unsigned` field with a *size* of
     three bytes.
     """
 
@@ -116,7 +116,7 @@ class Unsigned24(Unsigned):
 
 
 class Unsigned32(Unsigned):
-    """A `Unsigned32` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned32` field is a :class:`Unsigned` field with a *size* of
     four bytes.
     """
 
@@ -125,7 +125,7 @@ class Unsigned32(Unsigned):
 
 
 class Bitset8(Bitset):
-    """A `Bitset8` field is a :class:`Bitset` field with a *size* of
+    """ A `Bitset8` field is a :class:`Bitset` field with a *size* of
     one byte.
     """
 
@@ -134,7 +134,7 @@ class Bitset8(Bitset):
 
 
 class Bitset16(Bitset):
-    """A `Bitset16` field is a :class:`Bitset` field with a *size* of
+    """ A `Bitset16` field is a :class:`Bitset` field with a *size* of
     two bytes.
     """
 
@@ -143,7 +143,7 @@ class Bitset16(Bitset):
 
 
 class Bitset24(Bitset):
-    """A `Bitset24` field is a :class:`Bitset` field with a *size* of
+    """ A `Bitset24` field is a :class:`Bitset` field with a *size* of
     three bytes.
     """
 
@@ -152,7 +152,7 @@ class Bitset24(Bitset):
 
 
 class Bitset32(Bitset):
-    """A `Bitset32` field is a :class:`Bitset` field with a *size* of
+    """ A `Bitset32` field is a :class:`Bitset` field with a *size* of
     four bytes.
     """
 
@@ -161,7 +161,7 @@ class Bitset32(Bitset):
 
 
 class Bool8(Bool):
-    """A `Bool8` field is a :class:`Bool` field with a *size* of
+    """ A `Bool8` field is a :class:`Bool` field with a *size* of
     one byte.
     """
 
@@ -170,7 +170,7 @@ class Bool8(Bool):
 
 
 class Bool16(Bool):
-    """A `Bool16` field is a :class:`Bool` field with a *size* of
+    """ A `Bool16` field is a :class:`Bool` field with a *size* of
     two bytes.
     """
 
@@ -179,7 +179,7 @@ class Bool16(Bool):
 
 
 class Bool24(Bool):
-    """A `Bool24` field is a :class:`Bool` field with a *size* of
+    """ A `Bool24` field is a :class:`Bool` field with a *size* of
     three bytes.
     """
 
@@ -188,7 +188,7 @@ class Bool24(Bool):
 
 
 class Bool32(Bool):
-    """A `Bool32` field is a :class:`Bool` field with a *size* of
+    """ A `Bool32` field is a :class:`Bool` field with a *size* of
     four bytes.
     """
 
@@ -197,7 +197,7 @@ class Bool32(Bool):
 
 
 class Antivalent(Enum):
-    """A `Antivalent` field is a :class:`Enum` field with a *size* of
+    """ A `Antivalent` field is a :class:`Enum` field with a *size* of
     two bits and a fix assigned enumeration.
     """
 
@@ -214,7 +214,7 @@ class Antivalent(Enum):
 
 
 class Enum4(Enum):
-    """A `Enum4` field is a :class:`Enum` field with a *size* of
+    """ A `Enum4` field is a :class:`Enum` field with a *size* of
     four bits.
     """
 
@@ -226,7 +226,7 @@ class Enum4(Enum):
 
 
 class Enum8(Enum):
-    """A `Enum8` field is a :class:`Enum` field with a *size* of
+    """ A `Enum8` field is a :class:`Enum` field with a *size* of
     one byte.
     """
 
@@ -237,7 +237,7 @@ class Enum8(Enum):
 
 
 class Enum16(Enum):
-    """A `Enum16` field is a :class:`Enum` field with a *size* of
+    """ A `Enum16` field is a :class:`Enum` field with a *size* of
     two bytes.
     """
 
@@ -248,7 +248,7 @@ class Enum16(Enum):
 
 
 class Enum24(Enum):
-    """A `Enum24` field is a :class:`Enum` field with a *size* of
+    """ A `Enum24` field is a :class:`Enum` field with a *size* of
     three bytes.
     """
 
@@ -259,7 +259,7 @@ class Enum24(Enum):
 
 
 class Enum32(Enum):
-    """A `Enum32` field is a :class:`Enum` field with a *size* of
+    """ A `Enum32` field is a :class:`Enum` field with a *size* of
     four bytes.
     """
 
@@ -270,7 +270,7 @@ class Enum32(Enum):
 
 
 class Scaled8(Scaled):
-    """A `Scaled8` field is a :class:`Scaled` field with a *size* of
+    """ A `Scaled8` field is a :class:`Scaled` field with a *size* of
     one byte.
     """
 
@@ -280,7 +280,7 @@ class Scaled8(Scaled):
 
 
 class Scaled16(Scaled):
-    """A `Scaled16` field is a :class:`Scaled` field with a *size* of
+    """ A `Scaled16` field is a :class:`Scaled` field with a *size* of
     two bytes.
     """
 
@@ -290,7 +290,7 @@ class Scaled16(Scaled):
 
 
 class Scaled24(Scaled):
-    """A `Scaled24` field is a :class:`Scaled` field with a *size* of
+    """ A `Scaled24` field is a :class:`Scaled` field with a *size* of
     three bytes.
     """
 
@@ -300,7 +300,7 @@ class Scaled24(Scaled):
 
 
 class Scaled32(Scaled):
-    """A `Scaled32` field is a :class:`Scaled` field with a *size* of
+    """ A `Scaled32` field is a :class:`Scaled` field with a *size* of
     four bytes.
     """
 
@@ -310,7 +310,7 @@ class Scaled32(Scaled):
 
 
 class Bipolar2(Bipolar):
-    """A `Bipolar2` field is a :class:`Bipolar` field with a *size* of
+    """ A `Bipolar2` field is a :class:`Bipolar` field with a *size* of
     two bytes and an integer part of two bits.
     """
 
@@ -320,7 +320,7 @@ class Bipolar2(Bipolar):
 
 
 class Bipolar4(Bipolar):
-    """A `Bipolar4` field is a :class:`Bipolar` field with a *size* of
+    """ A `Bipolar4` field is a :class:`Bipolar` field with a *size* of
     two bytes and an integer part of four bits.
     """
 
@@ -330,7 +330,7 @@ class Bipolar4(Bipolar):
 
 
 class Unipolar2(Unipolar):
-    """A `Unipolar2` field is a :class:`Unipolar` field with a *size* of
+    """ A `Unipolar2` field is a :class:`Unipolar` field with a *size* of
     two bytes and an integer part of two bits.
     """
 

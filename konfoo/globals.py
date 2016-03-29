@@ -39,7 +39,7 @@ class ItemClass(Enumeration):
 
 
 class Byteorder(Category):
-    """Byte order categories."""
+    """ Byte order categories."""
     auto = 'auto'
     little = 'little'
     big = 'big'
@@ -50,7 +50,7 @@ BYTEORDER = Byteorder.little
 
 
 def limiter(value, minimum, maximum):
-    """Returns the *value* limited between *minimum* and *maximum*
+    """ Returns the *value* limited between *minimum* and *maximum*
     whereby the *maximum* wins over the *minimum*.
 
     Example:

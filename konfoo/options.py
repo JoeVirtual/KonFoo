@@ -22,7 +22,7 @@ class Option(Category):
 
 
 def byte_order_option(default=BYTEORDER):
-    """Attaches the option ``byte_order`` with its *default* value to the
+    """ Attaches the option ``byte_order`` with its *default* value to the
     keyword arguments, when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
@@ -45,7 +45,7 @@ def get_byte_order(options):
 
 
 def nested_option(default=False):
-    """Attaches the option ``nested`` with its *default* value to the
+    """ Attaches the option ``nested`` with its *default* value to the
     keyword arguments when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
@@ -68,7 +68,7 @@ def get_nested(options):
 
 
 def field_types_option(default=False):
-    """Attaches the option ``field_types`` with its *default* value to the
+    """ Attaches the option ``field_types`` with its *default* value to the
     keyword arguments when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
@@ -91,7 +91,7 @@ def get_field_types(options):
 
 
 def verbose_option(default=False):
-    """Attaches the option ``verbose`` with its *default* value to the
+    """ Attaches the option ``verbose`` with its *default* value to the
     keyword arguments when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """

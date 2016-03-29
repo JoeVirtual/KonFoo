@@ -471,19 +471,39 @@ Categories
 Exceptions
 ==========
 
-.. autoexception:: KonFooError
+.. autoexception:: ByteOrderTypeError
 
-.. autoexception:: FileError
+.. autoexception:: EnumTypeError
 
-.. autoexception:: RangeError
+.. autoexception:: FactoryTypeError
 
-.. autoexception:: SizeError
+.. autoexception:: MemberTypeError
 
-.. autoexception:: LengthError
+.. autoexception:: ProviderTypeError
 
-.. autoexception:: AlignmentError
+.. autoexception:: ContainerLengthError
 
-.. autoexception:: OffsetError
+.. autoexception:: FieldAddressError
+
+.. autoexception:: FieldAlignmentError
+
+.. autoexception:: FieldByteOrderError
+
+.. autoexception:: FieldIndexError
+
+.. autoexception:: FieldSizeError
+
+.. autoexception:: FieldTypeError
+
+.. autoexception:: FieldValueError
+
+.. autoexception:: FieldValueEncodingError
+
+.. autoexception:: FieldGroupByteOrderError
+
+.. autoexception:: FieldGroupOffsetError
+
+.. autoexception:: FieldGroupSizeError
 
 
 Utilities

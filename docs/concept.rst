@@ -216,7 +216,10 @@ Index
 -----
 
 A `field`_ has an :attr:`~Field.index`. The `field index`_ contains the location
-of the `field`_ in a *byte stream* and in the providing *data source*.
+of the `field`_ in a *byte stream* and in the providing *data source*. The `field
+index`_ is automatically calculated by the build-in decoding and encoding engine
+from the start point of the *byte stream* and the start address of the *byte
+stream* in the providing *data source*.
 
     >>> field.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
@@ -228,13 +231,17 @@ Alignment
 ---------
 
 A `field`_ has an :attr:`~Field.alignment`. The `field alignment`_ contains
-the location of the `field`_ within a *aligned* group of consecutive fields.
+the location of the `field`_ within an *aligned* group of consecutive fields.
+The order how the consecutive fields are declared in a `container`_ defines the
+order how the consecutive fields are aligned to each other. The ``bit offset``
+of the `field alignment`_ is automatically calculated by the build-in decoding
+and encoding engine.
 
-    >>> field.alignment
+    >>> field.alignment  # alignment(byte size, bit offset)
     (0, 0)
 
 A `field`_ can be *aligned to* a group of consecutive fields by using the
-``align_to`` argument of the :class:`Field` class to describe a **atomic**
+``align_to`` argument of the :class:`Field` class to describe an **atomic**
 content part of a *byte stream* with more than one `field`_.
 
     >>> Decimal(15).alignment

@@ -11,7 +11,7 @@ data.
 Setup
 -----
 
-.. code:: bash
+.. code-block:: bash
 
     > pip install konfoo
 

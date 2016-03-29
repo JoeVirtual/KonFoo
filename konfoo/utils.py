@@ -15,7 +15,7 @@ from konfoo.globals import ItemClass
 
 
 class HexViewer:
-    """A `HexViewer` writes or prints a source file or a byte stream
+    """ A `HexViewer` writes or prints a source file or a byte stream
     as a hexadecimal dump to a output file or the console.
 
     :param int columns: number of output columns.
@@ -37,7 +37,7 @@ class HexViewer:
 
     @property
     def columns(self):
-        """Number of output columns."""
+        """ Number of output columns."""
         return self._columns
 
     @columns.setter
@@ -47,7 +47,7 @@ class HexViewer:
 
     @staticmethod
     def _view_area(stream=bytes(), index=0, count=0):
-        """Returns the (start, stop) index for the viewing area of the
+        """ Returns the (start, stop) index for the viewing area of the
         byte stream.
 
         :param int index: start index of the viewing area.
@@ -75,7 +75,7 @@ class HexViewer:
         return start, stop
 
     def file_dump(self, source, index=0, count=0, output=str()):
-        """Dumps the content of the *source* file to the console or to the
+        """ Dumps the content of the *source* file to the console or to the
         optional given *output* file.
 
         :param str source: location and name of the source file.
@@ -92,7 +92,7 @@ class HexViewer:
         self.dump(stream, index, count, output)
 
     def dump(self, stream, index=0, count=0, output=str()):
-        """Dumps the content of the byte *stream* to the console or to the
+        """ Dumps the content of the byte *stream* to the console or to the
         optional given *output* file.
 
         :param bytes stream: byte stream to view.
@@ -173,7 +173,7 @@ class HexViewer:
 
 
 def d3json(blueprint, **options):
-    """Converts a *blueprint* into a JSON string.
+    """ Converts a *blueprint* into a JSON string.
 
     .. code-block:: JSON
 

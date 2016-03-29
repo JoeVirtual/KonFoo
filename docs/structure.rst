@@ -39,7 +39,7 @@ constructor method of the :class:`Structure` class.
 .. warning::
 
     A `structure`_ must always align to full bytes or an exception will be
-    raised when decoding or encoding an incomplete `structure`_ declaration.
+    raised when an incomplete `structure`_ declaration is decoded or encoded.
 
 
 Align Fields in a Structure

@@ -12,7 +12,7 @@ import enum
 
 
 class Category(enum.Enum):
-    """The `Category` class is a is a subclass of the :class:`~enum.Enum` class
+    """ The `Category` class is a is a subclass of the :class:`~enum.Enum` class
     provided by the Python standard module :mod:`enum` and extends its
     base class with methods
 
@@ -82,7 +82,7 @@ class Category(enum.Enum):
     """
 
     def __str__(self):
-        """Return str(self).
+        """ Return str(self).
 
         Example:
 
@@ -96,7 +96,7 @@ class Category(enum.Enum):
         return "({0.name!s}, {0.value!s})".format(self)
 
     def __repr__(self):
-        """Return repr(self). See help(type(self)) for accurate signature.
+        """ Return repr(self). See help(type(self)) for accurate signature.
 
         Example:
 
@@ -110,7 +110,7 @@ class Category(enum.Enum):
         return self.__class__.__name__ + ".{0.name!s} = {0.value!r}".format(self)
 
     def describe(self):
-        """Returns the `name`, `value` pair to describe a specific `Category` member.
+        """ Returns the `name`, `value` pair to describe a specific `Category` member.
 
         Example:
 
@@ -125,7 +125,7 @@ class Category(enum.Enum):
 
     @classmethod
     def names(cls):
-        """Returns a list of the member `names` of a `Category`.
+        """ Returns a list of the member `names` of a `Category`.
 
         Example:
 
@@ -140,7 +140,7 @@ class Category(enum.Enum):
 
     @classmethod
     def values(cls):
-        """Returns a list of the member `values` of a `Category`.
+        """ Returns a list of the member `values` of a `Category`.
 
         Example:
 
@@ -155,7 +155,7 @@ class Category(enum.Enum):
 
     @classmethod
     def get_name(cls, value):
-        """Returns the `name` of the `Category` member with the matching *value*
+        """ Returns the `name` of the `Category` member with the matching *value*
         or a empty string if no member match.
 
         Example:
@@ -176,7 +176,7 @@ class Category(enum.Enum):
 
     @classmethod
     def get_value(cls, name):
-        """Returns the `value` of the `Category` member with the matching *name*
+        """ Returns the `value` of the `Category` member with the matching *name*
         or `None` if no member match.
 
         Example:
@@ -197,7 +197,7 @@ class Category(enum.Enum):
 
     @classmethod
     def get_member(cls, value, default=None):
-        """Returns the first `Category` member with the matching *value*
+        """ Returns the first `Category` member with the matching *value*
         or the specified *default* value if no member match.
 
         Example:

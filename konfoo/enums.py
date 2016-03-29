@@ -12,7 +12,7 @@ import enum
 
 
 class Enumeration(enum.IntEnum):
-    """The `Enumeration` class is a subclass from the :class:`~enum.IntEnum` class
+    """ The `Enumeration` class is a subclass from the :class:`~enum.IntEnum` class
     provided by the Python standard module :mod:`enum` and extends its
     base class with methods
 
@@ -84,7 +84,7 @@ class Enumeration(enum.IntEnum):
     """
 
     def __str__(self):
-        """Return str(self).
+        """ Return str(self).
 
         Example:
 
@@ -98,7 +98,7 @@ class Enumeration(enum.IntEnum):
         return "({0.name!s}, {0.value!s})".format(self)
 
     def __repr__(self):
-        """Return repr(self). See help(type(self)) for accurate signature.
+        """ Return repr(self). See help(type(self)) for accurate signature.
 
         Example:
 
@@ -112,7 +112,7 @@ class Enumeration(enum.IntEnum):
         return self.__class__.__name__ + ".{0.name!s} = {0.value!r}".format(self)
 
     def describe(self):
-        """Returns the `name`, `value` pair to describe a specific `Enumeration` member.
+        """ Returns the `name`, `value` pair to describe a specific `Enumeration` member.
 
         Example:
 
@@ -127,7 +127,7 @@ class Enumeration(enum.IntEnum):
 
     @classmethod
     def names(cls):
-        """Returns a list of the member `names` of a `Enumeration`.
+        """ Returns a list of the member `names` of a `Enumeration`.
 
         Example:
 
@@ -142,7 +142,7 @@ class Enumeration(enum.IntEnum):
 
     @classmethod
     def values(cls):
-        """Returns a list of the member `values` of a `Enumeration`.
+        """ Returns a list of the member `values` of a `Enumeration`.
 
         Example:
 
@@ -157,7 +157,7 @@ class Enumeration(enum.IntEnum):
 
     @classmethod
     def get_name(cls, value):
-        """Returns the `name` of the `Enumeration` member with the matching *value*
+        """ Returns the `name` of the `Enumeration` member with the matching *value*
         or an empty string if no member match.
 
         Example:
@@ -178,7 +178,7 @@ class Enumeration(enum.IntEnum):
 
     @classmethod
     def get_value(cls, name):
-        """Returns the `value` of the `Enumeration` member with the matching *name*
+        """ Returns the `value` of the `Enumeration` member with the matching *name*
         or `None` if no member match.
 
         Example:
@@ -199,7 +199,7 @@ class Enumeration(enum.IntEnum):
 
     @classmethod
     def get_member(cls, value, default=None):
-        """Returns the first `Enumeration` member with the matching *value*
+        """ Returns the first `Enumeration` member with the matching *value*
         or the specified *default* value if no member match.
 
         Example:

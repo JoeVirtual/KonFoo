@@ -23,9 +23,13 @@ from .globals import Byteorder, BYTEORDER
 
 # Exceptions
 from .exceptions import (
-    KonFooError, FileError, RangeError, SizeError, LengthError,
-    AlignmentError, OffsetError)
-
+    ByteOrderTypeError, EnumTypeError, FactoryTypeError, MemberTypeError,
+    ProviderTypeError, ContainerLengthError,
+    FieldAddressError, FieldAlignmentError, FieldByteOrderError,
+    FieldIndexError, FieldSizeError, FieldTypeError, FieldValueError,
+    FieldValueEncodingError,
+    FieldGroupByteOrderError, FieldGroupOffsetError, FieldGroupSizeError
+)
 # Providers
 from .providers import Provider, FileProvider
 
@@ -43,8 +47,8 @@ from .core import (
     Pointer, StructurePointer, SequencePointer, ArrayPointer, StreamPointer,
     StringPointer, AutoStringPointer,
     RelativePointer, StructureRelativePointer, SequenceRelativePointer,
-    ArrayRelativePointer, StreamRelativePointer, StringRelativePointer)
-
+    ArrayRelativePointer, StreamRelativePointer, StringRelativePointer
+)
 # Field classes
 from .fields import (
     Decimal8, Decimal16, Decimal24, Decimal32,
@@ -54,8 +58,8 @@ from .fields import (
     Antivalent, Enum4, Enum8, Enum16, Enum24, Enum32,
     Bitset8, Bitset16, Bitset24, Bitset32,
     Scaled8, Scaled16, Scaled24, Scaled32,
-    Bipolar2, Bipolar4, Unipolar2)
-
+    Bipolar2, Bipolar4, Unipolar2
+)
 # Pointer classes
 from .pointers import (
     Pointer8, Pointer16, Pointer32, Pointer64,
@@ -65,8 +69,8 @@ from .pointers import (
     StringPointer8, StringPointer16, StringPointer32,
     FloatPointer,
     Signed8Pointer, Signed16Pointer, Signed32Pointer,
-    Unsigned8Pointer, Unsigned16Pointer, Unsigned32Pointer)
-
+    Unsigned8Pointer, Unsigned16Pointer, Unsigned32Pointer
+)
 # Relative pointer classes
 from .pointers import (
     RelativePointer8, RelativePointer16, RelativePointer32, RelativePointer64,
@@ -74,8 +78,8 @@ from .pointers import (
     StructureRelativePointer32,
     ArrayRelativePointer8, ArrayRelativePointer16, ArrayRelativePointer32,
     StreamRelativePointer8, StreamRelativePointer16, StreamRelativePointer32,
-    StringRelativePointer8, StringRelativePointer16, StringRelativePointer32)
-
+    StringRelativePointer8, StringRelativePointer16, StringRelativePointer32
+)
 # Utilities
 from .utils import d3json, HexViewer
 
@@ -90,9 +94,12 @@ __all__ = [
     'Byteorder', 'BYTEORDER',
 
     # Exceptions
-    'KonFooError',
-    'FileError', 'RangeError', 'SizeError', 'LengthError',
-    'AlignmentError', 'OffsetError',
+    'ByteOrderTypeError', 'EnumTypeError', 'FactoryTypeError',
+    'MemberTypeError', 'ProviderTypeError', 'ContainerLengthError',
+    'FieldAddressError', 'FieldAlignmentError', 'FieldByteOrderError',
+    'FieldIndexError', 'FieldSizeError', 'FieldValueError', 'FieldTypeError',
+    'FieldValueEncodingError',
+    'FieldGroupByteOrderError', 'FieldGroupOffsetError', 'FieldGroupSizeError',
 
     # Provider
     'Provider', 'FileProvider',
@@ -152,4 +159,4 @@ __all__ = [
     'd3json', 'HexViewer',
 ]
 
-__version__ = '0.1.a1'
+__version__ = '0.1.a2'
