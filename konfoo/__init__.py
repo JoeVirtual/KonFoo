@@ -159,4 +159,4 @@ __all__ = [
     'd3json', 'HexViewer',
 ]
 
-__version__ = '0.1.a2'
+__version__ = '0.1a3'

@@ -2074,7 +2074,7 @@ class String(Stream):
         return True
 
     def is_terminated(self):
-        """ Returns `True` if `String` field is zero-terminated."""
+        """ Returns `True` if the `String` field is zero-terminated."""
         return self._value.find(b'\x00') >= 0
 
 
@@ -4097,10 +4097,12 @@ class Pointer(Decimal, Container):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data
     >>> pointer.size
     0
@@ -4215,7 +4217,7 @@ class Pointer(Decimal, Container):
         elif isinstance(value, (bytearray, bytes)):
             self._data_stream = bytes(value)
         else:
-            raise FieldTypeError(self, index, value)
+            raise FieldTypeError(self, self.index, value)
 
     @property
     def data(self):
@@ -4272,6 +4274,10 @@ class Pointer(Decimal, Container):
     def is_pointer():
         """ Returns `True`."""
         return True
+
+    def is_null(self):
+        """ Returns `True` if the `Pointer` field points to zero."""
+        return self._value is 0
 
     def refresh(self):
         """ Refresh each :class:`Field` in the :attr:`data` object with the
@@ -4804,10 +4810,12 @@ class StructurePointer(Pointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data
     Structure()
     >>> pointer.size
@@ -4977,10 +4985,12 @@ class SequencePointer(Pointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data
     []
     >>> pointer.size
@@ -5198,10 +5208,12 @@ class ArrayPointer(SequencePointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data
     []
     >>> pointer.size
@@ -5371,10 +5383,12 @@ class StreamPointer(Pointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=(0, 0),
@@ -5549,10 +5563,12 @@ class StringPointer(StreamPointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=(0, 0),
@@ -5704,10 +5720,12 @@ class AutoStringPointer(StringPointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=(64, 0),
@@ -5904,10 +5922,12 @@ class RelativePointer(Pointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data
     >>> pointer.size
     0
@@ -6038,10 +6058,12 @@ class StructureRelativePointer(RelativePointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data
     Structure()
     >>> pointer.size
@@ -6211,10 +6233,12 @@ class SequenceRelativePointer(RelativePointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data
     []
     >>> pointer.size
@@ -6432,10 +6456,12 @@ class ArrayRelativePointer(SequenceRelativePointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data
     []
     >>> pointer.size
@@ -6605,10 +6631,12 @@ class StreamRelativePointer(RelativePointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=(0, 0),
@@ -6783,10 +6811,12 @@ class StringRelativePointer(StreamRelativePointer):
     4294967295
     >>> pointer.signed
     False
-    >>> pointer.address
-    0
     >>> pointer.base_address
     0
+    >>> pointer.address
+    0
+    >>> pointer.is_null()
+    True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=(0, 0),
