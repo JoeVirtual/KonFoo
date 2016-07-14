@@ -504,13 +504,13 @@ class Structure(OrderedDict, Container):
     @byte_order_option()
     @nested_option()
     def decode(self, buffer=bytes(), index=zero(), **options):
-        """ Decodes sequential bytes from a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the bytes to the
+        """ Decodes sequential bytes from the *buffer* starting at the begin
+        of the *buffer* or with the given *index* by mapping the bytes to the
         :class:`Field`'s of the `Structure` in accordance with the decoding
         *byte order* of the *buffer* and the :class:`Field`.
 
-        A specific coding *byte order* of a :class:`Field` overrules the
-        decoding *byte order* of the *buffer*.
+        A specific *byte order* of a :class:`Field` overrules the decoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the last
         :class:`Field` of the `Structure`.
@@ -537,13 +537,13 @@ class Structure(OrderedDict, Container):
     @byte_order_option()
     @nested_option()
     def encode(self, buffer=bytearray(), index=zero(), **options):
-        """ Encodes sequential bytes to a *buffer* starting at the begin of
-        the *buffer* or with a given *index* by mapping the *values* of the
+        """ Encodes sequential bytes to the *buffer* starting at the begin of
+        the *buffer* or with the given *index* by mapping the *values* of the
         :class:`Field`'s of the `Structure` to the bytes in accordance with
         the encoding *byte order* of the *buffer* and the :class:`Field`.
 
-        A specific coding *byte order* of a :class:`Field` overrules the
-        encoding *byte order* of the *buffer*.
+        A specific *byte order* of a :class:`Field` overrules the encoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the last
         :class:`Field` of the `Structure`.
@@ -992,13 +992,13 @@ class Sequence(MutableSequence, Container):
     @byte_order_option()
     @nested_option()
     def decode(self, buffer=bytes(), index=zero(), **options):
-        """ Decodes sequential bytes from a *buffer* starting at the begin of
-        the *buffer* or with a given *index* by mapping the bytes to the
+        """ Decodes sequential bytes from the *buffer* starting at the begin
+        of the *buffer* or with the given *index* by mapping the bytes to the
         :class:`Field`'s in the `Sequence` in accordance with the decoding
         *byte order* of the *buffer* and the :class:`Field`.
 
-        A specific coding *byte order* of a :class:`Field` overrules the
-        decoding *byte order* of the *buffer*.
+        A specific *byte order* of a :class:`Field` overrules the decoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the last
         :class:`Field` in the `Sequence`.
@@ -1025,13 +1025,13 @@ class Sequence(MutableSequence, Container):
     @byte_order_option()
     @nested_option()
     def encode(self, buffer=bytearray(), index=zero(), **options):
-        """ Encodes sequential bytes to a *buffer* starting at the begin of
-        the *buffer* or with a given *index* by mapping the *values* of the
+        """ Encodes sequential bytes to the *buffer* starting at the begin of
+        the *buffer* or with the given *index* by mapping the *values* of the
         :class:`Field`'s in the `Sequence` to the bytes in accordance with the
         encoding *byte order* of the *buffer* and the :class:`Field`.
 
-        A specific coding *byte order* of a :class:`Field` overrules the
-        encoding *byte order* of the *buffer*.
+        A specific *byte order* of a :class:`Field` overrules the encoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the last
         :class:`Field` in the `Sequence`.
@@ -1599,15 +1599,14 @@ class Field:
     @abc.abstractmethod
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=zero(), **options):
-        """ Unpacks the bytes and bits from a *buffer* starting at the given
-        *index* by mapping the bytes and bits to the *value*  of the `Field`
-        in accordance with the decoding *byte order* of the *buffer* and
+        """ Unpacks the *value* of the `Field` from the *buffer* at the given
+        *index* in accordance with the decoding *byte order* of the *buffer* and
         the `Field`.
 
-        A specific coding *byte order* of a `Field` overrules the decoding
-        *byte order* of the *buffer*.
+        A specific *byte order* of a `Field` overrules the decoding *byte order*
+        of the *buffer*.
 
-        Returns the :class:`Index` of the *buffer* after the `Field`.
+        Returns the decoded field *value*.
 
         :param bytes buffer: bytestream.
 
@@ -1617,20 +1616,19 @@ class Field:
 
         .. note:: This abstract method must be implemented by a derived class.
         """
-        return index
+        # Returns the decoded field value.
+        return None
 
     @abc.abstractmethod
     @byte_order_option()
     def pack(self, buffer=bytearray(), **options):
-        """ Packs the bytes and bits for a *buffer* starting at the *index*
-        of the `Field` by mapping the *value* of the `Field` to the bytes in
-        accordance with the encoding *byte order* of the *buffer* and the
-        `Field`.
+        """ Packs the *value* of the `Field` to the *buffer* at the given *index*
+        in accordance with the encoding *byte order* of the *buffer* and the `Field`.
 
-        A specific coding *byte order* of a `Field` overrules the encoding
-        *byte order* of the *buffer*.
+        A specific *byte order* of a `Field` overrules the encoding *byte order*
+        of the *buffer*.
 
-        Returns the encoded :class:`bytes` for its field *value*.
+        Returns the :class:`bytes` encoded field *value*.
 
         :param bytearray buffer: bytestream.
 
@@ -1638,18 +1636,19 @@ class Field:
 
         .. note:: This abstract method must be implemented by a derived class.
         """
+        # Returns the byte encoded field value.
         return bytes()
 
     @byte_order_option()
     @nested_option()
     def decode(self, buffer=bytes(), index=zero(), **options):
-        """ Decodes sequential bytes from a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the bytes to the
-        *value* of the `Field` in accordance with the decoding *byte order*
-        of the *buffer* and the `Field`.
+        """ Decodes sequential bytes from the *buffer* starting at the begin of
+        the *buffer* or with the given *index* by mapping the bytes to the *value*
+        of the `Field` in accordance with the decoding *byte order* of the
+        *buffer* and the `Field`.
 
-        A specific coding *byte order* of a `Field` overrules the decoding
-        *byte order* of the *buffer*.
+        A specific *byte order* of a `Field` overrules the decoding *byte order*
+        of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Field`.
 
@@ -1674,13 +1673,13 @@ class Field:
     @byte_order_option()
     @nested_option()
     def encode(self, buffer=bytearray(), index=zero(), **options):
-        """ Encodes sequential bytes to a *buffer* starting at the begin of
-        the *buffer* or with a given *index* by mapping the *value* of the
-        `Field` to the bytes in accordance with the encoding *byte order*
-        of the *buffer* and the `Field`.
+        """ Encodes sequential bytes to the *buffer* starting at the begin of
+        the *buffer* or with the given *index* by mapping the *value* of the
+        `Field` to the bytes in accordance with the encoding *byte order* of
+        the *buffer* and the `Field`.
 
-        A specific coding *byte order* of a `Field` overrules the encoding
-        *byte order* of the *buffer*.
+        A specific *byte order* of a `Field` overrules the encoding *byte order*
+        of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Field`.
 
@@ -4492,13 +4491,13 @@ class Pointer(Decimal, Container):
     @byte_order_option()
     @nested_option()
     def decode(self, buffer=bytes(), index=zero(), **options):
-        """ Decodes sequential the bytes from a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the bytes to the
-        *value* of the `Pointer` field by considering the decoding *byte order*
+        """ Decodes sequential the bytes from the *buffer* starting at the begin
+        of the *buffer* or with the given *index* by mapping the bytes to the
+        *value* of the `Pointer` field in accordance with the decoding *byte order*
         of the *buffer* and the `Pointer` field.
 
-        A specific coding *byte order* of the `Pointer` field overrules the
-        decoding *byte order* of the *buffer*.
+        A specific *byte order* of the `Pointer` field overrules the decoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Pointer` field.
 
@@ -4531,13 +4530,13 @@ class Pointer(Decimal, Container):
     @byte_order_option()
     @nested_option()
     def encode(self, buffer=bytearray(), index=zero(), **options):
-        """ Encodes sequential the bytes to a *buffer* starting at the begin
-        of the *buffer* or with a given *index* by mapping the *value* of the
-        `Pointer` field to the bytes by considering the encoding *byte order*
+        """ Encodes sequential the bytes to the *buffer* starting at the begin
+        of the *buffer* or with the given *index* by mapping the *value* of the
+        `Pointer` field to the bytes in accordance with the encoding *byte order*
         of the *buffer* and the `Pointer` field.
 
-        A specific coding *byte order*  of the `Pointer` field overrules the
-        encoding *byte order* of the *buffer*.
+        A specific *byte order* of the `Pointer` field overrules the encoding
+        *byte order* of the *buffer*.
 
         Returns the :class:`Index` of the *buffer* after the `Pointer` field.
 
