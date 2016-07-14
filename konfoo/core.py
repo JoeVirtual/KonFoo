@@ -4,7 +4,7 @@
     ~~~~~~~
     <Add description of the module here>.
 
-    :copyright: (c) 2015 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2016 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
@@ -14,6 +14,7 @@ import copy
 import time
 import datetime
 import calendar
+import abc
 from collections import Mapping, namedtuple, OrderedDict
 from collections.abc import MutableSequence
 from configparser import ConfigParser
@@ -144,6 +145,7 @@ class Container:
     **load** the *values* of the :class:`Field` items in the `Container`.
     """
 
+    @abc.abstractmethod
     def field_items(self, root=str(), **options):
         """ Returns a **flat** list which contains the ``(path, item)`` tuples
         for each :class:`Field` in the `Container`.
@@ -155,7 +157,7 @@ class Container:
             list their  *nested* `data` object fields as well
             (chained method call).
 
-        .. note:: This method must be overwritten by a derived class.
+        .. note:: This abstract method must be implemented by a derived class.
         """
         return list()
 
@@ -1594,6 +1596,7 @@ class Field:
         """ Returns `False`."""
         return False
 
+    @abc.abstractmethod
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=zero(), **options):
         """ Unpacks the bytes and bits from a *buffer* starting at the given
@@ -1612,12 +1615,11 @@ class Field:
 
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
-        .. note::
-
-           This is method must be overwritten by a derived class.
+        .. note:: This abstract method must be implemented by a derived class.
         """
         return index
 
+    @abc.abstractmethod
     @byte_order_option()
     def pack(self, buffer=bytearray(), **options):
         """ Packs the bytes and bits for a *buffer* starting at the *index*
@@ -1634,9 +1636,7 @@ class Field:
 
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
-        .. note::
-
-           This method must be overwritten by a derived class.
+        .. note:: This abstract method must be implemented by a derived class.
         """
         return bytes()
 
@@ -2413,7 +2413,7 @@ class Decimal(Field):
     @signed.setter
     def signed(self, value):
         self._signed = bool(value)
-        self._value = self._convert(self._value, self.min(), self.max(), self._signed)
+        self._value = self._cast(self._value, self.min(), self.max(), self._signed)
 
     @staticmethod
     def is_decimal():
@@ -2490,7 +2490,7 @@ class Decimal(Field):
         # Set field size
         self._bit_size = bit_size
 
-    def _convert(self, value, minimum, maximum, signed):
+    def _cast(self, value, minimum, maximum, signed):
         # Sign conversion
         if minimum <= value <= maximum:
             return value
@@ -2524,13 +2524,13 @@ class Decimal(Field):
         """ Returns the minimal possible field *value* of the `Decimal` field."""
         return self._min(self._signed)
 
-    def uint(self):
+    def as_unsigned(self):
         """ Returns the field *value* of the `Decimal` field as an unsigned integer."""
-        return self._convert(self._value, self._min(False), self._max(False), False)
+        return self._cast(self._value, self._min(False), self._max(False), False)
 
-    def int(self):
+    def as_signed(self):
         """ Returns the field *value* of the `Decimal` field as a signed integer."""
-        return self._convert(self._value, self._min(True), self._max(True), True)
+        return self._cast(self._value, self._min(True), self._max(True), True)
 
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=zero(), **options):

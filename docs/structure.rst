@@ -14,8 +14,18 @@ Structure
 
 KonFoo has a :class:`Structure` class and many :ref:`field <field>` classes to
 declare the mapping part of a *byte stream* :ref:`mapper <mapper>`.
-The order how you declare the fields in the `structure`_ defines the order how
-the fields are decoded and encoded by the built-in decoding and encoding engine.
+The order how you declare the :ref:`members <structure member>` in the `structure`_
+defines the order how the :ref:`members <structure member>` are decoded and encoded
+by the built-in decoding and encoding engine.
+
+
+.. _structure member:
+
+Member
+------
+
+A `structure member`_ can be any :ref:`field <field>` or :ref:`container
+<container>` class.
 
 
 Define a Structure
@@ -61,6 +71,9 @@ each other by using the ``align_to`` parameter of the :class:`Field` class.
             self.module = Char(4)        # 4th field aligned to 4 bytes
             self.next_index()
 
+.. note:: The field :ref:`alignment <field alignment>` works only for the
+          :class:`Decimal` :ref:`field <field>` classes.
+
 
 Re-use a Structure
 ------------------
@@ -91,7 +104,6 @@ You can define a `structure`_ with arguments.
     ...     def __init__(self, arg, *args, **kwargs):
     ...         super().__init__()
     ...         self.field = arg
-    >>> structure = Parametrized(Byte)
     >>> structure = Parametrized(Byte())
     >>> structure # doctest: +NORMALIZE_WHITESPACE
     Parametrized([('field',
@@ -102,59 +114,51 @@ You can define a `structure`_ with arguments.
                          bit_size=8,
                          value='0x0'))])
 
-Factorize
----------
 
-You can factorize a `structure`_ by defining a **factory** class to instantiate
-a `structure` with parameters. A **factory** is necessary whenever you use a
-:ref:`mapper <mapper>` with arguments for an :ref:`array element <array element>`,
-in this case you must assign the constructor of the **factory** class as the
-:ref:`array element <array element>`.
+Inherit from a Structure
+------------------------
+
+You can inherit the members from a `structure`_ class to extend or change it.
 
 .. code-block:: python
-    :emphasize-lines: 11-13, 28
+    :emphasize-lines: 23-29
 
-    >>> class Parametrized(Structure):
-    ...     def __init__(self, arg, *args, **kwargs):
-    ...         super().__init__()
-    ...         self.field = arg
-    >>> class Factory:
-    ...     def __init__(self, arg, *args, **kwargs):
-    ...         self.arg = arg
-    ...         self.args = args
-    ...         self.kwargs = kwargs
+    >>> class HeaderV1(Structure):
     ...
-    ...     def __call__(self):
-    ...         return Parametrized(self.arg, *self.args, **self.kwargs)
-    >>> factory = Factory(Byte)
-    >>> factory.arg  # doctest: +NORMALIZE_WHITESPACE
-    <class 'konfoo.core.Byte'>
-    >>> factory.args
-    ()
-    >>> factory.kwargs
-    {}
-    >>> factory() # doctest: +NORMALIZE_WHITESPACE
-    Parametrized([('field',
-                    Byte(index=Index(byte=0, bit=0,
-                                     address=0, base_address=0,
-                                     update=False),
-                    alignment=(1, 0),
-                    bit_size=8,
-                    value='0x0'))])
-    >>> array = Array(Factory(Byte), 2)  # assign the class constructor not an instance!
-    >>> [item.field.value for item in array]
-    ['0x0', '0x0']
-    >>> array[0].field.value = 16
-    >>> [item.field.value for item in array]
-    ['0x10', '0x0']
-
-
-.. warning::
-
-    If a factory argument is an **instance** of a :ref:`field <field>` or
-    :ref:`container <container>` class this **instance** will be assigned to more
-    than one :ref:`array element <array element>`. To avoid this behavior assign
-    the class constructor to the argument instead of an instance.
+    ...     def __init__(self):
+    ...         super().__init__()
+    ...         self.type = Decimal32()
+    ...         self.next_index()
+    >>> header = HeaderV1()
+    >>> header.field_items() # doctest: +NORMALIZE_WHITESPACE
+    HeaderV1([('type',
+                Decimal32(index=Index(byte=0, bit=0,
+                                      address=0, base_address=0,
+                                      update=False),
+                          alignment=(4, 0),
+                          bit_size=32,
+                          value='0x0'))])
+    >>> class HeaderV2(HeaderV1):
+    ...
+    ...     def __init__(self):
+    ...         super().__init__()
+    ...         self.size = Decimal32()
+    >>> header = HeaderV2()
+    >>> header # doctest: +NORMALIZE_WHITESPACE
+    HeaderV2([('type',
+                Decimal32(index=Index(byte=0, bit=0,
+                                      address=0, base_address=0,
+                                      update=False),
+                          alignment=(4, 0),
+                          bit_size=32,
+                          value='0x0')),
+               ('size',
+                Decimal32(index=Index(byte=4, bit=0,
+                                      address=4, base_address=0,
+                                      update=False),
+                          alignment=(4, 0),
+                          bit_size=32,
+                          value='0x0'))])
 
 
 Declare on the fly

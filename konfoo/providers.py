@@ -4,9 +4,11 @@
     ~~~~~~~~~~~~
     <Add description of the module here>.
     
-    :copyright: (c) 2015 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2016 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
+
+import abc
 
 
 class Provider:
@@ -25,9 +27,10 @@ class Provider:
 
     @property
     def cache(self):
-        """Returns the internal cache of the data `Provider` (read-only)."""
+        """ Returns the internal cache of the data `Provider` (read-only)."""
         return self._cache
 
+    @abc.abstractmethod
     def read(self, address=0, count=0):
         """ Reads the *number* of bytes from a data `source` beginning at
         the start *address*.
@@ -36,12 +39,11 @@ class Provider:
 
         :param int count: number of bytes to read from a data `source`.
 
-        .. note::
-
-           This method must be overwritten by a derived class.
+        .. note:: This abstract method must be implemented by a derived class.
         """
         return self._cache
 
+    @abc.abstractmethod
     def write(self, buffer=bytes(), address=0, count=0):
         """ Writes the content of the *buffer* to a data `source` beginning
         at the start *address*.
@@ -52,9 +54,7 @@ class Provider:
 
         :param int count: number of bytes to write to a data `source`.
 
-        .. note::
-
-           This method must be overwritten by a derived class.
+        .. note:: This abstract method must be implemented by a derived class.
         """
         pass
 
@@ -66,7 +66,7 @@ class FileProvider(Provider):
 
     Call :meth:`flush` to store the updated file content to a file.
 
-    :param str source: file name and location.
+    :param str source: name and location of the file.
     """
 
     def __init__(self, source):
@@ -96,6 +96,7 @@ class FileProvider(Provider):
 
         .. note::  Overwrites an existing file.
 
-        :param str file: file name and location. Default is the original file.
+        :param str file: name and location of the file.
+            Default is the original file.
         """
         open(file or self._source, 'wb').write(self._cache)
