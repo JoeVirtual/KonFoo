@@ -174,10 +174,14 @@ You can **declare** a `structure`_ on the fly.
     >>> structure.next_index()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pprint(structure.field_indexes()) # doctest: +NORMALIZE_WHITESPACE
-    {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'id': Index(byte=1, bit=0, address=1, base_address=0, update=False),
-     'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
-     'module': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
+    OrderedDict([('version',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('id',
+                  Index(byte=1, bit=0, address=1, base_address=0, update=False)),
+                 ('length',
+                  Index(byte=2, bit=0, address=2, base_address=0, update=False)),
+                 ('module',
+                  Index(byte=3, bit=0, address=3, base_address=0, update=False))])
 
 You can **nest** `structure`_ 's on the fly.
 
@@ -281,58 +285,59 @@ You can get the blueprint of the `structure`_ by calling the method
 :meth:`~Structure.blueprint`.
 
     >>> pprint(structure.blueprint()) # doctest: +NORMALIZE_WHITESPACE
-    {'class': 'Structure',
-     'name': 'Structure',
-     'size': 4,
-     'type': 'Structure',
-     'member': [{'address': 0,
-                 'alignment': [1, 0],
-                 'class': 'Byte',
-                 'index': [0, 0],
-                 'max': 255,
-                 'min': 0,
-                 'name': 'version',
-                 'order': 'auto',
-                 'signed': False,
-                 'size': 8,
-                 'type': 'Field',
-                 'value': '0x0'},
-                {'address': 1,
-                 'alignment': [1, 0],
-                 'class': 'Unsigned8',
-                 'index': [1, 0],
-                 'max': 255,
-                 'min': 0,
-                 'name': 'id',
-                 'order': 'auto',
-                 'signed': False,
-                 'size': 8,
-                 'type': 'Field',
-                 'value': '0x0'},
-                {'address': 2,
-                 'alignment': [1, 0],
-                 'class': 'Decimal8',
-                 'index': [2, 0],
-                 'max': 255,
-                 'min': 0,
-                 'name': 'length',
-                 'order': 'auto',
-                 'signed': False,
-                 'size': 8,
-                 'type': 'Field',
-                 'value': 0},
-                {'address': 3,
-                 'alignment': [1, 0],
-                 'class': 'Char',
-                 'index': [3, 0],
-                 'max': 255,
-                 'min': 0,
-                 'name': 'module',
-                 'order': 'auto',
-                 'signed': False,
-                 'size': 8,
-                 'type': 'Field',
-                 'value': '\x00'}]}
+    OrderedDict([('class', 'Structure'),
+                 ('name', 'Structure'),
+                 ('size', 4),
+                 ('type', 'Structure'),
+                 ('member',
+                  [OrderedDict([('address', 0),
+                                ('alignment', [1, 0]),
+                                ('class', 'Byte'),
+                                ('index', [0, 0]),
+                                ('max', 255),
+                                ('min', 0),
+                                ('name', 'version'),
+                                ('order', 'auto'),
+                                ('signed', False),
+                                ('size', 8),
+                                ('type', 'Field'),
+                                ('value', '0x0')]),
+                   OrderedDict([('address', 1),
+                                ('alignment', [1, 0]),
+                                ('class', 'Unsigned8'),
+                                ('index', [1, 0]),
+                                ('max', 255),
+                                ('min', 0),
+                                ('name', 'id'),
+                                ('order', 'auto'),
+                                ('signed', False),
+                                ('size', 8),
+                                ('type', 'Field'),
+                                ('value', '0x0')]),
+                   OrderedDict([('address', 2),
+                                ('alignment', [1, 0]),
+                                ('class', 'Decimal8'),
+                                ('index', [2, 0]),
+                                ('max', 255),
+                                ('min', 0),
+                                ('name', 'length'),
+                                ('order', 'auto'),
+                                ('signed', False),
+                                ('size', 8),
+                                ('type', 'Field'),
+                                ('value', 0)]),
+                   OrderedDict([('address', 3),
+                                ('alignment', [1, 0]),
+                                ('class', 'Char'),
+                                ('index', [3, 0]),
+                                ('max', 255),
+                                ('min', 0),
+                                ('name', 'module'),
+                                ('order', 'auto'),
+                                ('signed', False),
+                                ('size', 8),
+                                ('type', 'Field'),
+                                ('value', '\x00')])])])
 
 
 Length of a Structure
@@ -498,10 +503,14 @@ as a **nested** ordered dictionary by calling the method
 :meth:`~Structure.field_indexes`.
 
     >>> pprint(structure.field_indexes()) # doctest: +NORMALIZE_WHITESPACE
-    {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'id': Index(byte=1, bit=0, address=1, base_address=0, update=False),
-     'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
-     'module': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
+    OrderedDict([('version',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('id',
+                  Index(byte=1, bit=0, address=1, base_address=0, update=False)),
+                 ('length',
+                  Index(byte=2, bit=0, address=2, base_address=0, update=False)),
+                 ('module',
+                  Index(byte=3, bit=0, address=3, base_address=0, update=False))])
 
 
 List field types
@@ -512,10 +521,10 @@ as a **nested** ordered dictionary by calling the method
 :meth:`~Structure.field_types`.
 
     >>> pprint(structure.field_types()) # doctest: +NORMALIZE_WHITESPACE
-    {'version': 'Byte',
-     'id': 'Unsigned8',
-     'length': 'Decimal8',
-     'module': 'Char'}
+    OrderedDict([('version', 'Byte'),
+                 ('id', 'Unsigned8'),
+                 ('length', 'Decimal8'),
+                 ('module', 'Char')])
 
 
 List field values
@@ -526,10 +535,10 @@ as a **nested** ordered dictionary by calling the method
 :meth:`~Structure.field_values`.
 
     >>> pprint(structure.field_values()) # doctest: +NORMALIZE_WHITESPACE
-    {'version': '0x1',
-     'id': '0x2',
-     'length': 9,
-     'module': 'F'}
+    OrderedDict([('version', '0x1'),
+                 ('id', '0x2'),
+                 ('length', 9),
+                 ('module', 'F')])
 
 
 List field items
@@ -583,10 +592,11 @@ as a **flat** ordered dictionary by calling the method
 :meth:`~Container.to_dict`.
 
     >>> pprint(structure.to_dict()) # doctest: +NORMALIZE_WHITESPACE
-    {'Structure': {'version': '0x1',
-                   'id': '0x2',
-                   'length': 9,
-                   'module': 'F'}}
+    OrderedDict([('Structure',
+                  OrderedDict([('version', '0x1'),
+                               ('id', '0x2'),
+                               ('length', 9),
+                               ('module', 'F')]))])
 
 .. note::
 

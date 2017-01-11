@@ -60,10 +60,10 @@ A `data object`_ of a `pointer`_ field can be any :ref:`field <field>` or
 :ref:`container <container>` class.
 
 
-Define a Data Object Pointer
-----------------------------
+Define a Data Object
+--------------------
 
-Define the `data object`_:
+You define a structured `data object`_ like this:
 
 .. code-block:: python
     :emphasize-lines: 7
@@ -78,7 +78,10 @@ Define the `data object`_:
             self.next_index()
 
 
-Define the `pointer`_ for the `data object`_:
+Define a Data Object Pointer
+----------------------------
+
+You define define the `pointer`_ for the `data object`_ by
 
 .. code-block:: python
     :emphasize-lines: 5
@@ -86,12 +89,12 @@ Define the `pointer`_ for the `data object`_:
     # Pointer field
     class ContainerPointer(Pointer):
 
-        def __init__(self, address=None):
-            super().__init__(Container(), address)  # Data object
+        def __init__(self, address=None, byte_order=BYTEORDER):
+            super().__init__(Container(), address, byte_order)  # Data object
 
 
-Nesting
--------
+Nesting a Pointer
+-----------------
 
 Nesting `pointer`_ fields.
 
@@ -124,7 +127,7 @@ You can declare a `data object`_ on the fly.
     >>> data = Structure()
     >>> data.size = Decimal32()
     >>> data.item = Pointer(Stream())
-    >>> pprint(data.to_list(nested=True))
+    >>> pprint(data.to_list(nested=True)) # doctest: +NORMALIZE_WHITESPACE
     [('Structure.size', 0),
      ('Structure.item', '0x0'),
      ('Structure.item.data', b'')]
@@ -180,55 +183,59 @@ You can get the blueprint of a `pointer`_ by calling the method
 :meth:`~Pointer.blueprint`.
 
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'Pointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'Pointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0x0',
-     'member': [{'class': 'Structure',
-                 'name': 'data',
-                 'size': 2,
-                 'type': 'Structure',
-                 'member': [{'address': 0,
-                             'alignment': [4, 0],
-                             'class': 'Decimal32',
-                             'index': [0, 0],
-                             'max': 4294967295,
-                             'min': 0,
-                             'name': 'size',
-                             'order': 'auto',
-                             'signed': False,
-                             'size': 32,
-                             'type': 'Field',
-                             'value': 0},
-                            {'address': 0,
-                             'alignment': [4, 0],
-                             'class': 'Pointer',
-                             'index': [0, 0],
-                             'max': 4294967295,
-                             'min': 0,
-                             'name': 'item',
-                             'order': 'auto',
-                             'signed': False,
-                             'size': 32,
-                             'type': 'Pointer',
-                             'value': '0x0',
-                             'member': [{'address': 0,
-                                         'alignment': [0, 0],
-                                         'class': 'Stream',
-                                         'index': [0, 0],
-                                         'name': 'data',
-                                         'order': 'auto',
-                                         'size': 0,
-                                         'type': 'Field',
-                                         'value': ''}]}]}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'Pointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'Pointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0x0'),
+                 ('member',
+                  [OrderedDict([('class', 'Structure'),
+                                ('name', 'data'),
+                                ('size', 2),
+                                ('type', 'Structure'),
+                                ('member',
+                                 [OrderedDict([('address', 0),
+                                               ('alignment', [4, 0]),
+                                               ('class', 'Decimal32'),
+                                               ('index', [0, 0]),
+                                               ('max', 4294967295),
+                                               ('min', 0),
+                                               ('name', 'size'),
+                                               ('order', 'auto'),
+                                               ('signed', False),
+                                               ('size', 32),
+                                               ('type', 'Field'),
+                                               ('value', 0)]),
+                                  OrderedDict([('address', 0),
+                                               ('alignment', [4, 0]),
+                                               ('class', 'Pointer'),
+                                               ('index', [0, 0]),
+                                               ('max', 4294967295),
+                                               ('min', 0),
+                                               ('name', 'item'),
+                                               ('order', 'auto'),
+                                               ('signed', False),
+                                               ('size', 32),
+                                               ('type', 'Pointer'),
+                                               ('value', '0x0'),
+                                               ('member',
+                                                [OrderedDict([('address', 0),
+                                                              ('alignment', [0, 0]),
+                                                              ('class', 'Stream'),
+                                                              ('index', [0, 0]),
+                                                              ('name', 'data'),
+                                                              ('order', 'auto'),
+                                                              ('size', 0),
+                                                              ('type', 'Field'),
+                                                              ('value',
+                                                               '')])])])])])])])
 
 
 Indexing
@@ -349,9 +356,13 @@ as a **nested** ordered dictionary by calling the method
 :meth:`~Pointer.field_indexes`.
 
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': {'size': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-              'item': Index(byte=4, bit=0, address=4, base_address=0, update=False)}}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data',
+                  OrderedDict([('size',
+                                Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                               ('item',
+                                Index(byte=4, bit=0, address=4, base_address=0, update=False))]))])
 
 
 List field types
@@ -362,8 +373,9 @@ You can list the **types** of each :ref:`field <field>` of a `pointer`_ as a
 :meth:`~Pointer.field_types`.
 
     >>> pprint(pointer.field_types())
-    {'value': 'Pointer32',
-     'data': OrderedDict([('size', 'Decimal32'), ('item', 'Pointer32')])}
+    OrderedDict([('value', 'Pointer32'),
+                 ('data',
+                  OrderedDict([('size', 'Decimal32'), ('item', 'Pointer32')]))])
 
 
 List field values
@@ -375,8 +387,8 @@ You can list the **values** of each :ref:`field <field>` of a `pointer`_ as a
 
 
     >>> pprint(pointer.field_values())
-    {'value': '0x0',
-     'data': OrderedDict([('size', 0), ('item', '0x0')])}
+    OrderedDict([('value', '0x0'),
+                 ('data', OrderedDict([('size', 0), ('item', '0x0')]))])
 
 
 List field items
@@ -424,9 +436,10 @@ You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
 **flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 
     >>> pprint(pointer.to_dict())
-    {'Pointer': {'value': '0x0',
-                 'data.size': 0,
-                 'data.item': '0x0'}}
+    OrderedDict([('Pointer',
+                  OrderedDict([('value', '0x0'),
+                               ('data.size', 0),
+                               ('data.item', '0x0')]))])
 
 .. note::
 

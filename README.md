@@ -25,7 +25,44 @@ KonFoo in points:
 -   loadable mapping content including nested data from an INI file
 -   savable mapping content including nested data to an INI file
 -   easy creatable blueprint of a mapper
--   blueprint converter to JSON to visualise the mapper with *d3.js*.
+-   blueprint converter to JSON to visualise the mapper with 
+    [d3.js](https://d3js.org).
 
 This library is far away from stable but it works so far.
 Feedback is very welcomed!
+
+
+## Installation
+
+To install the library from [PyPi](https://pypi.python.org/pypi) through 
+[pip](https://pip.pypa.io) simply run
+
+    pip install konfoo
+    
+
+To install the library manually download the source package from 
+[github](https://github.com/JoeVirtual/KonFoo) and simply run the `setup.py` 
+script within the package.
+
+    python setup.py install
+
+
+## Dependencies
+
+The library has no external dependencies.
+
+
+## Building the Documentation
+
+Requires [sphinx](http://www.sphinx-doc.org) and the theme 
+[read the docs](https://github.com/snide/sphinx_rtd_theme),
+which are available through pip.
+
+    pip install sphinx
+    pip install sphinx_rtd_theme
+    
+Then it's a simple matter of running `make docs` in the package folder or
+in the `docs` folder with `make html`. The generated html documentation can be
+found in the `./docs/_build/html` folder of the source package.
+
+

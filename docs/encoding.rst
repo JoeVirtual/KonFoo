@@ -9,3 +9,7 @@
 
 Encoding
 ========
+
+
+Encoding Hook
+-------------

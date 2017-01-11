@@ -4,7 +4,7 @@
     ~~~~~~~
     <Add description of the module here>.
 
-    :copyright: (c) 2015-2016 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
@@ -967,6 +967,9 @@ class Sequence(MutableSequence, Container):
         # Field
         elif is_field(iterable):
             self._data.extend([iterable])
+        # Iterable
+        elif isinstance(iterable, (set, tuple, list)):
+            self._data.extend(Sequence(iterable))
         else:
             raise MemberTypeError(self, iterable, len(self))
 
@@ -1811,7 +1814,13 @@ class Stream(Field):
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
     >>> stream.bit_size
     0
+    >>> len(stream)
+    0
+    >>> bool(stream)
+    False
     >>> stream.value
+    b''
+    >>> bytes(stream)
     b''
     >>> stream.resize(10)
     >>> stream.name
@@ -1849,15 +1858,15 @@ class Stream(Field):
     >>> hexlify(stream[5:])  # converts to bytes
     b'060708090a'
     >>> pprint(stream.blueprint())
-    {'address': 0,
-     'alignment': [10, 0],
-     'class': 'Stream10',
-     'index': [0, 0],
-     'name': 'Stream10',
-     'order': 'auto',
-     'size': 80,
-     'type': 'Field',
-     'value': '0102030405060708090a'}
+    OrderedDict([('address', 0),
+                 ('alignment', [10, 0]),
+                 ('class', 'Stream10'),
+                 ('index', [0, 0]),
+                 ('name', 'Stream10'),
+                 ('order', 'auto'),
+                 ('size', 80),
+                 ('type', 'Field'),
+                 ('value', '0102030405060708090a')])
     """
     item_type = ItemClass.Stream
 
@@ -1867,6 +1876,9 @@ class Stream(Field):
         self._value = bytes()
         # Stream size
         self.resize(size)
+
+    def __bytes__(self):
+        return bytes(self._value)
 
     def __contains__(self, key):
         return key in self._value
@@ -2000,8 +2012,14 @@ class String(Stream):
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
     >>> string.bit_size
     0
+    >>> len(string)
+    0
+    >>> bool(string)
+    False
     >>> string.value
     ''
+    >>> bytes(string)
+    b''
     >>> string.resize(10)
     >>> string.name
     'String10'
@@ -2042,15 +2060,15 @@ class String(Stream):
     >>> string[3:6]  # converts to bytes
     b'Foo'
     >>> pprint(string.blueprint())
-    {'address': 0,
-     'alignment': [10, 0],
-     'class': 'String10',
-     'index': [0, 0],
-     'name': 'String10',
-     'order': 'auto',
-     'size': 80,
-     'type': 'Field',
-     'value': 'KonFoo is '}
+    OrderedDict([('address', 0),
+                 ('alignment', [10, 0]),
+                 ('class', 'String10'),
+                 ('index', [0, 0]),
+                 ('name', 'String10'),
+                 ('order', 'auto'),
+                 ('size', 80),
+                 ('type', 'Field'),
+                 ('value', 'KonFoo is ')])
     """
     item_type = ItemClass.String
 
@@ -2117,6 +2135,12 @@ class Float(Field):
     5.960464477539063e-08
     >>> real.value
     0.0
+    >>> int(real)
+    0
+    >>> float(real)
+    0.0
+    >>> bool(real)
+    False
     >>> real.value = 0x10
     >>> real.value
     16.0
@@ -2127,17 +2151,17 @@ class Float(Field):
     >>> real.value
     3.4028234663852886e+38
     >>> pprint(real.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'Float32',
-     'index': [0, 0],
-     'max': 3.4028234663852886e+38,
-     'min': -3.4028234663852886e+38,
-     'name': 'Float32',
-     'order': 'auto',
-     'size': 32,
-     'type': 'Field',
-     'value': 3.4028234663852886e+38}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'Float32'),
+                 ('index', [0, 0]),
+                 ('max', 3.4028234663852886e+38),
+                 ('min', -3.4028234663852886e+38),
+                 ('name', 'Float32'),
+                 ('order', 'auto'),
+                 ('size', 32),
+                 ('type', 'Field'),
+                 ('value', 3.4028234663852886e+38)])
     """
     item_type = ItemClass.Float
 
@@ -2145,6 +2169,15 @@ class Float(Field):
         super().__init__(bit_size=32, align_to=4, byte_order=byte_order)
         # Field value
         self._value = float()
+
+    def __bool__(self):
+        return bool(self._value)
+
+    def __int__(self):
+        return int(self._value)
+
+    def __float__(self):
+        return float(self._value)
 
     @property
     def value(self):
@@ -2286,6 +2319,18 @@ class Decimal(Field):
     False
     >>> unsigned.value
     0
+    >>> int(unsigned)
+    0
+    >>> float(unsigned)
+    0.0
+    >>> hex(unsigned)
+    '0x0'
+    >>> bin(unsigned)
+    '0b0'
+    >>> oct(unsigned)
+    '0o0'
+    >>> bool(unsigned)
+    False
     >>> unsigned.decode(bytes.fromhex('0080'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unsigned.value
@@ -2307,18 +2352,18 @@ class Decimal(Field):
     >>> hexlify(bytestream)
     b'ffff'
     >>> pprint(unsigned.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Decimal16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Decimal16',
-     'order': 'auto',
-     'signed': False,
-     'size': 16,
-     'type': 'Field',
-     'value': 65535}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Decimal16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Decimal16'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 65535)])
 
     Example:
 
@@ -2345,6 +2390,18 @@ class Decimal(Field):
     True
     >>> signed.value
     0
+    >>> int(signed)
+    0
+    >>> float(signed)
+    0.0
+    >>> hex(signed)
+    '0x0'
+    >>> bin(signed)
+    '0b0'
+    >>> oct(signed)
+    '0o0'
+    >>> bool(signed)
+    False
     >>> signed.decode(bytes.fromhex('00c0'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> signed.value
@@ -2366,18 +2423,18 @@ class Decimal(Field):
     >>> hexlify(bytestream)
     b'ff7f'
     >>> pprint(signed.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Decimal16',
-     'index': [0, 0],
-     'max': 32767,
-     'min': -32768,
-     'name': 'Decimal16',
-     'order': 'auto',
-     'signed': True,
-     'size': 16,
-     'type': 'Field',
-     'value': 32767}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Decimal16'),
+                 ('index', [0, 0]),
+                 ('max', 32767),
+                 ('min', -32768),
+                 ('name', 'Decimal16'),
+                 ('order', 'auto'),
+                 ('signed', True),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 32767)])
     """
     item_type = ItemClass.Decimal
 
@@ -2394,6 +2451,18 @@ class Decimal(Field):
             self._set_bit_size(bit_size, auto_align=True)
         # Field value
         self._value = int()
+
+    def __bool__(self):
+        return bool(self._value)
+
+    def __int__(self):
+        return int(self._value)
+
+    def __index__(self):
+        return int(self._value)
+
+    def __float__(self):
+        return float(self._value)
 
     @property
     def value(self):
@@ -2666,6 +2735,18 @@ class Bit(Decimal):
     False
     >>> bit.value
     0
+    >>> int(bit)
+    0
+    >>> float(bit)
+    0.0
+    >>> hex(bit)
+    '0x0'
+    >>> bin(bit)
+    '0b0'
+    >>> oct(bit)
+    '0o0'
+    >>> bool(bit)
+    False
     >>> bit.decode(bytes.fromhex('01'))
     Index(byte=0, bit=1, address=0, base_address=0, update=False)
     >>> bit.value
@@ -2693,18 +2774,18 @@ class Bit(Decimal):
     >>> hexlify(bytestream)
     b'01'
     >>> pprint(bit.blueprint())
-    {'address': 0,
-     'alignment': [1, 0],
-     'class': 'Bit',
-     'index': [0, 0],
-     'max': 1,
-     'min': 0,
-     'name': 'Bit',
-     'order': 'auto',
-     'signed': False,
-     'size': 1,
-     'type': 'Field',
-     'value': 1}
+    OrderedDict([('address', 0),
+                 ('alignment', [1, 0]),
+                 ('class', 'Bit'),
+                 ('index', [0, 0]),
+                 ('max', 1),
+                 ('min', 0),
+                 ('name', 'Bit'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 1),
+                 ('type', 'Field'),
+                 ('value', 1)])
     """
     item_type = ItemClass.Bit
 
@@ -2762,6 +2843,18 @@ class Byte(Decimal):
     False
     >>> byte.value
     '0x0'
+    >>> int(byte)
+    0
+    >>> float(byte)
+    0.0
+    >>> hex(byte)
+    '0x0'
+    >>> bin(byte)
+    '0b0'
+    >>> oct(byte)
+    '0o0'
+    >>> bool(byte)
+    False
     >>> byte.decode(bytes.fromhex('20'))
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> byte.value
@@ -2783,18 +2876,18 @@ class Byte(Decimal):
     >>> hexlify(bytestream)
     b'ff'
     >>> pprint(byte.blueprint())
-    {'address': 0,
-     'alignment': [1, 0],
-     'class': 'Byte',
-     'index': [0, 0],
-     'max': 255,
-     'min': 0,
-     'name': 'Byte',
-     'order': 'auto',
-     'signed': False,
-     'size': 8,
-     'type': 'Field',
-     'value': '0xff'}
+    OrderedDict([('address', 0),
+                 ('alignment', [1, 0]),
+                 ('class', 'Byte'),
+                 ('index', [0, 0]),
+                 ('max', 255),
+                 ('min', 0),
+                 ('name', 'Byte'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 8),
+                 ('type', 'Field'),
+                 ('value', '0xff')])
     """
     item_type = ItemClass.Byte
 
@@ -2849,8 +2942,22 @@ class Char(Decimal):
     255
     >>> char.signed
     False
+    >>> char.value
+    '\\x00'
     >>> ord(char.value)
     0
+    >>> int(char)
+    0
+    >>> float(char)
+    0.0
+    >>> hex(char)
+    '0x0'
+    >>> bin(char)
+    '0b0'
+    >>> oct(char)
+    '0o0'
+    >>> bool(char)
+    False
     >>> char.decode(bytes.fromhex('41'))
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> char.value
@@ -2872,18 +2979,18 @@ class Char(Decimal):
     >>> hexlify(bytestream)
     b'46'
     >>> pprint(char.blueprint())
-    {'address': 0,
-     'alignment': [1, 0],
-     'class': 'Char',
-     'index': [0, 0],
-     'max': 255,
-     'min': 0,
-     'name': 'Char',
-     'order': 'auto',
-     'signed': False,
-     'size': 8,
-     'type': 'Field',
-     'value': 'F'}
+    OrderedDict([('address', 0),
+                 ('alignment', [1, 0]),
+                 ('class', 'Char'),
+                 ('index', [0, 0]),
+                 ('max', 255),
+                 ('min', 0),
+                 ('name', 'Char'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 8),
+                 ('type', 'Field'),
+                 ('value', 'F')])
     """
     item_type = ItemClass.Char
 
@@ -2945,6 +3052,18 @@ class Signed(Decimal):
     True
     >>> signed.value
     0
+    >>> int(signed)
+    0
+    >>> float(signed)
+    0.0
+    >>> hex(signed)
+    '0x0'
+    >>> bin(signed)
+    '0b0'
+    >>> oct(signed)
+    '0o0'
+    >>> bool(signed)
+    False
     >>> signed.decode(bytes.fromhex('00c0'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> signed.value
@@ -2966,18 +3085,18 @@ class Signed(Decimal):
     >>> hexlify(bytestream)
     b'ff7f'
     >>> pprint(signed.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Signed16',
-     'index': [0, 0],
-     'max': 32767,
-     'min': -32768,
-     'name': 'Signed16',
-     'order': 'auto',
-     'signed': True,
-     'size': 16,
-     'type': 'Field',
-     'value': 32767}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Signed16'),
+                 ('index', [0, 0]),
+                 ('max', 32767),
+                 ('min', -32768),
+                 ('name', 'Signed16'),
+                 ('order', 'auto'),
+                 ('signed', True),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 32767)])
     """
     item_type = ItemClass.Signed
 
@@ -3026,6 +3145,18 @@ class Unsigned(Decimal):
     False
     >>> unsigned.value
     '0x0'
+    >>> int(unsigned)
+    0
+    >>> float(unsigned)
+    0.0
+    >>> hex(unsigned)
+    '0x0'
+    >>> bin(unsigned)
+    '0b0'
+    >>> oct(unsigned)
+    '0o0'
+    >>> bool(unsigned)
+    False
     >>> unsigned.decode(bytes.fromhex('00c0'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unsigned.value
@@ -3047,18 +3178,18 @@ class Unsigned(Decimal):
     >>> hexlify(bytestream)
     b'ffff'
     >>> pprint(unsigned.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Unsigned16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Unsigned16',
-     'order': 'auto',
-     'signed': False,
-     'size': 16,
-     'type': 'Field',
-     'value': '0xffff'}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Unsigned16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Unsigned16'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', '0xffff')])
     """
     item_type = ItemClass.Unsigned
 
@@ -3115,6 +3246,18 @@ class Bitset(Decimal):
     False
     >>> bitset.value
     '0b0000000000000000'
+    >>> int(bitset)
+    0
+    >>> float(bitset)
+    0.0
+    >>> hex(bitset)
+    '0x0'
+    >>> bin(bitset)
+    '0b0'
+    >>> oct(bitset)
+    '0o0'
+    >>> bool(bitset)
+    False
     >>> bitset.decode(bytes.fromhex('f00f'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bitset.value
@@ -3136,18 +3279,18 @@ class Bitset(Decimal):
     >>> hexlify(bytestream)
     b'ffff'
     >>> pprint(bitset.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Bitset16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Bitset16',
-     'order': 'auto',
-     'signed': False,
-     'size': 16,
-     'type': 'Field',
-     'value': '0b1111111111111111'}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Bitset16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Bitset16'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', '0b1111111111111111')])
     """
     item_type = ItemClass.Bitset
 
@@ -3206,6 +3349,18 @@ class Bool(Decimal):
     False
     >>> boolean.value
     False
+    >>> int(boolean)
+    0
+    >>> float(boolean)
+    0.0
+    >>> hex(boolean)
+    '0x0'
+    >>> bin(boolean)
+    '0b0'
+    >>> oct(boolean)
+    '0o0'
+    >>> bool(boolean)
+    False
     >>> boolean.decode(bytes.fromhex('0f00'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> boolean.value
@@ -3227,18 +3382,18 @@ class Bool(Decimal):
     >>> hexlify(bytestream)
     b'ffff'
     >>> pprint(boolean.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Bool16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Bool16',
-     'order': 'auto',
-     'signed': False,
-     'size': 16,
-     'type': 'Field',
-     'value': True}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Bool16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Bool16'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', True)])
     """
     item_type = ItemClass.Bool
 
@@ -3306,6 +3461,18 @@ class Enum(Decimal):
     False
     >>> enum.value
     0
+    >>> int(enum)
+    0
+    >>> float(enum)
+    0.0
+    >>> hex(enum)
+    '0x0'
+    >>> bin(enum)
+    '0b0'
+    >>> oct(enum)
+    '0o0'
+    >>> bool(enum)
+    False
     >>> enum.decode(bytes.fromhex('2800'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> enum.value
@@ -3333,18 +3500,18 @@ class Enum(Decimal):
     >>> hexlify(bytestream)
     b'ffff'
     >>> pprint(enum.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Enum16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Enum16',
-     'order': 'auto',
-     'signed': False,
-     'size': 16,
-     'type': 'Field',
-     'value': 65535}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Enum16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Enum16'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 65535)])
     """
     item_type = ItemClass.Enum
 
@@ -3446,6 +3613,18 @@ class Scaled(Decimal):
     True
     >>> scaled.value
     0.0
+    >>> int(scaled)
+    0
+    >>> float(scaled)
+    0.0
+    >>> hex(scaled)
+    '0x0'
+    >>> bin(scaled)
+    '0b0'
+    >>> oct(scaled)
+    '0o0'
+    >>> bool(scaled)
+    False
     >>> scaled.decode(bytes.fromhex('0040'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> scaled.value
@@ -3467,19 +3646,19 @@ class Scaled(Decimal):
     >>> hexlify(bytestream)
     b'ff7f'
     >>> pprint(scaled.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Scaled16',
-     'index': [0, 0],
-     'max': 32767,
-     'min': -32768,
-     'name': 'Scaled16',
-     'order': 'auto',
-     'scale': 100.0,
-     'signed': True,
-     'size': 16,
-     'type': 'Field',
-     'value': 199.993896484375}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Scaled16'),
+                 ('index', [0, 0]),
+                 ('max', 32767),
+                 ('min', -32768),
+                 ('name', 'Scaled16'),
+                 ('order', 'auto'),
+                 ('scale', 100.0),
+                 ('signed', True),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 199.993896484375)])
     """
     item_type = ItemClass.Scaled
 
@@ -3488,6 +3667,9 @@ class Scaled(Decimal):
         super().__init__(bit_size, align_to, True, byte_order)
         # Field scaling factor
         self._scale = float(scale)
+
+    def __float__(self):
+        return self.value
 
     @property
     def value(self):
@@ -3592,6 +3774,18 @@ class Fraction(Decimal):
     False
     >>> unipolar.value
     0.0
+    >>> int(unipolar)
+    0
+    >>> float(unipolar)
+    0.0
+    >>> hex(unipolar)
+    '0x0'
+    >>> bin(unipolar)
+    '0b0'
+    >>> oct(unipolar)
+    '0o0'
+    >>> bool(unipolar)
+    False
     >>> unipolar.decode(bytes.fromhex('0080'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unipolar.value
@@ -3617,18 +3811,18 @@ class Fraction(Decimal):
     >>> hexlify(bytestream)
     b'ffff'
     >>> pprint(unipolar.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Fraction2.16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Fraction2.16',
-     'order': 'auto',
-     'signed': False,
-     'size': 16,
-     'type': 'Field',
-     'value': 399.993896484375}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Fraction2.16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Fraction2.16'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 399.993896484375)])
 
     Example:
 
@@ -3655,6 +3849,18 @@ class Fraction(Decimal):
     False
     >>> bipolar.value
     0.0
+    >>> int(bipolar)
+    0
+    >>> float(bipolar)
+    0.0
+    >>> hex(bipolar)
+    '0x0'
+    >>> bin(bipolar)
+    '0b0'
+    >>> oct(bipolar)
+    '0o0'
+    >>> bool(bipolar)
+    False
     >>> bipolar.decode(bytes.fromhex('0040'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bipolar.value
@@ -3684,18 +3890,18 @@ class Fraction(Decimal):
     >>> hexlify(bytestream)
     b'ff7f'
     >>> pprint(bipolar.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Fraction2.16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Fraction2.16',
-     'order': 'auto',
-     'signed': True,
-     'size': 16,
-     'type': 'Field',
-     'value': 199.993896484375}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Fraction2.16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Fraction2.16'),
+                 ('order', 'auto'),
+                 ('signed', True),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 199.993896484375)])
     """
     item_type = ItemClass.Fraction
 
@@ -3709,6 +3915,9 @@ class Fraction(Decimal):
             self._signed_fraction = False
         else:
             self._signed_fraction = bool(signed)
+
+    def __float__(self):
+        return self.value
 
     @property
     def name(self):
@@ -3808,6 +4017,18 @@ class Bipolar(Fraction):
     False
     >>> bipolar.value
     0.0
+    >>> int(bipolar)
+    0
+    >>> float(bipolar)
+    0.0
+    >>> hex(bipolar)
+    '0x0'
+    >>> bin(bipolar)
+    '0b0'
+    >>> oct(bipolar)
+    '0o0'
+    >>> bool(bipolar)
+    False
     >>> bipolar.value = -100
     >>> bipolar.value
     -100.0
@@ -3833,18 +4054,18 @@ class Bipolar(Fraction):
     >>> hexlify(bytestream)
     b'ff7f'
     >>> pprint(bipolar.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Bipolar2.16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Bipolar2.16',
-     'order': 'auto',
-     'signed': True,
-     'size': 16,
-     'type': 'Field',
-     'value': 199.993896484375}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Bipolar2.16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Bipolar2.16'),
+                 ('order', 'auto'),
+                 ('signed', True),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 199.993896484375)])
     """
     item_type = ItemClass.Bipolar
 
@@ -3897,6 +4118,18 @@ class Unipolar(Fraction):
     False
     >>> unipolar.value
     0.0
+    >>> int(unipolar)
+    0
+    >>> float(unipolar)
+    0.0
+    >>> hex(unipolar)
+    '0x0'
+    >>> bin(unipolar)
+    '0b0'
+    >>> oct(unipolar)
+    '0o0'
+    >>> bool(unipolar)
+    False
     >>> unipolar.decode(bytes.fromhex('0080'))
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unipolar.value
@@ -3922,18 +4155,18 @@ class Unipolar(Fraction):
     >>> hexlify(bytestream)
     b'ffff'
     >>> pprint(unipolar.blueprint())
-    {'address': 0,
-     'alignment': [2, 0],
-     'class': 'Unipolar2.16',
-     'index': [0, 0],
-     'max': 65535,
-     'min': 0,
-     'name': 'Unipolar2.16',
-     'order': 'auto',
-     'signed': False,
-     'size': 16,
-     'type': 'Field',
-     'value': 399.993896484375}
+    OrderedDict([('address', 0),
+                 ('alignment', [2, 0]),
+                 ('class', 'Unipolar2.16'),
+                 ('index', [0, 0]),
+                 ('max', 65535),
+                 ('min', 0),
+                 ('name', 'Unipolar2.16'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 16),
+                 ('type', 'Field'),
+                 ('value', 399.993896484375)])
     """
     item_type = ItemClass.Unipolar
 
@@ -3974,6 +4207,18 @@ class Datetime(Decimal):
     False
     >>> datetime.value
     '1970-01-01 00:00:00'
+    >>> int(datetime)
+    0
+    >>> float(datetime)
+    0.0
+    >>> hex(datetime)
+    '0x0'
+    >>> bin(datetime)
+    '0b0'
+    >>> oct(datetime)
+    '0o0'
+    >>> bool(datetime)
+    False
     >>> datetime.decode(bytes.fromhex('ffffffff'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> datetime.value
@@ -3992,18 +4237,18 @@ class Datetime(Decimal):
     >>> hexlify(bytestream)
     b'ffffffff'
     >>> pprint(datetime.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'Datetime32',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'Datetime32',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Field',
-     'value': '2106-02-07 06:28:15'}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'Datetime32'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'Datetime32'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Field'),
+                 ('value', '2106-02-07 06:28:15')])
     """
     item_type = ItemClass.Datetime
 
@@ -4111,6 +4356,18 @@ class Pointer(Decimal, Container):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -4144,21 +4401,23 @@ class Pointer(Decimal, Container):
     >>> pointer.as_bytestream()
     bytearray(b'')
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'Pointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'Pointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff'}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'Pointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'Pointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff')])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data',
+                  Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False))])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', None)])
     >>> pprint(pointer.field_values())
@@ -4378,7 +4637,7 @@ class Pointer(Decimal, Container):
             # appending fields.
             buffer = bytearray(b'q\x00' * index.byte)
 
-            # Append the content mapped by the container fields to the buffer
+            # Append to the buffer the content mapped by the container fields
             item.encode(buffer, index, byte_order=byte_order)
 
             # Content of the buffer mapped by the container fields
@@ -4411,7 +4670,7 @@ class Pointer(Decimal, Container):
             # appending field group.
             buffer = bytearray(b'\x00' * index.byte)
 
-            # Append the content mapped by the field to the buffer
+            # Append to the buffer the content mapped by the field
             item.encode(buffer, index, byte_order=byte_order)
 
             # Content of the buffer mapped by the field group
@@ -4467,7 +4726,7 @@ class Pointer(Decimal, Container):
             pass
         elif is_provider(provider):
             if patch.inject:
-                # Unpatched content of the memory area in the data source to patch
+                # Unpatched content of the memory area in the data source to modify
                 content = provider.read(patch.address, len(patch.buffer))
 
                 # Decimal value of the memory area to patch
@@ -4479,7 +4738,7 @@ class Pointer(Decimal, Container):
                 value &= bit_mask
                 value |= int.from_bytes(patch.buffer, byte_order.value)
 
-                # Patched content for the memory area in the data source to patch
+                # Patched content for the memory area in the data source
                 buffer = value.to_bytes(len(patch.buffer), byte_order.value)
 
                 provider.write(buffer, patch.address, len(buffer))
@@ -4519,7 +4778,7 @@ class Pointer(Decimal, Container):
         index = super().decode(buffer, index, **options)
         # Data Object
         if self._data and get_nested(options):
-            options[Option.byteorder] = self.order
+            options[Option.byte_order] = self.order
             self._data.decode(self._data_stream,
                               Index(0, 0,
                                     self.address, self.base_address,
@@ -4558,7 +4817,7 @@ class Pointer(Decimal, Container):
         index = super().encode(buffer, index, **options)
         # Data Object
         if self._data and get_nested(options):
-            options[Option.byteorder] = self.order
+            options[Option.byte_order] = self.order
             self._data_stream = bytearray()
             self._data.encode(self._data_stream,
                               Index(0, 0,
@@ -4825,6 +5084,18 @@ class StructurePointer(Pointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -4850,26 +5121,28 @@ class StructurePointer(Pointer):
     >>> [(name, member.value) for name, member in pointer.items()]
     []
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'StructurePointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'StructurePointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'class': 'Structure',
-                 'name': 'data',
-                 'size': 0,
-                 'type': 'Structure',
-                 'member': []}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'StructurePointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'StructurePointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('class', 'Structure'),
+                                ('name', 'data'),
+                                ('size', 0),
+                                ('type', 'Structure'),
+                                ('member', [])])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': OrderedDict()}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data', OrderedDict())])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', OrderedDict())])
     >>> pprint(pointer.field_values())
@@ -5000,6 +5273,18 @@ class SequencePointer(Pointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -5046,26 +5331,28 @@ class SequencePointer(Pointer):
     []
     >>> pointer.clear()
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'SequencePointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'SequencePointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'class': 'Sequence',
-                 'name': 'data',
-                 'size': 0,
-                 'type': 'Sequence',
-                 'member': []}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'SequencePointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'SequencePointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('class', 'Sequence'),
+                                ('name', 'data'),
+                                ('size', 0),
+                                ('type', 'Sequence'),
+                                ('member', [])])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': []}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data', [])])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', None)])
     >>> pprint(pointer.field_values())
@@ -5223,6 +5510,18 @@ class ArrayPointer(SequencePointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -5272,26 +5571,28 @@ class ArrayPointer(SequencePointer):
     10
     >>> pointer.clear()
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'ArrayPointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'ArrayPointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'class': 'Array',
-                 'name': 'data',
-                 'size': 0,
-                 'type': 'Array',
-                 'member': []}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'ArrayPointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'ArrayPointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('class', 'Array'),
+                                ('name', 'data'),
+                                ('size', 0),
+                                ('type', 'Array'),
+                                ('member', [])])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': []}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data', [])])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', None)])
     >>> pprint(pointer.field_values())
@@ -5403,6 +5704,18 @@ class StreamPointer(Pointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -5452,30 +5765,33 @@ class StreamPointer(Pointer):
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'StreamPointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'StreamPointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'address': 4294967295,
-                 'alignment': [10, 0],
-                 'class': 'Stream10',
-                 'index': [0, 0],
-                 'name': 'data',
-                 'order': 'auto',
-                 'size': 80,
-                 'type': 'Field',
-                 'value': '4b6f6e466f6f20697320'}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'StreamPointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'StreamPointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('address', 4294967295),
+                                ('alignment', [10, 0]),
+                                ('class', 'Stream10'),
+                                ('index', [0, 0]),
+                                ('name', 'data'),
+                                ('order', 'auto'),
+                                ('size', 80),
+                                ('type', 'Field'),
+                                ('value', '4b6f6e466f6f20697320')])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data',
+                  Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False))])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', 'Stream10')])
     >>> pprint(pointer.field_values())
@@ -5499,8 +5815,9 @@ class StreamPointer(Pointer):
     [('StreamPointer.value', '0xffffffff'),
      ('StreamPointer.data', b'4b6f6e466f6f20697320')]
     >>> pprint(pointer.to_dict())
-    {'StreamPointer': {'value': '0xffffffff',
-                       'data': b'4b6f6e466f6f20697320'}}
+    OrderedDict([('StreamPointer',
+                  OrderedDict([('value', '0xffffffff'),
+                               ('data', b'4b6f6e466f6f20697320')]))])
     """
 
     def __init__(self, size=0, address=None):
@@ -5583,6 +5900,18 @@ class StringPointer(StreamPointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -5632,30 +5961,33 @@ class StringPointer(StreamPointer):
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'StringPointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'StringPointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'address': 4294967295,
-                 'alignment': [10, 0],
-                 'class': 'String10',
-                 'index': [0, 0],
-                 'name': 'data',
-                 'order': 'auto',
-                 'size': 80,
-                 'type': 'Field',
-                 'value': 'KonFoo is '}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'StringPointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'StringPointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('address', 4294967295),
+                                ('alignment', [10, 0]),
+                                ('class', 'String10'),
+                                ('index', [0, 0]),
+                                ('name', 'data'),
+                                ('order', 'auto'),
+                                ('size', 80),
+                                ('type', 'Field'),
+                                ('value', 'KonFoo is ')])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data',
+                  Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False))])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
     >>> pprint(pointer.field_values())
@@ -5678,8 +6010,8 @@ class StringPointer(StreamPointer):
     >>> pprint(pointer.to_list())
     [('StringPointer.value', '0xffffffff'), ('StringPointer.data', 'KonFoo is ')]
     >>> pprint(pointer.to_dict())
-    {'StringPointer': {'value': '0xffffffff',
-                       'data': 'KonFoo is '}}
+    OrderedDict([('StringPointer',
+                  OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """
 
     def __init__(self, size=0, address=None):
@@ -5740,6 +6072,18 @@ class AutoStringPointer(StringPointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -5789,30 +6133,33 @@ class AutoStringPointer(StringPointer):
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'AutoStringPointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'AutoStringPointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'address': 4294967295,
-                 'alignment': [10, 0],
-                 'class': 'String10',
-                 'index': [0, 0],
-                 'name': 'data',
-                 'order': 'auto',
-                 'size': 80,
-                 'type': 'Field',
-                 'value': 'KonFoo is '}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'AutoStringPointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'AutoStringPointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('address', 4294967295),
+                                ('alignment', [10, 0]),
+                                ('class', 'String10'),
+                                ('index', [0, 0]),
+                                ('name', 'data'),
+                                ('order', 'auto'),
+                                ('size', 80),
+                                ('type', 'Field'),
+                                ('value', 'KonFoo is ')])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data',
+                  Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False))])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
     >>> pprint(pointer.field_values())
@@ -5836,8 +6183,8 @@ class AutoStringPointer(StringPointer):
     [('AutoStringPointer.value', '0xffffffff'),
      ('AutoStringPointer.data', 'KonFoo is ')]
     >>> pprint(pointer.to_dict())
-    {'AutoStringPointer': {'value': '0xffffffff',
-                           'data': 'KonFoo is '}}
+    OrderedDict([('AutoStringPointer',
+                  OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """
     #: Block size in *bytes* to read for the :class:`String` field.
     BLOCK_SIZE = 64
@@ -5936,6 +6283,18 @@ class RelativePointer(Pointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -5966,21 +6325,23 @@ class RelativePointer(Pointer):
     >>> pointer.as_bytestream()
     bytearray(b'')
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'RelativePointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'RelativePointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff'}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'RelativePointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'RelativePointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff')])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data',
+                  Index(byte=0, bit=0, address=4294967295, base_address=0, update=False))])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', None)])
     >>> pprint(pointer.field_values())
@@ -6073,6 +6434,18 @@ class StructureRelativePointer(RelativePointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -6098,26 +6471,28 @@ class StructureRelativePointer(RelativePointer):
     >>> [(name, member.value) for name, member in pointer.items()]
     []
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'StructureRelativePointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'StructureRelativePointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'class': 'Structure',
-                 'name': 'data',
-                 'size': 0,
-                 'type': 'Structure',
-                 'member': []}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'StructureRelativePointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'StructureRelativePointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('class', 'Structure'),
+                                ('name', 'data'),
+                                ('size', 0),
+                                ('type', 'Structure'),
+                                ('member', [])])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': OrderedDict()}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data', OrderedDict())])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', OrderedDict())])
     >>> pprint(pointer.field_values())
@@ -6133,7 +6508,8 @@ class StructureRelativePointer(RelativePointer):
     >>> pprint(pointer.to_list(nested=True))
     [('StructureRelativePointer.value', '0xffffffff')]
     >>> pprint(pointer.to_dict(nested=True))
-    {'StructureRelativePointer': OrderedDict([('value', '0xffffffff')])}
+    OrderedDict([('StructureRelativePointer',
+                  OrderedDict([('value', '0xffffffff')]))])
     """
 
     def __init__(self, template=None, address=None, byte_order=BYTEORDER):
@@ -6248,6 +6624,18 @@ class SequenceRelativePointer(RelativePointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -6294,26 +6682,28 @@ class SequenceRelativePointer(RelativePointer):
     []
     >>> pointer.clear()
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'SequenceRelativePointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'SequenceRelativePointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'class': 'Sequence',
-                 'name': 'data',
-                 'size': 0,
-                 'type': 'Sequence',
-                 'member': []}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'SequenceRelativePointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'SequenceRelativePointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('class', 'Sequence'),
+                                ('name', 'data'),
+                                ('size', 0),
+                                ('type', 'Sequence'),
+                                ('member', [])])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': []}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data', [])])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', None)])
     >>> pprint(pointer.field_values())
@@ -6329,7 +6719,8 @@ class SequenceRelativePointer(RelativePointer):
     >>> pprint(pointer.to_list(nested=True))
     [('SequenceRelativePointer.value', '0xffffffff')]
     >>> pprint(pointer.to_dict(nested=True))
-    {'SequenceRelativePointer': OrderedDict([('value', '0xffffffff')])}
+    OrderedDict([('SequenceRelativePointer',
+                  OrderedDict([('value', '0xffffffff')]))])
     """
 
     def __init__(self, iterable=None, address=None, byte_order=BYTEORDER):
@@ -6471,6 +6862,18 @@ class ArrayRelativePointer(SequenceRelativePointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -6520,26 +6923,28 @@ class ArrayRelativePointer(SequenceRelativePointer):
     10
     >>> pointer.clear()
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'ArrayRelativePointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'ArrayRelativePointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'class': 'Array',
-                 'name': 'data',
-                 'size': 0,
-                 'type': 'Array',
-                 'member': []}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'ArrayRelativePointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'ArrayRelativePointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('class', 'Array'),
+                                ('name', 'data'),
+                                ('size', 0),
+                                ('type', 'Array'),
+                                ('member', [])])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': []}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data', [])])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', None)])
     >>> pprint(pointer.field_values())
@@ -6651,6 +7056,18 @@ class StreamRelativePointer(RelativePointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -6700,30 +7117,33 @@ class StreamRelativePointer(RelativePointer):
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'StreamRelativePointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'StreamRelativePointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'address': 4294967295,
-                 'alignment': [10, 0],
-                 'class': 'Stream10',
-                 'index': [0, 0],
-                 'name': 'data',
-                 'order': 'auto',
-                 'size': 80,
-                 'type': 'Field',
-                 'value': '4b6f6e466f6f20697320'}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'StreamRelativePointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'StreamRelativePointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('address', 4294967295),
+                                ('alignment', [10, 0]),
+                                ('class', 'Stream10'),
+                                ('index', [0, 0]),
+                                ('name', 'data'),
+                                ('order', 'auto'),
+                                ('size', 80),
+                                ('type', 'Field'),
+                                ('value', '4b6f6e466f6f20697320')])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data',
+                  Index(byte=0, bit=0, address=4294967295, base_address=0, update=False))])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', 'Stream10')])
     >>> pprint(pointer.field_values())
@@ -6747,8 +7167,9 @@ class StreamRelativePointer(RelativePointer):
     [('StreamRelativePointer.value', '0xffffffff'),
      ('StreamRelativePointer.data', b'4b6f6e466f6f20697320')]
     >>> pprint(pointer.to_dict())
-    {'StreamRelativePointer': {'value': '0xffffffff',
-                               'data': b'4b6f6e466f6f20697320'}}
+    OrderedDict([('StreamRelativePointer',
+                  OrderedDict([('value', '0xffffffff'),
+                               ('data', b'4b6f6e466f6f20697320')]))])
     """
 
     def __init__(self, size=0, address=None):
@@ -6831,6 +7252,18 @@ class StringRelativePointer(StreamRelativePointer):
     b''
     >>> pointer.value
     '0x0'
+    >>> int(pointer)
+    0
+    >>> float(pointer)
+    0.0
+    >>> hex(pointer)
+    '0x0'
+    >>> bin(pointer)
+    '0b0'
+    >>> oct(pointer)
+    '0o0'
+    >>> bool(pointer)
+    False
     >>> pointer.decode(bytes.fromhex('00c0'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.value
@@ -6880,30 +7313,33 @@ class StringRelativePointer(StreamRelativePointer):
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
     >>> pprint(pointer.blueprint())
-    {'address': 0,
-     'alignment': [4, 0],
-     'class': 'StringRelativePointer',
-     'index': [0, 0],
-     'max': 4294967295,
-     'min': 0,
-     'name': 'StringRelativePointer',
-     'order': 'auto',
-     'signed': False,
-     'size': 32,
-     'type': 'Pointer',
-     'value': '0xffffffff',
-     'member': [{'address': 4294967295,
-                 'alignment': [10, 0],
-                 'class': 'String10',
-                 'index': [0, 0],
-                 'name': 'data',
-                 'order': 'auto',
-                 'size': 80,
-                 'type': 'Field',
-                 'value': 'KonFoo is '}]}
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'StringRelativePointer'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'StringRelativePointer'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Pointer'),
+                 ('value', '0xffffffff'),
+                 ('member',
+                  [OrderedDict([('address', 4294967295),
+                                ('alignment', [10, 0]),
+                                ('class', 'String10'),
+                                ('index', [0, 0]),
+                                ('name', 'data'),
+                                ('order', 'auto'),
+                                ('size', 80),
+                                ('type', 'Field'),
+                                ('value', 'KonFoo is ')])])])
     >>> pprint(pointer.field_indexes())
-    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'data': Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)}
+    OrderedDict([('value',
+                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+                 ('data',
+                  Index(byte=0, bit=0, address=4294967295, base_address=0, update=False))])
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
     >>> pprint(pointer.field_values())
@@ -6927,8 +7363,8 @@ class StringRelativePointer(StreamRelativePointer):
     [('StringRelativePointer.value', '0xffffffff'),
      ('StringRelativePointer.data', 'KonFoo is ')]
     >>> pprint(pointer.to_dict())
-    {'StringRelativePointer': {'value': '0xffffffff',
-                               'data': 'KonFoo is '}}
+    OrderedDict([('StringRelativePointer',
+                  OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """
 
     def __init__(self, size=0, address=None):

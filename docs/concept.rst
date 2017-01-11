@@ -16,18 +16,19 @@ KonFoo is based on defining or declaring a *byte stream* `mapper`_ through
 classes. KonFoo has two abstract base classes the `container`_ class and the
 `field`_ class.
 
-A `container`_ holds `field`_ and/or `container`_ classes and knows how to
-**view**, **save** and **load** the *values* of the `field`_ **items** in the
-`container`_.
+A `container`_ contains `field`_ and/or `container`_ classes and knows how to
+**view**, **save** and **load** the *values* of the `field`_ **items** within
+the `container`_.
 
-A `field`_ holds the *value* of a content area in a *byte stream* which the
-`field`_ maps and knows how to **unpack** and **pack** its *value* from and to
-a *byte stream*.
+A `field`_ represents the *value* of a content area in a *byte stream* which
+the `field`_ maps and knows how to **unpack** and **pack** its *value* from and
+to a *byte stream*.
 
 The mixin :ref:`pointer <pointer>` class has both features of the two base
 classes and has an interface to a data :ref:`provider <provider>` to **read**
 and **write** *byte streams* from and back to the data :ref:`provider <provider>`
-for its referenced :ref:`data object <data object>`.
+for its referenced :ref:`data object <data object>` respectively the *byte
+stream* `mapper`_.
 
 The build-in **decoding** and **encoding** engine unpacks and packs the *byte
 stream* sequential to and from each `field`_ in the declared *byte
@@ -75,8 +76,9 @@ Here is an overview of the different available `container`_ classes.
 List field items
 ----------------
 
-A `container`_ can list all its `field`_ items as a **flat** list
-by calling the method :meth:`~Container.field_items`.
+A `container`_ can list all its `field`_ items as a **flat** list in the form
+of ``(field path, field item)`` tuples by calling its method
+:meth:`~Container.field_items`.
 
     >>> container = Container()
     >>> container.field_items() # doctest: +NORMALIZE_WHITESPACE
@@ -87,14 +89,16 @@ View field values
 -----------------
 
 A `container`_ can **view** the *value* of each `field`_ item as a **flat**
-list by calling the method :meth:`~Container.to_list`.
+list in the form of ``(field path, field value)`` tuples by calling its method
+:meth:`~Container.to_list`.
 
     >>> container.to_list() # doctest: +NORMALIZE_WHITESPACE
     []
 
 
 A `container`_ can **view** the *value* of each `field`_ item as a **flat**
-ordered dictionary by calling the method :meth:`~Container.to_dict`.
+ordered dictionary in the form of ``{'field path': field value}`` pairs by
+calling its method :meth:`~Container.to_dict`.
 
     >>> container.to_dict()  # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Container', OrderedDict())])
@@ -110,7 +114,7 @@ Save field values
 -----------------
 
 A `container`_ can **save** the *value* of each `field`_ item to an INI file
-by calling the method :meth:`~Container.save`.
+by calling its method :meth:`~Container.save`.
 
     >>> container.save("_static/container.ini")
 
@@ -124,7 +128,7 @@ Load field values
 -----------------
 
 A `container`_ can **load** the *value* of each `field`_ item from an INI file
-by calling the method :meth:`~Container.load`.
+by calling its method :meth:`~Container.load`.
 
     >>> container.load("_static/container.ini")
     [Container]

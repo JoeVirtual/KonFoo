@@ -12,8 +12,16 @@ Decoding
 ========
 
 
+Decoding Hook
+-------------
+
+
+
+Decoding Patterns
+-----------------
+
 Resizing on the fly
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
     :emphasize-lines: 13, 17
@@ -40,7 +48,7 @@ Resizing on the fly
             return index
 
 Updating on the fly
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
     :emphasize-lines: 15, 19
@@ -70,5 +78,5 @@ Updating on the fly
 
 
 Declaring on the fly
---------------------
+~~~~~~~~~~~~~~~~~~~~
 

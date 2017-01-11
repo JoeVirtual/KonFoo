@@ -26,6 +26,69 @@ A `sequence member`_ can be any :ref:`field <field>` or :ref:`container
 <container>` class.
 
 
+Append a Member
+---------------
+
+
+    >>> sequence = Sequence()
+    >>> sequence.append(Byte())
+    >>> sequence  # doctest: +NORMALIZE_WHITESPACE
+    [Byte(index=Index(byte=0, bit=0,
+                      address=0, base_address=0,
+                      update=False),
+          alignment=(1, 0),
+          bit_size=8,
+          value='0x0')]
+
+
+Insert a Member
+---------------
+
+    >>> sequence.insert(0, Decimal16())
+    >>> sequence  # doctest: +NORMALIZE_WHITESPACE
+    [Decimal16(index=Index(byte=0, bit=0,
+                           address=0, base_address=0,
+                           update=False),
+               alignment=(2, 0),
+               bit_size=16,
+               value=0),
+     Byte(index=Index(byte=0, bit=0,
+                      address=0, base_address=0,
+                      update=False),
+          alignment=(1, 0),
+          bit_size=8,
+          value='0x0')]
+
+Extend a Sequence
+-----------------
+
+    >>> sequence.extend([Signed8(), Scaled8(1.0)])
+    >>> sequence  # doctest: +NORMALIZE_WHITESPACE
+    [Decimal16(index=Index(byte=0, bit=0,
+                           address=0, base_address=0,
+                           update=False),
+               alignment=(2, 0),
+               bit_size=16,
+               value=0),
+     Byte(index=Index(byte=0, bit=0,
+                      address=0, base_address=0,
+                      update=False),
+          alignment=(1, 0),
+          bit_size=8,
+          value='0x0'),
+     Signed8(index=Index(byte=0, bit=0,
+                         address=0, base_address=0,
+                         update=False),
+             alignment=(1, 0),
+             bit_size=8,
+             value=0),
+     Scaled8(index=Index(byte=0, bit=0,
+                         address=0, base_address=0,
+                         update=False),
+             alignment=(1, 0),
+             bit_size=8,
+             value=0.0)]
+
 View a Sequence
 ---------------
 
@@ -43,11 +106,11 @@ You can get the blueprint of the `sequence`_ by calling the method
 :meth:`~Sequence.blueprint`.
 
     >>> pprint(sequence.blueprint()) # doctest: +NORMALIZE_WHITESPACE
-    {'class': 'Sequence',
-     'name': 'Sequence',
-     'size': 0,
-     'type': 'Sequence',
-     'member': []}
+    OrderedDict([('class', 'Sequence'),
+                 ('name', 'Sequence'),
+                 ('size', 0),
+                 ('type', 'Sequence'),
+                 ('member', [])])
 
 
 Length of a Sequence
@@ -66,11 +129,6 @@ You can get the **length** of a `sequence`_ as a tuple in the form of
    incomplete.
 
 
-Iterate over Members
---------------------
-
-
-
 Indexing
 --------
 
@@ -83,6 +141,14 @@ in a `sequence`_ by calling the method :meth:`~Sequence.next_index`.
 .. note::
 
     The method re-indexes all members in the `sequence`_ as well.
+
+
+Iterate over a Sequence
+-----------------------
+
+You can **iterate** over a `sequence`_.
+
+
 
 
 List field indexes

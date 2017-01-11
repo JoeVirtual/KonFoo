@@ -146,22 +146,23 @@ You can get the blueprint of the `array`_ by calling the method
 :meth:`~Sequence.blueprint`.
 
     >>> pprint(array.blueprint()) # doctest: +NORMALIZE_WHITESPACE
-    {'class': 'Array',
-     'name': 'Array',
-     'size': 1,
-     'type': 'Array',
-     'member': [{'address': 0,
-                 'alignment': [1, 0],
-                 'class': 'Byte',
-                 'index': [0, 0],
-                 'max': 255,
-                 'min': 0,
-                 'name': 'Array[0]',
-                 'order': 'auto',
-                 'signed': False,
-                 'size': 8,
-                 'type': 'Field',
-                 'value': '0x0'}]}
+    OrderedDict([('class', 'Array'),
+                 ('name', 'Array'),
+                 ('size', 1),
+                 ('type', 'Array'),
+                 ('member',
+                  [OrderedDict([('address', 0),
+                                ('alignment', [1, 0]),
+                                ('class', 'Byte'),
+                                ('index', [0, 0]),
+                                ('max', 255),
+                                ('min', 0),
+                                ('name', 'Array[0]'),
+                                ('order', 'auto'),
+                                ('signed', False),
+                                ('size', 8),
+                                ('type', 'Field'),
+                                ('value', '0x0')])])])
 
 
 Length of an Array
