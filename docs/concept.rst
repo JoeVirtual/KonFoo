@@ -170,8 +170,9 @@ Here is an overview of the different available `field`_ classes.
 * :class:`Stream`, :class:`String`
 * :class:`Float`
 * :class:`Decimal` :class:`Bit`, :class:`Byte`, :class:`Char`, :class:`Signed`,
-  :class:`Unsigned`, :class:`Bitset`, :class:`Bool`, :class:`Enum`, :class:`Scaled`,
-  :class:`Fraction`, :class:`Bipolar`, :class:`Unipolar`, :class:`Datetime`
+  :class:`Unsigned`, :class:`Bitset`, :class:`Bool`, :class:`Enum`,
+  :class:`Scaled`, :class:`Fraction`, :class:`Bipolar`, :class:`Unipolar`,
+  :class:`Datetime`, :class:`IPv4Address`
 * :class:`Pointer`, :class:`StructurePointer`, :class:`SequencePointer`,
   :class:`ArrayPointer`:class:`StreamPointer`, :class:`StringPointer`,
   :class:`AutoStringPointer`

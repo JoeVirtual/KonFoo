@@ -37,13 +37,13 @@ from .providers import Provider, FileProvider
 from .core import (
     is_any, is_field, is_container, is_array, is_structure,
     is_pointer, is_mixin,
-    Patch, Index, zero,
+    Patch, Index,
     Container, Structure, Sequence, Array,
     Field,
     Stream, String,
     Float,
     Decimal, Bit, Byte, Char, Signed, Unsigned, Bitset, Bool, Enum, Scaled,
-    Fraction, Bipolar, Unipolar, Datetime,
+    Fraction, Bipolar, Unipolar, Datetime, IPv4Address,
     Pointer, StructurePointer, SequencePointer, ArrayPointer, StreamPointer,
     StringPointer, AutoStringPointer,
     RelativePointer, StructureRelativePointer, SequenceRelativePointer,
@@ -109,13 +109,13 @@ __all__ = [
     'is_container', 'is_array', 'is_structure',
     'is_pointer', 'is_mixin',
 
-    'Patch', 'Index', 'zero',
+    'Patch', 'Index',
 
     'Container', 'Structure', 'Sequence', 'Array',
 
     'Field', 'Stream', 'String', 'Float', 'Decimal', 'Bit', 'Byte', 'Char',
     'Signed', 'Unsigned', 'Bitset', 'Bool', 'Enum', 'Scaled', 'Fraction',
-    'Bipolar', 'Unipolar', 'Datetime',
+    'Bipolar', 'Unipolar', 'Datetime', 'IPv4Address',
 
     'Pointer', 'StructurePointer', 'SequencePointer', 'ArrayPointer',
     'StreamPointer', 'StringPointer', 'AutoStringPointer',
@@ -159,4 +159,4 @@ __all__ = [
     'd3json', 'HexViewer',
 ]
 
-__version__ = '0.1a5'
+__version__ = '0.1a6'

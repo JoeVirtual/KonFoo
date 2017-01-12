@@ -4,7 +4,7 @@
     ~~~~~~~~~~
     <Add description of the module here>.
     
-    :copyright: (c) 2015 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
@@ -36,6 +36,7 @@ class ItemClass(Enumeration):
     Bipolar = 51
     Unipolar = 52
     Datetime = 53
+    IPAddress = 54
 
 
 class Byteorder(Category):

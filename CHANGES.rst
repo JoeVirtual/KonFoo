@@ -3,7 +3,9 @@ Changelog
 
 Here you can see the full list of changes between each KonFoo release.
 
-Not Released Yet
-----------------
+Version 0.1
+-----------
 
-First public preview.
+(Major release, unreleased)
+
+* First public preview.

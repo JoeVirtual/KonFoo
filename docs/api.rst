@@ -207,7 +207,6 @@ Enum
 .. autoclass:: Enum32
    :members:
 
-
 Scaled
 ~~~~~~
 
@@ -258,6 +257,13 @@ Datetime
 
 .. autoclass:: Datetime
    :members:
+
+IPv4Address
+~~~~~~~~~~~
+
+.. autoclass:: IPv4Address
+   :members:
+
 
 Pointer
 =======

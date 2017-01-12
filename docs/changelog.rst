@@ -1,3 +1,3 @@
 .. currentmodule:: konfoo
 
-.. include:: ../CHANGES.md
+.. include:: ../CHANGES.rst

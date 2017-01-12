@@ -19,6 +19,7 @@ from collections import Mapping, namedtuple, OrderedDict
 from collections.abc import MutableSequence
 from configparser import ConfigParser
 from binascii import hexlify
+import ipaddress
 from pprint import pprint
 
 from konfoo.enums import Enumeration
@@ -129,10 +130,7 @@ accessed via a data :class:`Provider` by a :class:`Pointer` field.
 
 :param bool update: if `True` the byte stream needs to be updated.
 """
-
-
-def zero():
-    return Index(0, 0, 0, 0, False)
+Index.__new__.__defaults__ = (0, 0, 0, 0, False)
 
 
 class Container:
@@ -503,7 +501,7 @@ class Structure(OrderedDict, Container):
 
     @byte_order_option()
     @nested_option()
-    def decode(self, buffer=bytes(), index=zero(), **options):
+    def decode(self, buffer=bytes(), index=Index(), **options):
         """ Decodes sequential bytes from the *buffer* starting at the begin
         of the *buffer* or with the given *index* by mapping the bytes to the
         :class:`Field`'s of the `Structure` in accordance with the decoding
@@ -536,7 +534,7 @@ class Structure(OrderedDict, Container):
 
     @byte_order_option()
     @nested_option()
-    def encode(self, buffer=bytearray(), index=zero(), **options):
+    def encode(self, buffer=bytearray(), index=Index(), **options):
         """ Encodes sequential bytes to the *buffer* starting at the begin of
         the *buffer* or with the given *index* by mapping the *values* of the
         :class:`Field`'s of the `Structure` to the bytes in accordance with
@@ -568,7 +566,7 @@ class Structure(OrderedDict, Container):
         return index
 
     @nested_option()
-    def next_index(self, index=zero(), **options):
+    def next_index(self, index=Index(), **options):
         """ Returns the :class:`Index` after the last :class:`Field`
         of the `Structure`.
 
@@ -648,7 +646,7 @@ class Structure(OrderedDict, Container):
         return divmod(length, 8)
 
     @nested_option()
-    def field_indexes(self, index=zero(), **options):
+    def field_indexes(self, index=Index(), **options):
         """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
         which contains the ``{'name': index}`` pairs for each :class:`Field`
         of the `Structure`.
@@ -994,7 +992,7 @@ class Sequence(MutableSequence, Container):
 
     @byte_order_option()
     @nested_option()
-    def decode(self, buffer=bytes(), index=zero(), **options):
+    def decode(self, buffer=bytes(), index=Index(), **options):
         """ Decodes sequential bytes from the *buffer* starting at the begin
         of the *buffer* or with the given *index* by mapping the bytes to the
         :class:`Field`'s in the `Sequence` in accordance with the decoding
@@ -1027,7 +1025,7 @@ class Sequence(MutableSequence, Container):
 
     @byte_order_option()
     @nested_option()
-    def encode(self, buffer=bytearray(), index=zero(), **options):
+    def encode(self, buffer=bytearray(), index=Index(), **options):
         """ Encodes sequential bytes to the *buffer* starting at the begin of
         the *buffer* or with the given *index* by mapping the *values* of the
         :class:`Field`'s in the `Sequence` to the bytes in accordance with the
@@ -1059,7 +1057,7 @@ class Sequence(MutableSequence, Container):
         return index
 
     @nested_option()
-    def next_index(self, index=zero(), **options):
+    def next_index(self, index=Index(), **options):
         """ Returns the :class:`Index` after the last :class:`Field`
         in the `Sequence`.
 
@@ -1139,7 +1137,7 @@ class Sequence(MutableSequence, Container):
         return divmod(length, 8)
 
     @nested_option()
-    def field_indexes(self, index=zero(), **options):
+    def field_indexes(self, index=Index(), **options):
         """ Returns a list which contains ``(name, index)`` tuples for each
         :class:`Field` in the `Sequence`.
 
@@ -1461,7 +1459,7 @@ class Field:
     def __init__(self, bit_size=0, align_to=0, byte_order=Byteorder.auto):
         super().__init__()
         # Field index
-        self._index = zero()
+        self._index = Index()
         # Field alignment
         self._align_to_byte_size = align_to
         self._align_to_bit_offset = 0
@@ -1601,7 +1599,7 @@ class Field:
 
     @abc.abstractmethod
     @byte_order_option()
-    def unpack(self, buffer=bytes(), index=zero(), **options):
+    def unpack(self, buffer=bytes(), index=Index(), **options):
         """ Unpacks the *value* of the `Field` from the *buffer* at the given
         *index* in accordance with the decoding *byte order* of the *buffer* and
         the `Field`.
@@ -1644,7 +1642,7 @@ class Field:
 
     @byte_order_option()
     @nested_option()
-    def decode(self, buffer=bytes(), index=zero(), **options):
+    def decode(self, buffer=bytes(), index=Index(), **options):
         """ Decodes sequential bytes from the *buffer* starting at the begin of
         the *buffer* or with the given *index* by mapping the bytes to the *value*
         of the `Field` in accordance with the decoding *byte order* of the
@@ -1675,7 +1673,7 @@ class Field:
 
     @byte_order_option()
     @nested_option()
-    def encode(self, buffer=bytearray(), index=zero(), **options):
+    def encode(self, buffer=bytearray(), index=Index(), **options):
         """ Encodes sequential bytes to the *buffer* starting at the begin of
         the *buffer* or with the given *index* by mapping the *value* of the
         `Field` to the bytes in accordance with the encoding *byte order* of
@@ -1704,7 +1702,7 @@ class Field:
         buffer += self.pack(buffer, **options)
         return self.next_index(index)
 
-    def next_index(self, index=zero()):
+    def next_index(self, index=Index()):
         """ Returns the :class:`Index` after the `Field`.
 
         :param index: start :class:`Index` for the `Field`.
@@ -1932,7 +1930,7 @@ class Stream(Field):
         return bytestream
 
     @byte_order_option()
-    def unpack(self, buffer=bytes(), index=zero(), **options):
+    def unpack(self, buffer=bytes(), index=Index(), **options):
         # Bad placed field
         if index.bit:
             raise FieldIndexError(self, index)
@@ -2215,7 +2213,7 @@ class Float(Field):
         return -(1 - Float.epsilon()) * 2 ** 128
 
     @byte_order_option()
-    def unpack(self, buffer=bytes(), index=zero(), **options):
+    def unpack(self, buffer=bytes(), index=Index(), **options):
         # Bad placed field
         if index.bit:
             raise FieldIndexError(self, index)
@@ -2601,7 +2599,7 @@ class Decimal(Field):
         return self._cast(self._value, self._min(True), self._max(True), True)
 
     @byte_order_option()
-    def unpack(self, buffer=bytes(), index=zero(), **options):
+    def unpack(self, buffer=bytes(), index=Index(), **options):
         # Content of the buffer mapped by the field group
         offset = index.byte
         size = offset + self.alignment[0]
@@ -4269,6 +4267,96 @@ class Datetime(Decimal):
         return self.to_decimal(decimal)
 
 
+class IPv4Address(Decimal):
+    """ A `IPv4Address` field is an unsigned :class:`Decimal` field with a fix
+    *size* of four bytes and returns its field *value* as a ipv4 address
+    formatted string.
+
+    :param byte_order: coding :class:`Byteorder` of the `IPAddress` field.
+
+    Example:
+
+    >>> ipv4 = IPv4Address()
+    >>> ipv4.is_decimal()
+    True
+    >>> ipv4.name
+    'Ipaddress32'
+    >>> ipv4.alignment
+    (4, 0)
+    >>> ipv4.byte_order
+    Byteorder.auto = 'auto'
+    >>> ipv4.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> ipv4.next_index()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> ipv4.bit_size
+    32
+    >>> ipv4.min()
+    0
+    >>> ipv4.max()
+    4294967295
+    >>> ipv4.signed
+    False
+    >>> ipv4.value
+    '0.0.0.0'
+    >>> int(ipv4)
+    0
+    >>> float(ipv4)
+    0.0
+    >>> hex(ipv4)
+    '0x0'
+    >>> bin(ipv4)
+    '0b0'
+    >>> oct(ipv4)
+    '0o0'
+    >>> bool(ipv4)
+    False
+    >>> ipv4.decode(bytes.fromhex('ffffffff'))
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> ipv4.value
+    '255.255.255.255'
+    >>> ipv4.value = '192.168.0.0'
+    >>> ipv4.value
+    '192.168.0.0'
+    >>> ipv4.value = '255.255.255.255'
+    >>> ipv4.value
+    '255.255.255.255'
+    >>> bytestream = bytearray()
+    >>> bytestream
+    bytearray(b'')
+    >>> ipv4.encode(bytestream)
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> hexlify(bytestream)
+    b'ffffffff'
+    >>> pprint(ipv4.blueprint())
+    OrderedDict([('address', 0),
+                 ('alignment', [4, 0]),
+                 ('class', 'Ipaddress32'),
+                 ('index', [0, 0]),
+                 ('max', 4294967295),
+                 ('min', 0),
+                 ('name', 'Ipaddress32'),
+                 ('order', 'auto'),
+                 ('signed', False),
+                 ('size', 32),
+                 ('type', 'Field'),
+                 ('value', '255.255.255.255')])
+    """
+    item_type = ItemClass.IPAddress
+
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=32, byte_order=byte_order)
+
+    @property
+    def value(self):
+        """ Field value."""
+        return str(ipaddress.IPv4Address(self._value))
+
+    @value.setter
+    def value(self, x):
+        self._value = int(ipaddress.IPv4Address(x))
+
+
 class Pointer(Decimal, Container):
     """ A `Pointer` field is an unsigned :class:`Decimal` field with a *size* of
     four bytes and returns its field *value* as a hexadecimal encoded string.
@@ -4749,7 +4837,7 @@ class Pointer(Decimal, Container):
 
     @byte_order_option()
     @nested_option()
-    def decode(self, buffer=bytes(), index=zero(), **options):
+    def decode(self, buffer=bytes(), index=Index(), **options):
         """ Decodes sequential the bytes from the *buffer* starting at the begin
         of the *buffer* or with the given *index* by mapping the bytes to the
         *value* of the `Pointer` field in accordance with the decoding *byte order*
@@ -4788,7 +4876,7 @@ class Pointer(Decimal, Container):
 
     @byte_order_option()
     @nested_option()
-    def encode(self, buffer=bytearray(), index=zero(), **options):
+    def encode(self, buffer=bytearray(), index=Index(), **options):
         """ Encodes sequential the bytes to the *buffer* starting at the begin
         of the *buffer* or with the given *index* by mapping the *value* of the
         `Pointer` field to the bytes in accordance with the encoding *byte order*
@@ -4869,7 +4957,7 @@ class Pointer(Decimal, Container):
                     self._data.value = value
 
     @nested_option()
-    def field_indexes(self, index=zero(), **options):
+    def field_indexes(self, index=Index(), **options):
         """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
         with two keys.
         The ``['value']`` key contains the *index* of the `Pointer` field and
