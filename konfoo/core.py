@@ -1529,15 +1529,14 @@ class Field:
             alignment = group_size, self.alignment[1]
             raise FieldGroupSizeError(self, value, alignment)
 
-        # Bit field?
-        if self.is_bit():
-            # Bad aligned field group?
-            if self.alignment[1] != bit:
-                alignment = self.alignment[0], bit
-                raise FieldGroupOffsetError(self, value, alignment)
-        else:
+        # No Bit field?
+        if not self.is_bit():
             # Set field alignment offset
             self._align_to_bit_offset = bit
+        # Bad aligned field group?
+        elif self.alignment[1] != bit:
+            alignment = self.alignment[0], bit
+            raise FieldGroupOffsetError(self, value, alignment)
 
         # Invalid field address
         if address < 0:
