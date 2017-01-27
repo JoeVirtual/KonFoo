@@ -1,9 +1,18 @@
-include CHANGES.md LICENSE
+include README.md
+include CHANGES.rst
+include LICENSE
 
+# Documentation
 graft artwork
 graft docs
-graft examples
-graft tests
 prune docs/_build
 
-global-exclude *.py[co]
+# Examples
+graft examples
+
+# Tests
+graft tests
+
+# Patterns to exclude from any directory
+global-exclude *.pyc
+global-exclude *.pyo
