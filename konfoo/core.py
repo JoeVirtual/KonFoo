@@ -4722,7 +4722,7 @@ class Pointer(Decimal, Container):
             # The dummy byte array is necessary because the length of
             # the buffer must correlate to the field indexes of the
             # appending fields.
-            buffer = bytearray(b'q\x00' * index.byte)
+            buffer = bytearray(b'\x00' * index.byte)
 
             # Append to the buffer the content mapped by the container fields
             item.encode(buffer, index, byte_order=byte_order)
