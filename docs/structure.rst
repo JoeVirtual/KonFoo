@@ -14,9 +14,10 @@ Structure
 
 KonFoo has a :class:`Structure` class and many :ref:`field <field>` classes to
 declare the mapping part of a *byte stream* :ref:`mapper <mapper>`.
-The order how you declare the :ref:`members <structure member>` in the `structure`_
-defines the order how the :ref:`members <structure member>` are decoded and encoded
-by the built-in decoding and encoding engine.
+The order how you declare the :ref:`members <structure member>` in the
+`structure`_ defines the order how the :ref:`members <structure member>` are
+decoded/deserialized and encoded/serialized by the built-in decoding and
+encoding engine.
 
 
 .. _structure member:
@@ -49,7 +50,8 @@ constructor method of the :class:`Structure` class.
 .. warning::
 
     A `structure`_ must always align to full bytes or an exception will be
-    raised when an incomplete `structure`_ declaration is decoded or encoded.
+    raised when an incomplete `structure`_ declaration is decoded/deserialized
+    or encoded/serialized.
 
 
 Align Fields in a Structure
@@ -373,8 +375,8 @@ of a `structure`_ by calling the method :meth:`~Structure.next_index`.
 Decoding
 --------
 
-You can **decode** a byte stream with a `structure`_ by calling the method
-:meth:`~Structure.decode`.
+You can **decode**/deserialize a byte stream with a `structure`_ by calling the
+method :meth:`~Structure.decode`.
 
     >>> bytestream = bytes.fromhex('01020946f00f00')
     >>> structure.decode(bytestream)
@@ -384,8 +386,8 @@ You can **decode** a byte stream with a `structure`_ by calling the method
 Encoding
 --------
 
-You can **encode** a byte stream with a `structure`_ by calling the method
-:meth:`~Structure.encode`.
+You can **encode**/serialize a byte stream with a `structure`_ by calling the
+method :meth:`~Structure.encode`.
 
     >>> bytestream = bytearray()
     >>> bytestream

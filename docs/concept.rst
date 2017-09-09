@@ -13,10 +13,10 @@ Introduction
 ============
 
 **KonFoo** is a Python package for decoding *byte streams* into a meaningful
-representation. KonFoo helps you to decode a *byte stream* retrievable through
-a data :ref:`provider <provider>` to any kind of data source into a
-meaningful representation by just declaring how the parts of a *byte stream*
-should be represented, respectively mapped to :ref:`fields <field>`.
+representation. KonFoo helps you to decode (deserialize) a *byte stream*
+retrievable through a data :ref:`provider <provider>` to any kind of data source
+into a meaningful representation by just declaring how the parts of a *byte
+stream* should be represented, respectively mapped to :ref:`fields <field>`.
 
 You can store the representation into an ``.ini`` file to analyse the
 *byte stream* data.
@@ -25,18 +25,18 @@ The built-in decoder hook ``decode(buffer=bytes(), index=Index(), **option)``
 available for all `container`_ and `field`_ classes allows you to adapt even
 expand or declare the representation during the decoding/reading on the fly.
 
-The built-in "decoding-reader" provided by the :ref:`pointer <pointer>` class
-(called through the :meth:`Pointer.read_from` method) is able to follow even
-nested absolute or relative pointers to retrieve the *byte stream* from the
-data :ref:`provider <provider>` necessary for its referenced :ref:`data object
-<data object>` and to decode (map) it.
+The built-in deserializer "decoding-reader" provided by the :ref:`pointer
+<pointer>` class (called through the :meth:`Pointer.read_from` method) is able
+to follow even nested absolute or relative pointers to retrieve the *byte
+stream* from the data :ref:`provider <provider>` necessary for its referenced
+:ref:`data object <data object>` and to decode/deserialize (map) it.
 
 After decoding (reading) the *byte stream* provided by the data :ref:`provider
-<provider>` the built-in "encoding-writer" provided also by the :ref:`pointer
-<pointer>` class (called through the :meth:`Pointer.write_to` method) is able
-to transfer the manipulated values of any `container`_ or `field`_ in the
-representation back to the data :ref:`provider <provider>` to write it into
-its data source.
+<provider>` the built-in serializer "encoding-writer" provided also by the
+:ref:`pointer <pointer>` class (called through the :meth:`Pointer.write_to`
+method) is able to transfer the manipulated values of any `container`_ or
+`field`_ in the representation back to the data :ref:`provider <provider>` to
+write it into its data source.
 
 Concept
 =======
@@ -60,10 +60,8 @@ for its referenced :ref:`data object <data object>` respectively its *byte
 stream* `mapper`_.
 
 The build-in **decoding** and **encoding** engine unpacks and packs the *byte
-stream* sequential to and from each `field`_ in the declared *byte
-stream* `mapper`_.
-
-
+stream* sequential to and from each `field`_ in the declare *byte stream*
+`mapper`_.
 
 
 .. _mapper:
@@ -76,7 +74,7 @@ members, whereby the `container`_ members describe the structure and the `field`
 members describe the content of one or more memory areas in a *data source*.
 The mix-in :ref:`pointer <pointer>` field serves in combination with a data
 :ref:`provider <provider>` as an entry point to a *data source* for the *byte
-stream* `mapper`_.
+stream* `mapper`_ to deserialize and serialize its *byte stream*.
 
 
 .. _container:
