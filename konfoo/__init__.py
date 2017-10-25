@@ -51,34 +51,54 @@ from .core import (
 )
 # Field classes
 from .fields import (
-    Decimal8, Decimal16, Decimal24, Decimal32,
-    Signed8, Signed16, Signed24, Signed32,
-    Unsigned8, Unsigned16, Unsigned24, Unsigned32,
-    Bool8, Bool16, Bool24, Bool32,
-    Antivalent, Enum4, Enum8, Enum16, Enum24, Enum32,
-    Bitset8, Bitset16, Bitset24, Bitset32,
-    Scaled8, Scaled16, Scaled24, Scaled32,
+    Decimal8, Decimal16, Decimal24, Decimal32, Decimal64,
+    Signed8, Signed16, Signed24, Signed32, Signed64,
+    Unsigned8, Unsigned16, Unsigned24, Unsigned32, Unsigned64,
+    Bool8, Bool16, Bool24, Bool32, Bool64,
+    Antivalent, Enum4, Enum8, Enum16, Enum24, Enum32, Enum64,
+    Bitset8, Bitset16, Bitset24, Bitset32, Bitset64,
+    Scaled8, Scaled16, Scaled24, Scaled32, Scaled64,
     Bipolar2, Bipolar4, Unipolar2
 )
 # Pointer classes
 from .pointers import (
-    Pointer8, Pointer16, Pointer32, Pointer64,
-    StructurePointer8, StructurePointer16, StructurePointer32,
-    ArrayPointer8, ArrayPointer16, ArrayPointer32,
-    StreamPointer8, StreamPointer16, StreamPointer32,
-    StringPointer8, StringPointer16, StringPointer32,
+    Pointer8, Pointer16, Pointer24,
+    Pointer32, Pointer48, Pointer64,
+    StructurePointer8, StructurePointer16, StructurePointer24,
+    StructurePointer32, StructurePointer48, StructurePointer64,
+
+    ArrayPointer8, ArrayPointer16, ArrayPointer24,
+    ArrayPointer32, ArrayPointer48, ArrayPointer64,
+    StreamPointer8, StreamPointer16, StreamPointer24,
+
+    StreamPointer32, StreamPointer48, StreamPointer64,
+    StringPointer8, StringPointer16, StringPointer24,
+
+    StringPointer32, StringPointer48, StringPointer64,
+
     FloatPointer,
+
     Signed8Pointer, Signed16Pointer, Signed32Pointer,
+
     Unsigned8Pointer, Unsigned16Pointer, Unsigned32Pointer
 )
 # Relative pointer classes
 from .pointers import (
-    RelativePointer8, RelativePointer16, RelativePointer32, RelativePointer64,
+    RelativePointer8, RelativePointer16, RelativePointer24,
+    RelativePointer32, RelativePointer48, RelativePointer64,
+
     StructureRelativePointer8, StructureRelativePointer16,
-    StructureRelativePointer32,
-    ArrayRelativePointer8, ArrayRelativePointer16, ArrayRelativePointer32,
-    StreamRelativePointer8, StreamRelativePointer16, StreamRelativePointer32,
-    StringRelativePointer8, StringRelativePointer16, StringRelativePointer32
+    StructureRelativePointer24, StructureRelativePointer32,
+    StructureRelativePointer48, StructureRelativePointer64,
+
+    ArrayRelativePointer8, ArrayRelativePointer16, ArrayRelativePointer24,
+    ArrayRelativePointer32, ArrayRelativePointer48, ArrayRelativePointer64,
+
+    StreamRelativePointer8, StreamRelativePointer16, StreamRelativePointer24,
+    StreamRelativePointer32, StreamRelativePointer48, StreamRelativePointer64,
+
+    StringRelativePointer8, StringRelativePointer16, StringRelativePointer24,
+    StringRelativePointer32, StringRelativePointer48, StringRelativePointer64,
 )
 # Utilities
 from .utils import d3json, HexViewer
@@ -94,69 +114,217 @@ __all__ = [
     'Byteorder', 'BYTEORDER',
 
     # Exceptions
-    'ByteOrderTypeError', 'EnumTypeError', 'FactoryTypeError',
-    'MemberTypeError', 'ProviderTypeError', 'ContainerLengthError',
-    'FieldAddressError', 'FieldAlignmentError', 'FieldByteOrderError',
-    'FieldIndexError', 'FieldSizeError', 'FieldValueError', 'FieldTypeError',
+    'ByteOrderTypeError',
+    'EnumTypeError',
+
+    'FactoryTypeError',
+    'MemberTypeError',
+    'ProviderTypeError',
+
+    'ContainerLengthError',
+
+    'FieldAddressError',
+    'FieldAlignmentError',
+    'FieldByteOrderError',
+    'FieldIndexError',
+    'FieldSizeError',
+    'FieldValueError',
+    'FieldTypeError',
     'FieldValueEncodingError',
-    'FieldGroupByteOrderError', 'FieldGroupOffsetError', 'FieldGroupSizeError',
+
+    'FieldGroupByteOrderError',
+    'FieldGroupOffsetError',
+    'FieldGroupSizeError',
 
     # Provider
-    'Provider', 'FileProvider',
+    'Provider',
+    'FileProvider',
 
     # Core classes
-    'is_any', 'is_field',
-    'is_container', 'is_array', 'is_structure',
-    'is_pointer', 'is_mixin',
+    'is_any',
+    'is_field',
+    'is_container',
+    'is_array',
+    'is_structure',
+    'is_pointer',
+    'is_mixin',
 
-    'Patch', 'Index',
+    'Patch',
+    'Index',
 
-    'Container', 'Structure', 'Sequence', 'Array',
+    'Container',
 
-    'Field', 'Stream', 'String', 'Float', 'Decimal', 'Bit', 'Byte', 'Char',
-    'Signed', 'Unsigned', 'Bitset', 'Bool', 'Enum', 'Scaled', 'Fraction',
-    'Bipolar', 'Unipolar', 'Datetime', 'IPv4Address',
+    'Structure',
 
-    'Pointer', 'StructurePointer', 'SequencePointer', 'ArrayPointer',
+    'Sequence',
+    'Array',
+
+    'Field',
+
+    'Stream',
+    'String',
+
+    'Float',
+
+    'Decimal',
+    'Bit',
+    'Byte',
+    'Char',
+    'Signed',
+    'Unsigned',
+    'Bitset',
+    'Bool',
+    'Enum',
+    'Scaled',
+    'Fraction',
+    'Bipolar',
+    'Unipolar',
+    'Datetime',
+    'IPv4Address',
+
+    'Pointer',
+    'StructurePointer',
+    'SequencePointer', 'ArrayPointer',
     'StreamPointer', 'StringPointer', 'AutoStringPointer',
 
-    'RelativePointer', 'StructureRelativePointer', 'SequenceRelativePointer',
-    'ArrayRelativePointer', 'StreamRelativePointer', 'StringRelativePointer',
+    'RelativePointer',
+    'StructureRelativePointer',
+    'SequenceRelativePointer', 'ArrayRelativePointer',
+    'StreamRelativePointer', 'StringRelativePointer',
 
     # Field classes
-    'Decimal8', 'Decimal16', 'Decimal24', 'Decimal32',
-    'Signed8', 'Signed16', 'Signed24', 'Signed32',
-    'Unsigned8', 'Unsigned16', 'Unsigned24', 'Unsigned32',
-    'Bool8', 'Bool16', 'Bool24', 'Bool32',
-    'Antivalent', 'Enum4', 'Enum8', 'Enum16', 'Enum24', 'Enum32',
-    'Bitset8', 'Bitset16', 'Bitset24', 'Bitset32',
-    'Scaled8', 'Scaled16', 'Scaled24', 'Scaled32',
-    'Bipolar2', 'Bipolar4', 'Unipolar2',
+    'Decimal8',
+    'Decimal16',
+    'Decimal24',
+    'Decimal32',
+    'Decimal64',
+
+    'Signed8',
+    'Signed16',
+    'Signed24',
+    'Signed32',
+    'Signed64',
+
+    'Unsigned8',
+    'Unsigned16',
+    'Unsigned24',
+    'Unsigned32',
+    'Unsigned64',
+
+    'Bool8',
+    'Bool16',
+    'Bool24',
+    'Bool32',
+    'Bool64',
+
+    'Antivalent',
+
+    'Enum4',
+    'Enum8',
+    'Enum16',
+    'Enum24',
+    'Enum32',
+    'Enum64',
+
+    'Bitset8',
+    'Bitset16',
+    'Bitset24',
+    'Bitset32',
+    'Bitset64',
+
+    'Scaled8',
+    'Scaled16',
+    'Scaled24',
+    'Scaled32',
+    'Scaled64',
+
+    'Bipolar2',
+    'Bipolar4',
+
+    'Unipolar2',
 
     # Pointer classes
-    'Pointer8', 'Pointer16', 'Pointer32', 'Pointer64',
-    'StructurePointer8', 'StructurePointer16', 'StructurePointer32',
-    'ArrayPointer8', 'ArrayPointer16', 'ArrayPointer32',
-    'StreamPointer8', 'StreamPointer16', 'StreamPointer32',
-    'StringPointer8', 'StringPointer16', 'StringPointer32',
+    'Pointer8',
+    'Pointer16',
+    'Pointer24',
+    'Pointer32',
+    'Pointer48',
+    'Pointer64',
+
+    'StructurePointer8',
+    'StructurePointer16',
+    'StructurePointer24',
+    'StructurePointer32',
+    'StructurePointer48',
+    'StructurePointer64',
+
+    'ArrayPointer8',
+    'ArrayPointer16',
+    'ArrayPointer24',
+    'ArrayPointer32',
+    'ArrayPointer48',
+    'ArrayPointer64',
+
+    'StreamPointer8',
+    'StreamPointer16',
+    'StreamPointer24',
+    'StreamPointer32',
+    'StreamPointer48',
+    'StreamPointer64',
+
+    'StringPointer8',
+    'StringPointer16',
+    'StringPointer24',
+    'StringPointer32',
+    'StringPointer48',
+    'StringPointer64',
+
     'FloatPointer',
-    'Signed8Pointer', 'Signed16Pointer', 'Signed32Pointer',
-    'Unsigned8Pointer', 'Unsigned16Pointer', 'Unsigned32Pointer',
+    'Signed8Pointer',
+    'Signed16Pointer',
+    'Signed32Pointer',
+    'Unsigned8Pointer',
+    'Unsigned16Pointer',
+    'Unsigned32Pointer',
 
     # Relative pointer classes
-    'RelativePointer8', 'RelativePointer16', 'RelativePointer32',
+    'RelativePointer8',
+    'RelativePointer16',
+    'RelativePointer24',
+    'RelativePointer32',
+    'RelativePointer48',
     'RelativePointer64',
-    'StructureRelativePointer8', 'StructureRelativePointer16',
+
+    'StructureRelativePointer8',
+    'StructureRelativePointer16',
+    'StructureRelativePointer24',
     'StructureRelativePointer32',
-    'ArrayRelativePointer8', 'ArrayRelativePointer16',
+    'StructureRelativePointer48',
+    'StructureRelativePointer64',
+
+    'ArrayRelativePointer8',
+    'ArrayRelativePointer16',
+    'ArrayRelativePointer24',
     'ArrayRelativePointer32',
-    'StreamRelativePointer8', 'StreamRelativePointer16',
+    'ArrayRelativePointer48',
+    'ArrayRelativePointer64',
+
+    'StreamRelativePointer8',
+    'StreamRelativePointer16',
+    'StreamRelativePointer24',
     'StreamRelativePointer32',
-    'StringRelativePointer8', 'StringRelativePointer16',
+    'StreamRelativePointer48',
+    'StreamRelativePointer64',
+
+    'StringRelativePointer8',
+    'StringRelativePointer16',
+    'StringRelativePointer24',
     'StringRelativePointer32',
+    'StringRelativePointer48',
+    'StringRelativePointer64',
 
     # Utilities
     'd3json', 'HexViewer',
 ]
 
-__version__ = '0.1a8'
+__version__ = '0.1a9'

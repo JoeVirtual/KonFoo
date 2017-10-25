@@ -8,27 +8,22 @@
     :license: BSD, see LICENSE for details
 """
 
+import abc
+import calendar
+import copy
+import datetime
+import ipaddress
+import json
 import math
 import struct
-import copy
 import time
-import datetime
-import calendar
-import abc
+from binascii import hexlify
 from collections import Mapping, namedtuple, OrderedDict
 from collections.abc import MutableSequence
 from configparser import ConfigParser
-from binascii import hexlify
-import ipaddress
 from pprint import pprint
 
 from konfoo.enums import Enumeration
-from konfoo.globals import ItemClass, Byteorder, BYTEORDER, limiter
-from konfoo.options import (
-    Option,
-    byte_order_option, get_byte_order, nested_option, get_nested,
-    field_types_option, get_field_types, verbose_option, verbose
-)
 from konfoo.exceptions import (
     ByteOrderTypeError, EnumTypeError, FactoryTypeError, MemberTypeError,
     ProviderTypeError, ContainerLengthError,
@@ -36,6 +31,12 @@ from konfoo.exceptions import (
     FieldIndexError, FieldSizeError, FieldTypeError, FieldValueError,
     FieldValueEncodingError,
     FieldGroupByteOrderError, FieldGroupOffsetError, FieldGroupSizeError
+)
+from konfoo.globals import ItemClass, Byteorder, BYTEORDER, limiter
+from konfoo.options import (
+    Option,
+    byte_order_option, get_byte_order, nested_option, get_nested,
+    field_types_option, get_field_types, verbose_option, verbose
 )
 from konfoo.providers import Provider
 
@@ -94,17 +95,12 @@ field.
 
 :param bytes buffer: byte stream for the memory area to patch in the data
     source. The byte stream contains the data of the patch item.
-
 :param int address: address of the memory area to patch in the data source.
-
 :param byteorder: :class:`Byteorder` of the memory area to patch in the data
     source.
-
 :param int bit_size: bit size of the patch item.
-
 :param int bit_offset: bit offset of the patch item within the memory area.
-
-:param bool inject: if `True` the patch item must be injected into the
+:param bool inject: if ``True`` the patch item must be injected into the
     memory area of the data source.
 """
 
@@ -121,14 +117,10 @@ normally provided by a :class:`Pointer` field. The `data source` is normally
 accessed via a data :class:`Provider` by a :class:`Pointer` field.
 
 :param int byte: byte offset of the :class:`Field` in the byte stream.
-
 :param int bit: bit offset of the :class:`Field` relative to its byte offset.
-
 :param int address: address of the :class:`Field` in the data source.
-
 :param int base_address: base address of the data source.
-
-:param bool update: if `True` the byte stream needs to be updated.
+:param bool update: if ``True`` the byte stream needs to be updated.
 """
 Index.__new__.__defaults__ = (0, 0, 0, 0, False)
 
@@ -149,8 +141,7 @@ class Container:
         for each :class:`Field` in the `Container`.
 
         :param str root: root path.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `data` objects of all :class:`Pointer` fields in the `Container`
             list their  *nested* `data` object fields as well
             (chained method call).
@@ -170,12 +161,10 @@ class Container:
 
         :param str name: name of the `Container`.
             Default is the class name of the instance.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` lists their *nested* `data` object fields as well
             (chained method call).
-
-        :keyword bool field_types: if `True` the type of the :class:`Field`
+        :keyword bool field_types: if ``True`` the type of the :class:`Field`
             is inserted into the tuple.
         """
         # Name of the Container
@@ -204,13 +193,11 @@ class Container:
 
         :param str name: name of the `Container`.
             Default is the class name of the instance.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` lists their *nested* `data` object fields as well
             (chained method call).
-
-        :keyword bool field_types: if `True` the type of the :class:`Field`
-            is append to the end of the path string with '|' as delimiter.
+        :keyword bool field_types: if ``True`` the type of the :class:`Field`
+            is append to the end of the path string with ``';'`` as delimiter.
         """
         # Name of the Container
         root = name if name else self.__class__.__name__
@@ -222,7 +209,7 @@ class Container:
 
             if get_field_types(options):
                 byte, bit = field.alignment
-                path_to_field += '|' + field.name + str((byte, bit))
+                path_to_field += ';' + field.name + str((byte, bit))
 
             fields[root][path_to_field] = field.value
         return fields
@@ -234,17 +221,14 @@ class Container:
         an INI *file*.
 
         :param str file: name and location of the INI *file*.
-
         :param str section: section in the INI file to look for the
             :class:`Field` values of the `Container`. If no *section* is
             specified the class name of the instance is used.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` saves their *nested* `data` object fields as well
             (chained method call).
-
-        :keyword bool field_types: if `True` the type of the :class:`Field`
-            is appended to its path string with the '|' sign as delimiter.
+        :keyword bool field_types: if ``True`` the type of the :class:`Field`
+            is appended to its path string with the ``';'`` sign as delimiter.
 
         Example:
 
@@ -287,19 +271,15 @@ class Container:
         an INI *file*.
 
         :param str file: name and location of the INI *file*.
-
         :param str section: section in the INI *file* to look for the
             :class:`Field` values of the `Container`. If no *section* is
             specified the class name of the instance is used.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` load their *nested* `data` object fields as well
             (chained method call).
-
-        :keyword bool field_types: if `True` the type of the :class:`Field`
-            is append to the end of the path string with '|' as delimiter.
-
-        :keyword bool verbose: if `True` the loading is executed in verbose
+        :keyword bool field_types: if ``True`` the type of the :class:`Field`
+            is append to the end of the path string with ``';'`` as delimiter.
+        :keyword bool verbose: if ``True`` the loading is executed in verbose
             mode.
 
         File `foo.ini`:
@@ -348,7 +328,7 @@ class Container:
             for option, field in self.field_items(**options):
                 if get_field_types(options):
                     byte, bit = field.alignment
-                    option += '|' + field.name + str((byte, bit))
+                    option += ';' + field.name + str((byte, bit))
 
                 if parser.has_option(section, option):
                     # Bool fields
@@ -373,7 +353,8 @@ class Container:
                     # Decimal fields
                     else:
                         field.value = parser.get(section, option)
-                    verbose(options, "{0}.{1} = {2}".format(section, option, field.value))
+                    verbose(options,
+                            "{0}.{1} = {2}".format(section, option, field.value))
         else:
             verbose(options, "No section [{0}] found.".format(section))
 
@@ -487,8 +468,7 @@ class Structure(OrderedDict, Container):
         :attr:`~Pointer.data` object fields. Null pointer are ignored.
 
         :param provider: data :class:`Provider`.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the `data`
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the `data`
             objects of all :class:`Pointer` fields of the `Structure` reads their
             *nested* `data` object fields as well (chained method call).
             Each :class:`Pointer` field stores the bytes for its *nested*
@@ -517,12 +497,9 @@ class Structure(OrderedDict, Container):
         of all :class:`Pointer` fields of the `Structure` can be enabled.
 
         :param bytes buffer: bytestream.
-
         :param index: current read :class:`Index` within the *buffer*.
-
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields of a
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields of a
             `Structure` decodes their *nested* `data` object fields as well
             (chained method call).
             Each :class:`Pointer` field uses for the decoding of its *nested*
@@ -550,12 +527,9 @@ class Structure(OrderedDict, Container):
         of all :class:`Pointer` fields of the `Structure` can be enabled.
 
         :param bytearray buffer: bytestream.
-
         :param index: current write :class:`Index` within the *buffer*.
-
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields of the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
             `Structure` encodes their *nested* `data` object fields as well
             (chained method call).
             Each :class:`Pointer` field uses for the encoding of its *nested*
@@ -572,8 +546,7 @@ class Structure(OrderedDict, Container):
 
         :param index: :class:`Index` of the first :class:`Field`
             of the `Structure`.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields of the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
             `Structure` indexes their *nested* `data` object fields as well
             (chained method call).
         """
@@ -652,8 +625,7 @@ class Structure(OrderedDict, Container):
         of the `Structure`.
 
         :param index: optional start :class:`Index` of the `Structure`.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields of the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
             `Structure` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -681,7 +653,7 @@ class Structure(OrderedDict, Container):
         which contains the ``{'name': type}`` pairs for each :class:`Field`
         of the `Structure`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
             `Structure` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -706,7 +678,7 @@ class Structure(OrderedDict, Container):
         which contains the ``{'name': value}`` pairs for each :class:`Field`
         of the `Structure`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields of the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
             `Structure` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -731,8 +703,7 @@ class Structure(OrderedDict, Container):
         for each :class:`Field` of the `Structure`.
 
         :param str root: root path.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `data` objects of all :class:`Pointer` fields of the `Structure`
             list their *nested* `data` object fields as well
             (chained method call).
@@ -775,10 +746,9 @@ class Structure(OrderedDict, Container):
             }
 
         :param str name: optional name for the `Structure`.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields of the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
             `Structure` lists their *nested* `data` object fields as well
-            (chained method call). Default is `True`.
+            (chained method call). Default is ``True``.
         """
         members = list()
         obj = OrderedDict()
@@ -810,7 +780,7 @@ class Sequence(MutableSequence, Container):
 
     A `Sequence` is:
 
-    *   *containable*: ``item in self`` returns `True` if *item* is in the
+    *   *containable*: ``item in self`` returns ``True`` if *item* is in the
         `Sequence`.
     *   *sized*: ``len(self)`` returns the number of items in the `Sequence`.
     *   *subscriptable* ``self[index]`` returns the *item* at the *index*
@@ -978,8 +948,7 @@ class Sequence(MutableSequence, Container):
         :attr:`~Pointer.data` object fields. Null pointer are ignored.
 
         :param provider: data :class:`Provider`.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the `data`
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the `data`
             objects of all :class:`Pointer` fields in the `Sequence` reads their
             *nested* `data` object fields as well (chained method call).
             Each :class:`Pointer` field stores the bytes for its *nested*
@@ -1008,12 +977,9 @@ class Sequence(MutableSequence, Container):
         of all :class:`Pointer` fields in the `Sequence` can be enabled.
 
         :param bytes buffer: bytestream.
-
         :param index: current read :class:`Index` within the *buffer*.
-
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` decodes their *nested* `data` object fields as well
             (chained method call).
             Each :class:`Pointer` field uses for the decoding of its *nested*
@@ -1041,12 +1007,9 @@ class Sequence(MutableSequence, Container):
         of all :class:`Pointer` fields in the `Sequence` can be enabled.
 
         :param bytearray buffer: bytestream.
-
         :param index: current write :class:`Index` within the *buffer*.
-
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` encodes their *nested* :attr:`~Pointer.data` object
             fields as well (chained method call).
             Each :class:`Pointer` field uses for the encoding of its *nested*
@@ -1064,7 +1027,7 @@ class Sequence(MutableSequence, Container):
         :param index: :class:`Index` of the first :class:`Field`
             in the `Sequence`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` indexes their *nested* `data` object fields as well
             (chained method call).
         """
@@ -1142,8 +1105,7 @@ class Sequence(MutableSequence, Container):
         :class:`Field` in the `Sequence`.
 
         :param index: optional start :class:`Index` of the `Sequence`.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -1170,7 +1132,7 @@ class Sequence(MutableSequence, Container):
         """ Returns a list which contains ``(name, type)`` tuples for each
         :class:`Field` in the `Sequence`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -1194,7 +1156,7 @@ class Sequence(MutableSequence, Container):
         """ Returns a list which contains ``(name, value)`` tuples for each
         :class:`Field` in the `Sequence`.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` lists their *nested* `data` object fields as well
             (chained method call).
         """
@@ -1219,8 +1181,7 @@ class Sequence(MutableSequence, Container):
         for each :class:`Field` in the `Sequence`.
 
         :param str root: root path.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `data` objects of all :class:`Pointer` fields in the `Sequence`
             list their *nested* `data` object fields as well
             (chained method call).
@@ -1229,7 +1190,8 @@ class Sequence(MutableSequence, Container):
 
         items = list()
         for name, item in enumerate(self):
-            path = "{0}[{1}]".format(base, str(name)) if base else ".[{0}]".format(str(name))
+            path = "{0}[{1}]".format(base, str(name)) if base else ".[{0}]".format(
+                str(name))
             # Container
             if is_container(item):
                 for field_item in item.field_items(path, **options):
@@ -1263,10 +1225,9 @@ class Sequence(MutableSequence, Container):
             }
 
         :param str name: optional name for the `Sequence`.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` lists their *nested* `data` object fields as well
-            (chained method call). Default is `True`.
+            (chained method call). Default is ``True``.
         """
         members = list()
         obj = OrderedDict()
@@ -1328,7 +1289,6 @@ class Array(Sequence):
         The *template* can be any :class:`Field` instance or any *callable*
         that returns a :class:`Structure`, :class:`Sequence`, :class:`Array`
         or any :class:`Field` instance.
-
     :param int size: size of the `Array` in number of `Array` elements.
     """
     item_type = ItemClass.Array
@@ -1446,11 +1406,9 @@ class Field:
     the byte stream and the providing data source in its field **index**.
 
     :param int bit_size: is the *size* of the `Field` in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Field` to the number of bytes,
-        can be between *1* and *8*.
-
+        can be between ``1`` and ``8``.
     :param byte_order: coding :class:`Byteorder` of the field.
         Default is :class:`~Byteorder.auto`.
     """
@@ -1563,37 +1521,37 @@ class Field:
 
     @staticmethod
     def is_bit():
-        """ Returns `False`."""
+        """ Returns ``False``."""
         return False
 
     @staticmethod
     def is_bool():
-        """ Returns `False`."""
+        """ Returns ``False``."""
         return False
 
     @staticmethod
     def is_decimal():
-        """ Returns `False`."""
+        """ Returns ``False``."""
         return False
 
     @staticmethod
     def is_float():
-        """ Returns `False`."""
+        """ Returns ``False``."""
         return False
 
     @staticmethod
     def is_pointer():
-        """ Returns `False`."""
+        """ Returns ``False``."""
         return False
 
     @staticmethod
     def is_stream():
-        """ Returns `False`."""
+        """ Returns ``False``."""
         return False
 
     @staticmethod
     def is_string():
-        """ Returns `False`."""
+        """ Returns ``False``."""
         return False
 
     @abc.abstractmethod
@@ -1609,9 +1567,7 @@ class Field:
         Returns the decoded field *value*.
 
         :param bytes buffer: bytestream.
-
         :param index: current read :class:`Index` within the *buffer*.
-
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
 
         .. note:: This abstract method must be implemented by a derived class.
@@ -1631,7 +1587,6 @@ class Field:
         Returns the :class:`bytes` encoded field *value*.
 
         :param bytearray buffer: bytestream.
-
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
 
         .. note:: This abstract method must be implemented by a derived class.
@@ -1656,12 +1611,9 @@ class Field:
         of a :class:`Pointer` field can be enabled.
 
         :param bytes buffer: bytestream.
-
         :param index: current read :class:`Index` within the *buffer*.
-
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
-
-        :keyword bool nested: if `True` a :class:`Pointer` field decodes its
+        :keyword bool nested: if ``True`` a :class:`Pointer` field decodes its
             *nested* `data` object fields as well (chained method call).
             Each :class:`Pointer` field uses for the decoding of its *nested*
             :attr:`~Pointer.data` object its own :attr:`~Pointer.bytestream`.
@@ -1687,12 +1639,9 @@ class Field:
         of a :class:`Pointer` field can be enabled.
 
         :param bytearray buffer: bytestream.
-
         :param index: current write :class:`Index` of the *buffer*.
-
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
-
-        :keyword bool nested: if `True` a :class:`Pointer` field encodes its
+        :keyword bool nested: if ``True`` a :class:`Pointer` field encodes its
             *nested* `data` object fields as well (chained method call).
             Each :class:`Pointer` field uses for the encoding of its *nested*
             :attr:`~Pointer.data` object its own :attr:`~Pointer.bytestream`.
@@ -1756,10 +1705,9 @@ class Field:
             }
 
         :param str name: optional name for the `Field`.
-
-        :keyword bool nested: if `True` a :class:`Pointer` field lists its
+        :keyword bool nested: if ``True`` a :class:`Pointer` field lists its
             *nested* :attr:`~Pointer.data` object fields as well
-            (chained method call). Default is `True`.
+            (chained method call). Default is ``True``.
         """
         obj = {
             'address': self.index.address,
@@ -1784,7 +1732,7 @@ class Stream(Field):
 
     A `Stream` field is:
 
-    *   *containable*: ``item in self`` returns `True` if *item* is part
+    *   *containable*: ``item in self`` returns ``True`` if *item* is part
         of the `Stream` field.
     *   *sized*: ``len(self)`` returns the length of the `Stream` field.
     *   *subscriptable* ``self[index]`` returns the *byte* at the *index*
@@ -1909,7 +1857,7 @@ class Stream(Field):
 
     @staticmethod
     def is_stream():
-        """ Returns `True`."""
+        """ Returns ``True``."""
         return True
 
     def to_stream(self, value, encoding='hex'):
@@ -1978,7 +1926,7 @@ class String(Stream):
 
     A `String` field is:
 
-    *   *containable*: ``item in self`` returns `True` if *item* is part
+    *   *containable*: ``item in self`` returns ``True`` if *item* is part
         of the `String` field.
     *   *sized*: ``len(self)`` returns the length of the `String` field.
     *   *subscriptable* ``self[index]`` returns the *byte* at the *index*
@@ -2084,11 +2032,11 @@ class String(Stream):
 
     @staticmethod
     def is_string():
-        """ Returns `True`."""
+        """ Returns ``True``."""
         return True
 
     def is_terminated(self):
-        """ Returns `True` if the `String` field is zero-terminated."""
+        """ Returns ``True`` if the `String` field is zero-terminated."""
         return self._value.find(b'\x00') >= 0
 
 
@@ -2187,7 +2135,7 @@ class Float(Field):
 
     @staticmethod
     def is_float():
-        """ Returns `True`."""
+        """ Returns ``True``."""
         return True
 
     def to_float(self, value):
@@ -2274,21 +2222,18 @@ class Decimal(Field):
 
     A `Decimal` field extends the :attr:`~Field.blueprint` of a :class:`Field`
     with a ``max`` and ``min`` key for its maximum and minimum possible field
-    *value* and a ``sigend`` key to mark the decimal number as signed or
+    *value* and a ``signed`` key to mark the decimal number as signed or
     unsigned.
 
     :param int bit_size: is the *size* of the `Decimal` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Decimal` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Decimal` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Decimal` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Decimal` field.
-
-    :param bool signed: if `True` the `Decimal` field is signed otherwise
+    :param bool signed: if ``True`` the `Decimal` field is signed otherwise
         unsigned.
-
     :param byte_order: coding :class:`Byteorder` of the `Decimal` field.
 
     Example:
@@ -2442,7 +2387,7 @@ class Decimal(Field):
         self._signed = bool(signed)
         # Field alignment, Field bit size
         if align_to:
-            self._set_alignment(byte_size=align_to)
+            self._set_alignment(group_size=align_to)
             self._set_bit_size(bit_size)
         else:
             self._set_bit_size(bit_size, auto_align=True)
@@ -2472,7 +2417,7 @@ class Decimal(Field):
 
     @property
     def signed(self):
-        """ Returns `True` if the `Decimal` field is signed."""
+        """ Returns ``True`` if the `Decimal` field is signed."""
         return self._signed
 
     @signed.setter
@@ -2482,7 +2427,7 @@ class Decimal(Field):
 
     @staticmethod
     def is_decimal():
-        """ Returns `True`."""
+        """ Returns ``True``."""
         return True
 
     def to_decimal(self, value, encoding=None):
@@ -2497,27 +2442,37 @@ class Decimal(Field):
             decimal = int(value)
         return limiter(decimal, self.min(), self.max())
 
-    def _set_alignment(self, byte_size, bit_offset=0, auto_align=False):
+    def _set_alignment(self, group_size, bit_offset=0, auto_align=False):
+        """ Sets the alignment of the ``Decimal`` field.
+        
+        :param int group_size: size of the aligned `Field` group in bytes,
+            can be between ``1`` and ``8``.
+        :param int bit_offset: bit offset of the `Decimal` field within the
+            aligned `Field` group, can be between ``0`` and ``63``.
+        :param bool auto_align: if ``True`` the `Decimal` field aligns itself
+            to the next matching byte size according to the *size* of the
+            `Decimal` field.
+        """
         # Field alignment offset
         field_offset = int(bit_offset)
 
         # Auto alignment
         if auto_align:
             # Field alignment size
-            field_size, offset = divmod(field_offset, 8)
-            if offset is not 0:
+            field_size, bit_offset = divmod(field_offset, 8)
+            if bit_offset is not 0:
                 field_size += 1
             field_size = max(field_size, 1)
         # No auto alignment
         else:
             # Field alignment size
-            field_size = int(byte_size)
+            field_size = int(group_size)
 
         # Field alignment
         alignment = field_size, field_offset
 
         # Invalid field alignment size
-        if field_size not in (1, 2, 3, 4, 5, 6, 7, 8):
+        if field_size not in range(1, 8):
             raise FieldAlignmentError(self, self.index, alignment)
 
         # Invalid field alignment offset
@@ -2533,6 +2488,16 @@ class Decimal(Field):
         self._align_to_bit_offset = field_offset
 
     def _set_bit_size(self, size, step=1, auto_align=False):
+        """ Sets the *size* of the `Decimal` field.
+        
+        :param int size: is the *size* of the `Decimal` field in bits,
+            can be between ``1`` and ``64``.
+        :param int step: is the minimal required step *size* for the `Decimal`
+            field in bits.
+        :param bool auto_align: if ``True`` the `Decimal` field aligns itself
+            to the next matching byte size according to the *size* of the
+            `Decimal` field.
+        """
         # Field size
         bit_size = int(size)
 
@@ -2706,10 +2671,9 @@ class Bit(Decimal):
     one bit and returns its field *value* as an unsigned integer number.
 
     :param int number: is the bit offset of the `Bit` field within the
-        aligned bytes, can be between *0* and *63*.
-
+        aligned bytes, can be between ``0`` and ``63``.
     :param int align_to: aligns the `Bit` field to the number of bytes,
-        can be between *1* and *8*.
+        can be between ``1`` and ``8``.
 
     Example:
 
@@ -2790,9 +2754,9 @@ class Bit(Decimal):
         super().__init__(bit_size=1, align_to=align_to)
         # Field alignment
         if align_to:
-            self._set_alignment(byte_size=align_to, bit_offset=number)
+            self._set_alignment(group_size=align_to, bit_offset=number)
         else:
-            self._set_alignment(byte_size=0, bit_offset=number, auto_align=True)
+            self._set_alignment(group_size=0, bit_offset=number, auto_align=True)
 
     @property
     def name(self):
@@ -2801,7 +2765,7 @@ class Bit(Decimal):
 
     @staticmethod
     def is_bit():
-        """ Returns `True`."""
+        """ Returns ``True``."""
         return True
 
 
@@ -2810,9 +2774,9 @@ class Byte(Decimal):
     one byte and returns its field *value* as a hexadecimal encoded string.
 
     :param int align_to: aligns the `Byte` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Byte` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Byte` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Byte` field.
 
     Example:
@@ -2911,9 +2875,9 @@ class Char(Decimal):
     one byte and returns its field *value* as a unicode encoded string.
 
     :param int align_to: aligns the `Char` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Char` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Char` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Char` field.
 
     Example:
@@ -3014,14 +2978,12 @@ class Signed(Decimal):
     *size* and returns its field *value* as a signed integer number.
 
     :param int bit_size: is the *size* of the `Signed` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Signed` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Signed` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Signed` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Signed` field.
-
     :param byte_order: coding :class:`Byteorder` of the `Signed` field.
 
     Example:
@@ -3107,14 +3069,12 @@ class Unsigned(Decimal):
     string.
 
     :param int bit_size: is the *size* of the `Unsigned` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Unsigned` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Unsigned` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Unsigned` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Unsigned` field.
-
     :param byte_order: coding :class:`Byteorder` of the `Unsigned` field.
 
     Example:
@@ -3208,14 +3168,12 @@ class Bitset(Decimal):
     *size* and returns its field *value* as a binary encoded string.
 
     :param int bit_size: is the *size* of the `Bitset` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Bitset` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Bitset` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Bitset` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Bitset` field.
-
     :param byte_order: coding :class:`Byteorder` of the `Bitset` field.
 
     Example:
@@ -3309,14 +3267,12 @@ class Bool(Decimal):
     *size* and returns its field *value* as a boolean.
 
     :param int bit_size: is the *size* of the `Bool` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Bool` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Bool` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Bool` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Bool` field.
-
     :param byte_order: coding :class:`Byteorder` of the `Bool` field.
 
     Example:
@@ -3408,7 +3364,7 @@ class Bool(Decimal):
 
     @staticmethod
     def is_bool():
-        """ Returns `True`."""
+        """ Returns ``True``."""
         return True
 
 
@@ -3421,16 +3377,13 @@ class Enum(Decimal):
     is returned.
 
     :param int bit_size: is the *size* of the `Enum` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Enum` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Enum` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Enum` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Enum` field.
-
     :param enumeration: :class:`Enumeration` definition of the `Enum` field.
-
     :param byte_order: coding :class:`Byteorder` of the `Enum` field.
 
     Example:
@@ -3569,16 +3522,13 @@ class Scaled(Decimal):
     with a ``scale`` key for its scaling factor.
 
     :param float scale: scaling factor of the `Scaled` field.
-
     :param int bit_size: is the *size* of the `Scaled` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Scaled` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Scaled` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Scaled` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Scaled` field.
-
     :param byte_order: coding :class:`Byteorder` of the `Scaled` field.
 
     Example:
@@ -3731,19 +3681,15 @@ class Fraction(Decimal):
     :param int bits_integer: number of bits for the integer part of the
         fraction number, can be between *1* and the *size* of the
         `Fraction` field.
-
     :param int bit_size: is the *size* of the `Fraction` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Fraction` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Fraction` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Fraction` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Fraction` field.
-
-    :param bool signed: if `True` the `Fraction` field is signed otherwise
+    :param bool signed: if ``True`` the `Fraction` field is signed otherwise
         unsigned.
-
     :param byte_order: coding :class:`Byteorder` of the `Fraction` field
 
     Example:
@@ -3950,7 +3896,8 @@ class Fraction(Decimal):
         bits_fraction = max(self.bit_size - self._bits_integer, 0)
         if self._signed_fraction:
             integer = abs(int(normalized)) << max(bits_fraction, 0)
-            fraction = int(math.fabs(normalized - int(normalized)) * 2 ** bits_fraction)
+            fraction = int(
+                math.fabs(normalized - int(normalized)) * 2 ** bits_fraction)
             if normalized < 0:
                 mask = 2 ** (self.bit_size - 1)
             else:
@@ -3977,16 +3924,13 @@ class Bipolar(Fraction):
     :param int bits_integer: number of bits for the integer part of the
         fraction number, can be between *1* and the *size* of the
         `Bipolar` field.
-
     :param int bit_size: is the *size* of the `Bipolar` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Bipolar` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Bipolar` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Bipolar` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Bipolar` field.
-
     :param byte_order: coding :class:`Byteorder` of the `Bipolar` field.
 
     Example:
@@ -4078,16 +4022,13 @@ class Unipolar(Fraction):
     :param int bits_integer: number of bits for the integer part of the
         fraction number, can be between *1* and the *size* of the
         `Unipolar` field.
-
     :param int bit_size: is the *size* of the `Unipolar` field in bits,
-        can be between *1* and *64*.
-
+        can be between ``1`` and ``64``.
     :param int align_to: aligns the `Unipolar` field to the number of bytes,
-        can be between *1* and *8*.
-        If no field *alignment* is set the `Unipolar` field  aligns itself
-        to the next matching byte size corresponding to the *size* of the
+        can be between ``1`` and ``8``.
+        If no field *alignment* is set the `Unipolar` field aligns itself
+        to the next matching byte size according to the *size* of the
         `Unipolar` field.
-
     :param byte_order: coding :class:`Byteorder` of the `Unipolar` field.
 
     Example:
@@ -4175,7 +4116,7 @@ class Unipolar(Fraction):
 class Datetime(Decimal):
     """ A `Datetime` field is an unsigned :class:`Decimal` field with a fix
     *size* of four bytes and returns its field *value* as a UTC datetime
-    encoded string in the format *YYYY-mm-dd HH:MM:SS*.
+    encoded string in the format ``YYYY-mm-dd HH:MM:SS``.
 
     :param byte_order: coding :class:`Byteorder` of the `Datetime` field.
 
@@ -4396,10 +4337,8 @@ class Pointer(Decimal, Container):
 
     :param template: template for the :attr:`data` object referenced by
         the `Pointer` field.
-
     :param int address: absolute address of the :attr:`data` object
         referenced by the `Pointer` field.
-
     :param byte_order: coding :class:`Byteorder` of the :attr:`bytestream`
         of the `Pointer` field.
 
@@ -4617,11 +4556,11 @@ class Pointer(Decimal, Container):
 
     @staticmethod
     def is_pointer():
-        """ Returns `True`."""
+        """ Returns ``True``."""
         return True
 
     def is_null(self):
-        """ Returns `True` if the `Pointer` field points to zero."""
+        """ Returns ``True`` if the `Pointer` field points to zero."""
         return self._value is 0
 
     def refresh(self):
@@ -4657,11 +4596,9 @@ class Pointer(Decimal, Container):
         from the data :class:`Provider`.
 
         :param provider: data :class:`Provider`.
-
-        :param bool null_allowed: if `True` read access of address zero (null)
+        :param bool null_allowed: if ``True`` read access of address zero (null)
             is allowed.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`data` object of the `Pointer` field reads their *nested*
             :attr:`~Pointer.data` object fields as well (chained method call).
             Each `Pointer` field stores the bytes for its *nested*
@@ -4695,7 +4632,6 @@ class Pointer(Decimal, Container):
         patched in the data `source`.
 
         :param item: item to patch.
-
         :param byte_order: encoding :class:`Byteorder` for the item.
         """
         # Re-index the data object
@@ -4801,9 +4737,7 @@ class Pointer(Decimal, Container):
         the given *item* to the data `source`.
 
         :param provider: data :class:`Provider`.
-
         :param item: item to write.
-
         :param byte_order: encoding :class:`Byteorder`.
         """
         # Create memory patch for the item to write
@@ -4851,12 +4785,9 @@ class Pointer(Decimal, Container):
         `Pointer` field can be enabled.
 
         :param bytes buffer: bytestream.
-
         :param index: current read :class:`Index` within the *buffer*.
-
         :keyword byte_order: decoding :class:`Byteorder` of the *buffer*.
-
-        :keyword bool nested: if `True` a `Pointer` field decodes its *nested*
+        :keyword bool nested: if ``True`` a `Pointer` field decodes its *nested*
             :attr:`data` object fields as well (chained method call).
             Each :class:`Pointer` field uses for the decoding of its *nested*
             :attr:`data` object its own :attr:`bytestream`.
@@ -4890,12 +4821,9 @@ class Pointer(Decimal, Container):
         `Pointer` field can be enabled.
 
         :param bytearray buffer: bytestream.
-
         :param index: current write :class:`Index` within the *buffer*.
-
         :keyword byte_order: encoding :class:`Byteorder` of the *buffer*.
-
-        :keyword bool nested: if `True` a `Pointer` field encodes its *nested*
+        :keyword bool nested: if ``True`` a `Pointer` field encodes its *nested*
             :attr:`data` object fields as well (chained method call).
             Each :class:`Pointer` field uses for the encoding of its *nested*
             :attr:`data` object its own :attr:`bytestream`.
@@ -4964,8 +4892,7 @@ class Pointer(Decimal, Container):
         in the :attr:`data` object of the `Pointer` field.
 
         :param index: optional start :class:`Index` of the `Pointer`.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`data` object of the `Pointer` field lists their *nested*
             :attr:`~Pointer.data` object fields as well (chained method call).
         """
@@ -5003,7 +4930,7 @@ class Pointer(Decimal, Container):
         the ``['data']`` key contains the *types* for each :class:`Field`
         in the :attr:`data` object of the `Pointer` field.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`data` object of the `Pointer` field lists their *nested*
             :attr:`~Pointer.data` object fields as well (chained method call).
         """
@@ -5030,7 +4957,7 @@ class Pointer(Decimal, Container):
         the ``['data']`` key contains the *values* for each :class:`Field`
         in the :attr:`data` object of the `Pointer` field.
 
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`data` object of the `Pointer` field lists their *nested*
             :attr:`~Pointer.data` object fields as well (chained method call).
         """
@@ -5055,8 +4982,7 @@ class Pointer(Decimal, Container):
         for each :class:`Field` of the `Pointer` field.
 
         :param str root: root path.
-
-        :keyword bool nested: if `True` all :class:`Pointer` fields in the
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`data` object of the `Pointer` field lists their *nested*
             :attr:`~Pointer.data` object fields as well (chained method call).
         """
@@ -5102,10 +5028,9 @@ class Pointer(Decimal, Container):
             }
 
         :param str name: optional name for the `Pointer` field.
-
-        :keyword bool nested: if `True` a :class:`Pointer` field lists its
+        :keyword bool nested: if ``True`` a :class:`Pointer` field lists its
             *nested* :attr:`data` object fields as well (chained method call).
-            Default is `True`.
+            Default is ``True``.
         """
         obj = super().blueprint(name, **options)
         obj['class'] = self.__class__.__name__
@@ -5123,10 +5048,8 @@ class StructurePointer(Pointer):
 
     :param template: template for the `data` object.
         The *template* must be a :class:`Structure` instance.
-
     :param int address: absolute address of the `data` object referenced by
         the `StructurePointer` field.
-
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `StructurePointer` field.
 
@@ -5286,7 +5209,7 @@ class SequencePointer(Pointer):
 
     A `SequencePointer` field is:
 
-    *   *containable*: ``item in self`` returns `True` if *item* is part
+    *   *containable*: ``item in self`` returns ``True`` if *item* is part
         of the :class:`Sequence`.
     *   *sized*: ``len(self)`` returns the number of items in the
         :class:`Sequence`.
@@ -5312,10 +5235,8 @@ class SequencePointer(Pointer):
         :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
         *iterable* is one of these instances itself then the *iterable* itself
         is appended to the :class:`Sequence`.
-
     :param int address: absolute address of the `data` object referenced by
         the `SequencePointer` field.
-
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `SequencePointer` field.
 
@@ -5546,13 +5467,10 @@ class ArrayPointer(SequencePointer):
         The *template* can be any :class:`Field` instance or any *callable*
         that returns a :class:`Structure`, :class:`Sequence`, :class:`Array`
         or any :class:`Field` instance.
-
     :param int size: is the size of the :class:`Array` in number of
         :class:`Array` elements.
-
     :param int address: absolute address of the `data` object referenced by
         the `ArrayPointer` field.
-
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `ArrayPointer` field.
 
@@ -5731,7 +5649,7 @@ class StreamPointer(Pointer):
 
     A `StreamPointer` field is:
 
-    *   *containable*: ``item in self`` returns `True` if *item* is part
+    *   *containable*: ``item in self`` returns ``True`` if *item* is part
         of the :class:`Stream` field.
     *   *sized*: ``len(self)`` returns the length of the
         :class:`Stream` field.
@@ -5741,7 +5659,6 @@ class StreamPointer(Pointer):
         :class:`Stream` field.
 
     :param int size: is the size of the :class:`Stream` field in bytes.
-
     :param int address: absolute address of the `data` object referenced by
         the `StreamPointer` field.
 
@@ -5937,7 +5854,6 @@ class StringPointer(StreamPointer):
     refers to a :class:`String` field.
 
     :param int size: is the *size* of the :class:`String` field in bytes.
-
     :param int address: absolute address of the `data` object referenced by
         the `StringPointer` field.
 
@@ -6323,10 +6239,8 @@ class RelativePointer(Pointer):
 
     :param template: template for the `data` object referenced by the
         `RelativePointer` field.
-
     :param address: relative address of the `data` object referenced
         by the `RelativePointer` field.
-
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `RelativePointer` field.
 
@@ -6473,10 +6387,8 @@ class StructureRelativePointer(RelativePointer):
 
     :param template: template for the `data` object.
         The *template* must be a :class:`Structure` instance.
-
     :param address: relative address of the `data` object referenced
         by the `StructureRelativePointer` field.
-
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `StructureRelativePointer` field.
 
@@ -6637,7 +6549,7 @@ class SequenceRelativePointer(RelativePointer):
 
     A `SequenceRelativePointer` is:
 
-    *   *containable*: ``item in self`` returns `True` if *item* is part
+    *   *containable*: ``item in self`` returns ``True`` if *item* is part
         of the :class:`Sequence`.
     *   *sized*: ``len(self)`` returns the number of items in the
         :class:`Sequence`.
@@ -6663,10 +6575,8 @@ class SequenceRelativePointer(RelativePointer):
         :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
         *iterable* is one of these instances itself then the *iterable* itself
         is appended to the :class:`Sequence`.
-
     :param address: relative address of the `data` object referenced
         by the `SequenceRelativePointer` field.
-
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `SequenceRelativePointer` field.
 
@@ -6898,13 +6808,10 @@ class ArrayRelativePointer(SequenceRelativePointer):
         The *template* can be any :class:`Field` instance or any *callable*
         that returns a :class:`Structure`, :class:`Sequence`, :class:`Array`
         or any :class:`Field` instance.
-
     :param int size: is the size of the :class:`Array` in number of
         :class:`Array` elements.
-
     :param address: relative address of the `data` object referenced
         by the `ArrayRelativePointer` field.
-
     :param byte_order: coding :class:`Byteorder` of the `bytestream`
         of the `ArrayRelativePointer` field.
 
@@ -7083,7 +6990,7 @@ class StreamRelativePointer(RelativePointer):
 
     A `StreamRelativePointer` field is:
 
-    *   *containable*: ``item in self`` returns `True` if *item* is part
+    *   *containable*: ``item in self`` returns ``True`` if *item* is part
         of the :class:`Stream` field.
     *   *sized*: ``len(self)`` returns the length of the
         :class:`Stream` field.
@@ -7093,7 +7000,6 @@ class StreamRelativePointer(RelativePointer):
         :class:`Stream` field.
 
     :param int size: is the size of the :class:`Stream` field in bytes.
-
     :param address: relative address of the `data` object referenced
         by the `StreamRelativePointer` field.
 
@@ -7289,7 +7195,6 @@ class StringRelativePointer(StreamRelativePointer):
     which refers to a :class:`String` field.
 
     :param int size: is the *size* of the :class:`String` field in bytes.
-
     :param address: relative address of the `data` object referenced
         by the `StringRelativePointer` field.
 

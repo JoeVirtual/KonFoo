@@ -18,439 +18,548 @@ Provider
 ========
 
 .. autoclass:: Provider
-   :members:
+    :members:
 
 FileProvider
 ------------
 
 .. autoclass:: FileProvider
-   :members:
+    :members:
 
 
 Container
 =========
 
 .. autoclass:: Container
-   :members:
+    :members:
 
 Structure
 ---------
 
 .. autoclass:: Structure
-   :members:
+    :members:
 
 Sequence
 --------
 
 .. autoclass:: Sequence
-   :members:
+    :members:
 
 Array
 ~~~~~
 
 .. autoclass:: Array
-   :members:
+    :members:
 
 Fields
 ======
 
 .. autoclass:: Field
-   :members:
+    :members:
 
 Stream
 ------
 
 .. autoclass:: Stream
-   :members:
+    :members:
 
 String
 ~~~~~~
 
 .. autoclass:: String
-   :members:
+    :members:
 
 Float
 -----
 
 .. autoclass:: Float
-   :members:
+    :members:
 
 Decimal
 -------
 
 .. autoclass:: Decimal
-   :members:
+    :members:
 
 .. autoclass:: Decimal8
-   :members:
+    :members:
 
 .. autoclass:: Decimal16
-   :members:
+    :members:
 
 .. autoclass:: Decimal24
-   :members:
+    :members:
 
 .. autoclass:: Decimal32
-   :members:
+    :members:
+
+.. autoclass:: Decimal64
+    :members:
+
 
 Bit
 ~~~
 
 .. autoclass:: Bit
-   :members:
+    :members:
 
 Byte
 ~~~~
 
 .. autoclass:: Byte
-   :members:
+    :members:
 
 Char
 ~~~~
 
 .. autoclass:: Char
-   :members:
+    :members:
 
 Signed
 ~~~~~~
 
 .. autoclass:: Signed
-   :members:
+    :members:
 
 .. autoclass:: Signed8
-   :members:
+    :members:
 
 .. autoclass:: Signed16
-   :members:
+    :members:
 
 .. autoclass:: Signed24
-   :members:
+    :members:
 
 .. autoclass:: Signed32
-   :members:
+    :members:
+
+.. autoclass:: Signed64
+    :members:
 
 Unsigned
 ~~~~~~~~
 
 .. autoclass:: Unsigned
-   :members:
+    :members:
 
 .. autoclass:: Unsigned8
-   :members:
+    :members:
 
 .. autoclass:: Unsigned16
-   :members:
+    :members:
 
 .. autoclass:: Unsigned24
-   :members:
+    :members:
 
 .. autoclass:: Unsigned32
-   :members:
+    :members:
+
+.. autoclass:: Unsigned64
+    :members:
 
 Bitset
 ~~~~~~
 
 .. autoclass:: Bitset
-   :members:
+    :members:
 
 .. autoclass:: Bitset8
-   :members:
+    :members:
 
 .. autoclass:: Bitset16
-   :members:
+    :members:
 
 .. autoclass:: Bitset24
-   :members:
+    :members:
 
 .. autoclass:: Bitset32
-   :members:
+    :members:
+
+.. autoclass:: Bitset64
+    :members:
 
 Bool
 ~~~~
 
 .. autoclass:: Bool
-   :members:
+    :members:
 
 .. autoclass:: Bool8
-   :members:
+    :members:
 
 .. autoclass:: Bool16
-   :members:
+    :members:
 
 .. autoclass:: Bool24
-   :members:
+    :members:
 
 .. autoclass:: Bool32
-   :members:
+    :members:
+
+.. autoclass:: Bool64
+    :members:
 
 Enum
 ~~~~
 
 .. autoclass:: Enum
-   :members:
+    :members:
 
 .. autoclass:: Antivalent
-   :members:
+    :members:
 
 .. autoclass:: Enum4
-   :members:
+    :members:
 
 .. autoclass:: Enum8
-   :members:
+    :members:
 
 .. autoclass:: Enum16
-   :members:
+    :members:
 
 .. autoclass:: Enum24
-   :members:
+    :members:
 
 .. autoclass:: Enum32
-   :members:
+    :members:
+
+.. autoclass:: Enum64
+    :members:
 
 Scaled
 ~~~~~~
 
 .. autoclass:: Scaled
-   :members:
+    :members:
 
 .. autoclass:: Scaled8
-   :members:
+    :members:
 
 .. autoclass:: Scaled16
-   :members:
+    :members:
 
 .. autoclass:: Scaled24
-   :members:
+    :members:
 
 .. autoclass:: Scaled32
-   :members:
+    :members:
+
+.. autoclass:: Scaled64
+    :members:
 
 Fraction
 ~~~~~~~~
 
 .. autoclass:: Fraction
-   :members:
+    :members:
 
 Bipolar
 ~~~~~~~
 
 .. autoclass:: Bipolar
-   :members:
+    :members:
 
 .. autoclass:: Bipolar2
-   :members:
+    :members:
 
 .. autoclass:: Bipolar4
-   :members:
+    :members:
 
 Unipolar
 ~~~~~~~~
 
 .. autoclass:: Unipolar
-   :members:
+    :members:
 
 .. autoclass:: Unipolar2
-   :members:
+    :members:
 
 Datetime
 ~~~~~~~~
 
 .. autoclass:: Datetime
-   :members:
+    :members:
 
 IPv4Address
 ~~~~~~~~~~~
 
 .. autoclass:: IPv4Address
-   :members:
+    :members:
 
 
 Pointer
 =======
 
 .. autoclass:: Pointer
-   :members:
+    :members:
 
 .. autoclass:: Pointer8
-   :members:
+    :members:
 
 .. autoclass:: Pointer16
-   :members:
+    :members:
+
+.. autoclass:: Pointer24
+    :members:
 
 .. autoclass:: Pointer32
-   :members:
+    :members:
+
+.. autoclass:: Pointer48
+    :members:
 
 .. autoclass:: Pointer64
-   :members:
+    :members:
 
 Structure Pointer
 -----------------
 
 .. autoclass:: StructurePointer
-   :members:
+    :members:
    
 .. autoclass:: StructurePointer8
-   :members:
+    :members:
 
 .. autoclass:: StructurePointer16
-   :members:
+    :members:
+
+.. autoclass:: StructurePointer24
+    :members:
 
 .. autoclass:: StructurePointer32
-   :members:
+    :members:
+
+.. autoclass:: StructurePointer48
+    :members:
+
+.. autoclass:: StructurePointer64
+    :members:
 
 
 Sequence Pointer
 ----------------
 
 .. autoclass:: SequencePointer
-   :members:
+    :members:
 
 Array Pointer
 ~~~~~~~~~~~~~
 
 .. autoclass:: ArrayPointer
-   :members:
+    :members:
     
 .. autoclass:: ArrayPointer8
-   :members:
+    :members:
 
 .. autoclass:: ArrayPointer16
-   :members:
+    :members:
+
+.. autoclass:: ArrayPointer24
+    :members:
 
 .. autoclass:: ArrayPointer32
-   :members:
+    :members:
+
+.. autoclass:: ArrayPointer48
+    :members:
+
+.. autoclass:: ArrayPointer64
+    :members:
 
 Stream Pointer
 --------------
 
 .. autoclass:: StreamPointer
-   :members:
+    :members:
 
 .. autoclass:: StreamPointer8
-   :members:
+    :members:
 
 .. autoclass:: StreamPointer16
-   :members:
+    :members:
+
+.. autoclass:: StreamPointer24
+    :members:
 
 .. autoclass:: StreamPointer32
-   :members:
+    :members:
+
+.. autoclass:: StreamPointer48
+    :members:
+
+.. autoclass:: StreamPointer64
+    :members:
 
 String Pointer
 ~~~~~~~~~~~~~~
 
 .. autoclass:: StringPointer
-   :members:
+    :members:
    
 .. autoclass:: StringPointer8
-   :members:
+    :members:
 
 .. autoclass:: StringPointer16
-   :members:
+    :members:
+
+.. autoclass:: StringPointer24
+    :members:
 
 .. autoclass:: StringPointer32
-   :members:
+    :members:
+
+.. autoclass:: StringPointer48
+    :members:
+
+.. autoclass:: StringPointer64
+    :members:
 
 
 Auto String Pointer
 ~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: AutoStringPointer
-   :members:
+    :members:
 
 
 Relative Pointer
 ================
 
 .. autoclass:: RelativePointer
-   :members:
+    :members:
 
 .. autoclass:: RelativePointer8
-   :members:
+    :members:
 
 .. autoclass:: RelativePointer16
-   :members:
+    :members:
+
+.. autoclass:: RelativePointer24
+    :members:
 
 .. autoclass:: RelativePointer32
-   :members:
+    :members:
+
+.. autoclass:: RelativePointer48
+    :members:
 
 .. autoclass:: RelativePointer64
-   :members:
+    :members:
 
 
 Structure Relative Pointer
 --------------------------
 
 .. autoclass:: StructureRelativePointer
-   :members:
+    :members:
 
 .. autoclass:: StructureRelativePointer8
-   :members:
+    :members:
 
 .. autoclass:: StructureRelativePointer16
-   :members:
+    :members:
 
+.. autoclass:: StructureRelativePointer24
+
+    :members:
 .. autoclass:: StructureRelativePointer32
-   :members:
+    :members:
+
+.. autoclass:: StructureRelativePointer48
+    :members:
+
+.. autoclass:: StructureRelativePointer64
+    :members:
 
 
 Sequence Relative Pointer
 -------------------------
 
 .. autoclass:: SequenceRelativePointer
-   :members:
+    :members:
 
 Array Relative Pointer
 ~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ArrayRelativePointer
-   :members:
+    :members:
 
 .. autoclass:: ArrayRelativePointer8
-   :members:
+    :members:
 
 .. autoclass:: ArrayRelativePointer16
-   :members:
+    :members:
+
+.. autoclass:: ArrayRelativePointer24
+    :members:
 
 .. autoclass:: ArrayRelativePointer32
-   :members:
+    :members:
+
+.. autoclass:: ArrayRelativePointer48
+    :members:
+
+.. autoclass:: ArrayRelativePointer64
+    :members:
 
 Stream Relative Pointer
 -----------------------
 
 .. autoclass:: StreamRelativePointer
-   :members:
+    :members:
 
 .. autoclass:: StreamRelativePointer8
-   :members:
+    :members:
 
 .. autoclass:: StreamRelativePointer16
-   :members:
+    :members:
+
+.. autoclass:: StreamRelativePointer24
+    :members:
 
 .. autoclass:: StreamRelativePointer32
-   :members:
+    :members:
+
+.. autoclass:: StreamRelativePointer48
+    :members:
+
+.. autoclass:: StreamRelativePointer64
+    :members:
+
 
 String Relative Pointer
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: StringRelativePointer
-   :members:
+    :members:
 
 .. autoclass:: StringRelativePointer8
-   :members:
+    :members:
 
 .. autoclass:: StringRelativePointer16
-   :members:
+    :members:
+
+.. autoclass:: StringRelativePointer24
+    :members:
 
 .. autoclass:: StringRelativePointer32
-   :members:
+    :members:
+
+.. autoclass:: StringRelativePointer48
+    :members:
+
+.. autoclass:: StringRelativePointer64
+    :members:
+
    
+
 Byteorder
 =========
 
 .. autoclass:: Byteorder
-   :members:
-   :undoc-members:
-   :inherited-members:
+    :members:
+    :undoc-members:
+    :inherited-members:
 
 Field Index
 ===========
@@ -466,13 +575,13 @@ Enumerations
 ============
 
 .. autoclass:: Enumeration
-   :members:
+    :members:
 
 Categories
 ==========
 
 .. autoclass:: Category
-   :members:
+    :members:
 
 Exceptions
 ==========
@@ -524,4 +633,4 @@ Hexadecimal Viewer
 ------------------
 
 .. autoclass:: HexViewer
-   :members:
+    :members:

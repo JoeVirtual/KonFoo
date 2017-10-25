@@ -4,7 +4,7 @@
     ~~~~~~~~
     <Add description of the module here>.
 
-    :copyright: (c) 2015 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details.
 """
 
@@ -19,7 +19,7 @@ class HexViewer:
     as a hexadecimal dump to a output file or the console.
 
     :param int columns: number of output columns.
-        Allowed values are *8*, *16* or *32*.
+        Allowed values are ``8``, ``16`` or ``32``.
 
     Example:
 
@@ -52,7 +52,6 @@ class HexViewer:
 
         :param int index: start index of the viewing area.
             Default is the begin of the stream.
-
         :param int count: number of bytes to view.
             Default is to the end of the stream.
         """
@@ -79,13 +78,10 @@ class HexViewer:
         optional given *output* file.
 
         :param str source: location and name of the source file.
-
         :param int index: optional start index of the viewing area in bytes.
             Default is from the begin of the file.
-
         :param int count: optional number of bytes to view.
             Default is to the end of the file.
-
         :param str output: location and name for the optional output file.
         """
         stream = open(source, 'rb').read()
@@ -96,13 +92,10 @@ class HexViewer:
         optional given *output* file.
 
         :param bytes stream: byte stream to view.
-
         :param int index: optional start index of the viewing area in bytes.
             Default is the begin of the stream.
-
         :param int count: optional number of bytes to view.
             Default is to the end of the stream.
-
         :param str output: location and name for the optional output file.
         """
 
@@ -187,7 +180,6 @@ def d3json(blueprint, **options):
 
     :param dict blueprint: blueprint generated from a :class:`Structure`,
         :class:`Sequence`, :class:`Array` or any :class:`Field` instance.
-
     :keyword int indent: indentation for the JSON string. Default is *2*.
     """
 

@@ -1,3 +1,7 @@
+**[Installation](#Installation)** |
+**[Dependencies](#Dependencies)** |
+**[Documentation](#Documentation)**
+
 # KonF'00'
 
 [![Docs](https://readthedocs.org/projects/konfoo/badge/?version=latest)](http://konfoo.readthedocs.org/en/latest/)
@@ -53,7 +57,11 @@ script within the package.
 The library has no external dependencies.
 
 
-## Building the Documentation
+## Documentation
+
+Read the documentation on [ReadTheDocs](http://konfoo.readthedocs.io).
+
+### Building the Documentation
 
 Requires [sphinx](http://www.sphinx-doc.org) and the theme 
 [read the docs](https://github.com/snide/sphinx_rtd_theme),

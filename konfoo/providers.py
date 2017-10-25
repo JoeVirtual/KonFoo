@@ -4,11 +4,12 @@
     ~~~~~~~~~~~~
     <Add description of the module here>.
     
-    :copyright: (c) 2015-2016 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
 import abc
+from pathlib import Path
 
 
 class Provider:
@@ -36,7 +37,6 @@ class Provider:
         the start *address*.
 
         :param int address: start address.
-
         :param int count: number of bytes to read from a data `source`.
 
         .. note:: This abstract method must be implemented by a derived class.
@@ -49,9 +49,7 @@ class Provider:
         at the start *address*.
 
         :param bytes buffer: content to write.
-
         :param int address: start address.
-
         :param int count: number of bytes to write to a data `source`.
 
         .. note:: This abstract method must be implemented by a derived class.
@@ -71,14 +69,14 @@ class FileProvider(Provider):
 
     def __init__(self, source):
         super().__init__(source)
-        if isinstance(source, str):
-            self._cache = bytearray(open(source, 'rb').read())
-        else:
-            raise TypeError(source)
+        # File path
+        self._source = Path(source).absolute()
+        # File cache
+        self._cache = bytearray(self._source.read_bytes())
 
     def __str__(self):
-        return self.name + "({0._source!s}, " \
-                           "{1!s})".format(self, len(self._cache))
+        return self.__class__.__name__ + "({0._source!s}, " \
+                                         "{1!s})".format(self, len(self._cache))
 
     def __repr__(self):
         return self.__class__.__name__ + "(file={0._source!r}, " \
@@ -99,4 +97,7 @@ class FileProvider(Provider):
         :param str file: name and location of the file.
             Default is the original file.
         """
-        open(file or self._source, 'wb').write(self._cache)
+        if file:
+            Path(file).write_bytes(self._cache)
+        else:
+            self._source.write_bytes(self._cache)

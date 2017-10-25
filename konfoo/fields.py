@@ -52,6 +52,15 @@ class Decimal32(Decimal):
         super().__init__(bit_size=32, signed=signed, byte_order=byte_order)
 
 
+class Decimal64(Decimal):
+    """ A `Decimal64` field is a :class:`Decimal` field with a *size* of
+    eight bytes and is by default unsigned.
+    """
+
+    def __init__(self, signed=False, byte_order=Byteorder.auto):
+        super().__init__(bit_size=64, signed=signed, byte_order=byte_order)
+
+
 class Signed8(Signed):
     """ A `Signed8` field is a :class:`Signed` field with a *size* of
     one byte.
@@ -86,6 +95,15 @@ class Signed32(Signed):
 
     def __init__(self, byte_order=Byteorder.auto):
         super().__init__(bit_size=32, byte_order=byte_order)
+
+
+class Signed64(Signed):
+    """ A `Signed64` field is a :class:`Signed` field with a *size* of
+    eight bytes.
+    """
+
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=64, byte_order=byte_order)
 
 
 class Unsigned8(Unsigned):
@@ -124,6 +142,15 @@ class Unsigned32(Unsigned):
         super().__init__(bit_size=32, byte_order=byte_order)
 
 
+class Unsigned64(Unsigned):
+    """ A `Unsigned64` field is a :class:`Unsigned` field with a *size* of
+    eight bytes.
+    """
+
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=64, byte_order=byte_order)
+
+
 class Bitset8(Bitset):
     """ A `Bitset8` field is a :class:`Bitset` field with a *size* of
     one byte.
@@ -160,6 +187,15 @@ class Bitset32(Bitset):
         super().__init__(bit_size=32, byte_order=byte_order)
 
 
+class Bitset64(Bitset):
+    """ A `Bitset64` field is a :class:`Bitset` field with a *size* of
+    eight bytes.
+    """
+
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=64, byte_order=byte_order)
+
+
 class Bool8(Bool):
     """ A `Bool8` field is a :class:`Bool` field with a *size* of
     one byte.
@@ -194,6 +230,15 @@ class Bool32(Bool):
 
     def __init__(self, byte_order=Byteorder.auto):
         super().__init__(bit_size=32, byte_order=byte_order)
+
+
+class Bool64(Bool):
+    """ A `Bool64` field is a :class:`Bool` field with a *size* of
+    eight bytes.
+    """
+
+    def __init__(self, byte_order=Byteorder.auto):
+        super().__init__(bit_size=64, byte_order=byte_order)
 
 
 class Antivalent(Enum):
@@ -269,6 +314,17 @@ class Enum32(Enum):
                          byte_order=byte_order)
 
 
+class Enum64(Enum):
+    """ A `Enum64` field is a :class:`Enum` field with a *size* of
+    eight bytes.
+    """
+
+    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+        super().__init__(bit_size=64,
+                         enumeration=enumeration,
+                         byte_order=byte_order)
+
+
 class Scaled8(Scaled):
     """ A `Scaled8` field is a :class:`Scaled` field with a *size* of
     one byte.
@@ -306,6 +362,16 @@ class Scaled32(Scaled):
 
     def __init__(self, scale, byte_order=Byteorder.auto):
         super().__init__(scale, bit_size=32,
+                         byte_order=byte_order)
+
+
+class Scaled64(Scaled):
+    """ A `Scaled64` field is a :class:`Scaled` field with a *size* of
+    eight bytes.
+    """
+
+    def __init__(self, scale, byte_order=Byteorder.auto):
+        super().__init__(scale, bit_size=64,
                          byte_order=byte_order)
 
 
