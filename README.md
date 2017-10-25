@@ -1,6 +1,6 @@
-**[Installation](#Installation)** |
-**[Dependencies](#Dependencies)** |
-**[Documentation](#Documentation)**
+**[Installation](#installation)** |
+**[Dependencies](#dependencies)** |
+**[Documentation](#documentation)**
 
 # KonF'00'
 
