@@ -12,27 +12,8 @@
     :license: BSD, see LICENSE for details.
 """
 
-# Enumerations
-from .enums import Enumeration
-
 # Categories
 from .categories import Category
-
-# Globals
-from .globals import Byteorder, BYTEORDER
-
-# Exceptions
-from .exceptions import (
-    ByteOrderTypeError, EnumTypeError, FactoryTypeError, MemberTypeError,
-    ProviderTypeError, ContainerLengthError,
-    FieldAddressError, FieldAlignmentError, FieldByteOrderError,
-    FieldIndexError, FieldSizeError, FieldTypeError, FieldValueError,
-    FieldValueEncodingError,
-    FieldGroupByteOrderError, FieldGroupOffsetError, FieldGroupSizeError
-)
-# Providers
-from .providers import Provider, FileProvider
-
 # Core classes
 from .core import (
     is_any, is_field, is_container, is_array, is_structure,
@@ -49,6 +30,18 @@ from .core import (
     RelativePointer, StructureRelativePointer, SequenceRelativePointer,
     ArrayRelativePointer, StreamRelativePointer, StringRelativePointer
 )
+# Enumerations
+from .enums import Enumeration
+# Exceptions
+from .exceptions import (
+    ByteOrderTypeError, ByteOrderValueError,
+    EnumTypeError, FactoryTypeError, MemberTypeError,
+    ProviderTypeError, ContainerLengthError,
+    FieldAddressError, FieldAlignmentError, FieldByteOrderError,
+    FieldIndexError, FieldSizeError, FieldTypeError, FieldValueError,
+    FieldValueEncodingError,
+    FieldGroupByteOrderError, FieldGroupOffsetError, FieldGroupSizeError
+)
 # Field classes
 from .fields import (
     Decimal8, Decimal16, Decimal24, Decimal32, Decimal64,
@@ -60,6 +53,8 @@ from .fields import (
     Scaled8, Scaled16, Scaled24, Scaled32, Scaled64,
     Bipolar2, Bipolar4, Unipolar2
 )
+# Globals
+from .globals import Byteorder, BYTEORDER
 # Pointer classes
 from .pointers import (
     Pointer8, Pointer16, Pointer24,
@@ -100,6 +95,8 @@ from .pointers import (
     StringRelativePointer8, StringRelativePointer16, StringRelativePointer24,
     StringRelativePointer32, StringRelativePointer48, StringRelativePointer64,
 )
+# Providers
+from .providers import Provider, FileProvider
 # Utilities
 from .utils import d3json, HexViewer
 
@@ -115,6 +112,7 @@ __all__ = [
 
     # Exceptions
     'ByteOrderTypeError',
+    'ByteOrderValueError',
     'EnumTypeError',
 
     'FactoryTypeError',
@@ -327,4 +325,4 @@ __all__ = [
     'd3json', 'HexViewer',
 ]
 
-__version__ = '0.1a9'
+__version__ = '0.1a10'

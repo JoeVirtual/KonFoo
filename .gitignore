@@ -3,12 +3,10 @@
 *.egg-ignore
 *.egg-info
 *.pypirc
-*.ipynb
+*.ipynb_checkpoints
 dist
 build
 docs/_build
-KonFoo-*
-KonFoo.egg-info
 .tox
 .idea
 .cache

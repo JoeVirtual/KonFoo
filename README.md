@@ -14,18 +14,17 @@ foo of the all well-known memory dumps or hexadecimal views of binary data.
 
 It comes with sensible defaults out of the box.
 
-It aims to make the process of reading, decoding (deserializing), viewing, 
-encoding (serializing) and writing binary data from and back to a data provider 
-as easy as possible.
+It aims to make the process of reading, de-serializing, viewing, serializing 
+and writing binary data from and back to a data provider as easy as possible.
 
 KonFoo in points:
 
--   declarative way to describe the mapping of binary data
--   declarative classes to map, read, decode/deserialize, encode/serialize
-    and write binary data from and back to a data source
+-   declarative way to describe the mapping of binary data to python types
+-   declarative classes to read, deserialize, serialize and write binary data 
+    from and back to a data source
 -   easy adjustable data provider bridge to any kind of data source
 -   nesting of classes
--   adaptable classes on the fly while reading/decoding binary data
+-   adaptable classes on the fly while reading/de-serializing binary data
 -   easy syntax for accessing nested fields
 -   loadable mapping content including nested data from an INI file
 -   savable mapping content including nested data to an INI file

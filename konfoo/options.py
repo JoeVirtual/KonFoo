@@ -3,15 +3,15 @@
     options.py
     ~~~~~~~~~~
     <Add description of the module here>.
-    
-    :copyright: (c) 2015 by Jochen Gerhaeusser.
+
+    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
 from functools import wraps
 
 from .categories import Category
-from .globals import BYTEORDER
+from .globals import BYTEORDER, Byteorder
 
 
 class Option(Category):
@@ -41,7 +41,10 @@ def byte_order_option(default=BYTEORDER):
 
 def get_byte_order(options):
     option = Option.byte_order.value
-    return options.get(option, BYTEORDER)
+    byte_order = options.get(option, BYTEORDER)
+    if isinstance(byte_order, str):
+        byte_order = Byteorder.get_member(byte_order, BYTEORDER)
+    return byte_order
 
 
 def nested_option(default=False):

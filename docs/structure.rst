@@ -16,8 +16,7 @@ KonFoo has a :class:`Structure` class and many :ref:`field <field>` classes to
 declare the mapping part of a *byte stream* :ref:`mapper <mapper>`.
 The order how you declare the :ref:`members <structure member>` in the
 `structure`_ defines the order how the :ref:`members <structure member>` are
-decoded/deserialized and encoded/serialized by the built-in decoding and
-encoding engine.
+deserialized and serialized by the built-in deserializer and serializer.
 
 
 .. _structure member:
@@ -50,8 +49,8 @@ constructor method of the :class:`Structure` class.
 .. warning::
 
     A `structure`_ must always align to full bytes or an exception will be
-    raised when an incomplete `structure`_ declaration is decoded/deserialized
-    or encoded/serialized.
+    raised when an incomplete `structure`_ declaration is deserialized or
+    serialized.
 
 
 Align Fields in a Structure
@@ -372,27 +371,27 @@ of a `structure`_ by calling the method :meth:`~Structure.next_index`.
     The method re-indexes all members of the `structure`_ as well.
 
 
-Decoding
---------
+De-Serializing
+--------------
 
-You can **decode**/deserialize a byte stream with a `structure`_ by calling the
-method :meth:`~Structure.decode`.
+You can **deserialize** a byte stream with a `structure`_ by calling the method
+:meth:`~Structure.deserialize`.
 
     >>> bytestream = bytes.fromhex('01020946f00f00')
-    >>> structure.decode(bytestream)
+    >>> structure.deserialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
 
 
-Encoding
---------
+Serializing
+-----------
 
-You can **encode**/serialize a byte stream with a `structure`_ by calling the
-method :meth:`~Structure.encode`.
+You can **serialize** a byte stream with a `structure`_ by calling the method
+:meth:`~Structure.serialize`.
 
     >>> bytestream = bytearray()
     >>> bytestream
     bytearray(b'')
-    >>> structure.encode(bytestream)
+    >>> structure.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'01020946'

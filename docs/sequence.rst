@@ -14,7 +14,8 @@ Sequence
 KonFoo has a :class:`Sequence` class to map a consecutive area of a *byte
 stream* with different kind of :ref:`members <sequence member>`.
 The order how you append the members to the `sequence`_ defines the order how
-the members are decoded and encoded by the built-in decoding and encoding engine.
+the members are deserialized and serialized by the built-in deserializer and
+serializer.
 
 
 .. _sequence member:

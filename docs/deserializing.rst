@@ -6,19 +6,19 @@
     from binascii import hexlify, unhexlify
     from konfoo import *
 
-.. _decoding:
+.. _de-serializing:
 
-Decoding
-========
-
-
-Decoding Hook
--------------
+De-Serializing
+==============
 
 
+De-Serializing Hook
+-------------------
 
-Decoding Patterns
------------------
+
+
+De-Serializing Patterns
+-----------------------
 
 Resizing on the fly
 ~~~~~~~~~~~~~~~~~~~
@@ -36,15 +36,15 @@ Resizing on the fly
             self.content = String()
             self.next_index()
 
-        def decode(self, buffer=bytes(), index=zero(), **options):
+        def deserialize(self, buffer=bytes(), index=zero(), **options):
             # Reset content field size on the fly.
             self.content.resize(0)
-            # Decode complete structure.
-            index = super().decode(buffer, index, **options)
+            # Deserialize complete structure.
+            index = super().deserialize(buffer, index, **options)
             # Re-size content field on the fly.
             self.content.resize(self.length.value)
-            # Decode the content field.
-            index = self.content.decode(buffer, index, **options)
+            # Deserialize the content field.
+            index = self.content.deserialize(buffer, index, **options)
             return index
 
 Updating on the fly
@@ -63,9 +63,9 @@ Updating on the fly
             self.content = String()
             self.next_index()
 
-        def decode(self, buffer=bytes(), index=zero(), **options):
-            # Decode length field first.
-            index = self.length.decode(buffer, index, **options)
+        def deserialize(self, buffer=bytes(), index=zero(), **options):
+            # Deserialize length field first.
+            index = self.length.deserialize(buffer, index, **options)
             # Check if content field size is incorrect.
             if self.length.value != len(self.content):
                 # Re-size content field on the fly.
@@ -73,8 +73,8 @@ Updating on the fly
                 # Request a buffer update from the providing pointer on the fly.
                 return index._replace(update=True)
             else:
-                # Decode content field with correct size.
-                return self.content.decode(buffer, index, **options)
+                # Deserialize content field with correct size.
+                return self.content.deserialize(buffer, index, **options)
 
 
 Declaring on the fly

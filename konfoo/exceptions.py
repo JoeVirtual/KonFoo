@@ -3,7 +3,7 @@
     exceptions.py
     ~~~~~~~~~~~~~
     <Add description of the module here>.
-    
+
     :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
@@ -16,6 +16,15 @@ class ByteOrderTypeError(TypeError):
     def __init__(self, field, byte_order):
         message = "{0}: Inappropriate byte order type '{1}'.".format(
             field.__class__.__name__, type(byte_order).__name__)
+        super().__init__(message)
+
+
+class ByteOrderValueError(ValueError):
+    """ Raised if an inappropriate byte order value is assigned to a field class.
+    """
+    def __init__(self, field, index, byte_order):
+        message = "{0}: Invalid field byte order value '{1}' at index ({2}, {3}).".format(
+            field.__class__.__name__, byte_order, index.byte, index.bit)
         super().__init__(message)
 
 

@@ -3,7 +3,7 @@
     providers.py
     ~~~~~~~~~~~~
     <Add description of the module here>.
-    
+
     :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
@@ -23,7 +23,9 @@ class Provider:
     """
 
     def __init__(self, source):
+        # Data source
         self._source = source
+        # Cache
         self._cache = bytes()
 
     @property
@@ -33,7 +35,7 @@ class Provider:
 
     @abc.abstractmethod
     def read(self, address=0, count=0):
-        """ Reads the *number* of bytes from a data `source` beginning at
+        """ Returns a *number* of bytes read from a data `source` beginning at
         the start *address*.
 
         :param int address: start address.
@@ -41,7 +43,7 @@ class Provider:
 
         .. note:: This abstract method must be implemented by a derived class.
         """
-        return self._cache
+        return bytes()
 
     @abc.abstractmethod
     def write(self, buffer=bytes(), address=0, count=0):
@@ -59,8 +61,8 @@ class Provider:
 
 class FileProvider(Provider):
     """ A `FileProvider` is a data :class:`Provider` for binary files. The file
-    content is internal stored in a cache. The read and write methods only
-    operate on the internal cache.
+    content is internal stored in a :attr:`~Provider.cache`. The read and write
+    methods only operate on the internal :attr:`~Provider.cache`.
 
     Call :meth:`flush` to store the updated file content to a file.
 

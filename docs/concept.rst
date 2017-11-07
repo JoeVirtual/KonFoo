@@ -12,31 +12,31 @@
 Introduction
 ============
 
-**KonFoo** is a Python package for decoding *byte streams* into a meaningful
-representation. KonFoo helps you to decode (deserialize) a *byte stream*
-retrievable through a data :ref:`provider <provider>` to any kind of data source
-into a meaningful representation by just declaring how the parts of a *byte
-stream* should be represented, respectively mapped to :ref:`fields <field>`.
+**KonFoo** is a Python package for de-serializing *byte streams* into a meaningful
+representation. KonFoo helps you to deserialize a *byte stream* retrievable
+through a data :ref:`provider <provider>` to any kind of data source into a
+meaningful representation by just declaring how the parts of a *byte stream*
+should be represented, respectively mapped to :ref:`fields <field>`.
 
-You can store the representation into an ``.ini`` file to analyse the
-*byte stream* data.
+You can store the representation into an ``.ini`` file to analyse the *byte
+stream* data.
 
-The built-in decoder hook ``decode(buffer=bytes(), index=Index(), **option)``
+The built-in deserialize hook ``deserialize(buffer=bytes(), index=Index(), **option)``
 available for all `container`_ and `field`_ classes allows you to adapt even
-expand or declare the representation during the decoding/reading on the fly.
+expand or declare the representation during the de-serialization on the fly.
 
-The built-in deserializer "decoding-reader" provided by the :ref:`pointer
-<pointer>` class (called through the :meth:`Pointer.read_from` method) is able
-to follow even nested absolute or relative pointers to retrieve the *byte
-stream* from the data :ref:`provider <provider>` necessary for its referenced
-:ref:`data object <data object>` and to decode/deserialize (map) it.
+The built-in **deserializer** provided by the :ref:`pointer <pointer>` class
+(called through the :meth:`Pointer.read_from` method) is able to follow even
+nested absolute or relative pointers to retrieve the *byte stream* from the
+data :ref:`provider <provider>` necessary for its referenced :ref:`data object
+<data object>` and to de-serialize (map) it.
 
-After decoding (reading) the *byte stream* provided by the data :ref:`provider
-<provider>` the built-in serializer "encoding-writer" provided also by the
-:ref:`pointer <pointer>` class (called through the :meth:`Pointer.write_to`
-method) is able to transfer the manipulated values of any `container`_ or
-`field`_ in the representation back to the data :ref:`provider <provider>` to
-write it into its data source.
+After de-serializing the *byte stream* provided by the data :ref:`provider
+<provider>` the built-in **serializer** provided also by the :ref:`pointer
+<pointer>` class (called through the :meth:`Pointer.write_to` method) is able
+to transfer the manipulated values of any `container`_ or `field`_ in the
+representation back to the data :ref:`provider <provider>` to write it into its
+data source.
 
 Concept
 =======
@@ -59,7 +59,7 @@ and **write** *byte streams* from and back to the data :ref:`provider <provider>
 for its referenced :ref:`data object <data object>` respectively its *byte
 stream* `mapper`_.
 
-The build-in **decoding** and **encoding** engine unpacks and packs the *byte
+The build-in **deserializer** and **serializer** unpacks and packs the *byte
 stream* sequential to and from each `field`_ in the declare *byte stream*
 `mapper`_.
 
@@ -251,7 +251,7 @@ Index
 
 A `field`_ has an :attr:`~Field.index`. The `field index`_ contains the location
 of the `field`_ in a *byte stream* and in the providing *data source*. The `field
-index`_ is automatically calculated by the build-in decoding and encoding engine
+index`_ is automatically calculated by the build-in deserializer and serializer
 from the start point of the *byte stream* and the start address of the *byte
 stream* in the providing *data source*.
 
@@ -264,12 +264,12 @@ stream* in the providing *data source*.
 Alignment
 ---------
 
-A `field`_ has an :attr:`~Field.alignment`. The `field alignment`_ contains
-the location of the `field`_ within an *aligned* group of consecutive fields.
-The order how the consecutive fields are declared in a `container`_ defines the
+A `field`_ has an :attr:`~Field.alignment`. The `field alignment`_ contains the
+location of the `field`_ within an *aligned* group of consecutive fields. The
+order how the consecutive fields are declared in a `container`_ defines the
 order how the consecutive fields are aligned to each other. The ``bit offset``
-of the `field alignment`_ is automatically calculated by the build-in decoding
-and encoding engine.
+of the `field alignment`_ is automatically calculated by the build-in
+deserializer and serializer.
 
     >>> field.alignment  # alignment(byte size, bit offset)
     (0, 0)

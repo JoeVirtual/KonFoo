@@ -5,11 +5,11 @@
     from pprint import pprint
     from konfoo import *
 
-.. _encoding:
+.. _serializing:
 
-Encoding
-========
+Serializing
+===========
 
 
-Encoding Hook
--------------
+Serializing Hook
+----------------
