@@ -249,7 +249,7 @@ class Container:
         .. code-block:: ini
 
             [Foo]
-            stream = b''
+            stream =
             float = 0.0
             structure.decimal = 0
             array[0] = 0x0
@@ -287,7 +287,7 @@ class Container:
         .. code-block:: ini
 
             [Foo]
-            stream = b''
+            stream =
             float = 0.0
             structure.decimal = 0
             array[0] = 0x0
@@ -307,9 +307,9 @@ class Container:
         ...         self.array = Array(Byte, 3)
         ...         self.pointer = Pointer()
         >>> foo = Foo()
-        >>> foo.load('foo.ini')
+        >>> foo.load('foo.ini') # doctest: +NORMALIZE_WHITESPACE
         [Foo]
-        Foo.stream = b''
+        Foo.stream =
         Foo.float = 0.0
         Foo.structure.decimal = 0
         Foo.array[0] = 0x0
@@ -403,6 +403,11 @@ class Structure(OrderedDict, Container):
 
     def __init__(self):
         super().__init__()
+
+    def __bytes__(self):
+        buffer = bytearray()
+        self.serialize(buffer)
+        return bytes(buffer)
 
     def __getitem__(self, key):
         return super().__getitem__(key)
@@ -856,6 +861,11 @@ class Sequence(MutableSequence, Container):
                 if not is_any(item):
                     raise MemberTypeError(self, item, name)
                 self.append(item)
+
+    def __bytes__(self):
+        buffer = bytearray()
+        self.serialize(buffer)
+        return bytes(buffer)
 
     def __str__(self):
         return str(self._data)
@@ -1799,7 +1809,7 @@ class Stream(Field):
     >>> bool(stream)
     False
     >>> stream.value
-    b''
+    ''
     >>> bytes(stream)
     b''
     >>> stream.resize(10)
@@ -1812,17 +1822,17 @@ class Stream(Field):
     >>> stream.next_index()
     Index(byte=10, bit=0, address=10, base_address=0, update=False)
     >>> stream.value
-    b'00000000000000000000'
+    '00000000000000000000'
     >>> stream.value = '0102030405'
     >>> stream.value
-    b'01020304050000000000'
+    '01020304050000000000'
     >>> stream.resize(15)
     >>> stream.value
-    b'010203040500000000000000000000'
+    '010203040500000000000000000000'
     >>> stream.resize(10)
     >>> stream.value = '0102030405060708090a0b0c'
     >>> stream.value
-    b'0102030405060708090a'
+    '0102030405060708090a'
     >>> stream.hex()
     '0102030405060708090a'
     >>> len(stream)
@@ -1886,8 +1896,8 @@ class Stream(Field):
 
     @property
     def value(self):
-        """ Field value."""
-        return hexlify(self._value)
+        """ Field value as a lowercase hexadecimal encoded string."""
+        return hexlify(self._value).decode('ascii')
 
     @value.setter
     def value(self, x):
@@ -2068,7 +2078,7 @@ class String(Stream):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a ascii encoded string."""
         length = self._value.find(b'\x00')
         if length >= 0:
             return self._value[:length].decode('ascii')
@@ -2130,6 +2140,8 @@ class Float(Field):
     5.960464477539063e-08
     >>> real.value
     0.0
+    >>> bytes(real)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(real)
     0
     >>> float(real)
@@ -2166,6 +2178,17 @@ class Float(Field):
         # Field value
         self._value = float()
 
+    def __bytes__(self):
+
+        if self.byte_order is Byteorder.big:
+            return struct.pack('>f', self._value)
+        elif self.byte_order is Byteorder.little:
+            return struct.pack('<f', self._value)
+        elif BYTEORDER is Byteorder.big:
+            return struct.pack('>f', self._value)
+        else:
+            return struct.pack('<f', self._value)
+
     def __bool__(self):
         return bool(self._value)
 
@@ -2177,7 +2200,7 @@ class Float(Field):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a single precision float point number."""
         return float(self._value)
 
     @value.setter
@@ -2313,6 +2336,8 @@ class Decimal(Field):
     65535
     >>> unsigned.value
     0
+    >>> bytes(unsigned)
+    b'\\x00\\x00'
     >>> int(unsigned)
     0
     >>> float(unsigned)
@@ -2388,6 +2413,8 @@ class Decimal(Field):
     32767
     >>> signed.value
     0
+    >>> bytes(signed)
+    b'\\x00\\x00'
     >>> int(signed)
     0
     >>> float(signed)
@@ -2451,6 +2478,14 @@ class Decimal(Field):
         # Field value
         self._value = int()
 
+    def __bytes__(self):
+        size, offset = self.alignment
+        value = self._value << offset
+        if self.byte_order in (Byteorder.big, Byteorder.little):
+            return value.to_bytes(size, self.byte_order.value)
+        else:
+            return value.to_bytes(size, BYTEORDER.value)
+
     def __bool__(self):
         return bool(self._value)
 
@@ -2465,7 +2500,7 @@ class Decimal(Field):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a decimal number."""
         return int(self._value)
 
     @value.setter
@@ -2763,6 +2798,8 @@ class Bit(Decimal):
     False
     >>> bit.value
     0
+    >>> bytes(bit)
+    b'\\x00'
     >>> int(bit)
     0
     >>> float(bit)
@@ -2876,6 +2913,8 @@ class Byte(Decimal):
     255
     >>> byte.value
     '0x0'
+    >>> bytes(byte)
+    b'\\x00'
     >>> int(byte)
     0
     >>> float(byte)
@@ -2939,7 +2978,7 @@ class Byte(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a lowercase hexadecimal string prefixed with ``0x``."""
         return hex(self._value)
 
     @value.setter
@@ -2982,6 +3021,8 @@ class Char(Decimal):
     255
     >>> char.value
     '\\x00'
+    >>> bytes(char)
+    b'\\x00'
     >>> ord(char.value)
     0
     >>> int(char)
@@ -3047,7 +3088,7 @@ class Char(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as an unicode string character."""
         return chr(self._value)
 
     @value.setter
@@ -3094,6 +3135,8 @@ class Signed(Decimal):
     32767
     >>> signed.value
     0
+    >>> bytes(signed)
+    b'\\x00\\x00'
     >>> int(signed)
     0
     >>> float(signed)
@@ -3190,6 +3233,8 @@ class Unsigned(Decimal):
     65535
     >>> unsigned.value
     '0x0'
+    >>> bytes(unsigned)
+    b'\\x00\\x00'
     >>> int(unsigned)
     0
     >>> float(unsigned)
@@ -3248,7 +3293,7 @@ class Unsigned(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a lowercase hexadecimal string prefixed with ``0x``."""
         return hex(self._value)
 
     @value.setter
@@ -3295,6 +3340,8 @@ class Bitset(Decimal):
     65535
     >>> bitset.value
     '0b0000000000000000'
+    >>> bytes(bitset)
+    b'\\x00\\x00'
     >>> int(bitset)
     0
     >>> float(bitset)
@@ -3353,7 +3400,7 @@ class Bitset(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a binary string prefixed with ``0b``."""
         return '{0:#0{1}b}'.format(self._value, self.bit_size + 2)
 
     @value.setter
@@ -3402,6 +3449,8 @@ class Bool(Decimal):
     65535
     >>> boolean.value
     False
+    >>> bytes(boolean)
+    b'\\x00\\x00'
     >>> int(boolean)
     0
     >>> float(boolean)
@@ -3460,7 +3509,7 @@ class Bool(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a boolean, ``True`` or ``False``."""
         return bool(self._value)
 
     @value.setter
@@ -3511,6 +3560,8 @@ class Enum(Decimal):
     16
     >>> enum.signed
     False
+    >>> bytes(enum)
+    b'\\x00\\x00'
     >>> enum.min()
     0
     >>> enum.max()
@@ -3589,7 +3640,7 @@ class Enum(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a enum name string. Fall back is a decimal number."""
         if self._enum and issubclass(self._enum, Enumeration):
             name = self._enum.get_name(self._value)
             if name:
@@ -3672,6 +3723,8 @@ class Scaled(Decimal):
     32767
     >>> scaled.value
     0.0
+    >>> bytes(scaled)
+    b'\\x00\\x00'
     >>> int(scaled)
     0
     >>> float(scaled)
@@ -3737,7 +3790,7 @@ class Scaled(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a floating point number."""
         return self.as_float(self._value)
 
     @value.setter
@@ -3835,6 +3888,8 @@ class Fraction(Decimal):
     65535
     >>> unipolar.value
     0.0
+    >>> bytes(unipolar)
+    b'\\x00\\x00'
     >>> int(unipolar)
     0
     >>> float(unipolar)
@@ -3914,6 +3969,8 @@ class Fraction(Decimal):
     65535
     >>> bipolar.value
     0.0
+    >>> bytes(bipolar)
+    b'\\x00\\x00'
     >>> int(bipolar)
     0
     >>> float(bipolar)
@@ -3998,7 +4055,7 @@ class Fraction(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a floating point number."""
         return self.as_float(self._value)
 
     @value.setter
@@ -4086,6 +4143,8 @@ class Bipolar(Fraction):
     65535
     >>> bipolar.value
     0.0
+    >>> bytes(bipolar)
+    b'\\x00\\x00'
     >>> int(bipolar)
     0
     >>> float(bipolar)
@@ -4190,6 +4249,8 @@ class Unipolar(Fraction):
     65535
     >>> unipolar.value
     0.0
+    >>> bytes(unipolar)
+    b'\\x00\\x00'
     >>> int(unipolar)
     0
     >>> float(unipolar)
@@ -4285,6 +4346,8 @@ class Datetime(Decimal):
     4294967295
     >>> datetime.value
     '1970-01-01 00:00:00'
+    >>> bytes(datetime)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(datetime)
     0
     >>> float(datetime)
@@ -4340,7 +4403,8 @@ class Datetime(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a  UTC datetime string in the ISO format
+        ``YYYY-mm-dd HH:MM:SS``"""
         return str(datetime.datetime.utcfromtimestamp(self._value))
 
     @value.setter
@@ -4388,6 +4452,8 @@ class IPv4Address(Decimal):
     4294967295
     >>> ipv4.value
     '0.0.0.0'
+    >>> bytes(ipv4)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(ipv4)
     0
     >>> float(ipv4)
@@ -4443,7 +4509,7 @@ class IPv4Address(Decimal):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a IPv4 address formatted string"""
         return str(ipaddress.IPv4Address(self._value))
 
     @value.setter
@@ -4534,9 +4600,11 @@ class Pointer(Decimal, Container):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -4578,7 +4646,7 @@ class Pointer(Decimal, Container):
     b'ffffffff'
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
-    b'4b6f6e466f6f2069732046756e'
+    '4b6f6e466f6f2069732046756e'
     >>> pointer.as_bytes()
     bytearray(b'')
     >>> pointer.refresh()
@@ -4650,9 +4718,9 @@ class Pointer(Decimal, Container):
     @property
     def bytestream(self):
         """ Bytestream of the `Pointer` field for the referenced :attr:`data`
-        object. Returned as a hexadecimal string.
+        object. Returned as a hexadecimal encoded string.
         """
-        return hexlify(self._data_stream)
+        return hexlify(self._data_stream).decode('ascii')
 
     @bytestream.setter
     def bytestream(self, value):
@@ -4712,7 +4780,7 @@ class Pointer(Decimal, Container):
 
     @property
     def value(self):
-        """ Field value."""
+        """ Field value as a lowercase hexadecimal string prefixed with ``0x``."""
         return hex(self._value)
 
     @value.setter
@@ -5261,9 +5329,11 @@ class StructurePointer(Pointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -5456,9 +5526,13 @@ class SequencePointer(Pointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> hexlify(bytes(pointer))
+    b'00000000'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -5695,9 +5769,11 @@ class ArrayPointer(SequencePointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -5884,7 +5960,7 @@ class StreamPointer(Pointer):
     Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=(0, 0),
            bit_size=0,
-           value=b'')
+           value='')
     >>> pointer.size
     0
     >>> len(pointer)
@@ -5892,9 +5968,11 @@ class StreamPointer(Pointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -5938,7 +6016,7 @@ class StreamPointer(Pointer):
     10
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
-    b'4b6f6e466f6f2069732046756e'
+    '4b6f6e466f6f2069732046756e'
     >>> hexlify(pointer.as_bytes())
     b'00000000000000000000'
     >>> pointer.refresh()
@@ -5990,7 +6068,7 @@ class StreamPointer(Pointer):
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', 'Stream10')])
     >>> pprint(pointer.field_values())
-    OrderedDict([('value', '0xffffffff'), ('data', b'4b6f6e466f6f20697320')])
+    OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
       StreamPointer(index=Index(byte=0, bit=0,
@@ -6005,14 +6083,14 @@ class StreamPointer(Pointer):
                          update=False),
              alignment=(10, 0),
              bit_size=80,
-             value=b'4b6f6e466f6f20697320'))]
+             value='4b6f6e466f6f20697320'))]
     >>> pprint(pointer.to_list())
     [('StreamPointer.value', '0xffffffff'),
-     ('StreamPointer.data', b'4b6f6e466f6f20697320')]
+     ('StreamPointer.data', '4b6f6e466f6f20697320')]
     >>> pprint(pointer.to_dict())
     OrderedDict([('StreamPointer',
                   OrderedDict([('value', '0xffffffff'),
-                               ('data', b'4b6f6e466f6f20697320')]))])
+                               ('data', '4b6f6e466f6f20697320')]))])
     """
 
     def __init__(self, size=0, address=None):
@@ -6091,9 +6169,11 @@ class StringPointer(StreamPointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -6137,7 +6217,7 @@ class StringPointer(StreamPointer):
     10
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
-    b'4b6f6e466f6f2069732046756e'
+    '4b6f6e466f6f2069732046756e'
     >>> hexlify(pointer.as_bytes())
     b'00000000000000000000'
     >>> pointer.refresh()
@@ -6267,9 +6347,11 @@ class AutoStringPointer(StringPointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -6313,7 +6395,7 @@ class AutoStringPointer(StringPointer):
     10
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
-    b'4b6f6e466f6f2069732046756e'
+    '4b6f6e466f6f2069732046756e'
     >>> hexlify(pointer.as_bytes())
     b'00000000000000000000'
     >>> pointer.refresh()
@@ -6481,9 +6563,11 @@ class RelativePointer(Pointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -6522,7 +6606,7 @@ class RelativePointer(Pointer):
     b'ffffffff'
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
-    b'4b6f6e466f6f2069732046756e'
+    '4b6f6e466f6f2069732046756e'
     >>> pointer.as_bytes()
     bytearray(b'')
     >>> pointer.refresh()
@@ -6635,9 +6719,11 @@ class StructureRelativePointer(RelativePointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -6831,9 +6917,11 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -7071,9 +7159,11 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -7260,7 +7350,7 @@ class StreamRelativePointer(RelativePointer):
     Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=(0, 0),
            bit_size=0,
-           value=b'')
+           value='')
     >>> pointer.size
     0
     >>> len(pointer)
@@ -7268,9 +7358,11 @@ class StreamRelativePointer(RelativePointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -7314,7 +7406,7 @@ class StreamRelativePointer(RelativePointer):
     10
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
-    b'4b6f6e466f6f2069732046756e'
+    '4b6f6e466f6f2069732046756e'
     >>> hexlify(pointer.as_bytes())
     b'00000000000000000000'
     >>> pointer.refresh()
@@ -7366,7 +7458,7 @@ class StreamRelativePointer(RelativePointer):
     >>> pprint(pointer.field_types())
     OrderedDict([('value', 'Pointer32'), ('data', 'Stream10')])
     >>> pprint(pointer.field_values())
-    OrderedDict([('value', '0xffffffff'), ('data', b'4b6f6e466f6f20697320')])
+    OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
       StreamRelativePointer(index=Index(byte=0, bit=0,
@@ -7381,14 +7473,14 @@ class StreamRelativePointer(RelativePointer):
                          update=False),
              alignment=(10, 0),
              bit_size=80,
-             value=b'4b6f6e466f6f20697320'))]
+             value='4b6f6e466f6f20697320'))]
     >>> pprint(pointer.to_list())
     [('StreamRelativePointer.value', '0xffffffff'),
-     ('StreamRelativePointer.data', b'4b6f6e466f6f20697320')]
+     ('StreamRelativePointer.data', '4b6f6e466f6f20697320')]
     >>> pprint(pointer.to_dict())
     OrderedDict([('StreamRelativePointer',
                   OrderedDict([('value', '0xffffffff'),
-                               ('data', b'4b6f6e466f6f20697320')]))])
+                               ('data', '4b6f6e466f6f20697320')]))])
     """
 
     def __init__(self, size=0, address=None):
@@ -7471,9 +7563,11 @@ class StringRelativePointer(StreamRelativePointer):
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.value
     '0x0'
+    >>> bytes(pointer)
+    b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
     0
     >>> float(pointer)
@@ -7513,7 +7607,7 @@ class StringRelativePointer(StreamRelativePointer):
     10
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
-    b'4b6f6e466f6f2069732046756e'
+    '4b6f6e466f6f2069732046756e'
     >>> hexlify(pointer.as_bytes())
     b'00000000000000000000'
     >>> pointer.refresh()

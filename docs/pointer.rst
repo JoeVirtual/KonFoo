@@ -130,7 +130,7 @@ You can declare a `data object`_ on the fly.
     >>> pprint(data.to_list(nested=True)) # doctest: +NORMALIZE_WHITESPACE
     [('Structure.size', 0),
      ('Structure.item', '0x0'),
-     ('Structure.item.data', b'')]
+     ('Structure.item.data', '')]
 
 You can declare a `pointer`_ on the fly.
 
@@ -139,7 +139,7 @@ You can declare a `pointer`_ on the fly.
     [('Pointer.value', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
-     ('Pointer.data.item.data', b'')]
+     ('Pointer.data.item.data', '')]
 
 
 View a Pointer
@@ -318,7 +318,7 @@ with the property names:
     >>> pointer.size
     8
     >>> pointer.bytestream
-    b''
+    ''
     >>> pointer.order
     Byteorder.little = 'little'
     >>> pointer.order.value
@@ -472,7 +472,7 @@ from an INI file by calling the method :meth:`~Container.load`.
     Pointer.value = 0x0
     Pointer.data.size = 0
     Pointer.data.item = 0x0
-    Pointer.data.item.data = b''
+    Pointer.data.item.data =
 
 .. note::
 

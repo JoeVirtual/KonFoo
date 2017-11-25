@@ -78,7 +78,7 @@ by attaching the :ref:`mapper <mapper>` to the :ref:`data object <data object>`
 of a :ref:`pointer <pointer>`.
 
 .. code-block:: python
-    :emphasize-lines: 5
+    :emphasize-lines: 4
 
     class MapperPointer(Pointer):
 
