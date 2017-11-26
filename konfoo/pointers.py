@@ -3,12 +3,10 @@
     pointers.py
     ~~~~~~~~~~~
     <Add description of the module here>.
-    
+
     :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
-
-from .globals import BYTEORDER
 
 from .core import (
     Pointer, StructurePointer, ArrayPointer, StreamPointer,
@@ -16,10 +14,10 @@ from .core import (
     RelativePointer, StructureRelativePointer, ArrayRelativePointer,
     StreamRelativePointer, StringRelativePointer,
     Float)
-
 from .fields import (
     Signed8, Signed16, Signed32,
     Unsigned8, Unsigned16, Unsigned32)
+from .globals import BYTEORDER
 
 
 class Pointer8(Pointer):
@@ -27,10 +25,11 @@ class Pointer8(Pointer):
     with a :class:`Field` *size* of one byte.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=8)
 
 
 class Pointer16(Pointer):
@@ -38,10 +37,13 @@ class Pointer16(Pointer):
     with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class Pointer24(Pointer):
@@ -49,10 +51,13 @@ class Pointer24(Pointer):
     with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class Pointer32(Pointer):
@@ -60,10 +65,13 @@ class Pointer32(Pointer):
     with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class Pointer48(Pointer):
@@ -71,10 +79,13 @@ class Pointer48(Pointer):
     with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class Pointer64(Pointer):
@@ -82,10 +93,13 @@ class Pointer64(Pointer):
     with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class StructurePointer8(StructurePointer):
@@ -93,10 +107,11 @@ class StructurePointer8(StructurePointer):
     with a :class:`Field` *size* of one byte.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=8)
 
 
 class StructurePointer16(StructurePointer):
@@ -104,10 +119,13 @@ class StructurePointer16(StructurePointer):
     with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class StructurePointer24(StructurePointer):
@@ -115,10 +133,13 @@ class StructurePointer24(StructurePointer):
     with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class StructurePointer32(StructurePointer):
@@ -126,10 +147,13 @@ class StructurePointer32(StructurePointer):
     with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class StructurePointer48(StructurePointer):
@@ -137,10 +161,13 @@ class StructurePointer48(StructurePointer):
     with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class StructurePointer64(StructurePointer):
@@ -148,76 +175,95 @@ class StructurePointer64(StructurePointer):
     with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class ArrayPointer8(ArrayPointer):
-    """ A `ArrayPointer8` field is a :class:`ArrayPointer` field
+    """ An `ArrayPointer8` field is an :class:`ArrayPointer` field
     with a :class:`Field` *size* of one byte.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=8)
 
 
 class ArrayPointer16(ArrayPointer):
-    """ A `ArrayPointer16` field is a :class:`ArrayPointer` field
+    """ An `ArrayPointer16` field is an :class:`ArrayPointer` field
     with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class ArrayPointer24(ArrayPointer):
-    """ A `ArrayPointer24` field is a :class:`ArrayPointer` field
+    """ An `ArrayPointer24` field is an :class:`ArrayPointer` field
     with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class ArrayPointer32(ArrayPointer):
-    """ A `ArrayPointer32` field is a :class:`ArrayPointer` field
+    """ An `ArrayPointer32` field is an :class:`ArrayPointer` field
     with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class ArrayPointer48(ArrayPointer):
-    """ A `ArrayPointer48` field is a :class:`ArrayPointer` field
+    """ An `ArrayPointer48` field is an :class:`ArrayPointer` field
     with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class ArrayPointer64(ArrayPointer):
-    """ A `ArrayPointer64` field is a :class:`ArrayPointer` field
+    """ An `ArrayPointer64` field is an :class:`ArrayPointer` field
     with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class StreamPointer8(StreamPointer):
@@ -226,9 +272,9 @@ class StreamPointer8(StreamPointer):
     """
 
     def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=8)
 
 
 class StreamPointer16(StreamPointer):
@@ -236,10 +282,11 @@ class StreamPointer16(StreamPointer):
     with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class StreamPointer24(StreamPointer):
@@ -247,10 +294,11 @@ class StreamPointer24(StreamPointer):
     with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class StreamPointer32(StreamPointer):
@@ -258,10 +306,11 @@ class StreamPointer32(StreamPointer):
     with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class StreamPointer48(StreamPointer):
@@ -269,10 +318,11 @@ class StreamPointer48(StreamPointer):
     with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class StreamPointer64(StreamPointer):
@@ -280,10 +330,11 @@ class StreamPointer64(StreamPointer):
     with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class StringPointer8(StringPointer):
@@ -292,9 +343,7 @@ class StringPointer8(StringPointer):
     """
 
     def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+        super().__init__(size, address, bit_size=8)
 
 
 class StringPointer16(StringPointer):
@@ -302,10 +351,11 @@ class StringPointer16(StringPointer):
     with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class StringPointer24(StringPointer):
@@ -313,10 +363,11 @@ class StringPointer24(StringPointer):
     with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class StringPointer32(StringPointer):
@@ -324,10 +375,11 @@ class StringPointer32(StringPointer):
     with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class StringPointer48(StringPointer):
@@ -335,10 +387,11 @@ class StringPointer48(StringPointer):
     with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class StringPointer64(StringPointer):
@@ -346,10 +399,11 @@ class StringPointer64(StringPointer):
     with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class FloatPointer(Pointer):
@@ -357,8 +411,14 @@ class FloatPointer(Pointer):
     which refers to a :class:`Float` field.
     """
 
-    def __init__(self, address=None, byte_order=BYTEORDER):
-        super().__init__(Float(), address, byte_order=byte_order)
+    def __init__(self, address=None, data_order=BYTEORDER,
+                 bit_size=32, align_to=None, field_order='auto'):
+        super().__init__(template=Float(),
+                         address=address,
+                         data_order=data_order,
+                         bit_size=bit_size,
+                         align_to=align_to,
+                         field_order=field_order)
 
 
 class Signed8Pointer(Pointer):
@@ -366,8 +426,14 @@ class Signed8Pointer(Pointer):
     which refers to a :class:`Signed8` field.
     """
 
-    def __init__(self, address=None, byte_order=BYTEORDER):
-        super().__init__(Signed8(), address, byte_order=byte_order)
+    def __init__(self, address=None, data_order=BYTEORDER,
+                 bit_size=32, align_to=None, field_order='auto'):
+        super().__init__(template=Signed8(),
+                         address=address,
+                         data_order=data_order,
+                         bit_size=bit_size,
+                         align_to=align_to,
+                         field_order=field_order)
 
 
 class Signed16Pointer(Pointer):
@@ -375,8 +441,14 @@ class Signed16Pointer(Pointer):
     which refers to a :class:`Signed16` field.
     """
 
-    def __init__(self, address=None, byte_order=BYTEORDER):
-        super().__init__(Signed16(), address, byte_order=byte_order)
+    def __init__(self, address=None, data_order=BYTEORDER,
+                 bit_size=32, align_to=None, field_order='auto'):
+        super().__init__(template=Signed16(),
+                         address=address,
+                         data_order=data_order,
+                         bit_size=bit_size,
+                         align_to=align_to,
+                         field_order=field_order)
 
 
 class Signed32Pointer(Pointer):
@@ -384,35 +456,59 @@ class Signed32Pointer(Pointer):
     which refers to a :class:`Signed32` field.
     """
 
-    def __init__(self, address=None, byte_order=BYTEORDER):
-        super().__init__(Signed32(), address, byte_order=byte_order)
+    def __init__(self, address=None, data_order=BYTEORDER,
+                 bit_size=32, align_to=None, field_order='auto'):
+        super().__init__(template=Signed32(),
+                         address=address,
+                         data_order=data_order,
+                         bit_size=bit_size,
+                         align_to=align_to,
+                         field_order=field_order)
 
 
 class Unsigned8Pointer(Pointer):
-    """ A `Unsigned8Pointer` field is a :class:`Pointer` field
-    which refers to a :class:`Unsigned8` field.
+    """ An `Unsigned8Pointer` field is a :class:`Pointer` field
+    which refers to an :class:`Unsigned8` field.
     """
 
-    def __init__(self, address=None, byte_order=BYTEORDER):
-        super().__init__(Unsigned8(), address, byte_order=byte_order)
+    def __init__(self, address=None, data_order=BYTEORDER,
+                 bit_size=32, align_to=None, field_order='auto'):
+        super().__init__(template=Unsigned8(),
+                         address=address,
+                         data_order=data_order,
+                         bit_size=bit_size,
+                         align_to=align_to,
+                         field_order=field_order)
 
 
 class Unsigned16Pointer(Pointer):
-    """ A `Unsigned16Pointer` field is a :class:`Pointer` field
-    which refers to a :class:`Unsigned16` field.
+    """ An `Unsigned16Pointer` field is a :class:`Pointer` field
+    which refers to an :class:`Unsigned16` field.
     """
 
-    def __init__(self, address=None, byte_order=BYTEORDER):
-        super().__init__(Unsigned16(), address, byte_order=byte_order)
+    def __init__(self, address=None, data_order=BYTEORDER,
+                 bit_size=32, align_to=None, field_order='auto'):
+        super().__init__(template=Unsigned16(),
+                         address=address,
+                         data_order=data_order,
+                         bit_size=bit_size,
+                         align_to=align_to,
+                         field_order=field_order)
 
 
 class Unsigned32Pointer(Pointer):
-    """ A `Unsigned32Pointer` field is a :class:`Pointer` field
-    which refers to a :class:`Unsigned32` field.
+    """ An `Unsigned32Pointer` field is a :class:`Pointer` field
+    which refers to an :class:`Unsigned32` field.
     """
 
-    def __init__(self, address=None, byte_order=BYTEORDER):
-        super().__init__(Unsigned32(), address, byte_order=byte_order)
+    def __init__(self, address=None, data_order=BYTEORDER,
+                 bit_size=32, align_to=None, field_order='auto'):
+        super().__init__(template=Unsigned32(),
+                         address=address,
+                         data_order=data_order,
+                         bit_size=bit_size,
+                         align_to=align_to,
+                         field_order=field_order)
 
 
 class RelativePointer8(RelativePointer):
@@ -420,10 +516,11 @@ class RelativePointer8(RelativePointer):
     with a :class:`Field` *size* of one byte.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=8)
 
 
 class RelativePointer16(RelativePointer):
@@ -431,10 +528,13 @@ class RelativePointer16(RelativePointer):
     with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class RelativePointer24(RelativePointer):
@@ -442,10 +542,13 @@ class RelativePointer24(RelativePointer):
     with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class RelativePointer32(RelativePointer):
@@ -453,10 +556,13 @@ class RelativePointer32(RelativePointer):
     with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class RelativePointer48(RelativePointer):
@@ -464,10 +570,13 @@ class RelativePointer48(RelativePointer):
     with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class RelativePointer64(RelativePointer):
@@ -475,10 +584,13 @@ class RelativePointer64(RelativePointer):
     with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class StructureRelativePointer8(StructureRelativePointer):
@@ -486,10 +598,11 @@ class StructureRelativePointer8(StructureRelativePointer):
     field with a :class:`Field` *size* of one byte.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=8)
 
 
 class StructureRelativePointer16(StructureRelativePointer):
@@ -497,10 +610,13 @@ class StructureRelativePointer16(StructureRelativePointer):
     field with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class StructureRelativePointer24(StructureRelativePointer):
@@ -508,10 +624,13 @@ class StructureRelativePointer24(StructureRelativePointer):
     field with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class StructureRelativePointer32(StructureRelativePointer):
@@ -519,10 +638,13 @@ class StructureRelativePointer32(StructureRelativePointer):
     field with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class StructureRelativePointer48(StructureRelativePointer):
@@ -530,10 +652,13 @@ class StructureRelativePointer48(StructureRelativePointer):
     field with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class StructureRelativePointer64(StructureRelativePointer):
@@ -541,76 +666,95 @@ class StructureRelativePointer64(StructureRelativePointer):
     field with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, template=None, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, template=None, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class ArrayRelativePointer8(ArrayRelativePointer):
-    """ A `ArrayRelativePointer8` field is a :class:`ArrayRelativePointer`
+    """ An `ArrayRelativePointer8` field is an :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of one byte.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=8)
 
 
 class ArrayRelativePointer16(ArrayRelativePointer):
-    """ A `ArrayRelativePointer16` field is a :class:`ArrayRelativePointer`
+    """ An `ArrayRelativePointer16` field is an :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class ArrayRelativePointer24(ArrayRelativePointer):
-    """ A `ArrayRelativePointer24` field is a :class:`ArrayRelativePointer`
+    """ An `ArrayRelativePointer24` field is an :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class ArrayRelativePointer32(ArrayRelativePointer):
-    """ A `ArrayRelativePointer32` field is a :class:`ArrayRelativePointer`
+    """ An `ArrayRelativePointer32` field is an :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class ArrayRelativePointer48(ArrayRelativePointer):
-    """ A `ArrayRelativePointer48` field is a :class:`ArrayRelativePointer`
+    """ An `ArrayRelativePointer48` field is an :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class ArrayRelativePointer64(ArrayRelativePointer):
-    """ A `ArrayRelativePointer64` field is a :class:`ArrayRelativePointer`
+    """ An `ArrayRelativePointer64` field is an :class:`ArrayRelativePointer`
     field with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, template, address=None, byte_order=BYTEORDER):
-        super().__init__(template=template, address=address, byte_order=byte_order)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, template, address=None, data_order=BYTEORDER,
+                 field_order='auto'):
+        super().__init__(template=template,
+                         address=address,
+                         data_order=data_order,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class StreamRelativePointer8(StreamRelativePointer):
@@ -619,9 +763,9 @@ class StreamRelativePointer8(StreamRelativePointer):
     """
 
     def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=8)
 
 
 class StreamRelativePointer16(StreamRelativePointer):
@@ -629,10 +773,11 @@ class StreamRelativePointer16(StreamRelativePointer):
     field with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class StreamRelativePointer24(StreamRelativePointer):
@@ -640,10 +785,11 @@ class StreamRelativePointer24(StreamRelativePointer):
     field with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class StreamRelativePointer32(StreamRelativePointer):
@@ -651,10 +797,11 @@ class StreamRelativePointer32(StreamRelativePointer):
     field with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class StreamRelativePointer48(StreamRelativePointer):
@@ -662,10 +809,11 @@ class StreamRelativePointer48(StreamRelativePointer):
     field with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class StreamRelativePointer64(StreamRelativePointer):
@@ -673,10 +821,11 @@ class StreamRelativePointer64(StreamRelativePointer):
     field with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=64,
+                         field_order=field_order)
 
 
 class StringRelativePointer8(StringRelativePointer):
@@ -685,9 +834,9 @@ class StringRelativePointer8(StringRelativePointer):
     """
 
     def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(8, 8, auto_align=True)
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=8)
 
 
 class StringRelativePointer16(StringRelativePointer):
@@ -695,10 +844,11 @@ class StringRelativePointer16(StringRelativePointer):
     field with a :class:`Field` *size* of two bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(16, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=16,
+                         field_order=field_order)
 
 
 class StringRelativePointer24(StringRelativePointer):
@@ -706,10 +856,11 @@ class StringRelativePointer24(StringRelativePointer):
     field with a :class:`Field` *size* of three bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(24, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=24,
+                         field_order=field_order)
 
 
 class StringRelativePointer32(StringRelativePointer):
@@ -717,10 +868,11 @@ class StringRelativePointer32(StringRelativePointer):
     field with a :class:`Field` *size* of four bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(32, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=32,
+                         field_order=field_order)
 
 
 class StringRelativePointer48(StringRelativePointer):
@@ -728,10 +880,11 @@ class StringRelativePointer48(StringRelativePointer):
     field with a :class:`Field` *size* of six bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(48, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=48,
+                         field_order=field_order)
 
 
 class StringRelativePointer64(StringRelativePointer):
@@ -739,7 +892,8 @@ class StringRelativePointer64(StringRelativePointer):
     field with a :class:`Field` *size* of eight bytes.
     """
 
-    def __init__(self, size=0, address=None):
-        super().__init__(size, address)
-        # Field bit size
-        self._set_bit_size(64, 8, auto_align=True)
+    def __init__(self, size=0, address=None, field_order='auto'):
+        super().__init__(size=size,
+                         address=address,
+                         bit_size=64,
+                         field_order=field_order)

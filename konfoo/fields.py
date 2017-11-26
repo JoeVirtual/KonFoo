@@ -8,12 +8,9 @@
     :license: BSD, see LICENSE for details
 """
 
-from .enums import Enumeration
-
-from .globals import Byteorder
-
 from .core import (
     Decimal, Signed, Unsigned, Bitset, Bool, Enum, Scaled, Bipolar, Unipolar)
+from .enums import Enumeration
 
 
 class Decimal8(Decimal):
@@ -21,8 +18,10 @@ class Decimal8(Decimal):
     one byte and is by default unsigned.
     """
 
-    def __init__(self, signed=False, byte_order=Byteorder.auto):
-        super().__init__(bit_size=8, signed=signed, byte_order=byte_order)
+    def __init__(self, signed=False, byte_order='auto'):
+        super().__init__(bit_size=8,
+                         signed=signed,
+                         byte_order=byte_order)
 
 
 class Decimal16(Decimal):
@@ -30,8 +29,10 @@ class Decimal16(Decimal):
     two bytes and is by default unsigned.
     """
 
-    def __init__(self, signed=False, byte_order=Byteorder.auto):
-        super().__init__(bit_size=16, signed=signed, byte_order=byte_order)
+    def __init__(self, signed=False, byte_order='auto'):
+        super().__init__(bit_size=16,
+                         signed=signed,
+                         byte_order=byte_order)
 
 
 class Decimal24(Decimal):
@@ -39,8 +40,10 @@ class Decimal24(Decimal):
     three bytes and is by default unsigned.
     """
 
-    def __init__(self, signed=False, byte_order=Byteorder.auto):
-        super().__init__(bit_size=24, signed=signed, byte_order=byte_order)
+    def __init__(self, signed=False, byte_order='auto'):
+        super().__init__(bit_size=24,
+                         signed=signed,
+                         byte_order=byte_order)
 
 
 class Decimal32(Decimal):
@@ -48,8 +51,10 @@ class Decimal32(Decimal):
     four bytes and is by default unsigned.
     """
 
-    def __init__(self, signed=False, byte_order=Byteorder.auto):
-        super().__init__(bit_size=32, signed=signed, byte_order=byte_order)
+    def __init__(self, signed=False, byte_order='auto'):
+        super().__init__(bit_size=32,
+                         signed=signed,
+                         byte_order=byte_order)
 
 
 class Decimal64(Decimal):
@@ -57,8 +62,10 @@ class Decimal64(Decimal):
     eight bytes and is by default unsigned.
     """
 
-    def __init__(self, signed=False, byte_order=Byteorder.auto):
-        super().__init__(bit_size=64, signed=signed, byte_order=byte_order)
+    def __init__(self, signed=False, byte_order='auto'):
+        super().__init__(bit_size=64,
+                         signed=signed,
+                         byte_order=byte_order)
 
 
 class Signed8(Signed):
@@ -66,8 +73,9 @@ class Signed8(Signed):
     one byte.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=8, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=8,
+                         byte_order=byte_order)
 
 
 class Signed16(Signed):
@@ -75,8 +83,9 @@ class Signed16(Signed):
     two bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=16, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=16,
+                         byte_order=byte_order)
 
 
 class Signed24(Signed):
@@ -84,8 +93,9 @@ class Signed24(Signed):
     three bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=24, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=24,
+                         byte_order=byte_order)
 
 
 class Signed32(Signed):
@@ -93,7 +103,7 @@ class Signed32(Signed):
     four bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
+    def __init__(self, byte_order='auto'):
         super().__init__(bit_size=32, byte_order=byte_order)
 
 
@@ -102,53 +112,59 @@ class Signed64(Signed):
     eight bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=64, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=64,
+                         byte_order=byte_order)
 
 
 class Unsigned8(Unsigned):
-    """ A `Unsigned8` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned8` field is an :class:`Unsigned` field with a *size* of
     one byte.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=8, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=8,
+                         byte_order=byte_order)
 
 
 class Unsigned16(Unsigned):
-    """ A `Unsigned16` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned16` field is an :class:`Unsigned` field with a *size* of
     two bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=16, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=16,
+                         byte_order=byte_order)
 
 
 class Unsigned24(Unsigned):
-    """ A `Unsigned24` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned24` field is an :class:`Unsigned` field with a *size* of
     three bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=24, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=24,
+                         byte_order=byte_order)
 
 
 class Unsigned32(Unsigned):
-    """ A `Unsigned32` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned32` field is an :class:`Unsigned` field with a *size* of
     four bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=32, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=32,
+                         byte_order=byte_order)
 
 
 class Unsigned64(Unsigned):
-    """ A `Unsigned64` field is a :class:`Unsigned` field with a *size* of
+    """ A `Unsigned64` field is an :class:`Unsigned` field with a *size* of
     eight bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=64, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=64,
+                         byte_order=byte_order)
 
 
 class Bitset8(Bitset):
@@ -156,8 +172,9 @@ class Bitset8(Bitset):
     one byte.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=8, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=8,
+                         byte_order=byte_order)
 
 
 class Bitset16(Bitset):
@@ -165,8 +182,9 @@ class Bitset16(Bitset):
     two bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=16, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=16,
+                         byte_order=byte_order)
 
 
 class Bitset24(Bitset):
@@ -174,8 +192,9 @@ class Bitset24(Bitset):
     three bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=24, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=24,
+                         byte_order=byte_order)
 
 
 class Bitset32(Bitset):
@@ -183,8 +202,9 @@ class Bitset32(Bitset):
     four bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=32, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=32,
+                         byte_order=byte_order)
 
 
 class Bitset64(Bitset):
@@ -192,8 +212,9 @@ class Bitset64(Bitset):
     eight bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=64, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=64,
+                         byte_order=byte_order)
 
 
 class Bool8(Bool):
@@ -201,8 +222,9 @@ class Bool8(Bool):
     one byte.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=8, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=8,
+                         byte_order=byte_order)
 
 
 class Bool16(Bool):
@@ -210,8 +232,9 @@ class Bool16(Bool):
     two bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=16, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=16,
+                         byte_order=byte_order)
 
 
 class Bool24(Bool):
@@ -219,8 +242,9 @@ class Bool24(Bool):
     three bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=24, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=24,
+                         byte_order=byte_order)
 
 
 class Bool32(Bool):
@@ -228,8 +252,9 @@ class Bool32(Bool):
     four bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=32, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=32,
+                         byte_order=byte_order)
 
 
 class Bool64(Bool):
@@ -237,12 +262,13 @@ class Bool64(Bool):
     eight bytes.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bit_size=64, byte_order=byte_order)
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=64,
+                         byte_order=byte_order)
 
 
 class Antivalent(Enum):
-    """ A `Antivalent` field is a :class:`Enum` field with a *size* of
+    """ An `Antivalent` field is an :class:`Enum` field with a *size* of
     two bits and a fix assigned enumeration.
     """
 
@@ -252,74 +278,76 @@ class Antivalent(Enum):
         forced = 2
         undefined = 3
 
-    def __init__(self, align_to=None, byte_order=Byteorder.auto):
-        super().__init__(bit_size=2, align_to=align_to,
+    def __init__(self, align_to=None, byte_order='auto'):
+        super().__init__(bit_size=2,
+                         align_to=align_to,
                          enumeration=Antivalent.Validity,
                          byte_order=byte_order)
 
 
 class Enum4(Enum):
-    """ A `Enum4` field is a :class:`Enum` field with a *size* of
+    """ An `Enum4` field is an :class:`Enum` field with a *size* of
     four bits.
     """
 
     def __init__(self, align_to=None, enumeration=None,
-                 byte_order=Byteorder.auto):
-        super().__init__(bit_size=4, align_to=align_to,
+                 byte_order='auto'):
+        super().__init__(bit_size=4,
+                         align_to=align_to,
                          enumeration=enumeration,
                          byte_order=byte_order)
 
 
 class Enum8(Enum):
-    """ A `Enum8` field is a :class:`Enum` field with a *size* of
+    """ An `Enum8` field is an :class:`Enum` field with a *size* of
     one byte.
     """
 
-    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+    def __init__(self, enumeration=None, byte_order='auto'):
         super().__init__(bit_size=8,
                          enumeration=enumeration,
                          byte_order=byte_order)
 
 
 class Enum16(Enum):
-    """ A `Enum16` field is a :class:`Enum` field with a *size* of
+    """ An `Enum16` field is an :class:`Enum` field with a *size* of
     two bytes.
     """
 
-    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+    def __init__(self, enumeration=None, byte_order='auto'):
         super().__init__(bit_size=16,
                          enumeration=enumeration,
                          byte_order=byte_order)
 
 
 class Enum24(Enum):
-    """ A `Enum24` field is a :class:`Enum` field with a *size* of
+    """ An `Enum24` field is an :class:`Enum` field with a *size* of
     three bytes.
     """
 
-    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+    def __init__(self, enumeration=None, byte_order='auto'):
         super().__init__(bit_size=24,
                          enumeration=enumeration,
                          byte_order=byte_order)
 
 
 class Enum32(Enum):
-    """ A `Enum32` field is a :class:`Enum` field with a *size* of
+    """ An `Enum32` field is an :class:`Enum` field with a *size* of
     four bytes.
     """
 
-    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+    def __init__(self, enumeration=None, byte_order='auto'):
         super().__init__(bit_size=32,
                          enumeration=enumeration,
                          byte_order=byte_order)
 
 
 class Enum64(Enum):
-    """ A `Enum64` field is a :class:`Enum` field with a *size* of
+    """ An `Enum64` field is an :class:`Enum` field with a *size* of
     eight bytes.
     """
 
-    def __init__(self, enumeration=None, byte_order=Byteorder.auto):
+    def __init__(self, enumeration=None, byte_order='auto'):
         super().__init__(bit_size=64,
                          enumeration=enumeration,
                          byte_order=byte_order)
@@ -330,8 +358,9 @@ class Scaled8(Scaled):
     one byte.
     """
 
-    def __init__(self, scale, byte_order=Byteorder.auto):
-        super().__init__(scale, bit_size=8,
+    def __init__(self, scale, byte_order='auto'):
+        super().__init__(scale=scale,
+                         bit_size=8,
                          byte_order=byte_order)
 
 
@@ -340,8 +369,9 @@ class Scaled16(Scaled):
     two bytes.
     """
 
-    def __init__(self, scale, byte_order=Byteorder.auto):
-        super().__init__(scale, bit_size=16,
+    def __init__(self, scale, byte_order='auto'):
+        super().__init__(scale=scale,
+                         bit_size=16,
                          byte_order=byte_order)
 
 
@@ -350,8 +380,9 @@ class Scaled24(Scaled):
     three bytes.
     """
 
-    def __init__(self, scale, byte_order=Byteorder.auto):
-        super().__init__(scale, bit_size=24,
+    def __init__(self, scale, byte_order='auto'):
+        super().__init__(scale=scale,
+                         bit_size=24,
                          byte_order=byte_order)
 
 
@@ -360,8 +391,9 @@ class Scaled32(Scaled):
     four bytes.
     """
 
-    def __init__(self, scale, byte_order=Byteorder.auto):
-        super().__init__(scale, bit_size=32,
+    def __init__(self, scale, byte_order='auto'):
+        super().__init__(scale=scale,
+                         bit_size=32,
                          byte_order=byte_order)
 
 
@@ -370,8 +402,9 @@ class Scaled64(Scaled):
     eight bytes.
     """
 
-    def __init__(self, scale, byte_order=Byteorder.auto):
-        super().__init__(scale, bit_size=64,
+    def __init__(self, scale, byte_order='auto'):
+        super().__init__(scale=scale,
+                         bit_size=64,
                          byte_order=byte_order)
 
 
@@ -380,8 +413,9 @@ class Bipolar2(Bipolar):
     two bytes and an integer part of two bits.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bits_integer=2, bit_size=16,
+    def __init__(self, byte_order='auto'):
+        super().__init__(bits_integer=2,
+                         bit_size=16,
                          byte_order=byte_order)
 
 
@@ -390,16 +424,18 @@ class Bipolar4(Bipolar):
     two bytes and an integer part of four bits.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bits_integer=4, bit_size=16,
+    def __init__(self, byte_order='auto'):
+        super().__init__(bits_integer=4,
+                         bit_size=16,
                          byte_order=byte_order)
 
 
 class Unipolar2(Unipolar):
-    """ A `Unipolar2` field is a :class:`Unipolar` field with a *size* of
+    """ An `Unipolar2` field is an :class:`Unipolar` field with a *size* of
     two bytes and an integer part of two bits.
     """
 
-    def __init__(self, byte_order=Byteorder.auto):
-        super().__init__(bits_integer=2, bit_size=16,
+    def __init__(self, byte_order='auto'):
+        super().__init__(bits_integer=2,
+                         bit_size=16,
                          byte_order=byte_order)

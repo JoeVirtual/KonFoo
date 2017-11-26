@@ -81,7 +81,7 @@ You define a structured `data object`_ like this:
 Define a Data Object Pointer
 ----------------------------
 
-You define define the `pointer`_ for the `data object`_ by
+You define the `pointer`_ for the `data object`_ by
 
 .. code-block:: python
     :emphasize-lines: 5
@@ -315,13 +315,13 @@ with the property names:
     0
     >>> pointer.base_address
     0
-    >>> pointer.size
+    >>> pointer.data_size
     8
     >>> pointer.bytestream
     ''
-    >>> pointer.order
+    >>> pointer.data_byte_order
     Byteorder.little = 'little'
-    >>> pointer.order.value
+    >>> pointer.data_byte_order.value
     'little'
 
 
