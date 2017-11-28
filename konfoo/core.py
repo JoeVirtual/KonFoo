@@ -767,12 +767,12 @@ class Structure(OrderedDict, Container):
             as well (chained method call). Default is ``True``.
         """
         members = list()
-        obj = OrderedDict()
-        obj['class'] = self.__class__.__name__
-        obj['name'] = name if name else self.__class__.__name__
-        obj['size'] = len(self)
-        obj['type'] = Structure.item_type.name
-        obj['member'] = members
+        metadata = OrderedDict()
+        metadata['class'] = self.__class__.__name__
+        metadata['name'] = name if name else self.__class__.__name__
+        metadata['size'] = len(self)
+        metadata['type'] = Structure.item_type.name
+        metadata['member'] = members
 
         for member_name, item in self.items():
             # Container
@@ -786,7 +786,7 @@ class Structure(OrderedDict, Container):
                 members.append(item.blueprint(member_name, nested=False))
             else:
                 raise MemberTypeError(self, item, member_name)
-        return obj
+        return metadata
 
 
 class Sequence(MutableSequence, Container):
@@ -1263,32 +1263,32 @@ class Sequence(MutableSequence, Container):
             as well (chained method call). Default is ``True``.
         """
         members = list()
-        obj = OrderedDict()
-        obj['class'] = self.__class__.__name__
-        obj['name'] = name if name else self.__class__.__name__
-        obj['size'] = len(self)
-        obj['type'] = Sequence.item_type.name
-        obj['member'] = members
+        metadata = OrderedDict()
+        metadata['class'] = self.__class__.__name__
+        metadata['name'] = name if name else self.__class__.__name__
+        metadata['size'] = len(self)
+        metadata['type'] = Sequence.item_type.name
+        metadata['member'] = members
 
         for member_name, item in enumerate(self):
             # Container
             if is_container(item):
                 members.append(item.blueprint("{0}[{1}]".
-                                              format(obj['name'], member_name),
+                                              format(metadata['name'], member_name),
                                               **options))
             # Pointer
             elif is_pointer(item) and get_nested(options):
                 members.append(item.blueprint("{0}[{1}]".
-                                              format(obj['name'], member_name),
+                                              format(metadata['name'], member_name),
                                               **options))
             # Field
             elif is_field(item):
                 members.append(item.blueprint("{0}[{1}]".
-                                              format(obj['name'], member_name),
+                                              format(metadata['name'], member_name),
                                               nested=False))
             else:
                 raise MemberTypeError(self, item, member_name)
-        return obj
+        return metadata
 
 
 class Array(Sequence):
@@ -1423,9 +1423,9 @@ class Array(Sequence):
                 self.pop()
 
     def blueprint(self, name=None, **options):
-        obj = super().blueprint(name, **options)
-        obj['type'] = Array.item_type.name
-        return obj
+        metadata = super().blueprint(name, **options)
+        metadata['type'] = Array.item_type.name
+        return metadata
 
 
 class Field:
@@ -1763,7 +1763,7 @@ class Field:
             referenced :attr:`~Pointer.data` object fields as well
             (chained method call). Default is ``True``.
         """
-        obj = {
+        metadata = {
             'address': self.index.address,
             'alignment': [self.alignment[0], self.alignment[1]],
             'class': self.name,
@@ -1774,7 +1774,7 @@ class Field:
             'type': Field.item_type.name,
             'value': self.value
         }
-        return OrderedDict(sorted(obj.items()))
+        return OrderedDict(sorted(metadata.items()))
 
 
 class Stream(Field):
@@ -1982,9 +1982,8 @@ class Stream(Field):
         self._align_to_byte_size = size
 
     def blueprint(self, name=str(), **options):
-        obj = super().blueprint(name, **options)
-        obj['value'] = str(obj['value']).replace("b'", "").replace("'", "")
-        return obj
+        metadata = super().blueprint(name, **options)
+        return metadata
 
 
 class String(Stream):
@@ -2294,10 +2293,10 @@ class Float(Field):
             return struct.pack('<f', self._value)
 
     def blueprint(self, name=str(), **options):
-        obj = super().blueprint(name, **options)
-        obj['max'] = self.max()
-        obj['min'] = self.min()
-        return OrderedDict(sorted(obj.items()))
+        metadata = super().blueprint(name, **options)
+        metadata['max'] = self.max()
+        metadata['min'] = self.min()
+        return OrderedDict(sorted(metadata.items()))
 
 
 class Decimal(Field):
@@ -2494,7 +2493,7 @@ class Decimal(Field):
 
     def __bytes__(self):
         size, offset = self.alignment
-        value = self._value << offset
+        value = self.as_unsigned() << offset
         if self.byte_order in (Byteorder.big, Byteorder.little):
             return value.to_bytes(size, self.byte_order.value)
         else:
@@ -2765,11 +2764,11 @@ class Decimal(Field):
             return value.to_bytes(self.alignment[0], byte_order.value)
 
     def blueprint(self, name=None, **options):
-        obj = super().blueprint(name, **options)
-        obj['max'] = self.max()
-        obj['min'] = self.min()
-        obj['signed'] = self.signed
-        return OrderedDict(sorted(obj.items()))
+        metadata = super().blueprint(name, **options)
+        metadata['max'] = self.max()
+        metadata['min'] = self.min()
+        metadata['signed'] = self.signed
+        return OrderedDict(sorted(metadata.items()))
 
 
 class Bit(Decimal):
@@ -3841,9 +3840,9 @@ class Scaled(Decimal):
         return 2 ** (self.bit_size - 1) / 2
 
     def blueprint(self, name=None, **options):
-        obj = super().blueprint(name, **options)
-        obj['scale'] = self.scale
-        return OrderedDict(sorted(obj.items()))
+        metadata = super().blueprint(name, **options)
+        metadata['scale'] = self.scale
+        return OrderedDict(sorted(metadata.items()))
 
 
 class Fraction(Decimal):
@@ -4122,9 +4121,9 @@ class Fraction(Decimal):
         return self.to_decimal(decimal)
 
     def blueprint(self, name=None, **options):
-        obj = super().blueprint(name, **options)
-        obj['signed'] = self._signed_fraction
-        return OrderedDict(sorted(obj.items()))
+        metadata = super().blueprint(name, **options)
+        metadata['signed'] = self._signed_fraction
+        return OrderedDict(sorted(metadata.items()))
 
 
 class Bipolar(Fraction):
@@ -5363,14 +5362,14 @@ class Pointer(Decimal, Container):
             referenced :attr:`data` object fields as well (chained method call).
             Default is ``True``.
         """
-        obj = super().blueprint(name, **options)
-        obj['class'] = self.__class__.__name__
-        obj['name'] = name if name else self.__class__.__name__
-        obj['type'] = Pointer.item_type.name
+        metadata = super().blueprint(name, **options)
+        metadata['class'] = self.__class__.__name__
+        metadata['name'] = name if name else self.__class__.__name__
+        metadata['type'] = Pointer.item_type.name
         if is_any(self._data) and get_nested(options):
-            obj['member'] = list()
-            obj['member'].append(self._data.blueprint('data', **options))
-        return obj
+            metadata['member'] = list()
+            metadata['member'].append(self._data.blueprint('data', **options))
+        return metadata
 
 
 class StructurePointer(Pointer):

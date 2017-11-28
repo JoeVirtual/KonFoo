@@ -36,13 +36,13 @@ Resizing on the fly
             self.content = String()
             self.next_index()
 
-        def deserialize(self, buffer=bytes(), index=zero(), **options):
+        def deserialize(self, buffer=bytes(), index=Index(), **options):
             # Reset content field size on the fly.
             self.content.resize(0)
             # Deserialize complete structure.
             index = super().deserialize(buffer, index, **options)
             # Re-size content field on the fly.
-            self.content.resize(self.length.value)
+            self.content.resize(int(self.length))
             # Deserialize the content field.
             index = self.content.deserialize(buffer, index, **options)
             return index
@@ -63,13 +63,13 @@ Updating on the fly
             self.content = String()
             self.next_index()
 
-        def deserialize(self, buffer=bytes(), index=zero(), **options):
+        def deserialize(self, buffer=bytes(), index=Index(), **options):
             # Deserialize length field first.
             index = self.length.deserialize(buffer, index, **options)
             # Check if content field size is incorrect.
-            if self.length.value != len(self.content):
+            if int(self.length) != len(self.content):
                 # Re-size content field on the fly.
-                self.content.resize(self.length.value)
+                self.content.resize(int(self.length))
                 # Request a buffer update from the providing pointer on the fly.
                 return index._replace(update=True)
             else:
