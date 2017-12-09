@@ -60,7 +60,7 @@ for its referenced :ref:`data object <data object>` respectively its *byte
 stream* `mapper`_.
 
 The build-in **deserializer** and **serializer** unpacks and packs the *byte
-stream* sequential to and from each `field`_ in the declare *byte stream*
+stream* sequential to and from each `field`_ in the declared *byte stream*
 `mapper`_.
 
 
@@ -215,8 +215,9 @@ Here is an overview of the different available `field`_ classes.
 Name
 ----
 
-A `field`_ has a :attr:`~Field.name`. The `field name`_ consists of the name of
-the `field`_ base class and its `field size`_.
+A `field`_ has a type :attr:`~Field.name`. The `field name`_ consists of the
+name of the `field`_ base class and its `field size`_ to describe the kind of
+the `field`_.
 
     >>> field.name
     'Field0'
@@ -271,8 +272,11 @@ order how the consecutive fields are aligned to each other. The ``bit offset``
 of the `field alignment`_ is automatically calculated by the build-in
 deserializer and serializer.
 
-    >>> field.alignment  # alignment(byte size, bit offset)
+    >>> # field alignment
+    >>> byte_size, bit_offset = field.alignment
+    >>> field.alignment
     (0, 0)
+
 
 A `field`_ can be *aligned to* a group of consecutive fields by using the
 ``align_to`` argument of the :class:`Field` class to describe an **atomic**
@@ -288,16 +292,20 @@ content part of a *byte stream* with more than one `field`_.
     A `field`_ aligns it self to the next matching byte size when the
     `field size`_ matches not full bytes and no `field alignment`_ is given.
 
-For example to describe an **atomic** 16 bit value in a *byte stream* with
+For example to describe an **atomic** 16-bit value in a *byte stream* with
 more than one `field`_ can be achieved like this:
 
     >>> aligned = Structure()
-    >>> aligned.size = Decimal(15, 2) # First 15 bits of a 16 bit value
-    >>> aligned.flag = Bool(1, 2)  # Last bit of a 16 bit value
-    >>> aligned.next_index()
+    >>> # First 15 bits of a 16-bit value.
+    >>> aligned.size = Decimal(15, 2)
+    >>> # Last bit of a 16-bit value.
+    >>> aligned.flag = Bool(1, 2)
+    >>> aligned.index_fields()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
+    >>> # Display alignment of the size field.
     >>> aligned.size.alignment
     (2, 0)
+    >>> # Display alignment of the flag field.
     >>> aligned.flag.alignment
     (2, 15)
 
@@ -323,3 +331,31 @@ its `field value`_ from and to the *byte stream*.
 Enumeration
 -----------
 
+The *name* instead of the *value* of an enumeration can be displayed with the
+:class:`Enum` `field`_ class by assigning an :class:`Enumeration` class to the
+:class:`Enum` `field`_.
+
+For example to describe a 2-bit ambivalent enumeration by an :class:`Enum`
+`field`_ can be achieved like this:
+
+    >>> # Define the enumeration class.
+    >>> class Validity(Enumeration):
+    ...     error = 0
+    ...     correct = 1
+    ...     forced = 2
+    ...     undefined = 3
+    >>> # Create an enum field and assign an enumeration to the field.
+    >>> ambivalent = Enum(2, enumeration=Validity)
+    >>> # Display the value of the field.
+    >>> ambivalent.value
+    'error'
+    >>> # Returns the field value as an integer.
+    >>> int(ambivalent)
+    0
+    >>> ambivalent # doctest: +NORMALIZE_WHITESPACE
+    Enum(index=Index(byte=0, bit=0,
+                  address=0, base_address=0,
+                  update=False),
+      alignment=(1, 0),
+      bit_size=2,
+      value='error')

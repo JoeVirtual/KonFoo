@@ -3,8 +3,8 @@
 .. testsetup:: *
 
     from pprint import pprint
-    from binascii import hexlify, unhexlify
     from konfoo import *
+
 
 .. _de-serializing:
 
@@ -34,7 +34,7 @@ Resizing on the fly
             self.length = Decimal16()
             # Content of the string
             self.content = String()
-            self.next_index()
+            self.index_fields()
 
         def deserialize(self, buffer=bytes(), index=Index(), **options):
             # Reset content field size on the fly.
@@ -61,7 +61,7 @@ Updating on the fly
             self.length = Decimal16()
             # Content of the string
             self.content = String()
-            self.next_index()
+            self.index_fields()
 
         def deserialize(self, buffer=bytes(), index=Index(), **options):
             # Deserialize length field first.

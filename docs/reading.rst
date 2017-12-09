@@ -45,7 +45,7 @@ You create a *byte stream* :ref:`mapper <mapper>` for the binary *data* in the
             super().__init__()
             self.length = Decimal16()
             self.content = String(15)
-            self.next_index()
+            self.index_fields()
 
 
 or
@@ -53,7 +53,7 @@ or
     >>> mapper = Structure()
     >>> mapper.length = Decimal16()
     >>> mapper.content = String(15)
-    >>> mapper.next_index()
+    >>> mapper.index_fields()
     Index(byte=17, bit=0, address=17, base_address=0, update=False)
     >>> mapper # doctest: +NORMALIZE_WHITESPACE
     Structure([('length', Decimal16(index=Index(byte=0, bit=0,

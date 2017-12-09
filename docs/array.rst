@@ -10,7 +10,7 @@
 Array
 =====
 
-KonFoo has a :class:`Array` class to map a consecutive area of a *byte stream*
+KonFoo has an :class:`Array` class to map a consecutive area of a *byte stream*
 with the same kind of :ref:`array elements <array element>`.
 
 
@@ -19,7 +19,7 @@ with the same kind of :ref:`array elements <array element>`.
 Array element
 -------------
 
-A `array element`_ can be any :ref:`field <field>` or :ref:`container <container>`
+An `array element`_ can be any :ref:`field <field>` or :ref:`container <container>`
 class **constructor**.
 
 
@@ -37,7 +37,7 @@ Define an `array`_ by calling the `array element`_ constructor.
             super().__init__(Byte, size)  # Array element constructor
 
 
-Define an `array`_ by using a `array element`_ instance.
+Define an `array`_ by using an `array element`_ instance.
 
 .. code-block:: python
    :emphasize-lines: 4
@@ -74,7 +74,7 @@ Define an `array`_ by calling a **factory** class.
 Factorizing an Array element
 ----------------------------
 
-You can factorize a `array element`_ by defining a **factory** class to instantiate
+You can factorize an `array element`_ by defining a **factory** class to instantiate
 an `array element`_ with parameters. A **factory** is necessary whenever you use a
 :ref:`mapper <mapper>` with arguments for an `array element`_, in this case you must
 assign the constructor of the **factory** class as the `array element`_.
@@ -139,13 +139,13 @@ You can **view** the `array`_
           value='0x0')]
 
 
-Blueprint of an Array
+Metadata of an Array
 ---------------------
 
-You can get the blueprint of the `array`_ by calling the method
-:meth:`~Sequence.blueprint`.
+You can get the metadata of the `array`_ by calling the method
+:meth:`~Sequence.describe`.
 
-    >>> pprint(array.blueprint()) # doctest: +NORMALIZE_WHITESPACE
+    >>> pprint(array.describe()) # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('class', 'Array'),
                  ('name', 'Array'),
                  ('size', 1),
@@ -165,70 +165,53 @@ You can get the blueprint of the `array`_ by calling the method
                                 ('value', '0x0')])])])
 
 
-Length of an Array
-------------------
+Size of an Array
+----------------
 
-You can get the **length** of an `array`_ as a tuple in the form of
-``(number of bytes, remaining bits)`` by calling the method
-:meth:`~Array.field_length`.
+You can get the **size** of an `array`_ as a tuple in the form of
+``(number of bytes, number of remaining bits)`` by calling the method
+:meth:`~Sequence.container_size`.
 
-    >>> array.field_length()
+    >>> array.container_size()
     (1, 0)
 
 .. note::
-
-   The remaining bits must be always zero or the `array`_ declaration is
-   incomplete.
+    The number of remaining bits must be always zero or the `array`_
+    declaration is incomplete.
 
 
 Indexing
 --------
 
-You can get the *byte stream* :class:`Index` after the last :ref:`field <field>`
-in an `array`_ by calling the method :meth:`~Sequence.next_index`.
+You can index all fields in an `array`_ by calling the method
+:meth:`~Sequence.index_fields`.
+The :class:`Index` after the last :ref:`field <field>` of the `array`_ is
+returned.
 
-    >>> array.next_index()
+    >>> array.index_fields(index=Index())
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
+    >>> array.index_fields()
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
 
-.. note::
 
-    The method re-indexes all members in the `array`_ as well.
+View Field Attributes
+---------------------
 
+You can view the **attributes** of each :ref:`field <field>` in an `array`_
+as a **nested** list by calling the method :meth:`~Sequence.view_fields`.
 
-List field indexes
-------------------
-
-You can list the :class:`Index` of each :ref:`field <field>` in an `array`_
-as a **nested** list by calling the method
-:meth:`~Sequence.field_indexes`.
-
-    >>> pprint(array.field_indexes()) # doctest: +NORMALIZE_WHITESPACE
+    >>> # Views the field values
+    >>> pprint(array.view_fields())
+    ['0x0']
+    >>> # Views the field name, value pairs
+    >>> pprint(array.view_fields('name', 'value'))
+    [('Byte', '0x0')]
+    >>> # Views the field indexes
+    >>> pprint(array.view_fields('index'))
     [Index(byte=0, bit=0, address=0, base_address=0, update=False)]
 
 
-
-List field types
-----------------
-
-You can list the **types** of each :ref:`field <field>` in an `array`_
-as a **nested** list by calling the method :meth:`~Sequence.field_types`.
-
-    >>> pprint(array.field_types()) # doctest: +NORMALIZE_WHITESPACE
-    ['Byte']
-
-
-List field values
------------------
-
-You can list the **values** of each :ref:`field <field>` in an `array`_
-as a **nested** list by calling the method :meth:`~Sequence.field_values`.
-
-
-    >>> pprint(array.field_values())
-    ['0x0']
-
-
-List field items
+List Field Items
 ----------------
 
 You can list all :ref:`field <field>` items in an `array`_
@@ -243,55 +226,50 @@ as a **flat** list by calling the method :meth:`~Sequence.field_items`.
                    value='0x0'))]
 
 
-View field values
+List Field Values
 -----------------
 
-You can **view** the *values* of each :ref:`field <field>` in an `array`_
+You can **list** the *value* of each :ref:`field <field>` in an `array`_
 as a **flat** list by calling the method :meth:`~Container.to_list`.
 
     >>> pprint(array.to_list()) # doctest: +NORMALIZE_WHITESPACE
     [('Array..[0]', '0x0')]
 
-
 .. note::
-
     The class name of the instance is used for the root name as long as no
     *name* is given.
 
 
-You can **view** the *values* of each  :ref:`field <field>` in an `array`_
+You can **view** the *value* of each :ref:`field <field>` in an `array`_
 as a **flat** ordered dictionary by calling the method
 :meth:`~Container.to_dict`.
 
     >>> pprint(array.to_dict()) # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Array', OrderedDict([('.[0]', '0x0')]))])
 
-
 .. note::
-
     The class name of the instance is used for the root name as long as no
     *name* is given.
 
 
-Save field values
+Save Field Values
 -----------------
 
-You can **save** the *values* of each :ref:`field <field>` in an `array`_
-to an INI file by calling the method :meth:`~Container.save`.
+You can **save** the *value* of each :ref:`field <field>` in an `array`_
+to an ``.ini`` file by calling the method :meth:`~Container.save`.
 
     >>> array.save("_static/array.ini", nested=True)
 
 .. note::
-
     The class name of the instance is used for the section name as long as no
     *section* is given.
 
 
-Load field values
+Load Field Values
 -----------------
 
-You can **load** the *values* of each :ref:`field <field>` in an `array`_
-from an INI file by calling the method :meth:`~Container.load`.
+You can **load** the *value* of each :ref:`field <field>` in an `array`_
+from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
     >>> array.load("_static/array.ini", nested=True)
     [Array]
@@ -299,6 +277,5 @@ from an INI file by calling the method :meth:`~Container.load`.
 
 
 .. note::
-
     The class name of the instance is used for the section name as long as no
     *section* is given.

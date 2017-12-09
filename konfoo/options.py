@@ -17,7 +17,6 @@ from .globals import BYTEORDER, Byteorder
 class Option(Category):
     byte_order = 'byte_order'
     nested = 'nested'
-    field_types = 'field_types'
     verbose = 'verbose'
 
 
@@ -67,29 +66,6 @@ def nested_option(default=False):
 
 def get_nested(options):
     option = Option.nested.value
-    return options.get(option, False)
-
-
-def field_types_option(default=False):
-    """ Attaches the option ``field_types`` with its *default* value to the
-    keyword arguments when the option does not exist. All positional
-    arguments and keyword arguments are forwarded unchanged.
-    """
-
-    def decorator(method):
-        @wraps(method)
-        def wrapper(*args, **kwargs):
-            option = Option.field_types.value
-            kwargs[option] = kwargs.get(option, bool(default))
-            return method(*args, **kwargs)
-
-        return wrapper
-
-    return decorator
-
-
-def get_field_types(options):
-    option = Option.field_types.value
     return options.get(option, False)
 
 

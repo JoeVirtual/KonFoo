@@ -44,6 +44,7 @@ setup(
     url='http://github.com/JoeVirtual/KonFoo',
     description='A declarative byte stream mapping engine.',
     long_description=__doc__,
+    keywords='binary data deserialize serialize parsing decoding encoding',
     packages=['konfoo'],
     include_package_data=True,
     zip_safe=False,

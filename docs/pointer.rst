@@ -16,15 +16,15 @@ KonFoo has a :class:`Pointer` class to reference ...
 KonFoo provides the following specialized `pointer`_ fields
 
 * a :class:`StructurePointer` field which refers to a
-  :ref:`structure <structure>`
+  :ref:`structure <structure>`.
 * a :class:`SequencePointer` field which refers to a
-  :ref:`sequence <sequence>`
-* a :class:`ArrayPointer` field which refers to a
-  :ref:`array <array>`
+  :ref:`sequence <sequence>`.
+* a :class:`ArrayPointer` field which refers to an
+  :ref:`array <array>`.
 * a :class:`StreamPointer` field which refers to a
-  :class:`Stream` :ref:`field <field>`
+  :class:`Stream` :ref:`field <field>`.
 * a :class:`StringPointer` field which refers to a
-  :class:`String` :ref:`field <field>`
+  :class:`String` :ref:`field <field>`.
 
 
 .. _relative pointer:
@@ -75,7 +75,7 @@ You define a structured `data object`_ like this:
             super().__init__()
             self.size = Decimal32()
             self.item = Pointer()  # No data object assigned
-            self.next_index()
+            self.index_fields()
 
 
 Define a Data Object Pointer
@@ -176,13 +176,13 @@ You can **view** the `data object`_ of a `pointer`_ with the property
                         value='0x0'))])
 
 
-Blueprint of a Pointer
+Metadata of a Pointer
 ----------------------
 
-You can get the blueprint of a `pointer`_ by calling the method
-:meth:`~Pointer.blueprint`.
+You can get the metadata of a `pointer`_ by calling the method
+:meth:`~Pointer.describe`.
 
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Pointer'),
@@ -241,25 +241,38 @@ You can get the blueprint of a `pointer`_ by calling the method
 Indexing
 --------
 
-You can get the next *byte stream* :class:`Index` after a `pointer`_ field
-by calling the method :meth:`~Field.next_index`.
+You can index the `pointer`_ field by calling the method
+:meth:`~Field.index_field`.
+The :class:`Index` after the `pointer`_ field is returned.
 
-
-    >>> pointer.next_index()
+    >>> pointer.index_field(index=Index())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
 
 
-You can index each member of a `data object`_ of a `pointer`_ field
-by calling the method :meth:`~Pointer.subscript`.
+You can index each :ref:`field <field>` in the `data object`_ referenced by the
+`pointer`_ field by calling the method :meth:`~Pointer.index_data`.
 
-    >>> pointer.subscript()
+    >>> pointer.index_data()
+
+You can index the `pointer`_ field and each :ref:`field <field>` in the
+`data object`_ referenced by the `pointer`_ field by calling the method
+:meth:`~Pointer.index_fields`.
+The :class:`Index` after the `pointer`_ field is returned.
 
 
-Properties of the Field
+    >>> pointer.index_fields(index=Index())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pointer.index_fields()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
+
+Attributes of the Field
 -----------------------
 
-You can **access** the :ref:`field <field>` properties of a `pointer`_ field
-with the following property names:
+You can **access** the :ref:`field <field>` attributes of a `pointer`_ field
+with the following attribute names:
 
     >>> pointer.name
     'Pointer32'
@@ -305,20 +318,25 @@ with the following property names:
     False
 
 
-Properties of the Data Object
+Attributes of the Data Object
 -----------------------------
 
-You can **access** the properties for the `data object`_ of a `pointer`_ field
-with the property names:
+You can **access** the attributes for the `data object`_ referenced by the
+`pointer`_ field with the attribute names:
 
+    >>> # Absolute address of the data object referenced by the pointer.
     >>> pointer.address
     0
+    >>> # Absolute address of the data object referenced by the pointer.
     >>> pointer.base_address
     0
+    >>> # Byte size of the data object referenced by the pointer.
     >>> pointer.data_size
     8
+    >>> # Byte stream for the data object referenced by the pointer.
     >>> pointer.bytestream
     ''
+    >>> # Byte order for the data object referenced by the pointer.
     >>> pointer.data_byte_order
     Byteorder.little = 'little'
     >>> pointer.data_byte_order.value
@@ -328,8 +346,8 @@ with the property names:
 Access the Data Object
 ----------------------
 
-You can **access** the `data object`_ of a `pointer`_ field with its
-property name:
+You can **access** the `data object`_ referenced by a `pointer`_ field with its
+attribute name:
 
     >>> pointer.data  # doctest: +NORMALIZE_WHITESPACE
     Structure([('size',
@@ -348,50 +366,20 @@ property name:
                         value='0x0'))])
 
 
-List field indexes
-------------------
+View Field Attributes
+---------------------
 
-You can list the :class:`Index` of each :ref:`field <field>` of a `pointer`_
-as a **nested** ordered dictionary by calling the method
-:meth:`~Pointer.field_indexes`.
-
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  OrderedDict([('size',
-                                Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                               ('item',
-                                Index(byte=4, bit=0, address=4, base_address=0, update=False))]))])
+You can view the **attributes** of a `pointer`_ field and of each :ref:`field
+<field>` in the `data object`_ referenced by the `pointer`_ field as a
+**nested** ordered dictionary by calling the method :meth:`~Pointer.view_fields`.
 
 
-List field types
-----------------
-
-You can list the **types** of each :ref:`field <field>` of a `pointer`_ as a
-**nested** ordered dictionary by calling the method
-:meth:`~Pointer.field_types`.
-
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'),
-                 ('data',
-                  OrderedDict([('size', 'Decimal32'), ('item', 'Pointer32')]))])
-
-
-List field values
------------------
-
-You can list the **values** of each :ref:`field <field>` of a `pointer`_ as a
-**nested** ordered dictionary by calling the method
-:meth:`~Pointer.field_values`.
-
-
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0x0'),
                  ('data', OrderedDict([('size', 0), ('item', '0x0')]))])
 
 
-List field items
+List Field Items
 ----------------
 
 You can list all :ref:`field <field>` items of a `pointer`_ as a **flat** list
@@ -415,10 +403,10 @@ by calling the method :meth:`~Pointer.field_items`.
               value='0x0'))]
 
 
-View field values
+List Field Values
 -----------------
 
-You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
+You can **list** the *values* of each :ref:`field <field>` of a `pointer`_ as a
 **flat** list by calling the method :meth:`~Container.to_list`.
 
     >>> pprint(pointer.to_list())
@@ -427,7 +415,6 @@ You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
      ('Pointer.data.item', '0x0')]
 
 .. note::
-
     The class name of the instance is used for the root name as long as no
     *name* is given.
 
@@ -442,32 +429,30 @@ You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
                                ('data.item', '0x0')]))])
 
 .. note::
-
     The class name of the instance is used for the root name as long as no
     *name* is given.
 
 
-Save field values
+Save Field Values
 -----------------
 
 You can **save** the *values* of each :ref:`field <field>` of a `pointer`_
-to an INI file by calling the method :meth:`~Container.save`.
+to an ``.ini`` file by calling the method :meth:`~Container.save`.
 
     >>> pointer.save("_static/pointer.ini", nested=True)
 
 .. note::
-
     The class name of the instance is used for the section name as long as no
     *section* is given.
 
 
-Load field values
+Load Field Values
 -----------------
 
 You can **load** the *values* of each :ref:`field <field>` of a `pointer`_
-from an INI file by calling the method :meth:`~Container.load`.
+from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
-    >>> pointer.load("_static/pointer.ini", nested=True)
+    >>> pointer.load("_static/pointer.ini", nested=True) # doctest: +NORMALIZE_WHITESPACE
     [Pointer]
     Pointer.value = 0x0
     Pointer.data.size = 0
@@ -475,6 +460,5 @@ from an INI file by calling the method :meth:`~Container.load`.
     Pointer.data.item.data =
 
 .. note::
-
     The class name of the instance is used for the section name as long as no
     *section* is given.

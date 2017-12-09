@@ -166,7 +166,7 @@ class HexViewer:
 
 
 def d3json(blueprint, **options):
-    """ Converts a *blueprint* into a JSON string.
+    """ Converts the *blueprint* metadata into a JSON string.
 
     .. code-block:: JSON
 
@@ -178,7 +178,7 @@ def d3json(blueprint, **options):
             "children": []
         }
 
-    :param dict blueprint: blueprint generated from a :class:`Structure`,
+    :param dict blueprint: metadata generated from a :class:`Structure`,
         :class:`Sequence`, :class:`Array` or any :class:`Field` instance.
     :keyword int indent: indentation for the JSON string. Default is *2*.
     """

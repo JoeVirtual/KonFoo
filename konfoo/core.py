@@ -20,6 +20,7 @@ from binascii import hexlify
 from collections import Mapping, namedtuple, OrderedDict
 from collections.abc import MutableSequence
 from configparser import ConfigParser
+from operator import attrgetter
 from pprint import pprint
 
 from konfoo.enums import Enumeration
@@ -36,7 +37,7 @@ from konfoo.globals import ItemClass, Byteorder, BYTEORDER, limiter
 from konfoo.options import (
     Option,
     byte_order_option, get_byte_order, nested_option, get_nested,
-    field_types_option, get_field_types, verbose_option, verbose
+    verbose_option, verbose
 )
 from konfoo.providers import Provider
 
@@ -132,15 +133,15 @@ class Container:
     :class:`Pointers <Pointer>`.
 
     The `Container` class provides core features to **view**, **save** and
-    **load** the *values* of the :class:`Field` items in the `Container`.
+    **load** the *attributes* of the :class:`Field` items in the `Container`.
     """
 
     @abc.abstractmethod
-    def field_items(self, root=str(), **options):
-        """ Returns a **flat** list which contains the ``(path, item)`` tuples
-        for each :class:`Field` in the `Container`.
+    def field_items(self, path=str(), **options):
+        """ Returns a **flat** list of ``(path, field)`` tuples for each
+        :class:`Field` in the `Container`.
 
-        :param str root: root path.
+        :param str path: item path.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`~Pointer.data` objects of all :class:`Pointer` fields in
             the `Container` list their referenced :attr:`~Pointer.data` object
@@ -151,84 +152,74 @@ class Container:
         return list()
 
     @nested_option()
-    @field_types_option()
-    def to_list(self, name=str(), **options):
-        """ Returns a **flat** list which contains tuples in the form of
-        ``(path, value)`` or ``(path, type, value)`` for each :class:`Field`
-        in the `Container`.
+    def to_list(self, *attributes, **options):
+        """ Returns a **flat** list of ``(path, *attributes)`` tuples for each
+        :class:`Field` in the `Container`.
 
-        The type entry of the tuple is optional.
-
-        :param str name: name of the `Container`.
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword str name: name of the `Container`.
             Default is the class name of the instance.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` lists their referenced :attr:`~Pointer.data` object
-            field values as well (chained method call).
-        :keyword bool field_types: if ``True`` the type of the :class:`Field`
-            is inserted into the tuple.
+            field attributes as well (chained method call).
         """
         # Name of the Container
-        root = name if name else self.__class__.__name__
+        name = options.get('name', self.__class__.__name__)
 
         fields = list()
+        if attributes:
+            field_getter = attrgetter(*attributes)
+        else:
+            field_getter = attrgetter('value')
         for item in self.field_items(**options):
-            path_to_field, field = item
-            path_to_field = '{0}.{1}'.format(root, path_to_field)
-
-            if get_field_types(options):
-                byte, bit = field.alignment
-                field_type = field.name + str((byte, bit))
-                fields.append((path_to_field, field_type, field.value))
-            else:
-                fields.append((path_to_field, field.value))
-
+            field_path, field = item
+            field_path = '{0}.{1}'.format(name, field_path)
+            fields.append((field_path, field_getter(field)))
         return fields
 
     @nested_option()
-    @field_types_option()
-    def to_dict(self, name=str(), **options):
+    def to_dict(self, *attributes, **options):
         """ Returns a **flat** :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the ``{'path': value}`` or ``{'path;type': value}`` pairs
-        for each :class:`Field` in the `Container`.
+        of ``{'path': attribute}`` or ``{'path': tuple(*attributes)}`` pairs for
+        each :class:`Field` in the `Container`.
 
-        :param str name: name of the `Container`.
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword str name: name of the `Container`.
             Default is the class name of the instance.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` lists their referenced :attr:`~Pointer.data` object
-            field values as well (chained method call).
-        :keyword bool field_types: if ``True`` the type of the :class:`Field`
-            is append to the end of the path string with ``';'`` as delimiter.
+            field attributes as well (chained method call).
         """
         # Name of the Container
-        root = name if name else self.__class__.__name__
+        name = options.get('name', self.__class__.__name__)
 
         fields = OrderedDict()
-        fields[root] = OrderedDict()
+        fields[name] = OrderedDict()
+        if attributes:
+            field_getter = attrgetter(*attributes)
+        else:
+            field_getter = attrgetter('value')
         for item in self.field_items(**options):
-            path_to_field, field = item
-
-            if get_field_types(options):
-                byte, bit = field.alignment
-                path_to_field += ';' + field.name + str((byte, bit))
-
-            fields[root][path_to_field] = field.value
+            field_path, field = item
+            fields[name][field_path] = field_getter(field)
         return fields
 
     @nested_option()
-    @field_types_option()
-    def save(self, file, section=str(), **options):
-        """ Saves the *values* of the :class:`Field`'s in the `Container` to
-        an ``.ini`` *file*.
+    def save(self, file, *attributes, **options):
+        """ Saves the given *attributes* for each :class:`Field` in the
+        `Container` to an ``.ini`` *file*.
 
         :param str file: name and location of the ``.ini`` *file*.
-        :param str section: section in the ``.ini`` file to look for the
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword str section: section in the ``.ini`` file to look for the
             :class:`Field` values of the `Container`. If no *section* is
             specified the class name of the instance is used.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` saves their referenced :attr:`~Pointer.data` object
-            field values as well (chained method call).
-        :keyword bool field_types: if ``True`` the type of the :class:`Field`
-            is appended to its path string with the ``';'`` sign as delimiter.
+            field attributes as well (chained method call).
 
         Example:
 
@@ -258,27 +249,25 @@ class Container:
             pointer = 0x0
         """
         parser = ConfigParser()
-        parser.read_dict(self.to_dict(section, **options))
+        section = options.get('section', str())
+        parser.read_dict(self.to_dict(*attributes, **options))
         with open(file, 'w') as handle:
             parser.write(handle)
         handle.close()
 
     @nested_option()
-    @field_types_option()
     @verbose_option(True)
     def load(self, file, section=str(), **options):
-        """ Loads the *values* of the :class:`Field`'s in the `Container` from
-        an ``.ini`` *file*.
+        """ Loads the *attributes* for each :class:`Field` in the `Container`
+        from an ``.ini`` *file*.
 
         :param str file: name and location of the ``.ini`` *file*.
-        :param str section: section in the ``.ini`` *file* to look for the
-            :class:`Field` values of the `Container`. If no *section* is
-            specified the class name of the instance is used.
+        :keyword str section: section in the ``.ini`` *file* to lookup the
+            attributes for each :class:`Field` in the `Container`.
+            If no *section* is specified the class name of the instance is used.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` load their referenced :attr:`~Pointer.data` object
-            field values as well (chained method call).
-        :keyword bool field_types: if ``True`` the type of the :class:`Field`
-            is append to the end of the path string with ``';'`` as delimiter.
+            field attributes as well (chained method call).
         :keyword bool verbose: if ``True`` the loading is executed in verbose
             mode.
 
@@ -317,7 +306,7 @@ class Container:
         Foo.array[2] = 0x0
         Foo.pointer = 0x0
         """
-        section = section if section else self.__class__.__name__
+        section = options.get('section', self.__class__.__name__)
 
         parser = ConfigParser()
         parser.read(file)
@@ -326,10 +315,6 @@ class Container:
             verbose(options, "[{0}]".format(section))
 
             for option, field in self.field_items(**options):
-                if get_field_types(options):
-                    byte, bit = field.alignment
-                    option += ';' + field.name + str((byte, bit))
-
                 if parser.has_option(section, option):
                     # Bool fields
                     if field.is_bool():
@@ -343,8 +328,7 @@ class Container:
                     # Stream fields
                     elif field.is_stream():
                         value = parser.get(section, option)
-                        stream = bytes.fromhex(value.replace("b'", '').
-                                               replace("'", ""))
+                        stream = bytes.fromhex(value.replace("'", ""))
                         # Auto size a zero sized stream field to
                         # the current stream length
                         if not field:
@@ -382,21 +366,18 @@ class Structure(OrderedDict, Container):
       in the `Structure` from a byte stream via :meth:`deserialize()`.
     * **Serialize** the :attr:`~Field.value` for each :class:`Field`
       in the `Structure` to a byte stream via :meth:`serialize()`.
-    * Get the **next** :class:`Index` after the last :class:`Field`
-      in the `Structure` via :meth:`next_index()`.
-    * Get the **first** :class:`Field`
-      in the `Structure` via :meth:`first_field()`.
-    * Get the accumulated **length** of all :class:`Field`'s
-      in the `Structure` via :meth:`field_length()`.
-    * View the :attr:`~Field.index` for each :class:`Field`
-      in the `Structure` via :meth:`field_indexes()`.
-    * View the type :attr:`~Field.name` for each :class:`Field`
-      in the `Structure` via :meth:`field_types()`.
-    * View the :attr:`~Field.value` for each :class:`Field`
-      in the `Structure` via :meth:`field_values()`.
-    * List the field **item** and its path for each :class:`Field`
-      in the `Structure` as a flat list via :meth:`field_items()`.
-    * Get a **blueprint** of the `Structure` via :meth:`blueprint()`.
+    * Indexes all fields in the `Structure`
+      via :meth:`index_fields()`.
+    * Get the **first** :class:`Field` in the `Structure`
+      via :meth:`first_field()`.
+    * Get the accumulated **size** of all fields in the `Structure`
+      via :meth:`container_size()`.
+    * View the selected *attributes* for each :class:`Field`
+      in the `Structure` via :meth:`view_fields()`.
+    * List the **path** to the field and the field **item** itself for each
+      :class:`Field` in the `Structure` as a flat list
+      via :meth:`field_items()`.
+    * Get the **metadata** of the `Structure` via :meth:`describe()`.
     """
     # Item type of a Structure.
     item_type = ItemClass.Structure
@@ -556,11 +537,12 @@ class Structure(OrderedDict, Container):
         return index
 
     @nested_option()
-    def next_index(self, index=Index(), **options):
-        """ Returns the :class:`Index` after the last :class:`Field`
+    def index_fields(self, index=Index(), **options):
+        """ Indexes all fields in the `Structure` starting with the given
+        *index* and returns the :class:`Index` after the last :class:`Field`
         in the `Structure`.
 
-        :param Index index: :class:`Index` of the first :class:`Field`
+        :param Index index: start :class:`Index` for the first :class:`Field`
             in the `Structure`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
             `Structure` indexes their referenced :attr:`~Pointer.data` object
@@ -569,35 +551,34 @@ class Structure(OrderedDict, Container):
         for name, item in self.items():
             # Container
             if is_container(item):
-                index = item.next_index(index, **options)
+                index = item.index_fields(index, **options)
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                index = item.next_index(index)
+                index = item.index_field(index)
                 item.index_data()
             # Field
             elif is_field(item):
-                index = item.next_index(index)
+                index = item.index_field(index)
             else:
                 raise MemberTypeError(self, item, name, index)
         return index
 
-    def initialize(self, content):
-        """ Initializes the :class:`Field` members in the `Structure` with
-        the *values* in the *content* dictionary.
-
-        :param dict content: a dictionary contains the :class:`Field`
-            values for each member in the `Structure`.
+    def container_size(self):
+        """ Returns the accumulated bit size of all fields in the `Structure` as
+        a tuple in the form of ``(number of bytes, remaining number of bits)``.
         """
-        for name, value in content.items():
-            item = self[name]
-            # Container or Pointer
-            if is_mixin(item):
-                item.initialize(value)
-            # Fields
+        length = 0
+        for name, item in self.items():
+            # Container
+            if is_container(item):
+                byte_length, bit_length = item.container_size()
+                length += bit_length + byte_length * 8
+            # Field
             elif is_field(item):
-                item.value = value
+                length += item.bit_size
             else:
                 raise MemberTypeError(self, item, name)
+        return divmod(length, 8)
 
     def first_field(self):
         """ Returns the first :class:`Field` in the `Structure` or ``None``
@@ -617,151 +598,105 @@ class Structure(OrderedDict, Container):
                 raise MemberTypeError(self, item, name)
         return None
 
-    def field_length(self):
-        """ Returns the length of the `Structure` as a tuple in the form of
-        ``(number of bytes, remaining number of bits)``.
+    def initialize_fields(self, content):
+        """ Initializes the :class:`Field` members in the `Structure` with
+        the *values* in the *content* dictionary.
+
+        :param dict content: a dictionary contains the :class:`Field`
+            values for each member in the `Structure`.
         """
-        length = 0
-        for name, item in self.items():
-            # Container
-            if is_container(item):
-                byte_length, bit_length = item.field_length()
-                length += bit_length + byte_length * 8
-            # Field
+        for name, value in content.items():
+            item = self[name]
+            # Container or Pointer
+            if is_mixin(item):
+                item.initialize_fields(value)
+            # Fields
             elif is_field(item):
-                length += item.bit_size
+                item.value = value
             else:
                 raise MemberTypeError(self, item, name)
-        return divmod(length, 8)
 
     @nested_option()
-    def field_indexes(self, index=Index(), **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the ``{'name': index}`` pairs for each :class:`Field`
-        in the `Structure`.
+    def field_items(self, path=str(), **options):
+        """ Returns a **flat** list of ``(path, field)`` tuples for each
+        :class:`Field` in the `Structure`.
 
-        :param Index index: optional start :class:`Index` of the `Structure`.
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
-            `Structure` lists their referenced :attr:`~Pointer.data` object
-            field indexes as well (chained method call).
-        """
-        indexes = OrderedDict()
-        for name, item in self.items():
-            # Container
-            if is_container(item):
-                indexes[name] = item.field_indexes(index, **options)
-                index = item.next_index(index)
-            # Pointer
-            elif is_pointer(item) and get_nested(options):
-                indexes[name] = item.field_indexes(index, **options)
-                index = item.next_index(index)
-            # Field
-            elif is_field(item):
-                index = item.next_index(index)
-                indexes[name] = item.index
-            else:
-                raise MemberTypeError(self, item, name, index)
-        return indexes
-
-    @nested_option()
-    def field_types(self, **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the ``{'name': type}`` pairs for each :class:`Field`
-        in the `Structure`.
-
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            `Structure` lists their referenced :attr:`~Pointer.data` object
-            field types as well (chained method call).
-        """
-        types = OrderedDict()
-        for name, item in self.items():
-            # Container
-            if is_container(item):
-                types[name] = item.field_types(**options)
-            # Pointer
-            elif is_pointer(item) and get_nested(options):
-                types[name] = item.field_types(**options)
-            # Field
-            elif is_field(item):
-                types[name] = item.name
-            else:
-                raise MemberTypeError(self, item, name)
-        return types
-
-    @nested_option()
-    def field_values(self, **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the ``{'name': value}`` pairs for each :class:`Field`
-        in the `Structure`.
-
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            `Structure` lists their referenced :attr:`~Pointer.data` object
-            field values as well (chained method call).
-        """
-        values = OrderedDict()
-        for name, item in self.items():
-            # Container
-            if is_container(item):
-                values[name] = item.field_values(**options)
-            # Pointer
-            elif is_pointer(item) and get_nested(options):
-                values[name] = item.field_values(**options)
-            # Field
-            elif is_field(item):
-                values[name] = item.value
-            else:
-                raise MemberTypeError(self, item, name)
-        return values
-
-    @nested_option()
-    def field_items(self, root=None, **options):
-        """ Returns a **flat** list which contains the ``(path, item)`` tuples
-        for each :class:`Field` in the `Structure`.
-
-        :param str root: root path.
+        :param str path: path of the `Structure`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`~Pointer.data` objects of all :class:`Pointer` fields in
             the `Structure` list their referenced :attr:`~Pointer.data` object
             field items as well (chained method call).
         """
-        base = root if root else str()
+        parent = path if path else str()
 
         items = list()
         for name, item in self.items():
-            path = '{0}.{1}'.format(base, name) if base else name
+            item_path = '{0}.{1}'.format(parent, name) if parent else name
             # Container
             if is_container(item):
-                for field in item.field_items(path, **options):
+                for field in item.field_items(item_path, **options):
                     items.append(field)
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                for field in item.field_items(path, **options):
+                for field in item.field_items(item_path, **options):
                     items.append(field)
             # Field
             elif is_field(item):
-                items.append((path, item))
+                items.append((item_path, item))
             else:
-                raise MemberTypeError(self, item, path)
+                raise MemberTypeError(self, item, item_path)
         return items
 
+    @nested_option()
+    def view_fields(self, *attributes, **options):
+        """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
+        which contains the ``{'name': attribute}`` or ``{'name': tuple(*attributes)}``
+        pairs for each :class:`Field` in the `Structure`.
+
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
+            `Structure` lists their referenced :attr:`~Pointer.data` object
+            field attributes as well (chained method call).
+        """
+        values = OrderedDict()
+        for name, item in self.items():
+            # Container
+            if is_container(item):
+                values[name] = item.view_fields(*attributes, **options)
+            # Pointer
+            elif is_pointer(item) and get_nested(options):
+                values[name] = item.view_fields(*attributes, **options)
+            # Field
+            elif is_field(item):
+                if attributes:
+                    field_getter = attrgetter(*attributes)
+                else:
+                    field_getter = attrgetter('value')
+                values[name] = field_getter(item)
+            else:
+                raise MemberTypeError(self, item, name)
+        return values
+
     @nested_option(True)
-    def blueprint(self, name=str(), **options):
-        """ Returns the **blueprint** of the `Structure` as an
+    def describe(self, name=str(), **options):
+        """ Returns the **metadata** of the `Structure` as an
         :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
 
-            blueprint = {
+            metadata = {
                 'class': self.__class__.__name__,
                 'name': name if name else self.__class__.__name__,
                 'size': len(self),
                 'type': Structure.item_type.name
                 'member': [
-                    item.blueprint(member) for member, item in self.items()
+                    item.describe(member) for member, item in self.items()
                 ]
             }
 
         :param str name: optional name for the `Structure`.
+            Fallback is the class name.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields of the
             `Structure` lists their referenced :attr:`~Pointer.data` object fields
             as well (chained method call). Default is ``True``.
@@ -777,13 +712,13 @@ class Structure(OrderedDict, Container):
         for member_name, item in self.items():
             # Container
             if is_container(item):
-                members.append(item.blueprint(member_name, **options))
+                members.append(item.describe(member_name, **options))
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                members.append(item.blueprint(member_name, **options))
+                members.append(item.describe(member_name, **options))
             # Field
             elif is_field(item):
-                members.append(item.blueprint(member_name, nested=False))
+                members.append(item.describe(member_name, nested=False))
             else:
                 raise MemberTypeError(self, item, member_name)
         return metadata
@@ -826,22 +761,18 @@ class Sequence(MutableSequence, Container):
       in the `Sequence` from a byte stream via :meth:`deserialize()`.
     * **Serialize** the :attr:`~Field.value` for each :class:`Field`
       in the `Sequence` to a byte stream via :meth:`serialize()`.
-    * Get the **next** :class:`Index` after the last :class:`Field`
-      in the `Sequence` via :meth:`next_index()`.
+    * Indexes all fields in the `Sequence` via :meth:`index_fields()`.
     * Get the **first** :class:`Field`
       in the `Sequence` via :meth:`first_field()`.
-    * Get the accumulated **length** of all :class:`Field`'s
-      in the `Sequence` via :meth:`field_length()`.
-    * View the :attr:`~Field.index` for each :class:`Field`
-      in the `Sequence` via :meth:`field_indexes()`.
-    * View the type :attr:`~Field.name` for each :class:`Field`
-      in the `Sequence` via :meth:`field_types()`.
-    * View the :attr:`~Field.value` for each :class:`Field`
-      in the `Sequence` via :meth:`field_values()`.
-    * List the field **item** and its path for each :class:`Field`
-      in the `Sequence` as a flat list via :meth:`field_items()`.
-    * Get a **blueprint** of the `Sequence` via :meth:`blueprint()`.
+    * Get the accumulated **size** of all fields in the `Sequence`
+      via :meth:`container_size()`.
 
+    * View the selected *attributes* for each :class:`Field`
+      in the `Sequence` via :meth:`view_fields()`.
+    * List the **path** to the field and the field **item** itself for each
+      :class:`Field` in the `Sequence` as a flat list
+      via :meth:`field_items()`.
+    * Get the **metadata** of the `Sequence` via :meth:`describe()`.
 
     :param iterable: any *iterable* that contains items of :class:`Structure`,
         :class:`Sequence`, :class:`Array` or :class:`Field` instances. If the
@@ -1054,11 +985,12 @@ class Sequence(MutableSequence, Container):
         return index
 
     @nested_option()
-    def next_index(self, index=Index(), **options):
-        """ Returns the :class:`Index` after the last :class:`Field`
+    def index_fields(self, index=Index(), **options):
+        """ Indexes all fields in the `Sequence` starting with the given
+        *index* and returns the :class:`Index` after the last :class:`Field`
         in the `Sequence`.
 
-        :param Index index: :class:`Index` of the first :class:`Field`
+        :param Index index: start :class:`Index` for the first :class:`Field`
             in the `Sequence`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` indexes their referenced :attr:`~Pointer.data` object
@@ -1067,35 +999,34 @@ class Sequence(MutableSequence, Container):
         for name, item in enumerate(self):
             # Container
             if is_container(item):
-                index = item.next_index(index, **options)
+                index = item.index_fields(index, **options)
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                index = item.next_index(index)
+                index = item.index_field(index)
                 item.index_data()
             # Field
             elif is_field(item):
-                index = item.next_index(index)
+                index = item.index_field(index)
             else:
                 raise MemberTypeError(self, item, name, index)
         return index
 
-    def initialize(self, content):
-        """ Initializes the :class:`Field` items in the `Sequence` with
-        the *values* in the *content* list.
-
-        :param list content: a list contains the :class:`Field` values for each
-            item in the `Sequence`.
+    def container_size(self):
+        """ Returns the accumulated bit size of all fields in the `Sequence` as
+        a tuple in the form of ``(number of bytes, remaining number of bits)``.
         """
-        for name, pair in enumerate(zip(self, content)):
-            item, value = pair
-            # Container or Pointer
-            if is_mixin(item):
-                item.initialize(value)
-            # Fields
+        length = 0
+        for name, item in enumerate(self):
+            # Container
+            if is_container(item):
+                byte_length, bit_length = item.container_size()
+                length += bit_length + byte_length * 8
+            # Field
             elif is_field(item):
-                item.value = value
+                length += item.bit_size
             else:
                 raise MemberTypeError(self, item, name)
+        return divmod(length, 8)
 
     def first_field(self):
         """ Returns the first :class:`Field` in the `Sequence` or ``None``
@@ -1115,80 +1046,31 @@ class Sequence(MutableSequence, Container):
                 raise MemberTypeError(self, item, name)
         return None
 
-    def field_length(self):
-        """ Returns the length of the `Sequence` as a tuple in the form of
-        ``(number of bytes, remaining number of bits)``.
+    def initialize_fields(self, content):
+        """ Initializes the :class:`Field` items in the `Sequence` with
+        the *values* in the *content* list.
+
+        :param list content: a list contains the :class:`Field` values for each
+            item in the `Sequence`.
         """
-        length = 0
-        for name, item in enumerate(self):
-            # Container
-            if is_container(item):
-                byte_length, bit_length = item.field_length()
-                length += bit_length + byte_length * 8
-            # Field
+        for name, pair in enumerate(zip(self, content)):
+            item, value = pair
+            # Container or Pointer
+            if is_mixin(item):
+                item.initialize_fields(value)
+            # Fields
             elif is_field(item):
-                length += item.bit_size
+                item.value = value
             else:
                 raise MemberTypeError(self, item, name)
-        return divmod(length, 8)
 
     @nested_option()
-    def field_indexes(self, index=Index(), **options):
-        """ Returns a list which contains ``(name, index)`` tuples for each
+    def view_fields(self, *attributes, **options):
+        """ Returns a list of ``(name, attributes)`` tuples for each
         :class:`Field` in the `Sequence`.
 
-        :param Index index: optional start :class:`Index` of the `Sequence`.
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            `Sequence` lists their referenced :attr:`~Pointer.data` object
-            field indexes as well (chained method call).
-        """
-        indexes = list()
-        for name, item in enumerate(self):
-            # Container
-            if is_container(item):
-                indexes.append(item.field_indexes(index, **options))
-                index = item.next_index(index)
-            # Pointer
-            elif is_pointer(item) and get_nested(options):
-                indexes.append(item.field_indexes(index, **options))
-                index = item.next_index(index)
-            # Field
-            elif is_field(item):
-                index = item.next_index(index)
-                indexes.append(item.index)
-            else:
-                raise MemberTypeError(self, item, name, index)
-        return indexes
-
-    @nested_option()
-    def field_types(self, **options):
-        """ Returns a list which contains ``(name, type)`` tuples for each
-        :class:`Field` in the `Sequence`.
-
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            `Sequence` lists their referenced :attr:`~Pointer.data` object
-            field types as well (chained method call).
-        """
-        types = list()
-        for name, item in enumerate(self):
-            # Container
-            if is_container(item):
-                types.append(item.field_types(**options))
-            # Pointer
-            elif is_pointer(item) and get_nested(options):
-                types.append(item.field_types(**options))
-            # Field
-            elif is_field(item):
-                types.append(item.name)
-            else:
-                raise MemberTypeError(self, item, name)
-            return types
-
-    @nested_option()
-    def field_values(self, **options):
-        """ Returns a list which contains ``(name, value)`` tuples for each
-        :class:`Field` in the `Sequence`.
-
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` lists their referenced :attr:`~Pointer.data` object
             field values as well (chained method call).
@@ -1197,67 +1079,74 @@ class Sequence(MutableSequence, Container):
         for name, item in enumerate(self):
             # Container
             if is_container(item):
-                values.append(item.field_values(**options))
+                values.append(item.view_fields(*attributes, **options))
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                values.append(item.field_values(**options))
+                values.append(item.view_fields(*attributes, **options))
             # Field
             elif is_field(item):
-                values.append(item.value)
+                if attributes:
+                    field_getter = attrgetter(*attributes)
+                else:
+                    field_getter = attrgetter('value')
+                values.append(field_getter(item))
             else:
                 raise MemberTypeError(self, item, name)
         return values
 
     @nested_option()
-    def field_items(self, root=str(), **options):
-        """ Returns a **flat** list which contains the ``(path, item)`` tuples
+    def field_items(self, path=str(), **options):
+        """ Returns a **flat** list which contains the ``(path, field)`` tuples
         for each :class:`Field` in the `Sequence`.
 
-        :param str root: root path.
+        :param str path: path of the `Sequence`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`~Pointer.data` objects of all :class:`Pointer` fields in
             the `Sequence` list their referenced :attr:`~Pointer.data` object
             field items as well (chained method call).
         """
-        base = root if root else str()
+        parent = path if path else str()
 
         items = list()
         for name, item in enumerate(self):
-            path = "{0}[{1}]".format(base, str(name)) if base else ".[{0}]".format(
-                str(name))
+            if path:
+                item_path = "{0}[{1}]".format(path, str(name))
+            else:
+                item_path = ".[{0}]".format(str(name))
             # Container
             if is_container(item):
-                for field_item in item.field_items(path, **options):
+                for field_item in item.field_items(item_path, **options):
                     items.append(field_item)
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                for field_item in item.field_items(path, **options):
+                for field_item in item.field_items(item_path, **options):
                     items.append(field_item)
             # Field
             elif is_field(item):
-                items.append((path, item))
+                items.append((item_path, item))
             else:
-                raise MemberTypeError(self, item, path)
+                raise MemberTypeError(self, item, item_path)
         return items
 
     @nested_option(True)
-    def blueprint(self, name=str(), **options):
-        """ Returns the **blueprint** of the `Sequence` as an
+    def describe(self, name=str(), **options):
+        """ Returns the **metadata** of the `Sequence` as an
         :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
 
-            blueprint = {
+            metadata = {
                 'class': self.__class__.__name__,
                 'name': name if name else self.__class__.__name__,
                 'size': len(self),
                 'type': Sequence.item_type.name
                 'member': [
-                    item.blueprint('name[idx]') for idx, item in enumerate(self)
+                    item.describe('name[idx]') for idx, item in enumerate(self)
                 ]
             }
 
         :param str name: optional name for the `Sequence`.
+            Fallback is the class name.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Sequence` lists their referenced :attr:`~Pointer.data` object fields
             as well (chained method call). Default is ``True``.
@@ -1273,26 +1162,26 @@ class Sequence(MutableSequence, Container):
         for member_name, item in enumerate(self):
             # Container
             if is_container(item):
-                members.append(item.blueprint("{0}[{1}]".
-                                              format(metadata['name'], member_name),
-                                              **options))
+                members.append(item.describe("{0}[{1}]".
+                                             format(metadata['name'], member_name),
+                                             **options))
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                members.append(item.blueprint("{0}[{1}]".
-                                              format(metadata['name'], member_name),
-                                              **options))
+                members.append(item.describe("{0}[{1}]".
+                                             format(metadata['name'], member_name),
+                                             **options))
             # Field
             elif is_field(item):
-                members.append(item.blueprint("{0}[{1}]".
-                                              format(metadata['name'], member_name),
-                                              nested=False))
+                members.append(item.describe("{0}[{1}]".
+                                             format(metadata['name'], member_name),
+                                             nested=False))
             else:
                 raise MemberTypeError(self, item, member_name)
         return metadata
 
 
 class Array(Sequence):
-    """ A `Array` is a :class:`Sequence` which contains *elements* of one type.
+    """ An `Array` is a :class:`Sequence` which contains *elements* of one type.
     The *template* for the `Array` element can be any :class:`Field` instance
     or a *callable* which returns a :class:`Structure`, :class:`Sequence`,
     :class:`Array` or any :class:`Field` instance.
@@ -1301,12 +1190,12 @@ class Array(Sequence):
     for the `Array` element produces complete copies for each `Array` element
     including the *nested* objects in the *template* for the `Array` element.
 
-    A `Array` of :class:`Pointer` fields should use a *callable* instead of
+    An `Array` of :class:`Pointer` fields should use a *callable* instead of
     assigning a :class:`Pointer` field instance directly as the `Array` element
     *template* to ensure that the referenced :attr:`~Pointer.data` object of a
     :class:`Pointer` field is also complete copied for each `Array` element.
 
-    A `Array` adapts and extends a :class:`Sequence` with the following
+    An `Array` adapts and extends a :class:`Sequence` with the following
     features:
 
     *   **Append** a new `Array` element to the `Array` via :meth:`append()`.
@@ -1314,7 +1203,7 @@ class Array(Sequence):
         via :meth:`insert()`.
     *   **Re-size** the `Array` via :meth:`resize()`.
 
-    A `Array` replaces the ``'type'`` key of the :attr:`~Sequence.blueprint`
+    An `Array` replaces the ``'type'`` key of the :attr:`~Sequence.metadata`
     of a :class:`Sequence` with its own `item` type.
 
     :param template: template for the `Array` element.
@@ -1354,43 +1243,6 @@ class Array(Sequence):
         else:
             return self._template()
 
-    def initialize(self, content):
-        """ Initializes the :class:`Field` elements in the `Array` with the
-        *values* in the *content* list.
-
-        If the *content* list is shorter than the `Array` then the *content*
-        list is used as a rotating fill pattern for the :class:`Field` elements
-        in the `Array`.
-
-        :param list content: a list contains the :class:`Field` values for each
-            element in the `Array` or one :class:`Field` value for all elements
-            in the `Array`.
-        """
-
-        if isinstance(content, (list, tuple)):
-            size = len(content)
-            for i in range(0, len(self), size):
-                for name, pair in enumerate(zip(self[i:i + size], content), start=i):
-                    item, value = pair
-                    # Container or Pointer
-                    if is_mixin(item):
-                        item.initialize(value)
-                    # Fields
-                    elif is_field(item):
-                        item.value = value
-                    else:
-                        raise MemberTypeError(self, item, name)
-        else:
-            for name, item in enumerate(self):
-                # Container or Pointer
-                if is_mixin(item):
-                    item.initialize(content)
-                # Fields
-                elif is_field(item):
-                    item.value = content
-                else:
-                    raise MemberTypeError(self, item, name)
-
     def append(self):
         """ Appends a new `Array` element to the `Array`."""
         super().append(self.__create__())
@@ -1422,8 +1274,45 @@ class Array(Sequence):
             for i in range(abs(count)):
                 self.pop()
 
-    def blueprint(self, name=None, **options):
-        metadata = super().blueprint(name, **options)
+    def initialize_fields(self, content):
+        """ Initializes the :class:`Field` elements in the `Array` with the
+        *values* in the *content* list.
+
+        If the *content* list is shorter than the `Array` then the *content*
+        list is used as a rotating fill pattern for the :class:`Field` elements
+        in the `Array`.
+
+        :param list content: a list contains the :class:`Field` values for each
+            element in the `Array` or one :class:`Field` value for all elements
+            in the `Array`.
+        """
+
+        if isinstance(content, (list, tuple)):
+            size = len(content)
+            for i in range(0, len(self), size):
+                for name, pair in enumerate(zip(self[i:i + size], content), start=i):
+                    item, value = pair
+                    # Container or Pointer
+                    if is_mixin(item):
+                        item.initialize_fields(value)
+                    # Fields
+                    elif is_field(item):
+                        item.value = value
+                    else:
+                        raise MemberTypeError(self, item, name)
+        else:
+            for name, item in enumerate(self):
+                # Container or Pointer
+                if is_mixin(item):
+                    item.initialize_fields(content)
+                # Fields
+                elif is_field(item):
+                    item.value = content
+                else:
+                    raise MemberTypeError(self, item, name)
+
+    def describe(self, name=None, **options):
+        metadata = super().describe(name, **options)
         metadata['type'] = Array.item_type.name
         return metadata
 
@@ -1432,7 +1321,7 @@ class Field:
     """ The `Field` class is the *abstract class* for all field classes.
 
     A `Field` has a specific **name**, **bit size**, **byte order**
-    and can be **aligned to** other `Field`'s.
+    and can be **aligned to** other fields.
 
     A `Field` has methods to **unpack**, **pack**, **deserialize** and **serialize**
     its field **value** from and to a byte stream and stores its location within
@@ -1645,7 +1534,7 @@ class Field:
     @nested_option()
     def deserialize(self, buffer=bytes(), index=Index(), **options):
         """ De-serializes the `Field` from the byte *buffer* starting at
-        the begin of the *buffer* or with the given *index* by mapping the
+        the begin of the *buffer* or with the given *index* by unpacking the
         bytes to the :attr:`value` of the `Field` in accordance with the
         decoding *byte order* for the de-serialization and the decoding
         :attr:`byte_order` of the `Field`.
@@ -1671,13 +1560,13 @@ class Field:
         """
         self.index = index
         self._value = self.unpack(buffer, index, **options)
-        return self.next_index(index)
+        return self.index_field(index)
 
     @byte_order_option()
     @nested_option()
     def serialize(self, buffer=bytearray(), index=Index(), **options):
         """ Serializes the `Field` to the byte *buffer* starting at the begin
-        of the *buffer* or with the given *index* by mapping the :attr:`value`
+        of the *buffer* or with the given *index* by packing the :attr:`value`
         of the `Field` to the byte *buffer* in accordance with the encoding
         *byte order*  for the serialization and the encoding :attr:`byte_order`
         of the `Field`.
@@ -1702,10 +1591,11 @@ class Field:
         """
         self.index = index
         buffer += self.pack(buffer, **options)
-        return self.next_index(index)
+        return self.index_field(index)
 
-    def next_index(self, index=Index()):
-        """ Returns the :class:`Index` after the `Field`.
+    def index_field(self, index=Index()):
+        """ Indexes the `Field` with the given *index* und returns the
+        :class:`Index` after the `Field`.
 
         :param Index index: start :class:`Index` for the `Field`.
         """
@@ -1740,13 +1630,13 @@ class Field:
         return Index(byte, bit, address, base, update)
 
     @nested_option(True)
-    def blueprint(self, name=str(), **options):
-        """ Returns the **blueprint** of a `Field` as an
+    def describe(self, name=str(), **options):
+        """ Returns the **metadata** of a `Field` as an
         :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
 
-            blueprint = {
+            metadata = {
                 'address': self.index.address,
                 'alignment': [self.alignment[0], self.alignment[1]],
                 'class': self.name,
@@ -1759,6 +1649,7 @@ class Field:
             }
 
         :param str name: optional name for the `Field`.
+            Fallback is the class name.
         :keyword bool nested: if ``True`` a :class:`Pointer` field lists its
             referenced :attr:`~Pointer.data` object fields as well
             (chained method call). Default is ``True``.
@@ -1809,7 +1700,7 @@ class Stream(Field):
     Byteorder.auto = 'auto'
     >>> stream.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> stream.next_index()
+    >>> stream.index_field()
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
     >>> stream.bit_size
     0
@@ -1830,7 +1721,7 @@ class Stream(Field):
     (10, 0)
     >>> stream.bit_size
     80
-    >>> stream.next_index()
+    >>> stream.index_field()
     Index(byte=10, bit=0, address=10, base_address=0, update=False)
     >>> stream.value
     '00000000000000000000'
@@ -1860,7 +1751,7 @@ class Stream(Field):
     False
     >>> hexlify(stream[5:])  # converts to bytes
     b'060708090a'
-    >>> pprint(stream.blueprint())
+    >>> pprint(stream.describe())
     OrderedDict([('address', 0),
                  ('alignment', [10, 0]),
                  ('class', 'Stream10'),
@@ -1981,8 +1872,8 @@ class Stream(Field):
         self._bit_size = size * 8
         self._align_to_byte_size = size
 
-    def blueprint(self, name=str(), **options):
-        metadata = super().blueprint(name, **options)
+    def describe(self, name=str(), **options):
+        metadata = super().describe(name, **options)
         return metadata
 
 
@@ -2019,7 +1910,7 @@ class String(Stream):
     Byteorder.auto = 'auto'
     >>> string.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> string.next_index()
+    >>> string.index_field()
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
     >>> string.bit_size
     0
@@ -2040,7 +1931,7 @@ class String(Stream):
     (10, 0)
     >>> string.bit_size
     80
-    >>> string.next_index()
+    >>> string.index_field()
     Index(byte=10, bit=0, address=10, base_address=0, update=False)
     >>> string.value
     ''
@@ -2074,7 +1965,7 @@ class String(Stream):
     b'KonFoo'
     >>> string[3:6]  # converts to bytes
     b'Foo'
-    >>> pprint(string.blueprint())
+    >>> pprint(string.describe())
     OrderedDict([('address', 0),
                  ('alignment', [10, 0]),
                  ('class', 'String10'),
@@ -2118,7 +2009,7 @@ class Float(Field):
     Internally a `Float` field uses a :class:`float` class to store the
     data of its field :attr:`~Float.value`.
 
-    A `Float` field extends the :attr:`~Field.blueprint` of a :class:`Field`
+    A `Float` field extends the :attr:`~Field.metadata` of a :class:`Field`
     with a ``'max'`` and ``'min'`` key for its maximum and minimum possible
     field :attr:`.value`.
 
@@ -2139,7 +2030,7 @@ class Float(Field):
     Byteorder.auto = 'auto'
     >>> real.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> real.next_index()
+    >>> real.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> real.bit_size
     32
@@ -2170,7 +2061,7 @@ class Float(Field):
     >>> real.value = 3.4028234663852887e+38
     >>> real.value
     3.4028234663852886e+38
-    >>> pprint(real.blueprint())
+    >>> pprint(real.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Float32'),
@@ -2233,6 +2124,7 @@ class Float(Field):
 
     @staticmethod
     def smallest():
+        """ Returns the smallest possible field *value* of the `Float` field."""
         return 2 ** -126
 
     @staticmethod
@@ -2292,8 +2184,8 @@ class Float(Field):
         else:
             return struct.pack('<f', self._value)
 
-    def blueprint(self, name=str(), **options):
-        metadata = super().blueprint(name, **options)
+    def describe(self, name=str(), **options):
+        metadata = super().describe(name, **options)
         metadata['max'] = self.max()
         metadata['min'] = self.min()
         return OrderedDict(sorted(metadata.items()))
@@ -2306,7 +2198,7 @@ class Decimal(Field):
     Internally a `Decimal` field uses an :class:`int` class to store the
     data of its field :attr:`value`.
 
-    A `Decimal` field extends the :attr:`~Field.blueprint` of a :class:`Field`
+    A `Decimal` field extends the :attr:`~Field.metadata` of a :class:`Field`
     with a ``'max'`` and ``'min'`` key for its maximum and minimum possible
     field :attr:`value` and a ``'signed'`` key to mark the decimal number as
     signed or unsigned.
@@ -2337,7 +2229,7 @@ class Decimal(Field):
     Byteorder.auto = 'auto'
     >>> unsigned.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> unsigned.next_index()
+    >>> unsigned.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unsigned.bit_size
     16
@@ -2387,7 +2279,7 @@ class Decimal(Field):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> pprint(unsigned.blueprint())
+    >>> pprint(unsigned.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Decimal16'),
@@ -2414,7 +2306,7 @@ class Decimal(Field):
     Byteorder.auto = 'auto'
     >>> signed.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> signed.next_index()
+    >>> signed.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> signed.bit_size
     16
@@ -2460,7 +2352,7 @@ class Decimal(Field):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> pprint(signed.blueprint())
+    >>> pprint(signed.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Decimal16'),
@@ -2763,8 +2655,8 @@ class Decimal(Field):
             # Extent the buffer with the field group content and the field value
             return value.to_bytes(self.alignment[0], byte_order.value)
 
-    def blueprint(self, name=None, **options):
-        metadata = super().blueprint(name, **options)
+    def describe(self, name=None, **options):
+        metadata = super().describe(name, **options)
         metadata['max'] = self.max()
         metadata['min'] = self.min()
         metadata['signed'] = self.signed
@@ -2795,7 +2687,7 @@ class Bit(Decimal):
     Byteorder.auto = 'auto'
     >>> bit.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> bit.next_index()
+    >>> bit.index_field()
     Index(byte=0, bit=1, address=0, base_address=0, update=False)
     >>> bit.bit_size
     1
@@ -2855,7 +2747,7 @@ class Bit(Decimal):
     Index(byte=0, bit=1, address=0, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'01'
-    >>> pprint(bit.blueprint())
+    >>> pprint(bit.describe())
     OrderedDict([('address', 0),
                  ('alignment', [1, 0]),
                  ('class', 'Bit'),
@@ -2915,7 +2807,7 @@ class Byte(Decimal):
     Byteorder.auto = 'auto'
     >>> byte.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> byte.next_index()
+    >>> byte.index_field()
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> byte.bit_size
     8
@@ -2965,7 +2857,7 @@ class Byte(Decimal):
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff'
-    >>> pprint(byte.blueprint())
+    >>> pprint(byte.describe())
     OrderedDict([('address', 0),
                  ('alignment', [1, 0]),
                  ('class', 'Byte'),
@@ -3023,7 +2915,7 @@ class Char(Decimal):
     Byteorder.auto = 'auto'
     >>> char.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> char.next_index()
+    >>> char.index_field()
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> char.bit_size
     8
@@ -3075,7 +2967,7 @@ class Char(Decimal):
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'46'
-    >>> pprint(char.blueprint())
+    >>> pprint(char.describe())
     OrderedDict([('address', 0),
                  ('alignment', [1, 0]),
                  ('class', 'Char'),
@@ -3138,7 +3030,7 @@ class Signed(Decimal):
     Byteorder.auto = 'auto'
     >>> signed.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> signed.next_index()
+    >>> signed.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> signed.bit_size
     16
@@ -3188,7 +3080,7 @@ class Signed(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> pprint(signed.blueprint())
+    >>> pprint(signed.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Signed16'),
@@ -3238,7 +3130,7 @@ class Unsigned(Decimal):
     Byteorder.auto = 'auto'
     >>> unsigned.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> unsigned.next_index()
+    >>> unsigned.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unsigned.bit_size
     16
@@ -3288,7 +3180,7 @@ class Unsigned(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> pprint(unsigned.blueprint())
+    >>> pprint(unsigned.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Unsigned16'),
@@ -3347,7 +3239,7 @@ class Bitset(Decimal):
     Byteorder.auto = 'auto'
     >>> bitset.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> bitset.next_index()
+    >>> bitset.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bitset.bit_size
     16
@@ -3397,7 +3289,7 @@ class Bitset(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> pprint(bitset.blueprint())
+    >>> pprint(bitset.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Bitset16'),
@@ -3457,7 +3349,7 @@ class Bool(Decimal):
     Byteorder.auto = 'auto'
     >>> boolean.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> boolean.next_index()
+    >>> boolean.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> boolean.bit_size
     16
@@ -3507,7 +3399,7 @@ class Bool(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> pprint(boolean.blueprint())
+    >>> pprint(boolean.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Bool16'),
@@ -3575,7 +3467,7 @@ class Enum(Decimal):
     Byteorder.auto = 'auto'
     >>> enum.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> enum.next_index()
+    >>> enum.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> enum.bit_size
     16
@@ -3631,7 +3523,7 @@ class Enum(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> pprint(enum.blueprint())
+    >>> pprint(enum.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Enum16'),
@@ -3702,7 +3594,7 @@ class Scaled(Decimal):
 
         ``2 ** (field size - 1) / 2``
 
-    A `Scaled` field extends the :attr:`~Field.blueprint` of a :class:`Decimal`
+    A `Scaled` field extends the :attr:`~Field.metadata` of a :class:`Decimal`
     with a ``'scale'`` key for its scaling factor.
 
     :param float scale: scaling factor of the `Scaled` field.
@@ -3730,7 +3622,7 @@ class Scaled(Decimal):
     Byteorder.auto = 'auto'
     >>> scaled.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> scaled.next_index()
+    >>> scaled.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> scaled.scale
     100.0
@@ -3784,7 +3676,7 @@ class Scaled(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> pprint(scaled.blueprint())
+    >>> pprint(scaled.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Scaled16'),
@@ -3839,8 +3731,8 @@ class Scaled(Decimal):
         """ Returns the scaling base of the `Scaled` field."""
         return 2 ** (self.bit_size - 1) / 2
 
-    def blueprint(self, name=None, **options):
-        metadata = super().blueprint(name, **options)
+    def describe(self, name=None, **options):
+        metadata = super().describe(name, **options)
         metadata['scale'] = self.scale
         return OrderedDict(sorted(metadata.items()))
 
@@ -3901,7 +3793,7 @@ class Fraction(Decimal):
     Byteorder.auto = 'auto'
     >>> unipolar.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> unipolar.next_index()
+    >>> unipolar.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unipolar.bit_size
     16
@@ -3955,7 +3847,7 @@ class Fraction(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> pprint(unipolar.blueprint())
+    >>> pprint(unipolar.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Fraction2.16'),
@@ -3982,7 +3874,7 @@ class Fraction(Decimal):
     Byteorder.auto = 'auto'
     >>> bipolar.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> bipolar.next_index()
+    >>> bipolar.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bipolar.bit_size
     16
@@ -4040,7 +3932,7 @@ class Fraction(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> pprint(bipolar.blueprint())
+    >>> pprint(bipolar.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Fraction2.16'),
@@ -4120,8 +4012,8 @@ class Fraction(Decimal):
             decimal = limiter(integer | fraction, 0, 2 ** self.bit_size - 1)
         return self.to_decimal(decimal)
 
-    def blueprint(self, name=None, **options):
-        metadata = super().blueprint(name, **options)
+    def describe(self, name=None, **options):
+        metadata = super().describe(name, **options)
         metadata['signed'] = self._signed_fraction
         return OrderedDict(sorted(metadata.items()))
 
@@ -4158,7 +4050,7 @@ class Bipolar(Fraction):
     Byteorder.auto = 'auto'
     >>> bipolar.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> bipolar.next_index()
+    >>> bipolar.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> bipolar.bit_size
     16
@@ -4212,7 +4104,7 @@ class Bipolar(Fraction):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> pprint(bipolar.blueprint())
+    >>> pprint(bipolar.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Bipolar2.16'),
@@ -4266,7 +4158,7 @@ class Unipolar(Fraction):
     Byteorder.auto = 'auto'
     >>> unipolar.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> unipolar.next_index()
+    >>> unipolar.index_field()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> unipolar.bit_size
     16
@@ -4320,7 +4212,7 @@ class Unipolar(Fraction):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> pprint(unipolar.blueprint())
+    >>> pprint(unipolar.describe())
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Unipolar2.16'),
@@ -4364,7 +4256,7 @@ class Datetime(Decimal):
     Byteorder.auto = 'auto'
     >>> datetime.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> datetime.next_index()
+    >>> datetime.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> datetime.bit_size
     32
@@ -4411,7 +4303,7 @@ class Datetime(Decimal):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffffffff'
-    >>> pprint(datetime.blueprint())
+    >>> pprint(datetime.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Datetime32'),
@@ -4471,7 +4363,7 @@ class IPv4Address(Decimal):
     Byteorder.auto = 'auto'
     >>> ipv4.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> ipv4.next_index()
+    >>> ipv4.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> ipv4.bit_size
     32
@@ -4518,7 +4410,7 @@ class IPv4Address(Decimal):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffffffff'
-    >>> pprint(ipv4.blueprint())
+    >>> pprint(ipv4.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Ipaddress32'),
@@ -4563,30 +4455,29 @@ class Pointer(Decimal, Container):
 
     * **Deserialize** the :attr:`~Field.value` for each :class:`Field`
       in the :attr:`data` object referenced by the `Pointer` field from
-      a byte stream via :meth:`deserialize_data()`.
+      a byte stream via :meth:`deserialize_data`.
     * **Serialize** the :attr:`~Field.value` for each :class:`Field`
       in the :attr:`data` object referenced by the `Pointer` field to a
-      byte stream via :meth:`serialize_data()`.
+      byte stream via :meth:`serialize_data`.
     * **Indexes** each :class:`Field` in the :attr:`data` object
-      referenced by the `Pointer` field via :meth:`index_data()`.
+      referenced by the `Pointer` field via :meth:`index_data`.
     * **Read** from a :class:`Provider` the necessary bytes for the :attr:`data`
-      object referenced by the `Pointer` field via :meth:`read_from()`.
+      object referenced by the `Pointer` field via :meth:`read_from`.
     * **Write** to a :class:`Provider` the necessary bytes for the
       :attr:`data` object referenced by the `Pointer` field
-      via :meth:`write_to()`.
-    * View the :attr:`~Field.index` of the `Pointer` field and for each
+      via :meth:`write_to`.
+    * Get the accumulated **size** of all fields in the :attr:`data` object
+      referenced by the `Pointer` field via :attr:`data_size`.
+    * Indexes the `Pointer` field and each :class:`Field` in the :attr:`data`
+      object referenced by the `Pointer` field via :meth:`index_fields`.
+    * View the selected *attributes* of the `Pointer` field and for each
       :class:`Field` in the :attr:`data` object referenced by the `Pointer`
-      field via :meth:`field_indexes()`.
-    * View the type :attr:`~Field.name` of the `Pointer` field and for each
-      :class:`Field` in the :attr:`data` object referenced by the `Pointer`
-      field via :meth:`field_types()`.
-    * View the :attr:`~Field.value` of the `Pointer` field and for each
-      :class:`Field` in the :attr:`data` object referenced by the `Pointer`
-      field via :meth:`field_values()`.
-    * List the field **item** and its path for the `Pointer` field
-      and for each :class:`Field` in the :attr:`data` object referenced by
-      the `Pointer` field as a flat list via :meth:`field_items()`.
-    * Get a **blueprint** of the `Pointer` field via :meth:`blueprint()`.
+      field via :meth:`view_fields`.
+    * List the **path** to the field and the field **item** itself for the
+      `Pointer` field and for each :class:`Field` in the :attr:`data` object
+      referenced by the `Pointer` field as a flat list
+      via :meth:`field_items`.
+    * Get the **metadata** of the `Pointer` field via :meth:`describe`.
 
     :param template: template for the :attr:`data` object referenced by the
         `Pointer` field.
@@ -4621,7 +4512,7 @@ class Pointer(Decimal, Container):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -4671,7 +4562,7 @@ class Pointer(Decimal, Container):
     >>> pointer.value = 0x4000
     >>> pointer.value
     '0x4000'
-    >>> pointer.initialize({'value': 0x8000})
+    >>> pointer.initialize_fields({'value': 0x8000})
     >>> pointer.value
     '0x8000'
     >>> pointer.value = -0x1
@@ -4696,7 +4587,7 @@ class Pointer(Decimal, Container):
     Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)
     >>> pointer.serialize_data()
     b''
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Pointer'),
@@ -4709,14 +4600,9 @@ class Pointer(Decimal, Container):
                  ('size', 32),
                  ('type', 'Pointer'),
                  ('value', '0xffffffff')])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False))])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', None)])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', None)])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -4816,7 +4702,7 @@ class Pointer(Decimal, Container):
         """ Returns the size of the :attr:`data` object in bytes (read-only)."""
         # Container
         if is_container(self._data):
-            byte_length, bit_length = self._data.field_length()
+            byte_length, bit_length = self._data.container_size()
             return byte_length + math.ceil(bit_length / 8)
         # Field
         elif is_field(self._data):
@@ -4911,14 +4797,14 @@ class Pointer(Decimal, Container):
         index = Index(0, 0, self.address, self.base_address, False)
         # Container
         if is_container(self._data):
-            self._data.next_index(index, nested=True)
+            self._data.index_fields(index, nested=True)
         # Pointer
         elif is_pointer(self._data):
-            self._data.next_index(index)
+            self._data.index_field(index)
             self._data.index_data()
         # Field
         elif is_field(self._data):
-            self._data.next_index(index)
+            self._data.index_field(index)
 
     @nested_option(True)
     def read_from(self, provider, null_allowed=False, **options):
@@ -4974,7 +4860,7 @@ class Pointer(Decimal, Container):
         # Container?
         if is_container(item):
             # Incomplete container
-            length = item.field_length()
+            length = item.container_size()
             if length[1] is not 0:
                 raise ContainerLengthError(item, length)
 
@@ -5181,7 +5067,7 @@ class Pointer(Decimal, Container):
             self._data_stream = bytes(self._data_stream)
         return index
 
-    def initialize(self, content):
+    def initialize_fields(self, content):
         """ Initializes the `Pointer` field itself and the :class:`Field` items
         in the :attr:`data` object referenced by the `Pointer` field with the
         *values* in the *content* dictionary.
@@ -5201,83 +5087,46 @@ class Pointer(Decimal, Container):
             elif name is 'data':
                 # Container or Pointer
                 if is_mixin(self._data):
-                    self._data.initialize(value)
+                    self._data.initialize_fields(value)
                 # Field
                 elif is_field(self._data):
                     self._data.value = value
 
     @nested_option()
-    def field_indexes(self, index=Index(), **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        with two keys.
-        The ``['value']`` key contains the :attr:`~Field.index` of the `Pointer`
-        field and the ``['data']`` key contains the :attr:`~Field.index` for
-        each :class:`Field` in the :attr:`data` object referenced by the
-        `Pointer` field.
+    def index_fields(self, index=Index(), **options):
+        """ Indexes the `Pointer` field and the :attr:`data` object referenced
+        by the `Pointer` field starting with the given *index* and returns the
+        :class:`Index` after the `Pointer` field.
 
-        :param Index index: optional start :class:`Index` of the `Pointer`.
+        :param Index index: :class:`Index` for the `Pointer` field.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            :attr:`data` object referenced by the `Pointer` field lists their
-            referenced :attr:`~Pointer.data` object field indexes as well
+            :attr:`data` object referenced by the `Pointer` field indexes their
+            referenced :attr:`~Pointer.data` object fields as well
             (chained method call).
         """
-        self.next_index(index)
+        index = self.index_field(index)
 
-        indexes = OrderedDict()
-        indexes['value'] = self._index
         # Container
         if is_container(self._data):
-            indexes['data'] = self._data.field_indexes(
-                Index(0, 0, self.address, self.base_address, False),
-                **options)
+            self._data.index_fields(Index(0, 0,
+                                          self.address, self.base_address,
+                                          False),
+                                    **options)
         # Pointer
         elif is_pointer(self._data) and get_nested(options):
-            indexes['data'] = self._data.field_indexes(
-                Index(0, 0, self.address, self.base_address, False),
-                **options)
+            self._data.index_fields(Index(0, 0,
+                                          self.address, self.base_address,
+                                          False),
+                                    **options)
         # Field
         elif is_field(self._data):
-            self._data.next_index(Index(0, 0,
-                                        self.address, self.base_address,
-                                        False))
-            indexes['data'] = self._data.index
-        else:
-            indexes['data'] = Index(0, 0,
-                                    self.address, self.base_address,
-                                    False)
-        return indexes
+            self._data.index_field(Index(0, 0,
+                                         self.address, self.base_address,
+                                         False))
+        return index
 
     @nested_option()
-    def field_types(self, **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        with two keys.
-        The ``['value']`` key contains the :attr:`~Field.name` of the `Pointer`
-        field and the ``['data']`` key contains the :attr:`~Field.name` for each
-        :class:`Field` in the :attr:`data` object referenced by the `Pointer`
-        field.
-
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            :attr:`data` object referenced by the `Pointer` field lists their
-            referenced :attr:`~Pointer.data` object field types as well
-            (chained method call).
-        """
-        types = OrderedDict()
-        types['value'] = self.name
-        # Container
-        if is_container(self._data):
-            types['data'] = self._data.field_types(**options)
-        # Pointer
-        elif is_pointer(self._data) and get_nested(options):
-            types['data'] = self._data.field_types(**options)
-        # Field
-        elif is_field(self._data):
-            types['data'] = self._data.name
-        else:
-            types['data'] = None
-        return types
-
-    @nested_option()
-    def field_values(self, **options):
+    def view_fields(self, *attributes, **options):
         """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
         with two keys.
         The ``['value']`` key contains the :attr:`~Pointer.value` of the `Pointer`
@@ -5285,32 +5134,39 @@ class Pointer(Decimal, Container):
         each :class:`Field` in the :attr:`data` object referenced by the
         `Pointer` field.
 
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`data` object referenced by the `Pointer` field lists their
-            referenced :attr:`~Pointer.data` object field values as well
+            referenced :attr:`~Pointer.data` object field attributes as well
             (chained method call).
         """
         values = OrderedDict()
         values['value'] = self.value
         # Container
         if is_container(self._data):
-            values['data'] = self._data.field_values(**options)
+            values['data'] = self._data.view_fields(*attributes, **options)
         # Pointer
         elif is_pointer(self._data) and get_nested(options):
-            values['data'] = self._data.field_values(**options)
+            values['data'] = self._data.view_fields(*attributes, **options)
         # Field
         elif is_field(self._data):
-            values['data'] = self._data.value
+            if attributes:
+                field_getter = attrgetter(*attributes)
+            else:
+                field_getter = attrgetter('value')
+            values['data'] = field_getter(self._data)
         else:
             values['data'] = self._data
         return values
 
     @nested_option()
-    def field_items(self, root=str(), **options):
-        """ Returns a **flat** list which contains the ``(path, item)`` tuples
-        for each :class:`Field` of the `Pointer` field.
+    def field_items(self, path=str(), **options):
+        """ Returns a **flat** list of ``(path, field)`` tuples for the `Pointer`
+        field itself and for each :class:`Field` in the :attr:`data` object
+        referenced by the `Pointer` field.
 
-        :param str root: root path.
+        :param str path: path of the `Pointer` field.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`data` object referenced by the `Pointer` field lists their
             referenced :attr:`~Pointer.data` object field items as well
@@ -5318,31 +5174,30 @@ class Pointer(Decimal, Container):
         """
         items = list()
         # Field
-        path = root if root else 'value'
-        items.append((path, self))
+        items.append((path if path else 'value', self))
         # Data Object
-        path = '{0}.{1}'.format(root, 'data') if root else 'data'
+        data_path = '{0}.{1}'.format(path, 'data') if path else 'data'
         # Container
         if is_container(self._data):
-            for field_item in self._data.field_items(path, **options):
+            for field_item in self._data.field_items(data_path, **options):
                 items.append(field_item)
         # Pointer
         elif is_pointer(self._data) and get_nested(options):
-            for field_item in self._data.field_items(path, **options):
+            for field_item in self._data.field_items(data_path, **options):
                 items.append(field_item)
         # Field
         elif is_field(self._data):
-            items.append((path, self._data))
+            items.append((data_path, self._data))
         return items
 
     @nested_option(True)
-    def blueprint(self, name=str(), **options):
-        """ Returns the **blueprint** of a `Pointer` as an
+    def describe(self, name=str(), **options):
+        """ Returns the **metadata** of a `Pointer` as an
         :class:`ordered dictionary <collections.OrderedDict>`.
 
         .. code-block:: python
 
-            blueprint = {
+            metadata = {
                 'address': self.index.address,
                 'alignment': [self.alignment[0], self.alignment[1]],
                 'class': self.__class__.__name__,
@@ -5354,21 +5209,22 @@ class Pointer(Decimal, Container):
                 'size': self.bit_size,
                 'type': Pointer.item_type.name,
                 'value': self.value,
-                'member': [self.data.blueprint()]
+                'member': [self.data.describe()]
             }
 
         :param str name: optional name for the `Pointer` field.
+            Fallback is the class name.
         :keyword bool nested: if ``True`` a :class:`Pointer` field lists its
             referenced :attr:`data` object fields as well (chained method call).
             Default is ``True``.
         """
-        metadata = super().blueprint(name, **options)
+        metadata = super().describe(name, **options)
         metadata['class'] = self.__class__.__name__
         metadata['name'] = name if name else self.__class__.__name__
         metadata['type'] = Pointer.item_type.name
         if is_any(self._data) and get_nested(options):
             metadata['member'] = list()
-            metadata['member'].append(self._data.blueprint('data', **options))
+            metadata['member'].append(self._data.describe('data', **options))
         return metadata
 
 
@@ -5410,7 +5266,7 @@ class StructurePointer(Pointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -5478,7 +5334,7 @@ class StructurePointer(Pointer):
     []
     >>> [(name, member.value) for name, member in pointer.items()]
     []
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StructurePointer'),
@@ -5497,13 +5353,9 @@ class StructurePointer(Pointer):
                                 ('size', 0),
                                 ('type', 'Structure'),
                                 ('member', [])])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data', OrderedDict())])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', OrderedDict())])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -5623,7 +5475,7 @@ class SequencePointer(Pointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -5714,7 +5566,7 @@ class SequencePointer(Pointer):
     >>> pointer.data
     []
     >>> pointer.clear()
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'SequencePointer'),
@@ -5733,13 +5585,9 @@ class SequencePointer(Pointer):
                                 ('size', 0),
                                 ('type', 'Sequence'),
                                 ('member', [])])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data', [])])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', None)])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -5882,7 +5730,7 @@ class ArrayPointer(SequencePointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -5974,7 +5822,7 @@ class ArrayPointer(SequencePointer):
     >>> len(pointer)
     10
     >>> pointer.clear()
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'ArrayPointer'),
@@ -5993,13 +5841,9 @@ class ArrayPointer(SequencePointer):
                                 ('size', 0),
                                 ('type', 'Array'),
                                 ('member', [])])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data', [])])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', None)])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -6091,7 +5935,7 @@ class StreamPointer(Pointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -6188,7 +6032,7 @@ class StreamPointer(Pointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StreamPointer'),
@@ -6211,14 +6055,9 @@ class StreamPointer(Pointer):
                                 ('size', 80),
                                 ('type', 'Field'),
                                 ('value', '4b6f6e466f6f20697320')])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False))])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', 'Stream10')])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -6307,7 +6146,7 @@ class StringPointer(StreamPointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -6404,7 +6243,7 @@ class StringPointer(StreamPointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StringPointer'),
@@ -6427,14 +6266,9 @@ class StringPointer(StreamPointer):
                                 ('size', 80),
                                 ('type', 'Field'),
                                 ('value', 'KonFoo is ')])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False))])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -6500,7 +6334,7 @@ class AutoStringPointer(StringPointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -6597,7 +6431,7 @@ class AutoStringPointer(StringPointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'AutoStringPointer'),
@@ -6620,14 +6454,9 @@ class AutoStringPointer(StringPointer):
                                 ('size', 80),
                                 ('type', 'Field'),
                                 ('value', 'KonFoo is ')])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False))])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -6737,7 +6566,7 @@ class RelativePointer(Pointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -6809,7 +6638,7 @@ class RelativePointer(Pointer):
     Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)
     >>> pointer.serialize_data()
     b''
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'RelativePointer'),
@@ -6822,14 +6651,9 @@ class RelativePointer(Pointer):
                  ('size', 32),
                  ('type', 'Pointer'),
                  ('value', '0xffffffff')])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  Index(byte=0, bit=0, address=4294967295, base_address=0, update=False))])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', None)])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', None)])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -6907,7 +6731,7 @@ class StructureRelativePointer(RelativePointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -6975,7 +6799,7 @@ class StructureRelativePointer(RelativePointer):
     []
     >>> [(name, member.value) for name, member in pointer.items()]
     []
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StructureRelativePointer'),
@@ -6994,13 +6818,9 @@ class StructureRelativePointer(RelativePointer):
                                 ('size', 0),
                                 ('type', 'Structure'),
                                 ('member', [])])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data', OrderedDict())])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', OrderedDict())])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -7121,7 +6941,7 @@ class SequenceRelativePointer(RelativePointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -7210,7 +7030,7 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer.data
     []
     >>> pointer.clear()
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'SequenceRelativePointer'),
@@ -7229,13 +7049,9 @@ class SequenceRelativePointer(RelativePointer):
                                 ('size', 0),
                                 ('type', 'Sequence'),
                                 ('member', [])])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data', [])])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', None)])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -7380,7 +7196,7 @@ class ArrayRelativePointer(SequenceRelativePointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -7472,7 +7288,7 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> len(pointer)
     10
     >>> pointer.clear()
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'ArrayRelativePointer'),
@@ -7491,13 +7307,9 @@ class ArrayRelativePointer(SequenceRelativePointer):
                                 ('size', 0),
                                 ('type', 'Array'),
                                 ('member', [])])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data', [])])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', None)])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -7589,7 +7401,7 @@ class StreamRelativePointer(RelativePointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -7686,7 +7498,7 @@ class StreamRelativePointer(RelativePointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StreamRelativePointer'),
@@ -7709,14 +7521,9 @@ class StreamRelativePointer(RelativePointer):
                                 ('size', 80),
                                 ('type', 'Field'),
                                 ('value', '4b6f6e466f6f20697320')])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  Index(byte=0, bit=0, address=4294967295, base_address=0, update=False))])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', 'Stream10')])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',
@@ -7805,7 +7612,7 @@ class StringRelativePointer(StreamRelativePointer):
     Byteorder.auto = 'auto'
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> pointer.next_index()
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.bit_size
     32
@@ -7902,7 +7709,7 @@ class StringRelativePointer(StreamRelativePointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pprint(pointer.blueprint())
+    >>> pprint(pointer.describe())
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StringRelativePointer'),
@@ -7925,14 +7732,9 @@ class StringRelativePointer(StreamRelativePointer):
                                 ('size', 80),
                                 ('type', 'Field'),
                                 ('value', 'KonFoo is ')])])])
-    >>> pprint(pointer.field_indexes())
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  Index(byte=0, bit=0, address=4294967295, base_address=0, update=False))])
-    >>> pprint(pointer.field_types())
-    OrderedDict([('value', 'Pointer32'), ('data', 'String10')])
-    >>> pprint(pointer.field_values())
+    >>> pprint(pointer.index_fields())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> pprint(pointer.view_fields())
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
     [('value',

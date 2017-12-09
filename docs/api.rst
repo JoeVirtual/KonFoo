@@ -316,7 +316,7 @@ Structure Pointer
 
 .. autoclass:: StructurePointer
     :members:
-   
+
 .. autoclass:: StructurePointer8
     :members:
 
@@ -347,7 +347,7 @@ Array Pointer
 
 .. autoclass:: ArrayPointer
     :members:
-    
+
 .. autoclass:: ArrayPointer8
     :members:
 
@@ -395,7 +395,7 @@ String Pointer
 
 .. autoclass:: StringPointer
     :members:
-   
+
 .. autoclass:: StringPointer8
     :members:
 
@@ -551,7 +551,7 @@ String Relative Pointer
 .. autoclass:: StringRelativePointer64
     :members:
 
-   
+
 
 Byteorder
 =========
@@ -624,7 +624,7 @@ Exceptions
 Utilities
 =========
 
-Blueprint to JSON Converter
+Metadata to JSON Converter
 ---------------------------
 
 .. autofunction:: d3json

@@ -95,53 +95,70 @@ View a Sequence
 
 You can **view** the `sequence`_
 
-    >>> sequence = Sequence()
+    >>> sequence = Sequence(Byte())
     >>> sequence # doctest: +NORMALIZE_WHITESPACE
-    []
+    [Byte(index=Index(byte=0, bit=0,
+                      address=0, base_address=0,
+                      update=False),
+          alignment=(1, 0),
+          bit_size=8,
+          value='0x0')]
 
 
-Blueprint of a Sequence
+
+Metadata of a Sequence
 -----------------------
 
-You can get the blueprint of the `sequence`_ by calling the method
-:meth:`~Sequence.blueprint`.
+You can get the metadata of the `sequence`_ by calling the method
+:meth:`~Sequence.describe`.
 
-    >>> pprint(sequence.blueprint()) # doctest: +NORMALIZE_WHITESPACE
+    >>> pprint(sequence.describe()) # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('class', 'Sequence'),
                  ('name', 'Sequence'),
-                 ('size', 0),
+                 ('size', 1),
                  ('type', 'Sequence'),
-                 ('member', [])])
+                 ('member',
+                  [OrderedDict([('address', 0),
+                                ('alignment', [1, 0]),
+                                ('class', 'Byte'),
+                                ('index', [0, 0]),
+                                ('max', 255),
+                                ('min', 0),
+                                ('name', 'Sequence[0]'),
+                                ('order', 'auto'),
+                                ('signed', False),
+                                ('size', 8),
+                                ('type', 'Field'),
+                                ('value', '0x0')])])])
 
 
-Length of a Sequence
---------------------
+Size of a Sequence
+------------------
 
-You can get the **length** of a `sequence`_ as a tuple in the form of
-``(number of bytes, remaining bits)`` by calling the method
-:meth:`~Sequence.field_length`.
+You can get the **size** of a `sequence`_ as a tuple in the form of
+``(number of bytes, number of remaining bits)`` by calling the method
+:meth:`~Sequence.container_size`.
 
-    >>> sequence.field_length()
-    (0, 0)
+    >>> sequence.container_size()
+    (1, 0)
 
 .. note::
-
-   The remaining bits must be always zero or the `sequence`_ declaration is
-   incomplete.
+    The number of remaining bits must be always zero or the `sequence`_
+    declaration is incomplete.
 
 
 Indexing
 --------
 
-You can get the *byte stream* :class:`Index` after the last :ref:`field <field>`
-in a `sequence`_ by calling the method :meth:`~Sequence.next_index`.
+You can index all fields in a `sequence`_ by calling the method
+:meth:`~Sequence.index_fields`.
+The :class:`Index` after the last :ref:`field <field>` of the `sequence`_ is
+returned.
 
-    >>> sequence.next_index()
-    Index(byte=0, bit=0, address=0, base_address=0, update=False)
-
-.. note::
-
-    The method re-indexes all members in the `sequence`_ as well.
+    >>> sequence.index_fields(index=Index())
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
+    >>> sequence.index_fields()
+    Index(byte=1, bit=0, address=1, base_address=0, update=False)
 
 
 Iterate over a Sequence
@@ -151,101 +168,89 @@ You can **iterate** over a `sequence`_.
 
 
 
+View Field Attributes
+---------------------
 
-List field indexes
-------------------
+You can view the **attributes** of each :ref:`field <field>` in a `sequence`_
+as a **nested** list by calling the method :meth:`~Sequence.view_fields`.
 
-You can list the :class:`Index` of each :ref:`field <field>` in a `sequence`_
-as a **nested** list by calling the method :meth:`~Sequence.field_indexes`.
-
-    >>> pprint(sequence.field_indexes()) # doctest: +NORMALIZE_WHITESPACE
-    []
-
-
-List field types
-----------------
-
-You can list the **types** of each :ref:`field <field>` in a `sequence`_
-as a **nested** list by calling the method :meth:`~Sequence.field_types`.
-
-    >>> pprint(sequence.field_types()) # doctest: +NORMALIZE_WHITESPACE
-    []
+    >>> # View the field values
+    >>> pprint(sequence.view_fields())
+    ['0x0']
+    >>> # View the field name and value pairs
+    >>> pprint(sequence.view_fields('name', 'value'))
+    [('Byte', '0x0')]
+    >>> # View the field indexes
+    >>> pprint(sequence.view_fields('index'))
+    [Index(byte=0, bit=0, address=0, base_address=0, update=False)]
 
 
-List field values
------------------
 
-You can list the **values** of each :ref:`field <field>` in a `sequence`_
-as a **nested** list by calling the method :meth:`~Sequence.field_values`.
-
-
-    >>> pprint(sequence.field_values())
-    []
-
-
-List field items
+List Field Items
 ----------------
 
 You can list all :ref:`field <field>` items in a `sequence`_
 as a **flat** list by calling the method :meth:`~Sequence.field_items`.
 
     >>> pprint(sequence.field_items()) # doctest: +NORMALIZE_WHITESPACE
-    []
+    [('.[0]',
+      Byte(index=Index(byte=0, bit=0,
+                       address=0, base_address=0,
+                       update=False),
+           alignment=(1, 0),
+           bit_size=8,
+           value='0x0'))]
 
 
-View field values
+View Field Values
 -----------------
 
-You can **view** the *values* of each :ref:`field <field>` in a `sequence`_
+You can **view** the *value* of each :ref:`field <field>` in a `sequence`_
 as a **flat** list by calling the method :meth:`~Container.to_list`.
 
     >>> pprint(sequence.to_list()) # doctest: +NORMALIZE_WHITESPACE
-    []
+    [('Sequence..[0]', '0x0')]
 
 .. note::
-
     The class name of the instance is used for the root name as long as no
     *name* is given.
 
 
-You can **view** the *values* of each :ref:`field <field>` in a `sequence`_
+You can **view** the *value* of each :ref:`field <field>` in a `sequence`_
 as a **flat** ordered dictionary by calling the method
 :meth:`~Container.to_dict`.
 
     >>> pprint(sequence.to_dict()) # doctest: +NORMALIZE_WHITESPACE
-    OrderedDict([('Sequence', OrderedDict())])
+    OrderedDict([('Sequence', OrderedDict([('.[0]', '0x0')]))])
 
 .. note::
-
     The class name of the instance is used for the root name as long as no
     *name* is given.
 
 
-Save field values
+Save Field Values
 -----------------
 
-You can **save** the *values* of each :ref:`field <field>` in a `sequence`_
-to an INI file by calling the method :meth:`~Container.save`.
+You can **save** the *value* of each :ref:`field <field>` in a `sequence`_
+to an ``.ini`` file by calling the method :meth:`~Container.save`.
 
     >>> sequence.save("_static/sequence.ini", nested=True)
 
 .. note::
-
     The class name of the instance is used for the section name as long as no
     *section* is given.
 
 
-Load field values
+Load Field Values
 -----------------
 
-You can **load** the *values* of each :ref:`field <field>` in a `sequence`_
-from an INI file by calling the method :meth:`~Container.load`.
+You can **load** the *value* of each :ref:`field <field>` in a `sequence`_
+from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
     >>> sequence.load("_static/sequence.ini", nested=True)
     [Sequence]
-
+    Sequence..[0] = 0x0
 
 .. note::
-
     The class name of the instance is used for the section name as long as no
     *section* is given.

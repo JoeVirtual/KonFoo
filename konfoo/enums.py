@@ -3,8 +3,8 @@
     enums.py
     ~~~~~~~~
     <Add description of the module here>.
-    
-    :copyright: (c) 2015 by Jochen Gerhaeusser.
+
+    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details.
 """
 
@@ -17,8 +17,8 @@ class Enumeration(enum.IntEnum):
     base class with methods
 
     * to `describe` a specific `Enumeration` member by its `name`, `value` pair
-    * to list the `member names` of a `Enumeration`
-    * to list the `member values` of a `Enumeration`
+    * to list the `member names` of an `Enumeration`
+    * to list the `member values` of an `Enumeration`
     * to `get` the `value` of the `Enumeration` member with the matching `name`
     * to `get` the `name` of the `Enumeration` member with the matching `value`
     * to `get` the `member` of the `Enumeration` with the matching `value`
