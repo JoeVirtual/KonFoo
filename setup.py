@@ -1,15 +1,28 @@
 # -*- coding: utf-8 -*-
 """
+.. |Doc Status| image:: https://readthedocs.org/projects/konfoo/badge/?version=latest
+    :target: http://konfoo.readthedocs.io/en/latest/?badge=latest
+.. |Build Status| image:: https://travis-ci.org/JoeVirtual/KonFoo.svg?branch=master
+    :target: https://travis-ci.org/JoeVirtual/KonFoo
+.. |PyPI| image:: https://img.shields.io/pypi/v/KonFoo.svg
+    :target: https://pypi.python.org/pypi/KonFoo/
+.. |License| image:: https://img.shields.io/pypi/l/KonFoo.svg
+    :target: https://pypi.python.org/pypi/KonFoo
+.. |Python| image:: https://img.shields.io/pypi/pyversions/KonFoo.svg
+    :target: https://pypi.python.org/pypi/KonFoo
+
 KonF'00'
-~~~~~~~~
+========
+
+|Doc Status| |Build Status| |PyPI| |License| |Python|
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the
 foo of the all too well-known memory dumps or hexadecimal views of binary
 data.
 
-Setup
------
+Installing
+----------
 
 .. code-block:: bash
 
@@ -17,9 +30,10 @@ Setup
 
 Links
 -----
-* `website <http://github.com/JoeVirtual/KonFoo/>`_
-* `documentation <http://konfoo.readthedocs.org>`_
-* `development version
+
+* `Code <http://github.com/JoeVirtual/KonFoo/>`_
+* `Documentation <http://konfoo.readthedocs.io>`_
+* `Development version
   <http://github.com/JoeVirtual/KonFoo/zipball/master#egg=konfoo-dev>`_
 
 """
@@ -42,6 +56,7 @@ setup(
     author='Jochen Gerhaeusser',
     author_email='jochen_privat@gmx.de',
     url='http://github.com/JoeVirtual/KonFoo',
+    download_url='http://github.com/JoeVirtual/KonFoo/zipball/master#egg=konfoo-dev',
     description='A declarative byte stream mapping engine.',
     long_description=__doc__,
     keywords='binary data deserialize serialize parsing decoding encoding',
@@ -52,7 +67,7 @@ setup(
     install_requires=[],
     tests_require=['pytest'],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',

@@ -2,6 +2,7 @@
 
 .. testsetup:: *
 
+    import json
     from pprint import pprint
     from binascii import hexlify
     from konfoo import *
@@ -561,7 +562,7 @@ List Field Values
 You can **view** the *value* of each :ref:`field <field>` in a `structure`_
 as a **flat** list by calling the method :meth:`~Container.to_list`.
 
-    >>> pprint(structure.to_list()) # doctest: +NORMALIZE_WHITESPACE
+    >>> print(structure.to_list()) # doctest: +NORMALIZE_WHITESPACE
     [('Structure.version', '0x1'),
      ('Structure.id', '0x2'),
      ('Structure.length', 9),
@@ -576,12 +577,21 @@ You can **view** the *value* of each :ref:`field <field>` in a `structure`_
 as a **flat** ordered dictionary by calling the method
 :meth:`~Container.to_dict`.
 
-    >>> pprint(structure.to_dict()) # doctest: +NORMALIZE_WHITESPACE
+    >>> print(structure.to_dict()) # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Structure',
                   OrderedDict([('version', '0x1'),
                                ('id', '0x2'),
                                ('length', 9),
                                ('module', 'F')]))])
+    >>> print(json.dumps(structure.to_dict(), indent=2)) # doctest: +NORMALIZE_WHITESPACE
+    {
+      "Structure": {
+        "version": "0x1",
+        "id": "0x2",
+        "length": 9,
+        "module": "F"
+      }
+    }
 
 .. note::
     The class name of the instance is used for the root name as long as no

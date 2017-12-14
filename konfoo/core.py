@@ -249,7 +249,6 @@ class Container:
             pointer = 0x0
         """
         parser = ConfigParser()
-        section = options.get('section', str())
         parser.read_dict(self.to_dict(*attributes, **options))
         with open(file, 'w') as handle:
             parser.write(handle)
@@ -329,8 +328,7 @@ class Container:
                     elif field.is_stream():
                         value = parser.get(section, option)
                         stream = bytes.fromhex(value.replace("'", ""))
-                        # Auto size a zero sized stream field to
-                        # the current stream length
+                        # Auto size a zero sized stream field to the current stream length
                         if not field:
                             field.resize(len(stream))
                         field.value = stream
