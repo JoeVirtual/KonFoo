@@ -4,6 +4,8 @@
     :target: https://pypi.python.org/pypi/KonFoo
 .. |Python| image:: https://img.shields.io/pypi/pyversions/KonFoo.svg
     :target: https://pypi.python.org/pypi/KonFoo
+.. |Binder| image:: https://mybinder.org/badge.svg
+    :target: https://mybinder.org/v2/gh/JoeVirtual/KonFoo/master?filepath=notebooks
 
 .. image:: _static/logo.png
    :align: right
@@ -14,7 +16,7 @@
 Welcome to the KonF'00' Documentation
 =====================================
 
-|PyPI| |License| |Python|
+|PyPI| |License| |Python| |Binder|
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the

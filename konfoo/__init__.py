@@ -8,7 +8,7 @@
     foo of the all too well-known memory dumps or hexadecimal views of binary
     data.
 
-    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details.
 """
 
@@ -325,4 +325,4 @@ __all__ = [
     'd3json', 'HexViewer',
 ]
 
-__version__ = '0.1b0'
+__version__ = '0.1b1'

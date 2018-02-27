@@ -226,7 +226,7 @@ the fly.
      'module': Index(byte=0, bit=24, address=0, base_address=0, update=False)}
 
 
-You can **assign** a `structure`_ to a member in a other `structure`_ on the fly.
+You can **assign** a `structure`_ to a member of another `structure`_ on the fly.
 
 .. code-block:: python
     :emphasize-lines: 2

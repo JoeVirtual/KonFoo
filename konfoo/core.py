@@ -4,7 +4,7 @@
     ~~~~~~~
     <Add description of the module here>.
 
-    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
@@ -256,7 +256,7 @@ class Container:
 
     @nested_option()
     @verbose_option(True)
-    def load(self, file, section=str(), **options):
+    def load(self, file, **options):
         """ Loads the *attributes* for each :class:`Field` in the `Container`
         from an ``.ini`` *file*.
 
@@ -328,7 +328,7 @@ class Container:
                     elif field.is_stream():
                         value = parser.get(section, option)
                         stream = bytes.fromhex(value.replace("'", ""))
-                        # Auto size a zero sized stream field to the current stream length
+                        # Auto size a zero sized stream field to the current length
                         if not field:
                             field.resize(len(stream))
                         field.value = stream
@@ -6502,11 +6502,11 @@ class AutoStringPointer(StringPointer):
                 self._data_stream = bytes()
                 self.resize(0)
                 for address in range(self.address,
-                                     AutoStringPointer.MAX_ADDRESS,
-                                     AutoStringPointer.BLOCK_SIZE):
-                    count = limiter(AutoStringPointer.BLOCK_SIZE,
+                                     self.MAX_ADDRESS,
+                                     self.BLOCK_SIZE):
+                    count = limiter(self.BLOCK_SIZE,
                                     0,
-                                    (AutoStringPointer.MAX_ADDRESS - address))
+                                    (self.MAX_ADDRESS - address))
                     self._data_stream += provider.read(address, count)
                     self.resize(len(self) + count)
                     index = self.deserialize_data()

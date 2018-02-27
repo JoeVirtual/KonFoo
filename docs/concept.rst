@@ -142,7 +142,7 @@ calling its method :meth:`~Container.to_dict`.
 Save field values
 -----------------
 
-A `container`_ can **save** the *value* of each `field`_ item to an INI file
+A `container`_ can **save** the *value* of each `field`_ item to an ``.ini`` file
 by calling its method :meth:`~Container.save`.
 
     >>> container.save("_static/container.ini")
@@ -156,7 +156,7 @@ by calling its method :meth:`~Container.save`.
 Load field values
 -----------------
 
-A `container`_ can **load** the *value* of each `field`_ item from an INI file
+A `container`_ can **load** the *value* of each `field`_ item from an ``.ini`` file
 by calling its method :meth:`~Container.load`.
 
     >>> container.load("_static/container.ini")
@@ -175,7 +175,7 @@ Fields
 ======
 
 The role of a :class:`Field` is to map a specific content area of a *byte stream*.
-A `field`_ is always placed in a `container`_ expect from a :ref:`pointer <pointer>`
+A `field`_ is always placed in a `container`_ except from a :ref:`pointer <pointer>`
 field which is the entry point for a `mapper`_ to connect the attached :ref:`data
 object <data object>` via a data :ref:`provider <provider>` to a *data source* to
 retrieve the required *byte stream* for the `mapper`_.

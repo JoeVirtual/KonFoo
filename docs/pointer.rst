@@ -327,7 +327,7 @@ You can **access** the attributes for the `data object`_ referenced by the
     >>> # Absolute address of the data object referenced by the pointer.
     >>> pointer.address
     0
-    >>> # Absolute address of the data object referenced by the pointer.
+    >>> # Base address of the data object referenced by the pointer.
     >>> pointer.base_address
     0
     >>> # Byte size of the data object referenced by the pointer.
