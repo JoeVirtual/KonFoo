@@ -3,8 +3,8 @@
     globals.py
     ~~~~~~~~~~
     <Add description of the module here>.
-    
-    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
+
+    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
@@ -50,17 +50,17 @@ class Byteorder(Category):
 BYTEORDER = Byteorder.little
 
 
-def limiter(value, minimum, maximum):
+def clamp(value, minimum, maximum):
     """ Returns the *value* limited between *minimum* and *maximum*
     whereby the *maximum* wins over the *minimum*.
 
     Example:
 
-    >>> limiter(64, 0, 255)
+    >>> clamp(64, 0, 255)
     64
-    >>> limiter(-128, 0, 255)
+    >>> clamp(-128, 0, 255)
     0
-    >>> limiter(0, 127, -128)
+    >>> clamp(0, 127, -128)
     -128
     """
     return min(max(value, minimum), maximum)

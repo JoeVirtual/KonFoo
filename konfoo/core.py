@@ -33,7 +33,7 @@ from konfoo.exceptions import (
     FieldValueEncodingError,
     FieldGroupByteOrderError, FieldGroupOffsetError, FieldGroupSizeError
 )
-from konfoo.globals import ItemClass, Byteorder, BYTEORDER, limiter
+from konfoo.globals import ItemClass, Byteorder, BYTEORDER, clamp
 from konfoo.options import (
     Option,
     byte_order_option, get_byte_order, nested_option, get_nested,
@@ -380,8 +380,8 @@ class Structure(OrderedDict, Container):
     # Item type of a Structure.
     item_type = ItemClass.Structure
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def __bytes__(self):
         buffer = bytearray()
@@ -1234,11 +1234,11 @@ class Array(Sequence):
         self.resize(size)
 
     def __create__(self):
-        # Field: Array element instance
         if is_field(self._template):
+            # Field: Array element instance
             return copy.copy(self._template)
-        # Callable: Array element factory
         else:
+            # Callable: Array element factory
             return self._template()
 
     def append(self):
@@ -1290,21 +1290,21 @@ class Array(Sequence):
             for i in range(0, len(self), size):
                 for name, pair in enumerate(zip(self[i:i + size], content), start=i):
                     item, value = pair
-                    # Container or Pointer
                     if is_mixin(item):
+                        # Container or Pointer
                         item.initialize_fields(value)
-                    # Fields
                     elif is_field(item):
+                        # Fields
                         item.value = value
                     else:
                         raise MemberTypeError(self, item, name)
         else:
             for name, item in enumerate(self):
-                # Container or Pointer
                 if is_mixin(item):
+                    # Container or Pointer
                     item.initialize_fields(content)
-                # Fields
                 elif is_field(item):
+                    # Fields
                     item.value = content
                 else:
                     raise MemberTypeError(self, item, name)
@@ -2114,7 +2114,7 @@ class Float(Field):
         return True
 
     def to_float(self, value):
-        return limiter(float(value), self.min(), self.max())
+        return clamp(float(value), self.min(), self.max())
 
     @staticmethod
     def epsilon():
@@ -2435,7 +2435,7 @@ class Decimal(Field):
                 raise FieldValueEncodingError(self, self.index, encoding)
         else:
             decimal = int(value)
-        return limiter(decimal, self.min(), self.max())
+        return clamp(decimal, self.min(), self.max())
 
     def _set_alignment(self, group_size, bit_offset=0, auto_align=False):
         """ Sets the alignment of the ``Decimal`` field.
@@ -2605,7 +2605,7 @@ class Decimal(Field):
     @byte_order_option()
     def pack(self, buffer=bytearray(), **options):
         # Field value
-        value = limiter(self._value, self.min(), self.max())
+        value = clamp(self._value, self.min(), self.max())
         value &= self.bit_mask()
 
         # Encoding byte order of the buffer
@@ -3951,7 +3951,7 @@ class Fraction(Decimal):
                  byte_order='auto'):
         super().__init__(bit_size, align_to, False, byte_order)
         # Number of bits of the integer part of the fraction number
-        self._bits_integer = limiter(int(bits_integer), 1, self._bit_size)
+        self._bits_integer = clamp(int(bits_integer), 1, self._bit_size)
         # Fraction number signed?
         if self._bit_size <= 1:
             self._signed_fraction = False
@@ -4001,13 +4001,13 @@ class Fraction(Decimal):
                 mask = 2 ** (self.bit_size - 1)
             else:
                 mask = 0
-            decimal = limiter(integer | fraction, 0, 2 ** (self.bit_size - 1) - 1)
+            decimal = clamp(integer | fraction, 0, 2 ** (self.bit_size - 1) - 1)
             decimal |= mask
         else:
             normalized = max(normalized, 0)
             integer = int(normalized) << max(bits_fraction, 0)
             fraction = int((normalized - int(normalized)) * 2 ** bits_fraction)
-            decimal = limiter(integer | fraction, 0, 2 ** self.bit_size - 1)
+            decimal = clamp(integer | fraction, 0, 2 ** self.bit_size - 1)
         return self.to_decimal(decimal)
 
     def describe(self, name=None, **options):
@@ -6504,9 +6504,9 @@ class AutoStringPointer(StringPointer):
                 for address in range(self.address,
                                      self.MAX_ADDRESS,
                                      self.BLOCK_SIZE):
-                    count = limiter(self.BLOCK_SIZE,
-                                    0,
-                                    (self.MAX_ADDRESS - address))
+                    count = clamp(self.BLOCK_SIZE,
+                                  0,
+                                  (self.MAX_ADDRESS - address))
                     self._data_stream += provider.read(address, count)
                     self.resize(len(self) + count)
                     index = self.deserialize_data()

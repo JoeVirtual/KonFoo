@@ -1,1 +1,1 @@
-konfoo>=0.1b0
+konfoo>=0.1b2
