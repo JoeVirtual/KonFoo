@@ -3,10 +3,8 @@
 .. testsetup:: *
 
     import json
-    from pprint import pprint
     from binascii import hexlify
     from konfoo import *
-
 
 .. _structure:
 
@@ -48,7 +46,6 @@ constructor method of the :class:`Structure` class.
             self.index_fields()       # <- Indexes all fields (optional)
 
 .. warning::
-
     A `structure`_ must always align to full bytes or an exception will be
     raised when an incomplete `structure`_ declaration is deserialized or
     serialized.
@@ -73,57 +70,57 @@ each other by using the ``align_to`` parameter of the :class:`Field` class.
             self.module = Char(4)        # 4th field aligned to 4 bytes
             self.index_fields()
 
-.. note:: The field :ref:`alignment <field alignment>` works only for the
-          :class:`Decimal` :ref:`field <field>` classes.
+.. note::
+    The field :ref:`alignment <field alignment>` works only for the
+    :class:`Decimal` :ref:`field <field>` classes.
 
 
-Re-use a Structure
-------------------
+Nest a Structure
+----------------
 
-You can re-use a `structure`_
+You can **nest** a `structure`_ in another `structure`_.
 
-.. code-block:: python
-    :emphasize-lines: 5
-
-    class Header(Structure):
-
-        def __init__(self):
-            super().__init__()
-            self.type = Identifier()  # re-used structure
-            self.size = Decimal32()
-            self.index_fields()
-
-
-Parametrize a Structure
------------------------
-
-You can define a `structure`_ with arguments.
-
-.. code-block:: python
-    :emphasize-lines: 1-4
-
-    >>> class Parametrized(Structure):
-    ...     def __init__(self, arg, *args, **kwargs):
+    >>> # Define a new structure class.
+    >>> class Identifier(Structure):
+    ...
+    ...     def __init__(self):
     ...         super().__init__()
-    ...         self.field = arg
-    >>> structure = Parametrized(Byte())
-    >>> structure # doctest: +NORMALIZE_WHITESPACE
-    Parametrized([('field',
-                    Byte(index=Index(byte=0, bit=0,
-                                     address=0, base_address=0,
-                                     update=False),
-                         alignment=(1, 0),
-                         bit_size=8,
-                         value='0x0'))])
+    ...         self.version = Byte()
+    ...         self.id = Unsigned8()
+    ...         self.length = Decimal8()
+    ...         self.module = Char()
+    ...         self.index_fields()
+    >>> # Create an instance.
+    >>> identifier = Identifier()
+    >>> # List the field values of the structure.
+    >>> identifier.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Identifier.version', '0x0'),
+     ('Identifier.id', '0x0'),
+     ('Identifier.length', 0),
+     ('Identifier.module', '\x00')]
+    >>> # Define a new structure class with a nested structure.
+    >>> class Header(Structure):
+    ...
+    ...     def __init__(self):
+    ...         super().__init__()
+    ...         self.type = Identifier()  # nested structure
+    ...         self.size = Decimal32()
+    ...         self.index_fields()
+    >>> # Create an instance.
+    >>> header = Header()
+    >>> # List the field values of the structure.
+    >>> header.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Header.type.version', '0x0'),
+     ('Header.type.id', '0x0'),
+     ('Header.type.length', 0),
+     ('Header.type.module', '\x00'),
+     ('Header.size', 0)]
 
 
 Inherit from a Structure
 ------------------------
 
-You can inherit the members from a `structure`_ class to extend or change it.
-
-.. code-block:: python
-    :emphasize-lines: 23-29
+You can **inherit** the members from a `structure`_ class to extend or change it.
 
     >>> class HeaderV1(Structure):
     ...
@@ -132,35 +129,21 @@ You can inherit the members from a `structure`_ class to extend or change it.
     ...         self.type = Decimal32()
     ...         self.index_fields()
     >>> header = HeaderV1()
-    >>> header.field_items() # doctest: +NORMALIZE_WHITESPACE
-    HeaderV1([('type',
-                Decimal32(index=Index(byte=0, bit=0,
-                                      address=0, base_address=0,
-                                      update=False),
-                          alignment=(4, 0),
-                          bit_size=32,
-                          value='0x0'))])
+    >>> # List the field values of the structure.
+    >>> header.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('HeaderV1.type', 0)]
+    >>> # Inherit from a Structure.
     >>> class HeaderV2(HeaderV1):
     ...
     ...     def __init__(self):
     ...         super().__init__()
     ...         self.size = Decimal32()
+    ...         self.index_fields()
     >>> header = HeaderV2()
-    >>> header # doctest: +NORMALIZE_WHITESPACE
-    HeaderV2([('type',
-                Decimal32(index=Index(byte=0, bit=0,
-                                      address=0, base_address=0,
-                                      update=False),
-                          alignment=(4, 0),
-                          bit_size=32,
-                          value='0x0')),
-               ('size',
-                Decimal32(index=Index(byte=4, bit=0,
-                                      address=4, base_address=0,
-                                      update=False),
-                          alignment=(4, 0),
-                          bit_size=32,
-                          value='0x0'))])
+    >>> # List the field values of the structure.
+    >>> header.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('HeaderV2.type', 0),
+     ('HeaderV2.size', 0)]
 
 
 Declare on the fly
@@ -168,36 +151,79 @@ Declare on the fly
 
 You can **declare** a `structure`_ on the fly.
 
+    >>> # Create an empty structure.
     >>> structure = Structure()
+    >>> # Add fields to the structure.
     >>> structure.version = Byte()
     >>> structure.id = Unsigned8()
     >>> structure.length = Decimal8()
     >>> structure.module = Char()
+    >>> # Index the fields in the structure.
     >>> structure.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> pprint(structure.view_fields('index')) # doctest: +NORMALIZE_WHITESPACE
-    OrderedDict([('version',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('id',
-                  Index(byte=1, bit=0, address=1, base_address=0, update=False)),
-                 ('length',
-                  Index(byte=2, bit=0, address=2, base_address=0, update=False)),
-                 ('module',
-                  Index(byte=3, bit=0, address=3, base_address=0, update=False))])
+    >>> # List the field values of the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', '0x0'),
+     ('Structure.id', '0x0'),
+     ('Structure.length', 0),
+     ('Structure.module', '\x00')]
 
 
-You can **nest** `structure`_ 's on the fly.
+You can **declare** a `structure`_ with :ref:`aligned <field alignment>` fields on
+the fly.
 
-.. code-block:: python
-    :emphasize-lines: 2-6
-
+    >>> # Create an empty structure.
     >>> structure = Structure()
+    >>> # Add aligned fields to the structure.
+    >>> structure.version = Byte(4)
+    >>> structure.id = Unsigned(8, 4)
+    >>> structure.length = Decimal(8, 4)
+    >>> structure.module = Char(4)
+    >>> # Index the fields in the structure.
+    >>> structure.index_fields()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> # List the field indexes of the structure.
+    >>> structure.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+     ('Structure.id', Index(byte=0, bit=8, address=0, base_address=0, update=False)),
+     ('Structure.length', Index(byte=0, bit=16, address=0, base_address=0, update=False)),
+     ('Structure.module', Index(byte=0, bit=24, address=0, base_address=0, update=False))]
+
+You can **declare** a `structure`_ with keywords.
+
+    >>> # Create a structure with keywords.
+    >>> structure = Structure(
+    ...     version=Byte(),
+    ...     id=Unsigned8(),
+    ...     length=Decimal8(),
+    ...     module=Char())
+    >>> # Index the fields in the structure.
+    >>> structure.index_fields()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> # List the field values of the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', '0x0'),
+     ('Structure.id', '0x0'),
+     ('Structure.length', 0),
+     ('Structure.module', '\x00')]
+
+You can **nest** `structure`_'s on the fly.
+
+    >>> # Create an empty structure.
+    >>> structure = Structure()
+    >>> # Add an empty nested structure to the structure.
     >>> structure.type = Structure()
+    >>> # Add fields to the nested structure.
     >>> structure.type.version = Byte()
     >>> structure.type.id = Unsigned8()
     >>> structure.type.length = Decimal8()
     >>> structure.type.module = Char()
+    >>> # Add a field to the structure.
     >>> structure.size = Decimal32()
+    >>> # Indexes the fields in the structure.
+    >>> structure.index_fields()
+    Index(byte=8, bit=0, address=8, base_address=0, update=False)
+    >>> # Lists the field values of the structure.
     >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.type.version', '0x0'),
      ('Structure.type.id', '0x0'),
@@ -206,35 +232,22 @@ You can **nest** `structure`_ 's on the fly.
      ('Structure.size', 0)]
 
 
-You can declare a `structure`_ with :ref:`aligned <field alignment>` fields on
-the fly.
-
-.. code-block:: python
-    :emphasize-lines: 2-5
-
-    >>> structure = Structure()
-    >>> structure.version = Byte(4)
-    >>> structure.id = Unsigned(8, 4)
-    >>> structure.length = Decimal(8, 4)
-    >>> structure.module = Char(4)
-    >>> structure.index_fields()
-    Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> pprint(structure.view_fields('index'))
-    {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
-     'id': Index(byte=0, bit=8, address=0, base_address=0, update=False),
-     'length': Index(byte=0, bit=16, address=0, base_address=0, update=False),
-     'module': Index(byte=0, bit=24, address=0, base_address=0, update=False)}
-
-
 You can **assign** a `structure`_ to a member of another `structure`_ on the fly.
 
-.. code-block:: python
-    :emphasize-lines: 2
-
-    >>> reuse = Structure()
-    >>> reuse.type = structure  # assign structure
-    >>> reuse.size = Decimal32()
-    >>> reuse.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> # Create a structure to be nested.
+    >>> nested = Structure(
+    ...     version = Byte(4),
+    ...     id = Unsigned(8, 4),
+    ...     length = Decimal(8, 4),
+    ...     module = Char(4))
+    >>> # Create an empty structure.
+    >>> structure = Structure()
+    >>> # Assign the nested structure to the structure.
+    >>> structure.type = nested
+    >>> # Add a field to the structure.
+    >>> structure.size = Decimal32()
+    >>> # Lists the field values of the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.type.version', '0x0'),
      ('Structure.type.id', '0x0'),
      ('Structure.type.length', 0),
@@ -247,14 +260,16 @@ View a Structure
 
 You can **view** the `structure`_
 
-.. code-block:: python
-    :emphasize-lines: 6
-
-    >>> structure = Structure()
-    >>> structure.version = Byte()
-    >>> structure.id = Unsigned8()
-    >>> structure.length = Decimal8()
-    >>> structure.module = Char()
+    >>> # Create a structure.
+    >>> structure = Structure(
+    ...     version=Byte(),
+    ...     id=Unsigned8(),
+    ...     length=Decimal8(),
+    ...     module=Char())
+    >>> # Index the fields in the structure.
+    >>> structure.index_fields()
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> # View the structure.
     >>> structure # doctest: +NORMALIZE_WHITESPACE
     Structure([('version', Byte(index=Index(byte=0, bit=0,
                                             address=0, base_address=0,
@@ -262,20 +277,20 @@ You can **view** the `structure`_
                                 alignment=(1, 0),
                                 bit_size=8,
                                 value='0x0')),
-                ('id', Unsigned8(index=Index(byte=0, bit=0,
-                                             address=0, base_address=0,
+                ('id', Unsigned8(index=Index(byte=1, bit=0,
+                                             address=1, base_address=0,
                                              update=False),
                                 alignment=(1, 0),
                                 bit_size=8,
                                 value='0x0')),
-                ('length', Decimal8(index=Index(byte=0, bit=0,
-                                                address=0, base_address=0,
+                ('length', Decimal8(index=Index(byte=2, bit=0,
+                                                address=2, base_address=0,
                                                 update=False),
                                    alignment=(1, 0),
                                    bit_size=8,
                                    value=0)),
-                ('module', Char(index=Index(byte=0, bit=0,
-                                            address=0, base_address=0,
+                ('module', Char(index=Index(byte=3, bit=0,
+                                            address=3, base_address=0,
                                             update=False),
                                 alignment=(1, 0),
                                 bit_size=8,
@@ -287,7 +302,8 @@ Metadata of a Structure
 You can get the metadata of the `structure`_ by calling the method
 :meth:`~Structure.describe`.
 
-    >>> pprint(structure.describe()) # doctest: +NORMALIZE_WHITESPACE
+    >>> # Get the description of the structure.
+    >>> structure.describe() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('class', 'Structure'),
                  ('name', 'Structure'),
                  ('size', 4),
@@ -350,6 +366,7 @@ You can get the **size** of a `structure`_ as a tuple in the form of
 ``(number of bytes, number of remaining bits)`` by calling the method
 :meth:`~Structure.container_size`.
 
+    >>> # Get the size of the structure.
     >>> structure.container_size()
     (4, 0)
 
@@ -366,11 +383,30 @@ You can index all fields in a `structure`_ by calling the method
 The :class:`Index` after the last :ref:`field <field>` of the `structure`_ is
 returned.
 
-    >>> structure.index_fields(index=Index())
-    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> # Create a structure.
+    >>> structure = Structure(
+    ...     version=Byte(),
+    ...     id=Unsigned8(),
+    ...     length=Decimal8(),
+    ...     module=Char())
+    >>> # List the field indexes of the structure.
+    >>> structure.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+     ('Structure.id', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+     ('Structure.length', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+     ('Structure.module', Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+    >>> # Index the fields in the structure.
     >>> structure.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-
+    >>> # Index the fields in the structure with a start index.
+    >>> structure.index_fields(index=Index())
+    Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> # List the field indexes of the structure.
+    >>> structure.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+    ('Structure.id', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
+    ('Structure.length', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
+    ('Structure.module', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
 
 De-Serializing
 --------------
@@ -378,10 +414,23 @@ De-Serializing
 You can **deserialize** a byte stream with a `structure`_ by calling the method
 :meth:`~Structure.deserialize`.
 
+    >>> # Create a structure.
+    >>> structure = Structure(
+    ...     version=Byte(),
+    ...     id=Unsigned8(),
+    ...     length=Decimal8(),
+    ...     module=Char())
+    >>> # Create a byte stream to be deserialized.
     >>> bytestream = bytes.fromhex('01020946f00f00')
+    >>> # Deserialize the byte stream and map it to the structure.
     >>> structure.deserialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-
+    >>> # List the field values of the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', '0x1'),
+     ('Structure.id', '0x2'),
+     ('Structure.length', 9),
+     ('Structure.module', 'F')]
 
 Serializing
 -----------
@@ -389,11 +438,14 @@ Serializing
 You can **serialize** a byte stream with a `structure`_ by calling the method
 :meth:`~Structure.serialize`.
 
+    >>> # Create an empty byte stream.
     >>> bytestream = bytearray()
     >>> bytestream
     bytearray(b'')
+    >>> # Serialize the structure to the byte stream.
     >>> structure.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> # View the byte stream.
     >>> hexlify(bytestream)
     b'01020946'
 
@@ -403,11 +455,13 @@ Access a Member
 
 You can **access** a member in a `structure`_ with its name.
 
+    >>> # Access a structure member with its attribute name.
     >>> structure.version # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=(1, 0),
          bit_size=8,
          value='0x1')
+    >>> # Access a structure member with its key name.
     >>> structure['version'] # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=(1, 0),
@@ -421,48 +475,67 @@ Attributes of a Member Field
 You can **access** the :class:`Field` attributes of a :ref:`field <field>`
 member in a `structure`_ with the attribute names:
 
+    >>> # Field name.
     >>> structure.version.name
     'Byte'
+    >>> # Field value.
     >>> structure.version.value
     '0x1'
+    >>> # Field bit size.
     >>> structure.version.bit_size
     8
+    >>> # Field alignment.
     >>> structure.version.alignment
     (1, 0)
+    >>> # Field alignment: byte size.
     >>> structure.version.alignment[0]
     1
+    >>> # Field alignment: bit offset.
     >>> structure.version.alignment[1]
     0
+    >>> # Field byte order.
     >>> structure.version.byte_order
     Byteorder.auto = 'auto'
+    >>> # Field byte order value.
     >>> structure.version.byte_order.value
     'auto'
+    >>> # Field index.
     >>> structure.version.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> structure.version.index.address
-    0
+    >>> # Field index: byte offset within the byte stream.
     >>> structure.version.index.byte
     0
+    >>> # Field index: bit offset within the byte stream.
     >>> structure.version.index.bit
     0
+    >>> # Field index: memory address in the data source.
     >>> structure.version.index.address
     0
+    >>> # Field index: base address of the byte stream in the data source.
     >>> structure.version.index.base_address
     0
+    >>> # Field index: update request for the byte stream from the data source.
     >>> structure.version.index.update
     False
+    >>> # Field is a bit field.
     >>> structure.version.is_bit()
     False
+    >>> # Field is a boolean field.
     >>> structure.version.is_bool()
     False
+    >>> # Field is a decimal field.
     >>> structure.version.is_decimal()
     True
+    >>> # Field is a float field.
     >>> structure.version.is_float()
     False
+    >>> # Field is a pointer field.
     >>> structure.version.is_pointer()
     False
+    >>> # Field is a stream field.
     >>> structure.version.is_stream()
     False
+    >>> # Field is a string field.
     >>> structure.version.is_string()
     False
 
@@ -472,12 +545,12 @@ Iterate over Members
 
 You can **iterate** over the member names of a `structure`_.
 
-    >>> [key for key in structure.keys()] # doctest: +NORMALIZE_WHITESPACE
+    >>> [name for name in structure.keys()] # doctest: +NORMALIZE_WHITESPACE
     ['version', 'id', 'length', 'module']
 
 You can **iterate** over all kind of member items of a `structure`_.
 
-    >>> [(key, value.item_type) for key, value in structure.items()] # doctest: +NORMALIZE_WHITESPACE
+    >>> [(name, member.item_type) for name, member in structure.items()] # doctest: +NORMALIZE_WHITESPACE
     [('version', ItemClass.Byte = 42),
      ('id', ItemClass.Unsigned = 45),
      ('length', ItemClass.Decimal = 40),
@@ -485,7 +558,7 @@ You can **iterate** over all kind of member items of a `structure`_.
 
 You can **iterate** over all kind of members of a `structure`_.
 
-    >>> [value.item_type for value in structure.values()] # doctest: +NORMALIZE_WHITESPACE
+    >>> [member.item_type for member in structure.values()] # doctest: +NORMALIZE_WHITESPACE
     [ItemClass.Byte = 42,
      ItemClass.Unsigned = 45,
      ItemClass.Decimal = 40,
@@ -493,7 +566,7 @@ You can **iterate** over all kind of members of a `structure`_.
 
 You can **iterate** over all :ref:`field <field>` members of a `structure`_.
 
-    >>> [value.name for value in structure.values() if is_field(value)]
+    >>> [member.name for member in structure.values() if is_field(member)]
     ['Byte', 'Unsigned8', 'Decimal8', 'Char']
 
 
@@ -504,20 +577,20 @@ You can view the **attributes** of each :ref:`field <field>` of a `structure`_
 as a **nested** ordered dictionary by calling the method
 :meth:`~Structure.view_fields`.
 
-    >>> # Views the field values
-    >>> pprint(structure.view_fields()) # doctest: +NORMALIZE_WHITESPACE
+    >>> # View the field values.
+    >>> structure.view_fields() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('version', '0x1'),
                  ('id', '0x2'),
                  ('length', 9),
                  ('module', 'F')])
-    >>> # Views the field name, value pairs
-    >>> pprint(structure.view_fields('name', 'value'))  # doctest: +NORMALIZE_WHITESPACE
+    >>> # View the field type name, field value pairs.
+    >>> structure.view_fields('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('version', ('Byte', '0x1')),
                  ('id', ('Unsigned8', '0x2')),
                  ('length', ('Decimal8', 9)),
                  ('module', ('Char', 'F'))])
-    >>> # Views the field indexes
-    >>> pprint(structure.view_fields('index')) # doctest: +NORMALIZE_WHITESPACE
+    >>> # View the field indexes.
+    >>> structure.view_fields('index') # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('version',
                   Index(byte=0, bit=0, address=0, base_address=0, update=False)),
                  ('id',
@@ -534,7 +607,8 @@ List Field Items
 You can list all :ref:`field <field>` items of a `structure`_
 as a **flat** list by calling the method :meth:`~Structure.field_items`.
 
-    >>> pprint(structure.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    >>> # List the field items of the structure.
+    >>> structure.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('version',
      Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=(1, 0),
@@ -556,17 +630,31 @@ as a **flat** list by calling the method :meth:`~Structure.field_items`.
           bit_size=8,
           value='F'))]
 
+
 List Field Values
 -----------------
 
 You can **view** the *value* of each :ref:`field <field>` in a `structure`_
 as a **flat** list by calling the method :meth:`~Container.to_list`.
 
-    >>> print(structure.to_list()) # doctest: +NORMALIZE_WHITESPACE
+    >>> # List the field values of the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.version', '0x1'),
      ('Structure.id', '0x2'),
      ('Structure.length', 9),
      ('Structure.module', 'F')]
+    >>> # List the field type names & field values of the structure.
+    >>> structure.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', ('Byte', '0x1')),
+     ('Structure.id', ('Unsigned8', '0x2')),
+     ('Structure.length', ('Decimal8', 9)),
+     ('Structure.module', ('Char', 'F'))]
+    >>> # List the field indexes of the structure.
+    >>> structure.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
+     ('Structure.id', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
+     ('Structure.length', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
+     ('Structure.module', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
 
 .. note::
     The class name of the instance is used for the root name as long as no
@@ -577,7 +665,8 @@ You can **view** the *value* of each :ref:`field <field>` in a `structure`_
 as a **flat** ordered dictionary by calling the method
 :meth:`~Container.to_dict`.
 
-    >>> print(structure.to_dict()) # doctest: +NORMALIZE_WHITESPACE
+    >>> # List the field values  of the structure.
+    >>> structure.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Structure',
                   OrderedDict([('version', '0x1'),
                                ('id', '0x2'),
@@ -592,6 +681,29 @@ as a **flat** ordered dictionary by calling the method
         "module": "F"
       }
     }
+    >>> # List the field type names & field values of the structure.
+    >>> structure.to_dict('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    OrderedDict([('Structure',
+                  OrderedDict([('version', ('Byte', '0x1')),
+                                ('id', ('Unsigned8', '0x2')),
+                                ('length', ('Decimal8', 9)),
+                                ('module', ('Char', 'F'))]))])
+    >>> # List the field indexes of the structure.
+    >>> structure.to_dict('index') # doctest: +NORMALIZE_WHITESPACE
+    OrderedDict([('Structure',
+                  OrderedDict([('version', Index(byte=0, bit=0,
+                                                 address=0, base_address=0,
+                                                 update=False)),
+                               ('id', Index(byte=1, bit=0,
+                                            address=1, base_address=0,
+                                            update=False)),
+                               ('length', Index(byte=2, bit=0,
+                                                address=2, base_address=0,
+                                                update=False)),
+                               ('module', Index(byte=3, bit=0,
+                                                address=3, base_address=0,
+                                                update=False))]))])
+
 
 .. note::
     The class name of the instance is used for the root name as long as no
@@ -604,7 +716,19 @@ Save Field Values
 You can **save** the *value* of each :ref:`field <field>` in a `structure`_
 to an ``.ini`` file by calling the method :meth:`~Container.save`.
 
+    >>> # List the field values of the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', '0x1'),
+     ('Structure.id', '0x2'),
+     ('Structure.length', 9),
+     ('Structure.module', 'F')]
+    >>> # Save the field values to an '.ini' file.
     >>> structure.save("_static/structure.ini")
+
+The generated ``.ini`` file for the structure looks like this:
+
+.. literalinclude:: _static/structure.ini
+    :language: ini
 
 .. note::
     The class name of the instance is used for the section name as long as no
@@ -617,12 +741,25 @@ Load Field Values
 You can **load** the *value* of each :ref:`field <field>` in a `structure`_
 from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
+    >>> # Create a structure.
+    >>> structure = Structure(
+    ...     version=Byte(),
+    ...     id=Unsigned8(),
+    ...     length=Decimal8(),
+    ...     module=Char())
+    >>> # Load the field values from an '.ini' file.
     >>> structure.load("_static/structure.ini")
     [Structure]
     Structure.version = 0x1
     Structure.id = 0x2
     Structure.length = 9
     Structure.module = F
+    >>> # List the field values of the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', '0x1'),
+     ('Structure.id', '0x2'),
+     ('Structure.length', 9),
+     ('Structure.module', 'F')]
 
 .. note::
     The class name of the instance is used for the section name as long as no

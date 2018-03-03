@@ -274,46 +274,67 @@ Attributes of the Field
 You can **access** the :ref:`field <field>` attributes of a `pointer`_ field
 with the following attribute names:
 
+    >>> # Field name.
     >>> pointer.name
     'Pointer32'
+    >>> # Field value.
     >>> pointer.value
     '0x0'
+    >>> # Field bit size.
     >>> pointer.bit_size
     32
+    >>> # Field alignment.
     >>> pointer.alignment
     (4, 0)
+    >>> # Field alignment: byte size.
     >>> pointer.alignment[0]
     4
+    >>> # Field alignment: bit offset.
     >>> pointer.alignment[1]
     0
+    >>> # Field byte order.
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
+    >>> # Field byte order value.
     >>> pointer.byte_order.value
     'auto'
+    >>> # Field index.
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> # Field index: byte offset within the byte stream.
     >>> pointer.index.byte
     0
+    >>> # Field index: bit offset within the byte stream.
     >>> pointer.index.bit
     0
+    >>> # Field index: memory address in the data source.
     >>> pointer.index.address
     0
+    >>> # Field index: base address of the byte stream in the data source.
     >>> pointer.index.base_address
     0
+    >>> # Field index: update request for the byte stream from the data source.
     >>> pointer.index.update
     False
+    >>> # Field is a bit field.
     >>> pointer.is_bit()
     False
+    >>> # Field is a boolean field.
     >>> pointer.is_bool()
     False
+    >>> # Field is a decimal field.
     >>> pointer.is_decimal()
     True
+    >>> # Field is a float field.
     >>> pointer.is_float()
     False
+    >>> # Field is a pointer field.
     >>> pointer.is_pointer()
     True
+    >>> # Field is a stream field.
     >>> pointer.is_stream()
     False
+    >>> # Field is a string field.
     >>> pointer.is_string()
     False
 
@@ -374,7 +395,7 @@ You can view the **attributes** of a `pointer`_ field and of each :ref:`field
 **nested** ordered dictionary by calling the method :meth:`~Pointer.view_fields`.
 
 
-    >>> pprint(pointer.view_fields())
+    >>> pointer.view_fields()
     OrderedDict([('value', '0x0'),
                  ('data', OrderedDict([('size', 0), ('item', '0x0')]))])
 
@@ -385,7 +406,7 @@ List Field Items
 You can list all :ref:`field <field>` items of a `pointer`_ as a **flat** list
 by calling the method :meth:`~Pointer.field_items`.
 
-    >>> pprint(pointer.field_items()) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('value',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
               alignment=(4, 0),
@@ -409,7 +430,7 @@ List Field Values
 You can **list** the *values* of each :ref:`field <field>` of a `pointer`_ as a
 **flat** list by calling the method :meth:`~Container.to_list`.
 
-    >>> pprint(pointer.to_list())
+    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Pointer.value', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0')]
@@ -422,7 +443,7 @@ You can **list** the *values* of each :ref:`field <field>` of a `pointer`_ as a
 You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
 **flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 
-    >>> pprint(pointer.to_dict())
+    >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Pointer',
                   OrderedDict([('value', '0x0'),
                                ('data.size', 0),
@@ -439,7 +460,19 @@ Save Field Values
 You can **save** the *values* of each :ref:`field <field>` of a `pointer`_
 to an ``.ini`` file by calling the method :meth:`~Container.save`.
 
+    >>> # List the field values of the pointer.
+    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Pointer.value', '0x0'),
+     ('Pointer.data.size', 0),
+     ('Pointer.data.item', '0x0'),
+     ('Pointer.data.item.data', '')]
+    >>> # Save the field values to an '.ini' file.
     >>> pointer.save("_static/pointer.ini", nested=True)
+
+The generated ``.ini`` file for the pointer looks like this:
+
+.. literalinclude:: _static/pointer.ini
+    :language: ini
 
 .. note::
     The class name of the instance is used for the section name as long as no
@@ -452,12 +485,19 @@ Load Field Values
 You can **load** the *values* of each :ref:`field <field>` of a `pointer`_
 from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
+    >>> # Load the field values from an '.ini' file.
     >>> pointer.load("_static/pointer.ini", nested=True) # doctest: +NORMALIZE_WHITESPACE
     [Pointer]
     Pointer.value = 0x0
     Pointer.data.size = 0
     Pointer.data.item = 0x0
     Pointer.data.item.data =
+    >>> # List the field values of the pointer.
+    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Pointer.value', '0x0'),
+     ('Pointer.data.size', 0),
+     ('Pointer.data.item', '0x0'),
+     ('Pointer.data.item.data', '')]
 
 .. note::
     The class name of the instance is used for the section name as long as no

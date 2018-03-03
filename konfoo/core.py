@@ -17,7 +17,7 @@ import math
 import struct
 import time
 from binascii import hexlify
-from collections import Mapping, namedtuple, OrderedDict
+from collections import Mapping, namedtuple, OrderedDict, Iterable
 from collections.abc import MutableSequence
 from configparser import ConfigParser
 from operator import attrgetter
@@ -165,7 +165,7 @@ class Container:
             field attributes as well (chained method call).
         """
         # Name of the Container
-        name = options.get('name', self.__class__.__name__)
+        name = options.pop('name', self.__class__.__name__)
 
         fields = list()
         if attributes:
@@ -174,7 +174,11 @@ class Container:
             field_getter = attrgetter('value')
         for item in self.field_items(**options):
             field_path, field = item
-            field_path = '{0}.{1}'.format(name, field_path)
+            if field_path.startswith('['):
+                # Sequence
+                field_path = '{0}{1}'.format(name, field_path)
+            else:
+                field_path = '{0}.{1}'.format(name, field_path)
             fields.append((field_path, field_getter(field)))
         return fields
 
@@ -193,7 +197,9 @@ class Container:
             field attributes as well (chained method call).
         """
         # Name of the Container
-        name = options.get('name', self.__class__.__name__)
+        name = options.pop('name', self.__class__.__name__)
+        # Save to file
+        save = options.pop('save', False)
 
         fields = OrderedDict()
         fields[name] = OrderedDict()
@@ -203,6 +209,9 @@ class Container:
             field_getter = attrgetter('value')
         for item in self.field_items(**options):
             field_path, field = item
+            if save and field_path.startswith('['):
+                # Sequence element
+                field_path = '.' + field_path
             fields[name][field_path] = field_getter(field)
         return fields
 
@@ -248,6 +257,7 @@ class Container:
             array[2] = 0x0
             pointer = 0x0
         """
+        options['save'] = True
         parser = ConfigParser()
         parser.read_dict(self.to_dict(*attributes, **options))
         with open(file, 'w') as handle:
@@ -305,7 +315,7 @@ class Container:
         Foo.array[2] = 0x0
         Foo.pointer = 0x0
         """
-        section = options.get('section', self.__class__.__name__)
+        section = options.pop('section', self.__class__.__name__)
 
         parser = ConfigParser()
         parser.read(file)
@@ -313,7 +323,12 @@ class Container:
         if parser.has_section(section):
             verbose(options, "[{0}]".format(section))
 
-            for option, field in self.field_items(**options):
+            for field_path, field in self.field_items(**options):
+                if field_path.startswith('['):
+                    # Sequence element
+                    option = '.' + field_path
+                else:
+                    option = field_path
                 if parser.has_option(section, option):
                     # Bool fields
                     if field.is_bool():
@@ -335,8 +350,16 @@ class Container:
                     # Decimal fields
                     else:
                         field.value = parser.get(section, option)
-                    verbose(options,
-                            "{0}.{1} = {2}".format(section, option, field.value))
+                    if field_path.startswith('['):
+                        verbose(options,
+                                "{0}{1} = {2}".format(section,
+                                                      field_path,
+                                                      field.value))
+                    else:
+                        verbose(options,
+                                "{0}.{1} = {2}".format(section,
+                                                       field_path,
+                                                       field.value))
         else:
             verbose(options, "No section [{0}] found.".format(section))
 
@@ -657,24 +680,22 @@ class Structure(OrderedDict, Container):
             `Structure` lists their referenced :attr:`~Pointer.data` object
             field attributes as well (chained method call).
         """
-        values = OrderedDict()
+        members = OrderedDict()
         for name, item in self.items():
             # Container
             if is_container(item):
-                values[name] = item.view_fields(*attributes, **options)
+                members[name] = item.view_fields(*attributes, **options)
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                values[name] = item.view_fields(*attributes, **options)
+                members[name] = item.view_fields(*attributes, **options)
             # Field
             elif is_field(item):
                 if attributes:
                     field_getter = attrgetter(*attributes)
                 else:
                     field_getter = attrgetter('value')
-                values[name] = field_getter(item)
-            else:
-                raise MemberTypeError(self, item, name)
-        return values
+                members[name] = field_getter(item)
+        return members
 
     @nested_option(True)
     def describe(self, name=str(), **options):
@@ -1103,14 +1124,12 @@ class Sequence(MutableSequence, Container):
             the `Sequence` list their referenced :attr:`~Pointer.data` object
             field items as well (chained method call).
         """
-        parent = path if path else str()
-
         items = list()
-        for name, item in enumerate(self):
+        for index, item in enumerate(self):
             if path:
-                item_path = "{0}[{1}]".format(path, str(name))
+                item_path = "{0}[{1}]".format(path, str(index))
             else:
-                item_path = ".[{0}]".format(str(name))
+                item_path = "[{0}]".format(str(index))
             # Container
             if is_container(item):
                 for field_item in item.field_items(item_path, **options):
