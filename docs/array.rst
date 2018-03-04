@@ -369,6 +369,11 @@ You can **serialize** a byte stream with an `array`_ by calling the method
     >>> hexlify(bytestream)
     b'01020304'
 
+or
+
+    >>> hexlify(bytes(array))
+    b'01020304'
+
 
 Access a Member
 ---------------

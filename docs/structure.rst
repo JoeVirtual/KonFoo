@@ -452,6 +452,11 @@ You can **serialize** a byte stream with a `structure`_ by calling the method
     >>> hexlify(bytestream)
     b'01020946'
 
+or
+
+    >>> hexlify(bytes(structure))
+    b'01020946'
+
 
 Access a Member
 ---------------

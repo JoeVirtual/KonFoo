@@ -292,6 +292,10 @@ You can **serialize** a byte stream with a `sequence`_ by calling the method
     >>> hexlify(bytestream)
     b'01020946'
 
+or
+
+    >>> hexlify(bytes(sequence))
+    b'01020946'
 
 Access a Member
 ---------------
