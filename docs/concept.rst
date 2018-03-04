@@ -109,7 +109,9 @@ A `container`_ can list all its `field`_ items as a **flat** list in the form
 of ``(field path, field item)`` tuples by calling its method
 :meth:`~Container.field_items`.
 
+    >>> # Create an empty container.
     >>> container = Container()
+    >>> # List the field items in the container.
     >>> container.field_items() # doctest: +NORMALIZE_WHITESPACE
     []
 
@@ -121,6 +123,7 @@ A `container`_ can **view** the *value* of each `field`_ item as a **flat**
 list in the form of ``(field path, field value)`` tuples by calling its method
 :meth:`~Container.to_list`.
 
+    >>> # List the field values in the container.
     >>> container.to_list() # doctest: +NORMALIZE_WHITESPACE
     []
 
@@ -129,12 +132,11 @@ A `container`_ can **view** the *value* of each `field`_ item as a **flat**
 ordered dictionary in the form of ``{'field path': field value}`` pairs by
 calling its method :meth:`~Container.to_dict`.
 
+    >>> # List the field values in the container.
     >>> container.to_dict()  # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Container', OrderedDict())])
 
-
 .. note::
-
     The class name of the instance is used for the root name as long as no
     *name* is given.
 
@@ -145,10 +147,15 @@ Save field values
 A `container`_ can **save** the *value* of each `field`_ item to an ``.ini`` file
 by calling its method :meth:`~Container.save`.
 
+    >>> # Save the field values to an '.ini' file.
     >>> container.save("_static/container.ini")
 
-.. note::
+The generated ``.ini`` file for the container looks like this:
 
+.. literalinclude:: _static/container.ini
+    :language: ini
+
+.. note::
     The class name of the instance is used for the section name as long as no
     *section* is given.
 
@@ -159,12 +166,11 @@ Load field values
 A `container`_ can **load** the *value* of each `field`_ item from an ``.ini`` file
 by calling its method :meth:`~Container.load`.
 
+    >>> # Load the field values from an '.ini' file.
     >>> container.load("_static/container.ini")
     [Container]
 
-
 .. note::
-
     The class name of the instance is used for the section name as long as no
     *section* is given.
 
@@ -180,8 +186,9 @@ field which is the entry point for a `mapper`_ to connect the attached :ref:`dat
 object <data object>` via a data :ref:`provider <provider>` to a *data source* to
 retrieve the required *byte stream* for the `mapper`_.
 
-
+    >>> # Create a field.
     >>> field = Field()
+    >>> # Display the field.
     >>> field # doctest: +NORMALIZE_WHITESPACE
     Field(index=Index(byte=0, bit=0,
                       address=0, base_address=0,
@@ -219,6 +226,7 @@ A `field`_ has a type :attr:`~Field.name`. The `field name`_ consists of the
 name of the `field`_ base class and its `field size`_ to describe the kind of
 the `field`_.
 
+    >>> # Field name.
     >>> field.name
     'Field0'
 
@@ -231,6 +239,7 @@ Size
 A `field`_ has a :attr:`~Field.bit_size`. The `field size`_ defines the size of
 the content area of a *byte stream* that the `field`_ map.
 
+    >>> # Field bit size.
     >>> field.bit_size
     0
 
@@ -242,6 +251,7 @@ Value
 A `field`_ has a :attr:`~Field.value`. The `field value`_ represents the content
 area of a *byte stream* that the `field`_ map.
 
+    >>> # Field value.
     >>> field.value
 
 
@@ -256,8 +266,24 @@ index`_ is automatically calculated by the build-in deserializer and serializer
 from the start point of the *byte stream* and the start address of the *byte
 stream* in the providing *data source*.
 
+    >>> # Field index.
     >>> field.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> # Field index: byte offset of the field in the byte stream.
+    >>> field.index.byte
+    0
+    >>> # Field index: bit offset of the field relative to its byte offset.
+    >>> field.index.bit
+    0
+    >>> # Field index: memory address of the field in the data source.
+    >>> field.index.address
+    0
+    >>> # Field index: start address of the byte stream in the data source.
+    >>> field.index.base_address
+    0
+    >>> # Field index: update request for the byte stream.
+    >>> field.index.update
+    False
 
 
 .. _field alignment:
@@ -272,11 +298,16 @@ order how the consecutive fields are aligned to each other. The ``bit offset``
 of the `field alignment`_ is automatically calculated by the build-in
 deserializer and serializer.
 
-    >>> # field alignment
-    >>> byte_size, bit_offset = field.alignment
+    >>> # Field alignment.
     >>> field.alignment
     (0, 0)
-
+    >>> byte_size, bit_offset = field.alignment
+    >>> # Field alignment: byte size of the aligned field group.
+    >>> byte_size
+    0
+    >>> # Field alignment: bit offset of the field in its field group.
+    >>> bit_offset
+    0
 
 A `field`_ can be *aligned to* a group of consecutive fields by using the
 ``align_to`` argument of the :class:`Field` class to describe an **atomic**
@@ -288,25 +319,26 @@ content part of a *byte stream* with more than one `field`_.
     (2, 0)
 
 .. note::
-
     A `field`_ aligns it self to the next matching byte size when the
     `field size`_ matches not full bytes and no `field alignment`_ is given.
 
 For example to describe an **atomic** 16-bit value in a *byte stream* with
 more than one `field`_ can be achieved like this:
 
-    >>> aligned = Structure()
-    >>> # First 15 bits of a 16-bit value.
-    >>> aligned.size = Decimal(15, 2)
-    >>> # Last bit of a 16-bit value.
-    >>> aligned.flag = Bool(1, 2)
-    >>> aligned.index_fields()
+    >>> # Create an empty structure.
+    >>> structure = Structure()
+    >>> # Add field for the first 15 bits of an atomic 16-bit value.
+    >>> structure.size = Decimal(15, 2)
+    >>> # Add field for the last bit of an atomic 16-bit value.
+    >>> structure.flag = Bool(1, 2)
+    >>> # Index the fields of the structure.
+    >>> structure.index_fields()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> # Display alignment of the size field.
-    >>> aligned.size.alignment
+    >>> structure.size.alignment
     (2, 0)
     >>> # Display alignment of the flag field.
-    >>> aligned.flag.alignment
+    >>> structure.flag.alignment
     (2, 15)
 
 
@@ -324,6 +356,13 @@ default `field byte order`_ is :class:`~Byteorder.auto` it means that
 the `field`_ use the byte order which the *byte stream* `mapper`_ defines to
 :attr:`~Field.unpack` and :attr:`~Field.pack` the required bytes and bits for
 its `field value`_ from and to the *byte stream*.
+
+    >>> # Field byte order.
+    >>> field.byte_order
+    Byteorder.auto = 'auto'
+    >>> # Field byte order value.
+    >>> field.byte_order.value
+    'auto'
 
 
 .. _enumeration:
@@ -352,6 +391,7 @@ For example to describe a 2-bit ambivalent enumeration by an :class:`Enum`
     >>> # Returns the field value as an integer.
     >>> int(ambivalent)
     0
+    >>> # Display the field.
     >>> ambivalent # doctest: +NORMALIZE_WHITESPACE
     Enum(index=Index(byte=0, bit=0,
                   address=0, base_address=0,

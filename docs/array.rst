@@ -21,121 +21,188 @@ Array element
 -------------
 
 An `array element`_ can be any :ref:`field <field>` or :ref:`container <container>`
-class **constructor**.
+**class**.
 
 
 Define an Array
 ---------------
 
-Define an `array`_ by calling the `array element`_ constructor.
+Define an `array`_ by calling the `array element`_ **class**.
 
 .. code-block:: python
-  :emphasize-lines: 4
+  :emphasize-lines: 4-5
 
     class ByteArray(Array):
 
-        def __init__(self, size=0):
-            super().__init__(Byte, size)  # Array element constructor
+        def __init__(self, capacity=0):
+            # Array element class.
+            super().__init__(template=Byte, capacity=capacity)
 
 
-Define an `array`_ by using an `array element`_ instance.
+Define an `array`_ by using an `array element`_ **instance**.
 
 .. code-block:: python
-   :emphasize-lines: 4
+   :emphasize-lines: 4-5
 
     class ByteArray(Array):
 
-        def __init__(self, size=0):
-            super().__init__(Byte(), size)  # Array element instance
+        def __init__(self, capacity=0):
+            # Array element instance.
+            super().__init__(template=Byte(), capacity=capacity)
 
 .. note:: Not recommended. It works only for simple :ref:`field <field>` instances.
 
-Define an `array`_ by calling a **factory** class.
+Define an `array`_ by using a **factory** class for an `array element`_ with
+arguments and/or keywords.
 
 .. code-block:: python
-   :emphasize-lines: 6-7
+   :emphasize-lines: 7-9
 
-    # Factory for the array element
+    # Factory class for a array element with arguments and/or keywords.
     class StringFactory:
         def __init__(self, size):
+            # Argument for the array element.
             self.size = size
 
         def __call__(self):
+            # Create the array element with arguments and/or keywords.
             return String(size)
 
+
 .. code-block:: python
-   :emphasize-lines: 4
+   :emphasize-lines: 4-5
 
     class StringArray(Array):
 
-        def __init__(self, length, size=0):
-            super().__init__(StringFactory(length), size)
+        def __init__(self, length, capacity=0):
+             # Array element produced by a factory class.
+            super().__init__(template=StringFactory(length), capacity=capacity)
 
 
-Factorizing an Array element
-----------------------------
+Factorize an Array element
+--------------------------
 
-You can factorize an `array element`_ by defining a **factory** class to instantiate
-an `array element`_ with parameters. A **factory** is necessary whenever you use a
-:ref:`mapper <mapper>` with arguments for an `array element`_, in this case you must
-assign the constructor of the **factory** class as the `array element`_.
+You can factorize an `array element`_ with arguments and/or keywords by defining a
+**factory** class to instantiate the `array element`_. A **factory** is necessary
+whenever you use an `array element`_ class which needs arguments and/or keywords to
+be instantiated, in this case you must assign the **factory** instance as the
+`array element`_ to the `array`_.
 
-.. code-block:: python
-    :emphasize-lines: 11-13, 28
-
-    >>> class Parametrized(Structure):
+    >>> # Define an array element class with arguments and/or keywords.
+    >>> class ArrayElement(Structure):
     ...     def __init__(self, arg, *args, **kwargs):
     ...         super().__init__()
     ...         self.field = arg
-    >>> class Factory:
+    >>> # Define an factory class for the array element.
+    >>> class ArrayElementFactory:
     ...     def __init__(self, arg, *args, **kwargs):
     ...         self.arg = arg
     ...         self.args = args
     ...         self.kwargs = kwargs
     ...
     ...     def __call__(self):
-    ...         return Parametrized(self.arg, *self.args, **self.kwargs)
-    >>> factory = Factory(Byte)
+    ...         # Create the array element with arguments and/or kywords
+    ...         return ArrayElement(self.arg, *self.args, **self.kwargs)
+    >>> # Create an instance of the array element factory.
+    >>> factory = ArrayElementFactory(Byte)
+    >>> # Use always a class not an instance in the arguments or keywords.
     >>> factory.arg  # doctest: +NORMALIZE_WHITESPACE
     <class 'konfoo.core.Byte'>
     >>> factory.args
     ()
     >>> factory.kwargs
     {}
+    >>> # Display the array element produced by the factory.
     >>> factory() # doctest: +NORMALIZE_WHITESPACE
-    Parametrized([('field',
+    ArrayElement([('field',
                     Byte(index=Index(byte=0, bit=0,
                                      address=0, base_address=0,
                                      update=False),
                     alignment=(1, 0),
                     bit_size=8,
                     value='0x0'))])
-    >>> array = Array(Factory(Byte), 2)  # assign the class constructor not an instance!
+    >>> # Assign the factory as the array element. Use a class!
+    >>> array = Array(ArrayElementFactory(Byte), 2)
     >>> [item.field.value for item in array]
     ['0x0', '0x0']
-    >>> array[0].field.value = 16
+    >>> array[0].field.value = 255
     >>> [item.field.value for item in array]
-    ['0x10', '0x0']
+    ['0xff', '0x0']
+    >>> # Assign the factory as the array element. Use not an instance!
+    >>> array = Array(ArrayElementFactory(Byte()), 2)
+    >>> [item.field.value for item in array]
+    ['0x0', '0x0']
+    >>> array[0].field.value = 255
+    >>> [item.field.value for item in array]
+    ['0xff', '0xff']
 
 
 .. warning::
-
-    If a factory argument is an **instance** of a :ref:`field <field>` or
+    If a factory argument/keyword is an **instance** of a :ref:`field <field>` or
     :ref:`container <container>` class this **instance** will be assigned to
-    more than one `array element`_. To avoid this behavior assign the class
-    constructor to the argument instead of an instance.
+    more than one `array element`_. To avoid this behavior assign the **class**
+    to the argument/keyword instead of an **instance**.
+
+
+Create an Array
+---------------
+
+    >>> # Create an array with an array element class.
+    >>> array = Array(template=Byte, capacity=4)
+    >>> array = Array(Byte, 4)
+    >>> # List the field values in the array.
+    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x0'),
+     ('Array[1]', '0x0'),
+     ('Array[2]', '0x0'),
+     ('Array[3]', '0x0')]
+
+
+Number of Array Elements
+------------------------
+
+You can **get** the number of array elements in the `array`_ with the build-in
+function :func:`len`.
+
+    >>> # Create an array.
+    >>> array = Array(Byte, 4)
+    >>> # Number of the array elements in the array.
+    >>> len(array)
+    4
+
+
+Resize an Array
+---------------
+
+You can **resize** an `array`_ by calling :meth:`~Array.resize`.
+
+    >>> # Create an empty array.
+    >>> array = Array(Byte)
+    >>> # List the field values in the array.
+    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    []
+    >>> # Resize the array.
+    >>> array.resize(4)
+    >>> # List the field values in the array.
+    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x0'),
+     ('Array[1]', '0x0'),
+     ('Array[2]', '0x0'),
+     ('Array[3]', '0x0')]
+
 
 
 View an Array
 -------------
 
-You can **view** the `array`_
+You can **view** the `array`_.
 
     >>> # Create a array.
     >>> array = Array(Byte, 4)
     >>> # Index the fields in the sequence.
     >>> array.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+    >>> # Display the array.
     >>> array # doctest: +NORMALIZE_WHITESPACE
     [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=(1, 0),
@@ -244,7 +311,7 @@ returned.
 
     >>> # Create an array.
     >>> array = Array(Byte, 4)
-    >>> # List the field indexes of the array.
+    >>> # List the field indexes in the array.
     >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
@@ -256,7 +323,7 @@ returned.
     >>> # Index the fields in the array with a start index.
     >>> array.index_fields(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> # List the field indexes of the array.
+    >>> # List the field indexes in the array.
     >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
@@ -277,7 +344,7 @@ You can **deserialize** a byte stream with an `array`_ by calling the method
     >>> # Deserialize the byte stream and map it to the array.
     >>> array.deserialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> # List the field values of the array.
+    >>> # List the field values in the array.
     >>> array.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', ('Byte', '0x1')),
      ('Array[1]', ('Byte', '0x2')),
@@ -333,10 +400,10 @@ member in a `array`_ with the attribute names:
     >>> # Field alignment.
     >>> array[0].alignment
     (1, 0)
-    >>> # Field alignment: byte size.
+    >>> # Field alignment: byte size of the aligned field group.
     >>> array[0].alignment[0]
     1
-    >>> # Field alignment: bit offset.
+    >>> # Field alignment: bit offset of the field in its field group.
     >>> array[0].alignment[1]
     0
     >>> # Field byte order.
@@ -348,19 +415,19 @@ member in a `array`_ with the attribute names:
     >>> # Field index.
     >>> array[0].index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
-    >>> # Field index: byte offset within the byte stream.
+    >>> # Field index: byte offset of the field in the byte stream.
     >>> array[0].index.byte
     0
-    >>> # Field index: bit offset within the byte stream.
+    >>> # Field index: bit offset of the field relative to its byte offset.
     >>> array[0].index.bit
     0
-    >>> # Field index: memory address in the data source.
+    >>> # Field index: memory address of the field in the data source.
     >>> array[0].index.address
     0
-    >>> # Field index: base address of the byte stream in the data source.
+    >>> # Field index: start address of the byte stream in the data source.
     >>> array[0].index.base_address
     0
-    >>> # Field index: update request for the byte stream from the data source.
+    >>> # Field index: update request for the byte stream.
     >>> array[0].index.update
     False
     >>> # Field is a bit field.
@@ -389,7 +456,7 @@ member in a `array`_ with the attribute names:
 Iterate over Members
 --------------------
 
-You can **iterate** over all kind of members of a `array`_.
+You can **iterate** over all kind of members of an `array`_.
 
     >>> [member.item_type for member in array] # doctest: +NORMALIZE_WHITESPACE
     [ItemClass.Byte = 42,
@@ -398,7 +465,7 @@ You can **iterate** over all kind of members of a `array`_.
      ItemClass.Byte = 42]
 
 
-You can **iterate** over all :ref:`field <field>` members of a `array`_.
+You can **iterate** over all :ref:`field <field>` members of an `array`_.
 
     >>> [member.value for member in array if is_field(member)]
     ['0x1', '0x2', '0x3', '0x4']
@@ -433,7 +500,7 @@ List Field Items
 You can list all :ref:`field <field>` items in an `array`_
 as a **flat** list by calling the method :meth:`~Sequence.field_items`.
 
-    >>> # List the field items of the array.
+    >>> # List the field items in the array.
     >>> array.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('[0]', Byte(index=Index(byte=0, bit=0,
                               address=0, base_address=0,
@@ -467,19 +534,19 @@ List Field Values
 You can **list** the *value* of each :ref:`field <field>` in an `array`_
 as a **flat** list by calling the method :meth:`~Container.to_list`.
 
-    >>> # List the field values of the array.
+    >>> # List the field values in the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),
      ('Array[3]', '0x4')]
-    >>> # List the field type names & field values of the array.
+    >>> # List the field type names & field values in the array.
     >>> array.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', ('Byte', '0x1')),
      ('Array[1]', ('Byte', '0x2')),
      ('Array[2]', ('Byte', '0x3')),
      ('Array[3]', ('Byte', '0x4'))]
-    >>> # List the field indexes of the array.
+    >>> # List the field indexes in the array.
     >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
@@ -495,7 +562,7 @@ You can **view** the *value* of each :ref:`field <field>` in an `array`_
 as a **flat** ordered dictionary by calling the method
 :meth:`~Container.to_dict`.
 
-    >>> # List the field values of the array.
+    >>> # List the field values in the array.
     >>> array.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Array',
                   OrderedDict([('[0]', '0x1'),
@@ -511,14 +578,14 @@ as a **flat** ordered dictionary by calling the method
         "[3]": "0x4"
       }
     }
-    >>> # List the field type names & field values of the array.
+    >>> # List the field type names & field values in the array.
     >>> array.to_dict('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Array',
                   OrderedDict([('[0]', ('Byte', '0x1')),
                                ('[1]', ('Byte', '0x2')),
                                ('[2]', ('Byte', '0x3')),
                                ('[3]', ('Byte', '0x4'))]))])
-    >>> # List the field indexes of the array.
+    >>> # List the field indexes in the array.
     >>> array.to_dict('index') # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Array',
                   OrderedDict([('[0]', Index(byte=0, bit=0,
@@ -545,7 +612,7 @@ Save Field Values
 You can **save** the *value* of each :ref:`field <field>` in an `array`_
 to an ``.ini`` file by calling the method :meth:`~Container.save`.
 
-    >>> # List the field values of the array.
+    >>> # List the field values in the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
@@ -580,7 +647,7 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     Array[1] = 0x2
     Array[2] = 0x3
     Array[3] = 0x4
-    >>> # List the field values of the array.
+    >>> # List the field values in the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),

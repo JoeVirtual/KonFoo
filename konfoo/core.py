@@ -119,7 +119,7 @@ accessed via a data :class:`Provider` by a :class:`Pointer` field.
 :param int byte: byte offset of the :class:`Field` in the byte stream.
 :param int bit: bit offset of the :class:`Field` relative to its byte offset.
 :param int address: address of the :class:`Field` in the data source.
-:param int base_address: base address of the data source.
+:param int base_address: start address of the byte stream in the data source.
 :param bool update: if ``True`` the byte stream needs to be updated.
 """
 Index.__new__.__defaults__ = (0, 0, 0, 0, False)
@@ -1226,12 +1226,12 @@ class Array(Sequence):
         The *template* can be any :class:`Field` instance or any *callable*
         that returns a :class:`Structure`, :class:`Sequence`, :class:`Array`
         or any :class:`Field` instance.
-    :param int size: size of the `Array` in number of `Array` elements.
+    :param int capacity: capacity of the `Array` in number of `Array` elements.
     """
     # Item type of a Array.
     item_type = ItemClass.Array
 
-    def __init__(self, template, size=0):
+    def __init__(self, template, capacity=0):
         super().__init__()
 
         # Template for the array element.
@@ -1249,7 +1249,7 @@ class Array(Sequence):
             raise MemberTypeError(self, template)
 
         # Create array
-        self.resize(size)
+        self.resize(capacity)
 
     def __create__(self):
         if is_field(self._template):
@@ -1270,14 +1270,14 @@ class Array(Sequence):
         """
         super().insert(index, self.__create__())
 
-    def resize(self, size):
+    def resize(self, capacity):
         """ Re-sizes the `Array` by appending new `Array` elements or
         removing `Array` elements from the end.
 
-        :param int size: new size of the `Array` in number of `Array`
+        :param int capacity: new capacity of the `Array` in number of `Array`
             elements.
         """
-        count = max(int(size), 0) - len(self)
+        count = max(int(capacity), 0) - len(self)
 
         if count == 0:
             pass
@@ -1304,9 +1304,11 @@ class Array(Sequence):
         """
 
         if isinstance(content, (list, tuple)):
-            size = len(content)
-            for i in range(0, len(self), size):
-                for name, pair in enumerate(zip(self[i:i + size], content), start=i):
+            capacity = len(content)
+            for i in range(0, len(self), capacity):
+                for name, pair in enumerate(zip(self[i:i + capacity],
+                                                content),
+                                            start=i):
                     item, value = pair
                     if is_mixin(item):
                         # Container or Pointer
@@ -1346,7 +1348,7 @@ class Field:
     :param int bit_size: is the *size* of a `Field` in bits.
     :param int align_to: aligns the `Field` to the number of bytes,
         can be between ``1`` and ``8``.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Field`.
         Default is :class:`~Byteorder.auto`.
     :type byte_order: :class:`Byteorder`, :class:`str`
@@ -2029,7 +2031,7 @@ class Float(Field):
     with a ``'max'`` and ``'min'`` key for its maximum and minimum possible
     field :attr:`.value`.
 
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Float` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -2228,7 +2230,7 @@ class Decimal(Field):
         `Decimal` field.
     :param bool signed: if ``True`` the `Decimal` field is signed otherwise
         unsigned.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Decimal` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -3029,7 +3031,7 @@ class Signed(Decimal):
         If no field *alignment* is set the `Signed` field aligns itself
         to the next matching byte size according to the *size* of the
         `Signed` field.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Signed` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -3129,7 +3131,7 @@ class Unsigned(Decimal):
         If no field *alignment* is set the `Unsigned` field aligns itself
         to the next matching byte size according to the *size* of the
         `Unsigned` field.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Unsigned` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -3238,7 +3240,7 @@ class Bitset(Decimal):
         If no field *alignment* is set the `Bitset` field aligns itself
         to the next matching byte size according to the *size* of the
         `Bitset` field.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Bitset` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -3346,7 +3348,7 @@ class Bool(Decimal):
         If no field *alignment* is set the `Bool` field aligns itself
         to the next matching byte size according to the *size* of the
         `Bool` field.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Bool` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -3466,7 +3468,7 @@ class Enum(Decimal):
         to the next matching byte size according to the *size* of the
         `Enum` field.
     :param enumeration: :class:`Enumeration` definition of the `Enum` field.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Enum` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -3621,7 +3623,7 @@ class Scaled(Decimal):
         If no field *alignment* is set the `Scaled` field aligns itself
         to the next matching byte size according to the *size* of the
         `Scaled` field.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Scaled` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -3792,7 +3794,7 @@ class Fraction(Decimal):
         `Fraction` field.
     :param bool signed: if ``True`` the `Fraction` field is signed otherwise
         unsigned.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Fraction` field
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -4049,7 +4051,7 @@ class Bipolar(Fraction):
         If no field *alignment* is set the `Bipolar` field aligns itself
         to the next matching byte size according to the *size* of the
         `Bipolar` field.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Bipolar` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -4157,7 +4159,7 @@ class Unipolar(Fraction):
         If no field *alignment* is set the `Unipolar` field aligns itself
         to the next matching byte size according to the *size* of the
         `Unipolar` field.
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Unipolar` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -4255,7 +4257,7 @@ class Datetime(Decimal):
     *size* of four bytes and returns its field :attr:`value` as an UTC datetime
     string in the ISO format ``YYYY-mm-dd HH:MM:SS``.
 
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `Datetime` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -4362,7 +4364,7 @@ class IPv4Address(Decimal):
     *size* of four bytes and returns its field :attr:`value` as an IPv4 address
     formatted string.
 
-    :param byte_order: byte order used to decode and encode the :attr:`value`
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
         of the `IPv4Address` field.
     :type byte_order: :class:`Byteorder`, :class:`str`
 
@@ -4499,7 +4501,7 @@ class Pointer(Decimal, Container):
         `Pointer` field.
     :param int address: absolute address of the :attr:`data` object referenced
         by the `Pointer` field.
-    :param data_order: byte order used to decode and encode the :attr:`data`
+    :param data_order: byte order used to unpack and pack the :attr:`data`
         object referenced by the `Pointer` field.
     :type data_order: :class:`Byteorder`, :class:`str`
     :param int bit_size: is the *size* of the `Pointer` field in bits,
@@ -4509,7 +4511,7 @@ class Pointer(Decimal, Container):
         If no field *alignment* is set the `Pointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `Pointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `Pointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -5253,7 +5255,7 @@ class StructurePointer(Pointer):
         The *template* must be a :class:`Structure` instance.
     :param int address: absolute address of the :attr:`data` object referenced
         by the `Pointer` field.
-    :param data_order: byte order used to decode and encode the :attr:`data`
+    :param data_order: byte order used to unpack and pack the :attr:`data`
         object referenced by the `Pointer` field.
     :type data_order: :class:`Byteorder`, :class:`str`
     :param int bit_size: is the *size* of the `Pointer` field in bits,
@@ -5263,7 +5265,7 @@ class StructurePointer(Pointer):
         If no field *alignment* is set the `Pointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `Pointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `Pointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -5462,7 +5464,7 @@ class SequencePointer(Pointer):
         is appended to the :class:`Sequence`.
     :param int address: absolute address of the :attr:`data` object referenced
         by the `Pointer` field.
-    :param data_order: byte order used to decode and encode the :attr:`data`
+    :param data_order: byte order used to unpack and pack the :attr:`data`
         object referenced by the `Pointer` field.
     :type data_order: :class:`Byteorder`, :class:`str`
     :param int bit_size: is the *size* of the `Pointer` field in bits,
@@ -5472,7 +5474,7 @@ class SequencePointer(Pointer):
         If no field *alignment* is set the `Pointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `Pointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `Pointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -5717,7 +5719,7 @@ class ArrayPointer(SequencePointer):
         :class:`Array` elements.
     :param int address: absolute address of the :attr:`data` object referenced
         by the `Pointer` field.
-    :param data_order: byte order used to decode and encode the :attr:`data`
+    :param data_order: byte order used to unpack and pack the :attr:`data`
         object referenced by the `Pointer` field.
     :type data_order: :class:`Byteorder`, :class:`str`
     :param int bit_size: is the *size* of the `Pointer` field in bits,
@@ -5727,7 +5729,7 @@ class ArrayPointer(SequencePointer):
         If no field *alignment* is set the `Pointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `Pointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `Pointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -5932,7 +5934,7 @@ class StreamPointer(Pointer):
         If no field *alignment* is set the `Pointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `Pointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `Pointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -6143,7 +6145,7 @@ class StringPointer(StreamPointer):
         If no field *alignment* is set the `Pointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `Pointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `Pointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -6331,7 +6333,7 @@ class AutoStringPointer(StringPointer):
         If no field *alignment* is set the `Pointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `Pointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `Pointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -6553,7 +6555,7 @@ class RelativePointer(Pointer):
         `RelativePointer` field.
     :param int address: relative address of the :attr:`data` object referenced
         by the `RelativePointer` field.
-    :param data_order: byte order used to decode and encode the :attr:`data`
+    :param data_order: byte order used to unpack and pack the :attr:`data`
         object referenced by the `RelativePointer` field.
     :type data_order: :class:`Byteorder`, :class:`str`
     :param int bit_size: is the *size* of the `RelativePointer` field in bits,
@@ -6563,7 +6565,7 @@ class RelativePointer(Pointer):
         If no field *alignment* is set the `RelativePointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `RelativePointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `RelativePointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -6718,7 +6720,7 @@ class StructureRelativePointer(RelativePointer):
         The *template* must be a :class:`Structure` instance.
     :param int address: relative address of the :attr:`data` object referenced
         by the `RelativePointer` field.
-    :param data_order: byte order used to decode and encode the :attr:`data`
+    :param data_order: byte order used to unpack and pack the :attr:`data`
         object referenced by the `RelativePointer` field.
     :type data_order: :class:`Byteorder`, :class:`str`
     :param int bit_size: is the *size* of the `RelativePointer` field in bits,
@@ -6728,7 +6730,7 @@ class StructureRelativePointer(RelativePointer):
         If no field *alignment* is set the `RelativePointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `RelativePointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `RelativePointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -6928,7 +6930,7 @@ class SequenceRelativePointer(RelativePointer):
         is appended to the :class:`Sequence`.
     :param int address: relative address of the :attr:`data` object referenced
         by the `RelativePointer` field.
-    :param data_order: byte order used to decode and encode the :attr:`data`
+    :param data_order: byte order used to unpack and pack the :attr:`data`
         object referenced by the `RelativePointer` field.
     :type data_order: :class:`Byteorder`, :class:`str`
     :param int bit_size: is the *size* of the `RelativePointer` field in bits,
@@ -6938,7 +6940,7 @@ class SequenceRelativePointer(RelativePointer):
         If no field *alignment* is set the `RelativePointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `RelativePointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `RelativePointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -7182,7 +7184,7 @@ class ArrayRelativePointer(SequenceRelativePointer):
         :class:`Array` elements.
     :param int address: relative address of the :attr:`data` object referenced
         by the `RelativePointer` field.
-    :param data_order: byte order used to decode and encode the :attr:`data`
+    :param data_order: byte order used to unpack and pack the :attr:`data`
         object referenced by the `RelativePointer` field.
     :type data_order: :class:`Byteorder`, :class:`str`
     :param int bit_size: is the *size* of the `RelativePointer` field in bits,
@@ -7192,7 +7194,7 @@ class ArrayRelativePointer(SequenceRelativePointer):
         If no field *alignment* is set the `RelativePointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `RelativePointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `RelativePointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -7398,7 +7400,7 @@ class StreamRelativePointer(RelativePointer):
         If no field *alignment* is set the `RelativePointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `RelativePointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `RelativePointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
@@ -7609,7 +7611,7 @@ class StringRelativePointer(StreamRelativePointer):
         If no field *alignment* is set the `RelativePointer` field aligns itself
         to the next matching byte size according to the *size* of the
         `RelativePointer` field.
-    :param field_order: byte order used to decode and encode the :attr:`value`
+    :param field_order: byte order used to unpack and pack the :attr:`value`
         of the `RelativePointer` field.
     :type field_order: :class:`Byteorder`, :class:`str`
 
