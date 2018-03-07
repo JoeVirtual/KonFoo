@@ -106,7 +106,7 @@ You can **extend** a `sequence`_ with a list of new members.
 View a Sequence
 ---------------
 
-You can **view** the `sequence`_
+You can **view** the `sequence`_.
 
     >>> # Create a sequence.
     >>> sequence = Sequence([

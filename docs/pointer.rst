@@ -95,14 +95,16 @@ Define a Data Object Pointer
 You **define**  a `pointer`_ for a `data object`_ like this:
 
 .. code-block:: python
-    :emphasize-lines: 5-6
+    :emphasize-lines: 5-8
 
     # Pointer field
     class DataObjectPointer(Pointer):
 
         def __init__(self, address=None, byte_order=BYTEORDER):
             # Attach the data object to the pointer.
-            super().__init__(template=DataObject(), address, byte_order)
+            super().__init__(template=DataObject(),
+                             address=address,
+                             data_order=byte_order)
 
 
 Nest a Pointer
@@ -128,9 +130,9 @@ You can *nest* a `pointer`_ in a `data object`_.
     # Pointer
     class DataObjectPointer(Pointer):
 
-        def __init__(self, address=None):
+        def __init__(self, address=None, byte_order=BYTEORDER):
             # Attach the data object to the pointer.
-            super().__init__(DataObject(), address)
+            super().__init__(DataObject(), address, byte_order)
 
 
 Declare on the fly
@@ -240,7 +242,7 @@ of a `pointer`_ field.
 
 .. note:: The default byte order for a `data object`_ is little endian.
 
-You can change the **byte_order** used by the `pointer`_ to unpack or pack its
+You can change the **byte order** used by the `pointer`_ to unpack or pack its
 referenced `data object`_ with the :attr:`~Pointer.data_byte_order` attribute
 of a `pointer`_ field.
 
@@ -499,7 +501,6 @@ The :class:`Index` after the `pointer`_ field is returned.
                                       update=False))]
 
 
-
 Attributes of a Pointer Field
 -----------------------------
 
@@ -674,13 +675,13 @@ Save Field Values
 You can **save** the *values* of each :ref:`field <field>` of a `pointer`_
 to an ``.ini`` file by calling the method :meth:`~Container.save`.
 
-    >>> # List the field values of the pointer.
+    >>> # List all field values of the pointer and its attached data objects.
     >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Pointer.value', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
-    >>> # Save the field values to an '.ini' file.
+    >>> # Save all field values to an '.ini' file.
     >>> pointer.save("_static/pointer.ini", nested=True)
 
 The generated ``.ini`` file for the pointer looks like this:
@@ -699,14 +700,14 @@ Load Field Values
 You can **load** the *values* of each :ref:`field <field>` of a `pointer`_
 from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
-    >>> # Load the field values from an '.ini' file.
+    >>> # Load all field values from an '.ini' file.
     >>> pointer.load("_static/pointer.ini", nested=True) # doctest: +NORMALIZE_WHITESPACE
     [Pointer]
     Pointer.value = 0x0
     Pointer.data.size = 0
     Pointer.data.item = 0x0
     Pointer.data.item.data =
-    >>> # List the field values of the pointer.
+    >>> # List all field values of the pointer and its attached data objects.
     >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Pointer.value', '0x0'),
      ('Pointer.data.size', 0),

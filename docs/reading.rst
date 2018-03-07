@@ -76,7 +76,7 @@ of a :ref:`pointer <pointer>` field.
     class MapperPointer(Pointer):
 
         def __init__(self, address=None, byte_order=BYTEORDER):
-            # Attach the mapper as the referenced data object by the pointer.
+            # Attach the mapper as the referenced data object to the pointer.
             super().__init__(Mapper(), address, byte_order)
 
 or

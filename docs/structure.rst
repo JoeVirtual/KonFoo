@@ -261,7 +261,7 @@ You can **assign** a `structure`_ to a member of another `structure`_ on the fly
 View a Structure
 ----------------
 
-You can **view** the `structure`_
+You can **view** the `structure`_.
 
     >>> # Create a structure.
     >>> structure = Structure(
