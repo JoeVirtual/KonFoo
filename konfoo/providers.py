@@ -58,17 +58,17 @@ class FileProvider(Provider):
 
     def __init__(self, source):
         # File path
-        self._source = Path(source).absolute()
+        self._path = Path(source).absolute()
         # File cache
-        self._cache = bytearray(self._source.read_bytes())
+        self._cache = bytearray(self._path.read_bytes())
 
     def __str__(self):
-        return self.__class__.__name__ + "({0._source!s}, " \
+        return self.__class__.__name__ + "({0._path!s}, " \
                                          "{1!s})".format(self,
                                                          len(self._cache))
 
     def __repr__(self):
-        return self.__class__.__name__ + "(file={0._source!r}, " \
+        return self.__class__.__name__ + "(file={0._path!r}, " \
                                          "size={1!r})".format(self,
                                                               len(self._cache))
 
@@ -78,9 +78,22 @@ class FileProvider(Provider):
         return self._cache
 
     def read(self, address=0, count=0):
+        """ Returns a *number* of bytes read from the :attr:`cache` beginning
+        at the start *address*.
+
+        :param int address: start address.
+        :param int count: number of bytes to read from the cache.
+        """
         return self._cache[address:]
 
     def write(self, buffer=bytes(), address=0, count=0):
+        """ Writes the content of the *buffer* to the :attr:`cache` beginning
+        at the start *address*.
+
+        :param bytes buffer: content to write.
+        :param int address: start address.
+        :param int count: number of bytes to write to the cache.
+        """
         view = memoryview(self._cache)
         view[address:address + count] = buffer
 
@@ -95,4 +108,4 @@ class FileProvider(Provider):
         if file:
             Path(file).write_bytes(self._cache)
         else:
-            self._source.write_bytes(self._cache)
+            self._path.write_bytes(self._cache)
