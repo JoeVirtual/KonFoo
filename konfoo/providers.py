@@ -4,7 +4,7 @@
     ~~~~~~~~~~~~
     <Add description of the module here>.
 
-    :copyright: (c) 2015-2017 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
@@ -18,20 +18,7 @@ class Provider:
     The `Provider` class servers as a meta class. A derived class must
     implement the two methods :meth:`read` and :meth:`write` for reading
     and writing byte streams from and back to the data *source*.
-
-    :param source: generic data source.
     """
-
-    def __init__(self, source):
-        # Data source
-        self._source = source
-        # Cache
-        self._cache = bytes()
-
-    @property
-    def cache(self):
-        """ Returns the internal cache of the data `Provider` (read-only)."""
-        return self._cache
 
     @abc.abstractmethod
     def read(self, address=0, count=0):
@@ -70,7 +57,6 @@ class FileProvider(Provider):
     """
 
     def __init__(self, source):
-        super().__init__(source)
         # File path
         self._source = Path(source).absolute()
         # File cache
@@ -78,11 +64,18 @@ class FileProvider(Provider):
 
     def __str__(self):
         return self.__class__.__name__ + "({0._source!s}, " \
-                                         "{1!s})".format(self, len(self._cache))
+                                         "{1!s})".format(self,
+                                                         len(self._cache))
 
     def __repr__(self):
         return self.__class__.__name__ + "(file={0._source!r}, " \
-                                         "size={1!r})".format(self, len(self._cache))
+                                         "size={1!r})".format(self,
+                                                              len(self._cache))
+
+    @property
+    def cache(self):
+        """ Returns the internal cache of the data `Provider` (read-only)."""
+        return self._cache
 
     def read(self, address=0, count=0):
         return self._cache[address:]

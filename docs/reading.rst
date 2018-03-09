@@ -11,8 +11,6 @@
 Reading
 =======
 
-
-
 Create a Provider
 -----------------
 
@@ -26,7 +24,7 @@ You create a data :ref:`provider <provider>` to access the *data source*.
     bytearray(b"\x0f\x00KonFoo is \'Fun\'")
 
 .. note::
-    We use here a :ref:`file provider <file provider>` but you can write your own
+    We use here a :class:`FileProvider` but you can write your own
     :ref:`provider <provider>` class to access any kind of *data source*.
 
 
