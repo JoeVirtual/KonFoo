@@ -58,7 +58,7 @@ arguments and/or keywords.
 .. code-block:: python
    :emphasize-lines: 7-9
 
-    # Factory class for a array element with arguments and/or keywords.
+    # Factory class for an array element with arguments and/or keywords.
     class StringFactory:
         def __init__(self, size):
             # Argument for the array element.
@@ -191,13 +191,36 @@ You can **resize** an `array`_ by calling :meth:`~Array.resize`.
      ('Array[3]', '0x0')]
 
 
+Initialize an Array
+-------------------
+
+You can **initialize** the fields in an `array`_ by calling the method
+:meth:`~Array.initialize_fields`.
+
+    >>> # Create an array.
+    >>> array = Array(Byte, 4)
+    >>> # List the field values in the array.
+    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x0'),
+     ('Array[1]', '0x0'),
+     ('Array[2]', '0x0'),
+     ('Array[3]', '0x0')]
+    >>> # Initialize the fields in the array with a fill pattern.
+    >>> array.initialize_fields([1 ,2])
+    >>> # List the field values in the array.
+    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x1'),
+     ('Array[1]', '0x2'),
+     ('Array[2]', '0x1'),
+     ('Array[3]', '0x2')]
+
 
 View an Array
 -------------
 
 You can **view** the `array`_.
 
-    >>> # Create a array.
+    >>> # Create an array.
     >>> array = Array(Byte, 4)
     >>> # Index the fields in the sequence.
     >>> array.index_fields()
@@ -378,9 +401,9 @@ or
 Access a Member
 ---------------
 
-You can **access** a member in a `array`_ by its index.
+You can **access** a member in an `array`_ by its index.
 
-    >>> # Access a array member with its index.
+    >>> # Access an array member with its index.
     >>> array[0] # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=(1, 0),
@@ -391,7 +414,7 @@ Attributes of a Member Field
 ----------------------------
 
 You can **access** the :class:`Field` attributes of a :ref:`field <field>`
-member in a `array`_ with the attribute names:
+member in an `array`_ with the attribute names:
 
     >>> # Field name.
     >>> array[0].name

@@ -103,6 +103,35 @@ You can **extend** a `sequence`_ with a list of new members.
      ('Sequence[2]', ('Decimal8', 0)),
      ('Sequence[3]', ('Char', '\x00'))]
 
+
+Initialize a Sequence
+----------------------
+
+You can **initialize** the fields in a `sequence`_ by calling the method
+:meth:`~Sequence.initialize_fields`.
+
+    >>> # Create a sequence.
+    >>> sequence = Sequence([
+    ...     Byte(),
+    ...     Unsigned8(),
+    ...     Decimal8(),
+    ...     Char()])
+    >>> # List the field type names & field values in the sequence.
+    >>> sequence.to_list('name', 'value')  # doctest: +NORMALIZE_WHITESPACE
+    [('Sequence[0]', ('Byte', '0x0')),
+     ('Sequence[1]', ('Unsigned8', '0x0')),
+     ('Sequence[2]', ('Decimal8', 0)),
+     ('Sequence[3]', ('Char', '\x00'))]
+    >>> # Initialize the fields in the sequence.
+    >>> sequence.initialize_fields([1, 2, 9, 0x46])
+    >>> # List the field type names & field values in the sequence.
+    >>> sequence.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    [('Sequence[0]', ('Byte', '0x1')),
+     ('Sequence[1]', ('Unsigned8', '0x2')),
+     ('Sequence[2]', ('Decimal8', 9)),
+     ('Sequence[3]', ('Char', 'F'))]
+
+
 View a Sequence
 ---------------
 

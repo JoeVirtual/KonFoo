@@ -258,6 +258,35 @@ You can **assign** a `structure`_ to a member of another `structure`_ on the fly
      ('Structure.size', 0)]
 
 
+Initialize a Structure
+----------------------
+
+You can **initialize** the fields in a `structure`_ by calling the method
+:meth:`~Structure.initialize_fields`.
+
+    >>> # Create a structure.
+    >>> structure = Structure(
+    ...     version=Byte(),
+    ...     id=Unsigned8(),
+    ...     length=Decimal8(),
+    ...     module=Char())
+    >>> # Lists the field values in the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', '0x0'),
+     ('Structure.id', '0x0'),
+     ('Structure.length', 0),
+     ('Structure.module', '\x00')]
+    >>> # Initialize the fields in the structure.
+    >>> structure.initialize_fields(
+    ...     dict(version=1, id=2, length=9, module=0x46))
+    >>> # Lists the field values in the structure.
+    >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', '0x1'),
+     ('Structure.id', '0x2'),
+     ('Structure.length', 9),
+     ('Structure.module', 'F')]
+
+
 View a Structure
 ----------------
 

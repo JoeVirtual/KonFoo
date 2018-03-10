@@ -35,17 +35,33 @@ Example
 
 .. code-block:: python
 
-    class FileCachedProvider(Provider):
+    from konfoo import Provider
+    from pathlib import Path
 
-        def __init__(self, source):
-            #: File path
-            self._source = Path(source).absolute()
-            #: File cache
+    class MyProvider(Provider):
+
+        def __init__(self, file):
+            #: File path.
+            self.path = Path(file).absolute()
+            #: File cache.
             self.cache = bytearray(self.path.read_bytes())
 
         def read(self, address=0, count=0):
-            return self._cache[address:]
+            """ Returns a *number* of bytes read from the :attr:`cache` beginning
+            at the start *address*.
+
+            :param int address: start address.
+            :param int count: number of bytes to read from the cache.
+            """
+            return self.cache[address:]
 
         def write(self, buffer=bytes(), address=0, count=0):
+            """ Writes the content of the *buffer* to the :attr:`cache` beginning
+            at the start *address*.
+
+            :param bytes buffer: content to write.
+            :param int address: start address.
+            :param int count: number of bytes to write to the cache.
+            """
             view = memoryview(self.cache)
             view[address:address + count] = buffer
