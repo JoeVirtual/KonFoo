@@ -16,7 +16,6 @@ if not on_rtd:
     html_theme = 'sphinx_rtd_theme'
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
-
 # -- Path setup --------------------------------------------------------------
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -24,7 +23,6 @@ if not on_rtd:
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('..'))
 sys.path.append(os.path.abspath('.'))
-
 
 # -- Project information -----------------------------------------------------
 
@@ -34,10 +32,9 @@ copyright = '2015-{}, Jochen Gerhäußer'.format(datetime.datetime.utcnow().year
 author = 'Jochen Gerhäußer'
 
 # The short X.Y version.
-version = '0.1b5'
+version = '0.1b6'
 # The full version, including alpha/beta/rc tags.
-release = '0.1b5'
-
+release = '0.1b6'
 
 # -- General configuration ---------------------------------------------------
 
@@ -87,7 +84,6 @@ exclude_patterns = ['_build']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.
@@ -122,12 +118,10 @@ html_title = 'KonFoo'
 # If true, links to the reST sources are added to the pages.
 html_show_sourcelink = True
 
-
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'KonFoo'
-
 
 # -- Options for LaTeX output ------------------------------------------------
 
@@ -157,7 +151,6 @@ latex_documents = [
      'Jochen Gerhäußer', 'manual'),
 ]
 
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -166,7 +159,6 @@ man_pages = [
     (master_doc, 'konfoo', 'KonFoo Documentation',
      [author], 1)
 ]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -186,13 +178,11 @@ texinfo_documents = [
 autodoc_member_order = 'bysource'
 autodoc_inherit_docstrings = True
 
-
 # -- Options for ExtLinks -----------------------------------------------------
 
 extlinks = {
     'issue': ('https://github.com/JoeVirtual/KonFoo/issues/%s', 'issue ')
 }
-
 
 # -- Options for InterSphinx --------------------------------------------------
 

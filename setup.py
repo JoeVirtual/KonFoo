@@ -23,6 +23,26 @@ way with as little code as necessary to help fighting the confusion with the
 foo of the all too well-known memory dumps or hexadecimal views of binary
 data.
 
+It comes with sensible defaults out of the box.
+
+It aims to make the process of reading, de-serializing, viewing, serializing
+and writing binary data from and back to a data provider as easy as possible.
+
+KonFoo in points:
+
+- declarative way to describe the mapping of binary data to Python types
+- declarative classes to read, deserialize, serialize and write binary data
+  from and back to a data source
+- easy adjustable data provider bridge to any kind of data source
+- nesting of classes
+- adaptable classes on the fly while reading/de-serializing binary data
+- easy syntax for accessing nested fields
+- loadable mapping content including nested data from an ``.ini`` file
+- savable mapping content including nested data to an ``.ini`` file
+- easy creatable blueprint of a mapper
+- blueprint converter to JSON to visualise the mapper with
+  `d3.js <https://d3js.org>`_.
+
 Installing
 ----------
 

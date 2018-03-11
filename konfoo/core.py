@@ -1586,7 +1586,7 @@ class Field:
         """ Serializes the `Field` to the byte *buffer* starting at the begin
         of the *buffer* or with the given *index* by packing the :attr:`value`
         of the `Field` to the byte *buffer* in accordance with the encoding
-        *byte order*  for the serialization and the encoding :attr:`byte_order`
+        *byte order* for the serialization and the encoding :attr:`byte_order`
         of the `Field`.
 
         The specific encoding :attr:`byte_order` of the `Field` overrules the
@@ -4667,7 +4667,7 @@ class Pointer(Decimal, Container):
 
     @property
     def bytestream(self):
-        """ Bytestream of the `Pointer` field for the referenced :attr:`data`
+        """ Byte stream of the `Pointer` field for the referenced :attr:`data`
         object. Returned as a lowercase hexadecimal encoded string.
         """
         return hexlify(self._data_stream).decode('ascii')
@@ -4697,8 +4697,8 @@ class Pointer(Decimal, Container):
 
     @property
     def data_byte_order(self):
-        """ :class:`Byteorder` used to decode and encode the :attr:`data` object
-        referenced by the `Pointer` field.
+        """ :class:`Byteorder` used to deserialize and serialize the :attr:`data`
+        object referenced by the `Pointer` field.
         """
         return self._data_byte_order
 
@@ -4754,7 +4754,7 @@ class Pointer(Decimal, Container):
         and the decoding :attr:`byte_order` of each :class:`Field` in the
         :attr:`data` object.
 
-        A specific decoding :attr:`~Field.byte_order` of a :class:`Field` in
+        A specific decoding :attr:`byte_order` of a :class:`Field` in
         the :attr:`data` object overrules the decoding *byte order* for the
         de-serialization.
 

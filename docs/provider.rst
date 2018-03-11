@@ -10,14 +10,14 @@
 Provider
 ========
 
-KonFoo has an abstract :class:`Provider` class with an abstract interface to
+KonFoo has an *abstract* :class:`Provider` class with an abstract interface to
 **read** a *byte stream* from a *data source* and to **write** a *byte stream*
 to a *data source*.
 
 Read Interface
 --------------
 
-A :class:`Provider` class has the abstract method :meth:`Provider.read` which
+A :class:`Provider` class has the *abstract* method :meth:`Provider.read` which
 must be implemented by a derived class to read at the given start address
 the given number of bytes from the data source and returns the :class:`bytes`.
 
@@ -25,13 +25,18 @@ the given number of bytes from the data source and returns the :class:`bytes`.
 Write Interface
 ---------------
 
-A :class:`Provider` class has the abstract method :meth:`Provider.write` which
+A :class:`Provider` class has the *abstract* method :meth:`Provider.write` which
 must be implemented by a derived class to write the given number of bytes at
 the given start address to the data source.
 
 
-Example
--------
+Define a Provider
+-----------------
+
+You define a `provider`_ by creating a class derived from the *abstract*
+:class:`Provider` class and implement the two *abstract* methods
+:meth:`~Provider.read` and :meth:`~Provider.write` for your kind of *data source*
+like shown below:
 
 .. code-block:: python
 
@@ -43,7 +48,7 @@ Example
         def __init__(self, file):
             #: File path.
             self.path = Path(file).absolute()
-            #: File cache.
+            #: Byte cache.
             self.cache = bytearray(self.path.read_bytes())
 
         def read(self, address=0, count=0):
@@ -53,7 +58,7 @@ Example
             :param int address: start address.
             :param int count: number of bytes to read from the cache.
             """
-            return self.cache[address:]
+            return self.cache[address:address + count]
 
         def write(self, buffer=bytes(), address=0, count=0):
             """ Writes the content of the *buffer* to the :attr:`cache` beginning

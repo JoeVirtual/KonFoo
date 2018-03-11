@@ -53,7 +53,7 @@ KonFoo provides the following specialized `relative pointer`_ fields
   :ref:`structure <structure>`
 * a :class:`SequenceRelativePointer` field which refers to a
   :ref:`sequence <sequence>`
-* a :class:`ArrayRelativePointer` field which refers to a
+* a :class:`ArrayRelativePointer` field which refers to an
   :ref:`array <array>`
 * a :class:`StreamRelativePointer` field which refers to a
   :class:`Stream` :ref:`field <field>`
@@ -513,6 +513,9 @@ with the following attribute names:
     >>> # Field value.
     >>> pointer.value
     '0x0'
+    >>> # Field points to zero.
+    >>> pointer.is_null()
+    True
     >>> # Field bit size.
     >>> pointer.bit_size
     32
