@@ -279,6 +279,13 @@ You can **initialize** the fields in a `structure`_ by calling the method
     >>> # Initialize the fields in the structure.
     >>> structure.initialize_fields(
     ...     dict(version=1, id=2, length=9, module=0x46))
+    >>> # Initialize the fields in the structure.
+    >>> structure.initialize_fields({
+    ...     'version': 1,
+    ...     'id': 2,
+    ...     'length': 9,
+    ...     'module': 0x46
+    ... })
     >>> # Lists the field values in the structure.
     >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.version', '0x1'),

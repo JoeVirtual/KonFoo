@@ -36,7 +36,7 @@ Create the Mapper
 -----------------
 
 Second, you create the *byte stream* :ref:`mapper <mapper>` for the *binary data*
-in the *data source* to be mapped.
+to be mapped in the *data source*.
 
 .. code-block:: python
     :emphasize-lines: 5-6

@@ -81,7 +81,7 @@ setup(
     download_url='http://github.com/JoeVirtual/KonFoo/zipball/master#egg=konfoo-dev',
     description='A declarative byte stream mapping engine.',
     long_description=__doc__,
-    keywords='binary data deserialize serialize parsing decoding encoding',
+    keywords='binary data deserialize serialize parse decode encode unpack pack',
     packages=['konfoo'],
     include_package_data=True,
     zip_safe=False,

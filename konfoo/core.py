@@ -724,7 +724,7 @@ class Structure(OrderedDict, Container):
         metadata['class'] = self.__class__.__name__
         metadata['name'] = name if name else self.__class__.__name__
         metadata['size'] = len(self)
-        metadata['type'] = Structure.item_type.name
+        metadata['type'] = self.item_type.name
         metadata['member'] = members
 
         for member_name, item in self.items():
@@ -1172,7 +1172,7 @@ class Sequence(MutableSequence, Container):
         metadata['class'] = self.__class__.__name__
         metadata['name'] = name if name else self.__class__.__name__
         metadata['size'] = len(self)
-        metadata['type'] = Sequence.item_type.name
+        metadata['type'] = self.item_type.name
         metadata['member'] = members
 
         for member_name, item in enumerate(self):
@@ -1328,11 +1328,6 @@ class Array(Sequence):
                     item.value = content
                 else:
                     raise MemberTypeError(self, item, name)
-
-    def describe(self, name=None, **options):
-        metadata = super().describe(name, **options)
-        metadata['type'] = Array.item_type.name
-        return metadata
 
 
 class Field:
@@ -1660,7 +1655,7 @@ class Field:
                 'class': self.name,
                 'index': [self.index.byte, self.index.bit],
                 'name': name if name else self.name,
-                'order': self.byteorder.value,
+                'order': self.byte_order.value,
                 'size': self.bit_size,
                 'type': Field.item_type.name,
                 'value': self.value
@@ -1889,10 +1884,6 @@ class Stream(Field):
         size = len(self)
         self._bit_size = size * 8
         self._align_to_byte_size = size
-
-    def describe(self, name=str(), **options):
-        metadata = super().describe(name, **options)
-        return metadata
 
 
 class String(Stream):
@@ -4653,15 +4644,15 @@ class Pointer(Decimal, Container):
 
     @property
     def address(self):
-        """ Returns the absolute address of the :attr:`data` object
+        """ Returns the *data source* address of the :attr:`data` object
         referenced by the `Pointer` field (read-only).
         """
         return self._value
 
     @property
     def base_address(self):
-        """ Returns the base address of the data :class:`Provider` for the
-        :attr:`data` object referenced by the `Pointer` field (read-only).
+        """ Returns the *data source* base address of the :attr:`data` object
+        referenced by the `Pointer` field (read-only).
         """
         return self._value
 
@@ -5223,7 +5214,7 @@ class Pointer(Decimal, Container):
                 'max': self.max(),
                 'min': self.min(),
                 'name': name if name else self.__class__.__name__,
-                'order': self.byteorder.value,
+                'order': self.byte_order.value,
                 'size': self.bit_size,
                 'type': Pointer.item_type.name,
                 'value': self.value,
@@ -6547,9 +6538,12 @@ class AutoStringPointer(StringPointer):
 
 
 class RelativePointer(Pointer):
-    """ A `RelativePointer` field is a :class:`Pointer` field which refers
-    to a :attr:`data` object relatively to a *base address* of a data
-    :class:`Provider`.
+    """ A `RelativePointer` field is a :class:`Pointer` field which references its
+    :attr:`data` object relative to a **base address** in the *data source*.
+
+    .. important::
+        The :attr:`base_address` of a `RelativePointer` is defined by the field
+        :attr:`~Field.index` of the `RelativePointer` field.
 
     :param template: template for the :attr:`data` object referenced by the
         `RelativePointer` field.
@@ -6698,15 +6692,15 @@ class RelativePointer(Pointer):
 
     @property
     def address(self):
-        """ Returns the absolute address of the `data` object
+        """ Returns the *data source* address of the :attr:`data` object
         referenced by the `RelativePointer` field (read-only).
         """
         return self._value + self.base_address
 
     @property
     def base_address(self):
-        """ Returns the base address of the data :class:`Provider` for the
-        `data` object referenced by the `RelativePointer` field (read-only).
+        """ Returns the *data source* base address of the :attr:`data` object
+        relative referenced by the `RelativePointer` field (read-only).
         """
         return self.index.base_address
 

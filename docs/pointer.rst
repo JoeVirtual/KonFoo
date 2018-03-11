@@ -70,7 +70,7 @@ A `data object`_ of a `pointer`_ field can be any :ref:`field <field>` or
 :ref:`container <container>` class.
 
 
-Define a Data Object
+Define a Data object
 --------------------
 
 You **define** a `data object`_ like this:
@@ -83,13 +83,13 @@ You **define** a `data object`_ like this:
 
         def __init__(self):
             super().__init__()
-            self.size = Decimal16()
+            self.size = Decimal(16)
             # Nested pointer field with no attached data object
             self.item = Pointer()
             self.index_fields()
 
 
-Define a Data Object Pointer
+Define a Data object pointer
 ----------------------------
 
 You **define**  a `pointer`_ for a `data object`_ like this:
@@ -120,8 +120,8 @@ You can *nest* a `pointer`_ in a `data object`_.
 
         def __init__(self):
             super().__init__()
-            self.size = Decimal16()
-            # Nested pointer refers to a stirng field
+            self.size = Decimal(16)
+            # Nested pointer refers to a string field
             self.item = Pointer(String())
 
 
@@ -143,7 +143,7 @@ You can **declare** a `data object`_ on the fly.
     >>> # Create a data object.
     >>> data = Structure()
     >>> # Add a field to the data object.
-    >>> data.size = Decimal16()
+    >>> data.size = Decimal(16)
     >>> # Add a nested pointer field to the data object.
     >>> data.item = Pointer(String())
     >>> # List the field values in the data object.
@@ -160,12 +160,12 @@ You can **declare** a `pointer`_ on the fly.
 
     >>> # Create a pointer for the data object.
     >>> pointer = Pointer(data)
-    >>> # List the field values referenced by the pointer.
+    >>> # List the field values of the pointer and its attached data object.
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Pointer.value', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0')]
-    >>> # List the all field values referenced by the pointer.
+    >>> # List all field values of the pointer and its attached data objects.
     >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Pointer.value', '0x0'),
      ('Pointer.data.size', 0),
@@ -173,7 +173,7 @@ You can **declare** a `pointer`_ on the fly.
      ('Pointer.data.item.data', '')]
 
 
-Access the Data Object
+Access the Data object
 ----------------------
 
 You can **access** the `data object`_ referenced by a `pointer`_ with the
@@ -182,20 +182,20 @@ You can **access** the `data object`_ referenced by a `pointer`_ with the
     >>> # Create a pointer.
     >>> pointer = Pointer(
     ...     Structure(
-    ...         size=Decimal16(),
-    ...         item=Pointer(Stream())))
+    ...         size=Decimal(16),
+    ...         item=Pointer(String())))
     >>> # Index the pointer field and its attached data object.
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Access the data object referenced by the pointer field.
     >>> pointer.data  # doctest: +NORMALIZE_WHITESPACE
     Structure([('size',
-                Decimal16(index=Index(byte=0, bit=0,
-                                      address=0, base_address=0,
-                                      update=False),
-                alignment=(2, 0),
-                bit_size=16,
-                value=0)),
+                Decimal(index=Index(byte=0, bit=0,
+                                    address=0, base_address=0,
+                                    update=False),
+                        alignment=(2, 0),
+                        bit_size=16,
+                        value=0)),
                ('item',
                 Pointer(index=Index(byte=2, bit=0,
                                     address=2, base_address=0,
@@ -205,7 +205,7 @@ You can **access** the `data object`_ referenced by a `pointer`_ with the
                         value='0x0'))])
 
 
-Size of the Data Object
+Size of the Data object
 -----------------------
 
 You can get the byte **size** of the `data object`_ referenced by the `pointer`_
@@ -216,25 +216,56 @@ with the :attr:`~Pointer.data_size` attribute of a `pointer`_ field.
     6
 
 
-Address of the Data Object
+Index the Data object
+---------------------
+
+You can index each :ref:`field <field>` in the `data object`_ referenced by the
+`pointer`_ field by calling the method :meth:`~Pointer.index_data`
+
+    >>> # Create a pointer.
+    >>> pointer = Pointer(
+    ...     Structure(
+    ...         size=Decimal(16),
+    ...         item=Pointer(String())))
+    >>> # List the field indexes of the data object referenced by the pointer.
+    >>> pointer.data.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.size', Index(byte=0, bit=0,
+                              address=0, base_address=0,
+                              update=False)),
+     ('Structure.item', Index(byte=0, bit=0,
+                              address=0, base_address=0,
+                              update=False))]
+    >>> # Indexes the data object referenced by the pointer.
+    >>> pointer.index_data()
+    >>> # List the field indexes of the data object referenced by the pointer.
+    >>> pointer.data.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.size', Index(byte=0, bit=0,
+                              address=0, base_address=0,
+                              update=False)),
+     ('Structure.item', Index(byte=2, bit=0,
+                              address=2, base_address=0,
+                              update=False))]
+
+
+Address of the Data object
 --------------------------
 
-You can get the **address** of the `data object`_ referenced by the `pointer`_
-with the :attr:`~Pointer.address` attribute of a `pointer`_ field.
+You can get the *data source* **address** of the `data object`_ referenced by the
+`pointer`_ with the :attr:`~Pointer.address` attribute of a `pointer`_ field.
 
-    >>> # Absolute address of the data object referenced by the pointer.
+    >>> # Data source address of the data object referenced by the pointer.
     >>> pointer.address
     0
 
 
-Byte order of the Data Object
+Byte order of the Data object
 -----------------------------
 
-You can get the **byte order** used by the `pointer`_ to unpack or pack its
-referenced `data object`_ with the :attr:`~Pointer.data_byte_order` attribute
+You can get the **byte order** used by the `pointer`_ to deserialize or serialize
+its referenced `data object`_ with the :attr:`~Pointer.data_byte_order` attribute
 of a `pointer`_ field.
 
-    >>> # Byte order for the data object referenced by the pointer.
+    >>> # Byte order to de-/serialize the data objects referenced by the pointer.
     >>> pointer.data_byte_order
     Byteorder.little = 'little'
     >>> pointer.data_byte_order.value
@@ -242,35 +273,141 @@ of a `pointer`_ field.
 
 .. note:: The default byte order for a `data object`_ is little endian.
 
-You can change the **byte order** used by the `pointer`_ to unpack or pack its
-referenced `data object`_ with the :attr:`~Pointer.data_byte_order` attribute
+You can set the **byte order** used by the `pointer`_ to deserialize or serialize
+its referenced `data object`_ with the :attr:`~Pointer.data_byte_order` attribute
 of a `pointer`_ field.
 
+    >>> # Set byte order to de-/serialize the data objects referenced by the pointer.
     >>> pointer.data_byte_order = 'big'
-    >>> # Byte order for the data object referenced by the pointer.
+    >>> # Byte order to de-/serialize the data objects referenced by the pointer.
     >>> pointer.data_byte_order
     Byteorder.big = 'big'
 
 
-Byte stream for the Data Object
---------------------------------
+Byte stream for the Data object
+-------------------------------
 
-    >>> # Byte stream for the data object referenced by the pointer.
+You can get the internal **byte stream** used by the `pointer`_ to deserialize or
+serialize its referenced `data object`_ with the :attr:`~Pointer.bytestream`
+attribute of a `pointer`_ field.
+
+    >>> # Internal byte stream to de-/serialize the data object referenced by the pointer.
     >>> pointer.bytestream
     ''
 
+You can set the internal **byte stream** used by the `pointer`_ to deserialize or
+serialize its referenced `data object`_ with the :attr:`~Pointer.bytestream`
+attribute of a `pointer`_ field.
 
-De-Serializing
---------------
-
-
-
-
-Serializing
------------
-
+    >>> # Set the internal byte stream of the pointer.
+    >>> pointer.bytestream = '000000000000'
+    >>> pointer.bytestream
+    '000000000000'
 
 
+Deserialize the Data object
+---------------------------
+
+You can **deserialize** the `data object`_ referenced by the `pointer`_ by calling
+the method :meth:`~Pointer.deserialize_data` of a `pointer`_ field.
+
+    >>> # Create a pointer.
+    >>> pointer = Pointer(
+    ...     Structure(
+    ...         size=Decimal(16),
+    ...         item=Pointer(String())))
+    >>> # List the field values in the data object referenced by the pointer.
+    >>> pointer.data.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.size', 0),
+     ('Structure.item', '0x0')]
+    >>> # Internal byte stream of the pointer.
+    >>> pointer.bytestream
+    ''
+    >>> # Deserialize the data object with an external byte stream.
+    >>> pointer.deserialize_data(bytes.fromhex('0e0010000000'))
+    Index(byte=6, bit=0, address=6, base_address=0, update=False)
+    >>> # Set the internal byte stream of the pointer.
+    >>> pointer.bytestream = '0e0010000000'
+    >>> # Deserialize the data object with the internal byte stream.
+    >>> pointer.deserialize_data()
+    Index(byte=6, bit=0, address=6, base_address=0, update=False)
+    >>> # List the field values in the data object referenced by the pointer.
+    >>> pointer.data.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.size', 14),
+     ('Structure.item', '0x10')]
+
+
+Serialize the Data object
+-------------------------
+
+You can **serialize** the `data object`_ referenced by the `pointer`_ by calling
+the method :meth:`~Pointer.serialize_data` of a `pointer`_ field.
+
+    >>> # Create a pointer.
+    >>> pointer = Pointer(
+    ...     Structure(
+    ...         size=Decimal(16),
+    ...         item=Pointer(String())))
+    >>> # List the field values in the data object referenced by the pointer.
+    >>> pointer.data.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.size', 0),
+     ('Structure.item', '0x0')]
+    >>> # Serialize the data object referenced by the pointer.
+    >>> pointer.serialize_data()
+    b'\x00\x00\x00\x00\x00\x00'
+
+
+Read the Byte stream
+--------------------
+
+You can **read** the *byte stream* used by the `pointer`_ to deserialize its
+referenced `data object`_ **from** a *data source* through a data
+:ref:`provider <provider>` by calling the method :meth:`~Pointer.read_from` of
+a `pointer`_ field.
+
+
+
+Initialize a Pointer
+--------------------
+
+You can **initialize** the fields in a `pointer`_ by calling the method
+:meth:`~Pointer.initialize_fields`.
+
+    >>> # Create a pointer.
+    >>> pointer = Pointer(
+    ...     Structure(
+    ...         size=Decimal(16),
+    ...         item=Pointer(String(14))))
+    >>> # View all field values of the pointer and its attached data objects.
+    >>> pointer.view_fields(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    OrderedDict([('value', '0x0'),
+                 ('data',
+                  OrderedDict([('size', 0),
+                               ('item',
+                                OrderedDict([('value', '0x0'),
+                                             ('data', '')]))]))])
+    >>> # Initialize the fields values of the pointer and its attached data objects.
+    >>> pointer.initialize_fields({
+    ...     'value': 0x1,
+    ...     'data': {
+    ...         'size': 14,
+    ...         'item': {
+    ...             'value': 0x10,
+    ...             'data': 'Konfoo is Fun'
+    ...         }
+    ...     }
+    ... })
+    >>> # List the field values of the pointer and its attached data object.
+    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('Pointer.value', '0x1'),
+     ('Pointer.data.size', 14),
+     ('Pointer.data.item', '0x10')]
+    >>> # List all field values of the pointer and its attached data objects.
+    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Pointer.value', '0x1'),
+     ('Pointer.data.size', 14),
+     ('Pointer.data.item', '0x10'),
+     ('Pointer.data.item.data', 'Konfoo is Fun')]
 
 
 View a Pointer
@@ -281,7 +418,7 @@ You can **view** a `pointer`_ field.
     >>> # Create a pointer.
     >>> pointer = Pointer(
     ...     Structure(
-    ...         size=Decimal16(),
+    ...         size=Decimal(16),
     ...         item=Pointer(String())))
     >>> # Index the pointer field and its attached data object.
     >>> pointer.index_fields()
@@ -297,12 +434,12 @@ You can **view** a `pointer`_ field.
     >>> # Display the data object referenced by the pointer
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     Structure([('size',
-                Decimal16(index=Index(byte=0, bit=0,
-                                      address=0, base_address=0,
-                                      update=False),
-                          alignment=(2, 0),
-                          bit_size=16,
-                          value=0)),
+                Decimal(index=Index(byte=0, bit=0,
+                                    address=0, base_address=0,
+                                    update=False),
+                        alignment=(2, 0),
+                        bit_size=16,
+                        value=0)),
                ('item',
                 Pointer(index=Index(byte=2, bit=0,
                                     address=2, base_address=0,
@@ -384,7 +521,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     >>> # Create a pointer.
     >>> pointer = Pointer(
     ...     Structure(
-    ...         size=Decimal16(),
+    ...         size=Decimal(16),
     ...         item=Pointer(String())))
     >>> # List the field indexes of the pointer and its attached data object.
     >>> pointer.to_list('index') # doctest: +NORMALIZE_WHITESPACE
@@ -432,29 +569,6 @@ The :class:`Index` after the `pointer`_ field is returned.
                                  update=False))]
 
 
-You can index each :ref:`field <field>` in the `data object`_ referenced by the
-`pointer`_ field by calling the method :meth:`~Pointer.index_data`.
-
-    >>> # List the field indexes of the data object referenced by the pointer.
-    >>> pointer.data.to_list('index') # doctest: +NORMALIZE_WHITESPACE
-    [('Structure.size', Index(byte=0, bit=0,
-                              address=0, base_address=0,
-                              update=False)),
-     ('Structure.item', Index(byte=0, bit=0,
-                              address=0, base_address=0,
-                              update=False))]
-    >>> # Indexes the data object referenced by the pointer.
-    >>> pointer.index_data()
-    >>> # List the field indexes of the data object referenced by the pointer.
-    >>> pointer.data.to_list('index') # doctest: +NORMALIZE_WHITESPACE
-    [('Structure.size', Index(byte=0, bit=0,
-                              address=0, base_address=0,
-                              update=False)),
-     ('Structure.item', Index(byte=2, bit=0,
-                              address=2, base_address=0,
-                              update=False))]
-
-
 You can index the `pointer`_ field and each :ref:`field <field>` in the
 `data object`_ referenced by the `pointer`_ field by calling the method
 :meth:`~Pointer.index_fields`.
@@ -463,7 +577,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     >>> # Create a pointer.
     >>> pointer = Pointer(
     ...     Structure(
-    ...         size=Decimal16(),
+    ...         size=Decimal(16),
     ...         item=Pointer(String())))
     >>> # List the field indexes of the pointer and its attached data object.
     >>> pointer.to_list('index') # doctest: +NORMALIZE_WHITESPACE
@@ -499,6 +613,22 @@ The :class:`Index` after the `pointer`_ field is returned.
      ('Pointer.data.item.data', Index(byte=0, bit=0,
                                       address=0, base_address=0,
                                       update=False))]
+
+
+
+De-Serializing
+--------------
+
+You can **deserialize** the `pointer`_ field from a byte stream by calling the
+method :meth:`~Pointer.deserialize`.
+
+
+
+Serializing
+-----------
+
+You can **serialize** the `pointer`_ field to a byte stream by calling the
+method :meth:`~Pointer.serialize`.
 
 
 Attributes of a Pointer Field
@@ -582,10 +712,20 @@ You can view the **attributes** of a `pointer`_ field and of each :ref:`field
 <field>` in the `data object`_ referenced by the `pointer`_ field as a
 **nested** ordered dictionary by calling the method :meth:`~Pointer.view_fields`.
 
-
+    >>> # View the field values of the pointer and its attached data object.
     >>> pointer.view_fields() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('value', '0x0'),
-                 ('data', OrderedDict([('size', 0), ('item', '0x0')]))])
+                 ('data',
+                  OrderedDict([('size', 0),
+                               ('item', '0x0')]))])
+    >>> # View all field values of the pointer and its attached data objects.
+    >>> pointer.view_fields(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    OrderedDict([('value', '0x0'),
+                 ('data',
+                  OrderedDict([('size', 0),
+                               ('item',
+                                OrderedDict([('value', '0x0'),
+                                             ('data', '')]))]))])
 
 
 List Field Items
@@ -602,10 +742,10 @@ by calling the method :meth:`~Pointer.field_items`.
               bit_size=32,
               value='0x0')),
      ('data.size',
-      Decimal16(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-                alignment=(2, 0),
-                bit_size=16,
-                value=0)),
+      Decimal(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+              alignment=(2, 0),
+              bit_size=16,
+              value=0)),
      ('data.item',
       Pointer(index=Index(byte=2, bit=0, address=2, base_address=0, update=False),
               alignment=(4, 0),
@@ -619,10 +759,10 @@ by calling the method :meth:`~Pointer.field_items`.
               bit_size=32,
               value='0x0')),
      ('data.size',
-      Decimal16(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-                alignment=(2, 0),
-                bit_size=16,
-                value=0)),
+      Decimal(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+              alignment=(2, 0),
+              bit_size=16,
+              value=0)),
      ('data.item',
       Pointer(index=Index(byte=2, bit=0, address=2, base_address=0, update=False),
               alignment=(4, 0),
