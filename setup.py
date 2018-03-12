@@ -81,12 +81,13 @@ setup(
     download_url='http://github.com/JoeVirtual/KonFoo/zipball/master#egg=konfoo-dev',
     description='A declarative byte stream mapping engine.',
     long_description=__doc__,
-    keywords='binary data deserialize serialize parse decode encode unpack pack',
+    keywords='byte binary data deserialize serialize parse decode encode unpack pack',
     packages=['konfoo'],
     include_package_data=True,
     zip_safe=False,
     platforms='any',
     install_requires=[],
+    python_requires='>=3.4',
     tests_require=['pytest'],
     classifiers=[
         'Development Status :: 4 - Beta',
@@ -103,6 +104,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: Software Development',
         'Topic :: Software Development :: Embedded Systems',
+        'Topic :: Software Development :: Testing',
         'Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator',
         'Topic :: Scientific/Engineering :: Visualization',
     ]

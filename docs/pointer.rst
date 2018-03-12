@@ -2,6 +2,7 @@
 
 .. testsetup:: *
 
+    import json
     from pprint import pprint
     from konfoo import *
 
@@ -510,6 +511,97 @@ You can get the metadata of a `pointer`_ by calling the method
                                                               ('type', 'Field'),
                                                               ('value',
                                                                '')])])])])])])])
+    >>> print(json.dumps(pointer.describe(), indent=2))
+    {
+      "address": 0,
+      "alignment": [
+        4,
+        0
+      ],
+      "class": "Pointer",
+      "index": [
+        0,
+        0
+      ],
+      "max": 4294967295,
+      "min": 0,
+      "name": "Pointer",
+      "order": "auto",
+      "signed": false,
+      "size": 32,
+      "type": "Pointer",
+      "value": "0x0",
+      "member": [
+        {
+          "class": "Structure",
+          "name": "data",
+          "size": 2,
+          "type": "Structure",
+          "member": [
+            {
+              "address": 0,
+              "alignment": [
+                2,
+                0
+              ],
+              "class": "Decimal16",
+              "index": [
+                0,
+                0
+              ],
+              "max": 65535,
+              "min": 0,
+              "name": "size",
+              "order": "auto",
+              "signed": false,
+              "size": 16,
+              "type": "Field",
+              "value": 0
+            },
+            {
+              "address": 2,
+              "alignment": [
+                4,
+                0
+              ],
+              "class": "Pointer",
+              "index": [
+                2,
+                0
+              ],
+              "max": 4294967295,
+              "min": 0,
+              "name": "item",
+              "order": "auto",
+              "signed": false,
+              "size": 32,
+              "type": "Pointer",
+              "value": "0x0",
+              "member": [
+                {
+                  "address": 0,
+                  "alignment": [
+                    0,
+                    0
+                  ],
+                  "class": "String",
+                  "index": [
+                    0,
+                    0
+                  ],
+                  "name": "data",
+                  "order": "auto",
+                  "size": 0,
+                  "type": "Field",
+                  "value": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+
 
 Indexing
 --------

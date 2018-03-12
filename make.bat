@@ -30,7 +30,7 @@ if "%1" == "doctest" (
 
 if "%1" == "test" (
     cd tests
-    py.test
+    pytest
     cd ..
     goto end
 )

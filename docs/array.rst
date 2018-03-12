@@ -306,6 +306,95 @@ You can get the metadata of the `array`_ by calling the method
                                 ('size', 8),
                                 ('type', 'Field'),
                                 ('value', '0x0')])])])
+    >>> print(json.dumps(array.describe(), indent=2))
+    {
+      "class": "Array",
+      "name": "Array",
+      "size": 4,
+      "type": "Array",
+      "member": [
+        {
+          "address": 0,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Byte",
+          "index": [
+            0,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "Array[0]",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "0x0"
+        },
+        {
+          "address": 1,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Byte",
+          "index": [
+            1,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "Array[1]",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "0x0"
+        },
+        {
+          "address": 2,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Byte",
+          "index": [
+            2,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "Array[2]",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "0x0"
+        },
+        {
+          "address": 3,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Byte",
+          "index": [
+            3,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "Array[3]",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "0x0"
+        }
+      ]
+    }
 
 
 Size of an Array

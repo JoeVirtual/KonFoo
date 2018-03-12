@@ -227,6 +227,95 @@ You can get the metadata of the `sequence`_ by calling the method
                                 ('size', 8),
                                 ('type', 'Field'),
                                 ('value', '\x00')])])])
+    >>> print(json.dumps(sequence.describe(), indent=2))
+    {
+      "class": "Sequence",
+      "name": "Sequence",
+      "size": 4,
+      "type": "Sequence",
+      "member": [
+        {
+          "address": 0,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Byte",
+          "index": [
+            0,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "Sequence[0]",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "0x0"
+        },
+        {
+          "address": 1,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Unsigned8",
+          "index": [
+            1,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "Sequence[1]",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "0x0"
+        },
+        {
+          "address": 2,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Decimal8",
+          "index": [
+            2,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "Sequence[2]",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": 0
+        },
+        {
+          "address": 3,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Char",
+          "index": [
+            3,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "Sequence[3]",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "\u0000"
+        }
+      ]
+    }
 
 
 Size of a Sequence

@@ -396,6 +396,95 @@ You can get the metadata of the `structure`_ by calling the method
                                 ('size', 8),
                                 ('type', 'Field'),
                                 ('value', '\x00')])])])
+    >>> print(json.dumps(structure.describe(), indent=2))
+    {
+      "class": "Structure",
+      "name": "Structure",
+      "size": 4,
+      "type": "Structure",
+      "member": [
+        {
+          "address": 0,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Byte",
+          "index": [
+            0,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "version",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "0x0"
+        },
+        {
+          "address": 1,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Unsigned8",
+          "index": [
+            1,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "id",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "0x0"
+        },
+        {
+          "address": 2,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Decimal8",
+          "index": [
+            2,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "length",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": 0
+        },
+        {
+          "address": 3,
+          "alignment": [
+            1,
+            0
+          ],
+          "class": "Char",
+          "index": [
+            3,
+            0
+          ],
+          "max": 255,
+          "min": 0,
+          "name": "module",
+          "order": "auto",
+          "signed": false,
+          "size": 8,
+          "type": "Field",
+          "value": "\u0000"
+        }
+      ]
+    }
 
 
 Size of a Structure
