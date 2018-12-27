@@ -4692,6 +4692,8 @@ class Pointer(Decimal, Container):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('value', '0xffffffff'), ('data', None)])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": null}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -5460,6 +5462,8 @@ class StructurePointer(Pointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": {}}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       StructurePointer(index=Index(byte=0, bit=0,
@@ -5692,6 +5696,8 @@ class SequencePointer(Pointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', [])])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": []}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       SequencePointer(index=Index(byte=0, bit=0,
@@ -5948,6 +5954,8 @@ class ArrayPointer(SequencePointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', [])])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": []}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       ArrayPointer(index=Index(byte=0, bit=0,
@@ -6162,6 +6170,8 @@ class StreamPointer(Pointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": "4b6f6e466f6f20697320"}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       StreamPointer(index=Index(byte=0, bit=0,
@@ -6373,6 +6383,8 @@ class StringPointer(StreamPointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": "KonFoo is "}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       StringPointer(index=Index(byte=0, bit=0,
@@ -6561,6 +6573,8 @@ class AutoStringPointer(StringPointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": "KonFoo is "}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       AutoStringPointer(index=Index(byte=0, bit=0,
@@ -6761,6 +6775,8 @@ class RelativePointer(Pointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', None)])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": null}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       RelativePointer(index=Index(byte=0, bit=0,
@@ -6928,6 +6944,8 @@ class StructureRelativePointer(RelativePointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": {}}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       StructureRelativePointer(index=Index(byte=0, bit=0,
@@ -7159,6 +7177,8 @@ class SequenceRelativePointer(RelativePointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', [])])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": []}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       SequenceRelativePointer(index=Index(byte=0, bit=0,
@@ -7417,6 +7437,8 @@ class ArrayRelativePointer(SequenceRelativePointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', [])])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": []}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       ArrayRelativePointer(index=Index(byte=0, bit=0,
@@ -7631,6 +7653,8 @@ class StreamRelativePointer(RelativePointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": "4b6f6e466f6f20697320"}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       StreamRelativePointer(index=Index(byte=0, bit=0,
@@ -7842,6 +7866,8 @@ class StringRelativePointer(StreamRelativePointer):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    >>> pointer.to_json()
+    '{"value": "0xffffffff", "data": "KonFoo is "}'
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('field',
       StringRelativePointer(index=Index(byte=0, bit=0,
