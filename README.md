@@ -4,11 +4,12 @@
 
 # KonF'00'
 
-[![Docs](https://readthedocs.org/projects/konfoo/badge/?version=latest)](http://konfoo.readthedocs.org/en/latest/)
+[![Docs](https://readthedocs.org/projects/konfoo/badge/?version=latest)](https://konfoo.readthedocs.io)
 [![Build](https://travis-ci.org/JoeVirtual/KonFoo.svg?branch=master)](https://travis-ci.org/JoeVirtual/KonFoo)
-[![PyPi](https://img.shields.io/pypi/v/KonFoo.svg)](https://pypi.python.org/pypi/KonFoo)
+[![PyPi](https://img.shields.io/pypi/v/KonFoo.svg)](https://pypi.org/project/KonFoo)
 ![Lisence](https://img.shields.io/pypi/l/KonFoo.svg)
 ![Python](https://img.shields.io/pypi/pyversions/KonFoo.svg)
+![Status](https://img.shields.io/pypi/status/KonFoo.svg)
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/JoeVirtual/KonFoo/master?filepath=notebooks)
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
@@ -22,18 +23,20 @@ and writing binary data from and back to a data provider as easy as possible.
 
 KonFoo in points:
 
--   declarative way to describe the mapping of binary data to Python types
--   declarative classes to read, deserialize, serialize and write binary data 
-    from and back to a data source
--   easy adjustable data provider bridge to any kind of data source
--   nesting of classes
--   adaptable classes on the fly while reading/de-serializing binary data
--   easy syntax for accessing nested fields
--   loadable mapping content including nested data from an `.ini` file
--   savable mapping content including nested data to an `.ini` file
--   easy creatable blueprint of a mapper
--   blueprint converter to JSON to visualise the mapper with 
-    [d3.js](https://d3js.org).
+* declarative way to describe the mapping of binary data to Python types
+* declarative classes to read, deserialize, view, serialize and write binary 
+  data from and back to a data source
+* easy adjustable data provider bridge to any kind of data source
+* nesting of classes
+* adaptable classes on the fly while reading/de-serializing binary data
+* easy syntax for accessing nested fields
+* view the mapped binary data as a JSON string
+* list the mapped binary data as a flatten list or dictionary
+* save the mapped binary data to an `.ini` file
+* load the mapped binary data from an `.ini` file
+* easy creatable blueprint of a mapper
+* blueprint converter to JSON to visualise the mapper with 
+  [d3.js](https://d3js.org).
 
 This library is far away from stable but it works so far.
 Feedback is very welcomed!
@@ -41,7 +44,7 @@ Feedback is very welcomed!
 
 ## Installation
 
-To install the library from [PyPi](https://pypi.python.org/pypi) through 
+To install the library from [PyPi](https://pypi.org) through 
 [pip](https://pip.pypa.io) simply run
 
     pip install konfoo
@@ -61,7 +64,7 @@ The library has no external dependencies.
 
 ## Documentation
 
-Read the documentation on [ReadTheDocs](http://konfoo.readthedocs.io).
+Read the documentation on [ReadTheDocs](https://konfoo.readthedocs.io).
 
 ### Building the Documentation
 

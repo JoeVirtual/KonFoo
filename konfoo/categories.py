@@ -198,7 +198,7 @@ class Category(enum.Enum):
     @classmethod
     def get_member(cls, value, default=None):
         """ Returns the first `Category` member with the matching *value*
-        or the specified *default* value if no member match.
+        or the specified *default* value if no  member match.
 
         Example:
 

@@ -32,9 +32,9 @@ copyright = '2015-{}, Jochen Gerhäußer'.format(datetime.datetime.utcnow().year
 author = 'Jochen Gerhäußer'
 
 # The short X.Y version.
-version = '0.1b7'
+version = '0.2'
 # The full version, including alpha/beta/rc tags.
-release = '0.1b7'
+release = '0.2a0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -147,8 +147,11 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'KonFoo.tex', 'KonFoo Documentation',
-     'Jochen Gerhäußer', 'manual'),
+    (master_doc,
+     'KonFoo.tex',
+     'KonFoo Documentation',
+     'Jochen Gerhäußer',
+     'manual'),
 ]
 
 # -- Options for manual page output ------------------------------------------
@@ -156,8 +159,11 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'konfoo', 'KonFoo Documentation',
-     [author], 1)
+    (master_doc,
+     'konfoo',
+     'KonFoo Documentation',
+     [author],
+     1)
 ]
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -166,8 +172,12 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'KonFoo', 'KonFoo Documentation',
-     author, 'KonFoo', 'One line description of project.',
+    (master_doc,
+     'KonFoo',
+     'KonFoo Documentation',
+     author,
+     'KonFoo',
+     'One line description of project.',
      'Miscellaneous'),
 ]
 
@@ -187,5 +197,5 @@ extlinks = {
 # -- Options for InterSphinx --------------------------------------------------
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.6', None)
+    'python': ('https://docs.python.org/3.7', None)
 }

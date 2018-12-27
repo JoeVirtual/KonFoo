@@ -3,7 +3,6 @@
 .. testsetup:: *
 
     import json
-    from pprint import pprint
     from konfoo import *
 
 
@@ -163,12 +162,12 @@ You can **declare** a `pointer`_ on the fly.
     >>> pointer = Pointer(data)
     >>> # List the field values of the pointer and its attached data object.
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x0'),
+    [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0')]
     >>> # List all field values of the pointer and its attached data objects.
     >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x0'),
+    [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
@@ -194,14 +193,14 @@ You can **access** the `data object`_ referenced by a `pointer`_ with the
                 Decimal(index=Index(byte=0, bit=0,
                                     address=0, base_address=0,
                                     update=False),
-                        alignment=(2, 0),
+                        alignment=Alignment(byte_size=2, bit_offset=0),
                         bit_size=16,
                         value=0)),
                ('item',
                 Pointer(index=Index(byte=2, bit=0,
                                     address=2, base_address=0,
                                     update=False),
-                        alignment=(4, 0),
+                        alignment=Alignment(byte_size=4, bit_offset=0),
                         bit_size=32,
                         value='0x0'))])
 
@@ -400,21 +399,21 @@ You can **initialize** the fields in a `pointer`_ by calling the method
     ... })
     >>> # List the field values of the pointer and its attached data object.
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x1'),
+    [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10')]
     >>> # List all field values of the pointer and its attached data objects.
     >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x1'),
+    [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
 
 
-View a Pointer
---------------
+Display a Pointer
+-----------------
 
-You can **view** a `pointer`_ field.
+You can **display** a `pointer`_ field.
 
     >>> # Create a pointer.
     >>> pointer = Pointer(
@@ -429,23 +428,27 @@ You can **view** a `pointer`_ field.
     Pointer(index=Index(byte=0, bit=0,
                         address=0, base_address=0,
                         update=False),
-            alignment=(4, 0),
+            alignment=Alignment(byte_size=4, bit_offset=0),
             bit_size=32,
             value='0x0')
+
+
+You can **display** the `data object`_ of a `pointer`_ field.
+
     >>> # Display the data object referenced by the pointer
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     Structure([('size',
                 Decimal(index=Index(byte=0, bit=0,
                                     address=0, base_address=0,
                                     update=False),
-                        alignment=(2, 0),
+                        alignment=Alignment(byte_size=2, bit_offset=0),
                         bit_size=16,
                         value=0)),
                ('item',
                 Pointer(index=Index(byte=2, bit=0,
                                     address=2, base_address=0,
                                     update=False),
-                        alignment=(4, 0),
+                        alignment=Alignment(byte_size=4, bit_offset=0),
                         bit_size=32,
                         value='0x0'))])
 
@@ -511,6 +514,7 @@ You can get the metadata of a `pointer`_ by calling the method
                                                               ('type', 'Field'),
                                                               ('value',
                                                                '')])])])])])])])
+
     >>> print(json.dumps(pointer.describe(), indent=2))
     {
       "address": 0,
@@ -617,7 +621,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     ...         item=Pointer(String())))
     >>> # List the field indexes of the pointer and its attached data object.
     >>> pointer.to_list('index') # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', Index(byte=0, bit=0,
+    [('Pointer.field', Index(byte=0, bit=0,
                              address=0, base_address=0,
                              update=False)),
      ('Pointer.data.size', Index(byte=0, bit=0,
@@ -628,7 +632,7 @@ The :class:`Index` after the `pointer`_ field is returned.
                                  update=False))]
     >>> # List all field indexes of the pointer and its attached data objects.
     >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', Index(byte=0, bit=0,
+    [('Pointer.field', Index(byte=0, bit=0,
                              address=0, base_address=0,
                              update=False)),
      ('Pointer.data.size', Index(byte=0, bit=0,
@@ -650,7 +654,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field indexes of the pointer and its attached data object.
     >>> pointer.to_list('index') # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', Index(byte=0, bit=0,
+    [('Pointer.field', Index(byte=0, bit=0,
                              address=0, base_address=0,
                              update=False)),
      ('Pointer.data.size', Index(byte=0, bit=0,
@@ -673,7 +677,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     ...         item=Pointer(String())))
     >>> # List the field indexes of the pointer and its attached data object.
     >>> pointer.to_list('index') # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', Index(byte=0, bit=0,
+    [('Pointer.field', Index(byte=0, bit=0,
                              address=0, base_address=0,
                              update=False)),
      ('Pointer.data.size', Index(byte=0, bit=0,
@@ -693,7 +697,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List all field indexes of the pointer and its attached data objects.
     >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', Index(byte=0, bit=0,
+    [('Pointer.field', Index(byte=0, bit=0,
                              address=0, base_address=0,
                              update=False)),
      ('Pointer.data.size', Index(byte=0, bit=0,
@@ -743,12 +747,12 @@ with the following attribute names:
     32
     >>> # Field alignment.
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> # Field alignment: byte size of the aligned field group.
-    >>> pointer.alignment[0]
+    >>> pointer.alignment.byte_size
     4
     >>> # Field alignment: bit offset of the field in its field group.
-    >>> pointer.alignment[1]
+    >>> pointer.alignment.bit_offset
     0
     >>> # Field byte order.
     >>> pointer.byte_order
@@ -774,6 +778,7 @@ with the following attribute names:
     >>> # Field index: update request for the byte stream.
     >>> pointer.index.update
     False
+
     >>> # Field is a bit field.
     >>> pointer.is_bit()
     False
@@ -801,8 +806,9 @@ View Field Attributes
 ---------------------
 
 You can view the **attributes** of a `pointer`_ field and of each :ref:`field
-<field>` in the `data object`_ referenced by the `pointer`_ field as a
-**nested** ordered dictionary by calling the method :meth:`~Pointer.view_fields`.
+<field>` in the `data object`_ referenced by the `pointer`_ field as a **nested**
+ordered dictionary by calling the method :meth:`~Pointer.view_fields`.
+Default attribute is the field :attr:`~Field.value`.
 
     >>> # View the field values of the pointer and its attached data object.
     >>> pointer.view_fields() # doctest: +NORMALIZE_WHITESPACE
@@ -820,67 +826,101 @@ You can view the **attributes** of a `pointer`_ field and of each :ref:`field
                                              ('data', '')]))]))])
 
 
+View as a JSON string
+---------------------
+
+You can view the **attributes** of a `pointer`_ field and of each :ref:`field <field>`
+in the `data object`_ referenced by the `pointer`_ field as a **JSON** formatted string
+by calling the method :meth:`~Container.to_json`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> pointer.to_json()
+    '{"value": "0x0", "data": {"size": 0, "item": "0x0"}}'
+    >>> print(pointer.to_json(indent=2)) # doctest: +NORMALIZE_WHITESPACE
+    {
+      "value": "0x0",
+      "data": {
+        "size": 0,
+        "item": "0x0"
+      }
+    }
+    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    '{"value": "0x0", "data": {"size": 0, "item": {"value": "0x0", "data": ""}}}'
+    >>> print(pointer.to_json(nested=True, indent=2)) # doctest: +NORMALIZE_WHITESPACE
+    {
+      "value": "0x0",
+      "data": {
+        "size": 0,
+        "item": {
+          "value": "0x0",
+          "data": ""
+        }
+      }
+    }
+
+
 List Field Items
 ----------------
 
-You can list all :ref:`field <field>` items of a `pointer`_ as a **flat** list
+You can list all :ref:`field <field>` items of a `pointer`_ as a **flatten** list
 by calling the method :meth:`~Pointer.field_items`.
 
     >>> # List the field items of the pointer and its attached data object.
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-              alignment=(4, 0),
+              alignment=Alignment(byte_size=4, bit_offset=0),
               bit_size=32,
               value='0x0')),
      ('data.size',
       Decimal(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-              alignment=(2, 0),
+              alignment=Alignment(byte_size=2, bit_offset=0),
               bit_size=16,
               value=0)),
      ('data.item',
       Pointer(index=Index(byte=2, bit=0, address=2, base_address=0, update=False),
-              alignment=(4, 0),
+              alignment=Alignment(byte_size=4, bit_offset=0),
               bit_size=32,
               value='0x0'))]
     >>> # List all field items of the pointer and its attached data objects.
     >>> pointer.field_items(nested=True) # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-              alignment=(4, 0),
+              alignment=Alignment(byte_size=4, bit_offset=0),
               bit_size=32,
               value='0x0')),
      ('data.size',
       Decimal(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-              alignment=(2, 0),
+              alignment=Alignment(byte_size=2, bit_offset=0),
               bit_size=16,
               value=0)),
      ('data.item',
       Pointer(index=Index(byte=2, bit=0, address=2, base_address=0, update=False),
-              alignment=(4, 0),
+              alignment=Alignment(byte_size=4, bit_offset=0),
               bit_size=32,
               value='0x0')),
      ('data.item.data',
       String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-             alignment=(0, 0),
+             alignment=Alignment(byte_size=0, bit_offset=0),
              bit_size=0,
              value=''))]
 
 
-List Field Values
------------------
+List Field Attributes
+---------------------
 
-You can **list** the *values* of each :ref:`field <field>` of a `pointer`_ as a
-**flat** list by calling the method :meth:`~Container.to_list`.
+You can **list** the *attributes* of each :ref:`field <field>` of a `pointer`_
+as a **flatten** list by calling the method :meth:`~Container.to_list`.
+Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and its attached data object.
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x0'),
+    [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0')]
     >>> # List all field values of the pointer and its attached data objects.
     >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x0'),
+    [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
@@ -890,12 +930,13 @@ You can **list** the *values* of each :ref:`field <field>` of a `pointer`_ as a
     *name* is given.
 
 
-You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
-**flat** ordered dictionary by calling the method :meth:`~Container.to_dict`.
+You can **list** the *attributes* of each :ref:`field <field>` of a `pointer`_
+as a **flatten** ordered dictionary by calling the method :meth:`~Container.to_dict`.
+Default attribute is the field :attr:`~Field.value`.
 
     >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Pointer',
-                  OrderedDict([('value', '0x0'),
+                  OrderedDict([('field', '0x0'),
                                ('data.size', 0),
                                ('data.item', '0x0')]))])
 
@@ -904,15 +945,16 @@ You can **view** the *values* of each :ref:`field <field>` of a `pointer`_ as a
     *name* is given.
 
 
-Save Field Values
------------------
+Save Field Attributes
+---------------------
 
-You can **save** the *values* of each :ref:`field <field>` of a `pointer`_
+You can **save** the *attributes* of each :ref:`field <field>` of a `pointer`_
 to an ``.ini`` file by calling the method :meth:`~Container.save`.
+Default attribute is the field :attr:`~Field.value`.
 
     >>> # List all field values of the pointer and its attached data objects.
     >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x0'),
+    [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
@@ -938,13 +980,13 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     >>> # Load all field values from an '.ini' file.
     >>> pointer.load("_static/pointer.ini", nested=True) # doctest: +NORMALIZE_WHITESPACE
     [Pointer]
-    Pointer.value = 0x0
+    Pointer.field = 0x0
     Pointer.data.size = 0
     Pointer.data.item = 0x0
     Pointer.data.item.data =
     >>> # List all field values of the pointer and its attached data objects.
     >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x0'),
+    [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]

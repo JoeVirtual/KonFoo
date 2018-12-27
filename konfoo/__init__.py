@@ -18,7 +18,7 @@ from .categories import Category
 from .core import (
     is_any, is_field, is_container, is_array, is_structure,
     is_pointer, is_mixin,
-    Patch, Index,
+    Patch, Index, Alignment,
     Container, Structure, Sequence, Array,
     Field,
     Stream, String,
@@ -149,6 +149,7 @@ __all__ = [
 
     'Patch',
     'Index',
+    'Alignment',
 
     'Container',
 
@@ -325,4 +326,4 @@ __all__ = [
     'd3json', 'HexViewer',
 ]
 
-__version__ = '0.1b7'
+__version__ = '0.2a0'

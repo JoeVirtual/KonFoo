@@ -23,7 +23,7 @@ stream* data.
 
 The built-in deserialize hook ``deserialize(buffer=bytes(), index=Index(), **option)``
 available for all `container`_ and `field`_ classes allows you to adapt even
-expand or declare the representation during the de-serialization on the fly.
+expand or declare the representation during the de-serialization process on the fly.
 
 The built-in **deserializer** provided by the :ref:`pointer <pointer>` class
 (called through the :meth:`Pointer.read_from` method) is able to follow even
@@ -59,7 +59,7 @@ and **write** *byte streams* from and back to the data :ref:`provider <provider>
 for its referenced :ref:`data object <data object>` respectively its *byte
 stream* `mapper`_.
 
-The build-in **deserializer** and **serializer** unpacks and packs the *byte
+The built-in **deserializer** and **serializer** unpacks and packs the *byte
 stream* sequential to and from each `field`_ in the declared *byte stream*
 `mapper`_.
 
@@ -84,7 +84,7 @@ Containers
 
 The role of a :class:`Container` is to describe the *structure* of one or more
 memory areas in a *data source*. A `container`_ always needs one or more
-`field`_ 's to describe the content of the memory area.
+:ref:`fields <field>` to describe the content of the memory area.
 
 
 Overview
@@ -95,42 +95,75 @@ Here is an overview of the different available `container`_ classes.
 * :class:`Structure`
 * :class:`Sequence`, :class:`Array`
 * :class:`Pointer`, :class:`StructurePointer`, :class:`SequencePointer`,
-  :class:`ArrayPointer`:class:`StreamPointer`, :class:`StringPointer`,
+  :class:`ArrayPointer`, :class:`StreamPointer`, :class:`StringPointer`,
   :class:`AutoStringPointer`
 * :class:`RelativePointer`, :class:`StructureRelativePointer`,
   :class:`SequenceRelativePointer`, :class:`ArrayRelativePointer`,
   :class:`StreamRelativePointer`, :class:`StringRelativePointer`
 
+View field attributes
+---------------------
+
+A `container`_ can **view** the *attributes* of each `field`_ *nested* in the
+`container`_ by calling its method :meth:`~Container.view_fields`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> # Create an empty container.
+    >>> container = Container()
+    >>> # View the field values in the container.
+    >>> container.view_fields() # doctest: +NORMALIZE_WHITESPACE
+
+.. note::
+    The *attributes* of each `field`_ for containers *nested* in the `container`_
+    are viewed as well (chained method call).
+
+View as a JSON String
+---------------------
+
+A `container`_ can **view** the *attributes* of each `field`_ *nested* in the
+`container`_ as a **JSON** formatted string by calling its method
+:meth:`~Container.to_json`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> container.to_json() # doctest: +NORMALIZE_WHITESPACE
+    'null'
+
+.. note::
+    The *attributes* of each `field`_ for containers *nested* in the `container`_
+    are viewed as well (chained method call).
+
 
 List field items
 ----------------
 
-A `container`_ can list all its `field`_ items as a **flat** list in the form
-of ``(field path, field item)`` tuples by calling its method
-:meth:`~Container.field_items`.
+A `container`_ can list all its `field`_ items *nested* in the `container`_
+as a **flatten** list in the form of ``('field path', field item)`` tuples
+by calling its method :meth:`~Container.field_items`.
 
-    >>> # Create an empty container.
-    >>> container = Container()
     >>> # List the field items in the container.
     >>> container.field_items() # doctest: +NORMALIZE_WHITESPACE
     []
 
 
-View field values
------------------
+List field attributes
+---------------------
 
-A `container`_ can **view** the *value* of each `field`_ item as a **flat**
-list in the form of ``(field path, field value)`` tuples by calling its method
+A `container`_ can **list** the *attributes* of each `field`_ item *nested* in the
+`container`_ as a **flatten** list in the form of ``('field path', attribute)`` or
+``('field path', list(attributes))`` tuples by calling its method
 :meth:`~Container.to_list`.
+Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values in the container.
     >>> container.to_list() # doctest: +NORMALIZE_WHITESPACE
     []
 
 
-A `container`_ can **view** the *value* of each `field`_ item as a **flat**
-ordered dictionary in the form of ``{'field path': field value}`` pairs by
-calling its method :meth:`~Container.to_dict`.
+A `container`_ can **list** the *attributes* of each `field`_ item *nested* in the
+`container`_ as a **flatten** ordered dictionary in the form of
+``{'field path': attribute}`` or ``{'field path': list(attributes)}`` pairs
+by calling its method :meth:`~Container.to_dict`.
+Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values in the container.
     >>> container.to_dict()  # doctest: +NORMALIZE_WHITESPACE
@@ -141,11 +174,12 @@ calling its method :meth:`~Container.to_dict`.
     *name* is given.
 
 
-Save field values
------------------
+Save field attributes
+---------------------
 
-A `container`_ can **save** the *value* of each `field`_ item to an ``.ini`` file
-by calling its method :meth:`~Container.save`.
+A `container`_ can **save** the *attributes* of each `field`_ item *nested* in the
+`container`_ to an ``.ini`` file by calling its method :meth:`~Container.save`.
+Default attribute is the field :attr:`~Field.value`.
 
     >>> # Save the field values to an '.ini' file.
     >>> container.save("_static/container.ini")
@@ -163,8 +197,8 @@ The generated ``.ini`` file for the container looks like this:
 Load field values
 -----------------
 
-A `container`_ can **load** the *value* of each `field`_ item from an ``.ini`` file
-by calling its method :meth:`~Container.load`.
+A `container`_ can **load** the *value* of each `field`_ item *nested* in the
+`container`_ from an ``.ini`` file by calling its method :meth:`~Container.load`.
 
     >>> # Load the field values from an '.ini' file.
     >>> container.load("_static/container.ini")
@@ -193,7 +227,7 @@ retrieve the required *byte stream* for the `mapper`_.
     Field(index=Index(byte=0, bit=0,
                       address=0, base_address=0,
                       update=False),
-          alignment=(0, 0),
+          alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
 
@@ -262,7 +296,7 @@ Index
 
 A `field`_ has an :attr:`~Field.index`. The `field index`_ contains the location
 of the `field`_ in a *byte stream* and in the providing *data source*. The `field
-index`_ is automatically calculated by the build-in deserializer and serializer
+index`_ is automatically calculated by the built-in deserializer and serializer
 from the start point of the *byte stream* and the start address of the *byte
 stream* in the providing *data source*.
 
@@ -295,12 +329,12 @@ A `field`_ has an :attr:`~Field.alignment`. The `field alignment`_ contains the
 location of the `field`_ within an *aligned* group of consecutive fields. The
 order how the consecutive fields are declared in a `container`_ defines the
 order how the consecutive fields are aligned to each other. The ``bit offset``
-of the `field alignment`_ is automatically calculated by the build-in
+of the `field alignment`_ is automatically calculated by the built-in
 deserializer and serializer.
 
     >>> # Field alignment.
     >>> field.alignment
-    (0, 0)
+    Alignment(byte_size=0, bit_offset=0)
     >>> byte_size, bit_offset = field.alignment
     >>> # Field alignment: byte size of the aligned field group.
     >>> byte_size
@@ -314,9 +348,9 @@ A `field`_ can be *aligned to* a group of consecutive fields by using the
 content part of a *byte stream* with more than one `field`_.
 
     >>> Decimal(15).alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> Bool(1, align_to=2).alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
 
 .. note::
     A `field`_ aligns it self to the next matching byte size when the
@@ -325,21 +359,21 @@ content part of a *byte stream* with more than one `field`_.
 For example to describe an **atomic** 16-bit value in a *byte stream* with
 more than one `field`_ can be achieved like this:
 
-    >>> # Create an empty structure.
-    >>> structure = Structure()
+    >>> # Create an empty structure for the atomic 16-bit value.
+    >>> atomic = Structure()
     >>> # Add field for the first 15 bits of an atomic 16-bit value.
-    >>> structure.size = Decimal(15, 2)
+    >>> atomic.size = Decimal(15, 2)
     >>> # Add field for the last bit of an atomic 16-bit value.
-    >>> structure.flag = Bool(1, 2)
-    >>> # Index the fields of the structure.
-    >>> structure.index_fields()
+    >>> atomic.flag = Bool(1, 2)
+    >>> # Index the fields of the atomic 16-bit value.
+    >>> atomic.index_fields()
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> # Display alignment of the size field.
-    >>> structure.size.alignment
-    (2, 0)
+    >>> atomic.size.alignment
+    Alignment(byte_size=2, bit_offset=0)
     >>> # Display alignment of the flag field.
-    >>> structure.flag.alignment
-    (2, 15)
+    >>> atomic.flag.alignment
+    Alignment(byte_size=2, bit_offset=15)
 
 
 .. note:: The `field alignment`_ works only for the :class:`Decimal` `field`_
@@ -394,8 +428,8 @@ For example to describe a 2-bit ambivalent enumeration by an :class:`Enum`
     >>> # Display the field.
     >>> ambivalent # doctest: +NORMALIZE_WHITESPACE
     Enum(index=Index(byte=0, bit=0,
-                  address=0, base_address=0,
-                  update=False),
-      alignment=(1, 0),
-      bit_size=2,
-      value='error')
+                     address=0, base_address=0,
+                     update=False),
+         alignment=Alignment(byte_size=1, bit_offset=0),
+         bit_size=2,
+         value='error')

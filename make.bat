@@ -42,7 +42,8 @@ if "%1" == "build" (
 
 if "%1" == "release" (
     set HOME=.
-    python setup.py sdist bdist_wheel upload
+    python setup.py sdist bdist_wheel
+    twine upload dist/*
     goto end
 )
 

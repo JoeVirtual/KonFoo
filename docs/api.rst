@@ -566,6 +566,12 @@ Field Index
 
 .. autoclass:: Index
 
+
+Field Alignment
+===============
+
+.. autoclass:: Alignment
+
 Memory Patch
 ============
 

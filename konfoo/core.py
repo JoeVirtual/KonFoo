@@ -13,15 +13,17 @@ import calendar
 import copy
 import datetime
 import ipaddress
+import json
 import math
 import struct
 import time
 from binascii import hexlify
-from collections import Mapping, namedtuple, OrderedDict, Iterable
-from collections.abc import MutableSequence
+from collections import namedtuple, OrderedDict
+from collections.abc import Mapping, MutableSequence
 from configparser import ConfigParser
 from operator import attrgetter
 
+from konfoo.categories import Category
 from konfoo.enums import Enumeration
 from konfoo.exceptions import (
     ByteOrderTypeError, ByteOrderValueError,
@@ -110,7 +112,7 @@ Index = namedtuple('Index', [
     'bit',
     'address',
     'base_address',
-    'update'])
+    'update'], defaults=(0, 0, 0, 0, False))
 """ The `Index` class contains the relevant information of the location of a
 :class:`Field` in a `byte stream` and in a `data source`. The `byte stream` is
 normally provided by a :class:`Pointer` field. The `data source` is normally
@@ -122,7 +124,28 @@ accessed via a data :class:`Provider` by a :class:`Pointer` field.
 :param int base_address: start address of the byte stream in the data source.
 :param bool update: if ``True`` the byte stream needs to be updated.
 """
-Index.__new__.__defaults__ = (0, 0, 0, 0, False)
+
+# Field Alignment
+Alignment = namedtuple('Alignment', [
+    'byte_size',
+    'bit_offset'], defaults=(0, 0))
+""" The `Alignment` class contains the location of the :class:`Field` within an 
+aligned group of consecutive fields.
+
+:param int byte_size: size of the *field group* in bytes 
+    which the :class:`Field` is aligned to.
+:param int bit_offset: bit offset of the :class:`Field` 
+    within its aligned *field group*.
+"""
+
+
+class _CategoryJSONEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        if isinstance(obj, Category):
+            return obj.name
+
+        return super().default(obj)
 
 
 class Container:
@@ -136,9 +159,48 @@ class Container:
     """
 
     @abc.abstractmethod
+    def view_fields(self, *attributes, **options):
+        """ Returns a container with the selected field *attribute* or with the
+        dictionary of the selected field *attributes* for each :class:`Field`
+        *nested* in the `Container`.
+
+        The *attributes* of each :class:`Field` for containers *nested* in the
+        `Container` are viewed as well (chained method call).
+
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
+            `Container` views their referenced :attr:`~Pointer.data` object
+            field attributes as well (chained method call).
+        """
+        return
+
+    def to_json(self, *attributes, **options):
+        """ Returns the selected field *attributes* for each :class:`Field` *nested*
+        in the `Container` as a JSON formatted string.
+
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
+            `Container` lists their referenced :attr:`~Pointer.data` object
+            field attributes as well (chained method call).
+        """
+        nested = options.pop('nested', False)
+        if 'cls' in options.keys():
+            return json.dumps(self.view_fields(*attributes,
+                                               nested=nested),
+                              **options)
+        else:
+
+            return json.dumps(self.view_fields(*attributes,
+                                               nested=nested),
+                              cls=_CategoryJSONEncoder,
+                              **options)
+
+    @abc.abstractmethod
     def field_items(self, path=str(), **options):
-        """ Returns a **flat** list of ``(path, field)`` tuples for each
-        :class:`Field` in the `Container`.
+        """ Returns a **flatten** list of ``('field path', field item)`` tuples
+        for each :class:`Field` *nested* in the `Container`.
 
         :param str path: item path.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
@@ -152,8 +214,9 @@ class Container:
 
     @nested_option()
     def to_list(self, *attributes, **options):
-        """ Returns a **flat** list of ``(path, *attributes)`` tuples for each
-        :class:`Field` in the `Container`.
+        """ Returns a **flatten** list of ``('field path', attribute)`` or
+        ``('field path', tuple(attributes))`` tuples for each :class:`Field`
+        *nested* in the `Container`.
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
@@ -163,6 +226,7 @@ class Container:
             `Container` lists their referenced :attr:`~Pointer.data` object
             field attributes as well (chained method call).
         """
+
         # Name of the Container
         name = options.pop('name', self.__class__.__name__)
 
@@ -183,9 +247,9 @@ class Container:
 
     @nested_option()
     def to_dict(self, *attributes, **options):
-        """ Returns a **flat** :class:`ordered dictionary <collections.OrderedDict>`
-        of ``{'path': attribute}`` or ``{'path': tuple(*attributes)}`` pairs for
-        each :class:`Field` in the `Container`.
+        """ Returns a **flatten** :class:`ordered dictionary <collections.OrderedDict>`
+        of ``{'field path': attribute}`` or ``{'field path': tuple(*attributes)}``
+        pairs for each :class:`Field` *nested* in the `Container`.
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
@@ -210,14 +274,14 @@ class Container:
             field_path, field = item
             if save and field_path.startswith('['):
                 # Sequence element
-                field_path = '.' + field_path
+                field_path = '_' + field_path
             fields[name][field_path] = field_getter(field)
         return fields
 
     @nested_option()
     def save(self, file, *attributes, **options):
-        """ Saves the given *attributes* for each :class:`Field` in the
-        `Container` to an ``.ini`` *file*.
+        """ Saves the selected field *attributes* for each :class:`Field` *nested*
+        in the `Container` to an ``.ini`` *file*.
 
         :param str file: name and location of the ``.ini`` *file*.
         :param str attributes: selected :class:`Field` attributes.
@@ -266,8 +330,8 @@ class Container:
     @nested_option()
     @verbose_option(True)
     def load(self, file, **options):
-        """ Loads the *attributes* for each :class:`Field` in the `Container`
-        from an ``.ini`` *file*.
+        """ Loads the field *value* for each :class:`Field` *nested* in the
+        `Container` from an ``.ini`` *file*.
 
         :param str file: name and location of the ``.ini`` *file*.
         :keyword str section: section in the ``.ini`` *file* to lookup the
@@ -325,7 +389,7 @@ class Container:
             for field_path, field in self.field_items(**options):
                 if field_path.startswith('['):
                     # Sequence element
-                    option = '.' + field_path
+                    option = '_' + field_path
                 else:
                     option = field_path
                 if parser.has_option(section, option):
@@ -363,6 +427,7 @@ class Container:
             verbose(options, "No section [{0}] found.".format(section))
 
 
+# noinspection PyIncorrectDocstring
 class Structure(OrderedDict, Container):
     """ A `Structure` is an :class:`ordered dictionary <collections.OrderedDict>`
     whereby the dictionary `key` describes the *name* of a *member* of the
@@ -392,11 +457,10 @@ class Structure(OrderedDict, Container):
       via :meth:`first_field()`.
     * Get the accumulated **size** of all fields in the `Structure`
       via :meth:`container_size()`.
-    * View the selected *attributes* for each :class:`Field`
-      in the `Structure` via :meth:`view_fields()`.
+    * View the selected *attributes* for each :class:`Field` in the `Structure`
+      via :meth:`view_fields()`.
     * List the **path** to the field and the field **item** itself for each
-      :class:`Field` in the `Structure` as a flat list
-      via :meth:`field_items()`.
+      :class:`Field` in the `Structure` as a flatten list via :meth:`field_items()`.
     * Get the **metadata** of the `Structure` via :meth:`describe()`.
     """
     # Item type of a Structure.
@@ -637,11 +701,48 @@ class Structure(OrderedDict, Container):
                 raise MemberTypeError(self, item, name)
 
     @nested_option()
+    def view_fields(self, *attributes, **options):
+        """ Returns an :class:`ordered dictionary <collections.OrderedDict>` which
+        contains the ``{'member name': field attribute}`` or the
+        ``{'member name': dict(field attributes)}`` pairs for each :class:`Field`
+        *nested* in the `Structure`.
+
+        The *attributes* of each :class:`Field` for containers *nested* in the
+        `Structure` are viewed as well (chained method call).
+
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields nested in the
+            `Structure` views their referenced :attr:`~Pointer.data` object field
+            attributes as well (chained method call).
+        """
+        members = OrderedDict()
+        for name, item in self.items():
+            # Container
+            if is_container(item):
+                members[name] = item.view_fields(*attributes, **options)
+            # Pointer
+            elif is_pointer(item) and get_nested(options):
+                members[name] = item.view_fields(*attributes, **options)
+            # Field
+            elif is_field(item):
+                if attributes:
+                    field_getter = attrgetter(*attributes)
+                else:
+                    field_getter = attrgetter('value')
+                if len(attributes) > 1:
+                    members[name] = dict(zip(attributes, field_getter(item)))
+                else:
+                    members[name] = field_getter(item)
+
+        return members
+
+    @nested_option()
     def field_items(self, path=str(), **options):
-        """ Returns a **flat** list of ``(path, field)`` tuples for each
+        """ Returns a **flatten** list of ``(path, field)`` tuples for each
         :class:`Field` in the `Structure`.
 
-        :param str path: path of the `Structure`.
+        :param str path: field path of the `Structure`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`~Pointer.data` objects of all :class:`Pointer` fields in
             the `Structure` list their referenced :attr:`~Pointer.data` object
@@ -666,35 +767,6 @@ class Structure(OrderedDict, Container):
             else:
                 raise MemberTypeError(self, item, item_path)
         return items
-
-    @nested_option()
-    def view_fields(self, *attributes, **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        which contains the ``{'name': attribute}`` or ``{'name': tuple(*attributes)}``
-        pairs for each :class:`Field` in the `Structure`.
-
-        :param str attributes: selected :class:`Field` attributes.
-            Fallback is the field :attr:`~Field.value`.
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            `Structure` lists their referenced :attr:`~Pointer.data` object
-            field attributes as well (chained method call).
-        """
-        members = OrderedDict()
-        for name, item in self.items():
-            # Container
-            if is_container(item):
-                members[name] = item.view_fields(*attributes, **options)
-            # Pointer
-            elif is_pointer(item) and get_nested(options):
-                members[name] = item.view_fields(*attributes, **options)
-            # Field
-            elif is_field(item):
-                if attributes:
-                    field_getter = attrgetter(*attributes)
-                else:
-                    field_getter = attrgetter('value')
-                members[name] = field_getter(item)
-        return members
 
     @nested_option(True)
     def describe(self, name=str(), **options):
@@ -788,8 +860,7 @@ class Sequence(MutableSequence, Container):
     * View the selected *attributes* for each :class:`Field`
       in the `Sequence` via :meth:`view_fields()`.
     * List the **path** to the field and the field **item** itself for each
-      :class:`Field` in the `Sequence` as a flat list
-      via :meth:`field_items()`.
+      :class:`Field` in the `Sequence` as a flatten list via :meth:`field_items()`.
     * Get the **metadata** of the `Sequence` via :meth:`describe()`.
 
     :param iterable: any *iterable* that contains items of :class:`Structure`,
@@ -809,9 +880,9 @@ class Sequence(MutableSequence, Container):
         elif is_any(iterable):
             self.append(iterable)
         else:
-            for name, item in enumerate(iterable):
+            for member, item in enumerate(iterable):
                 if not is_any(item):
-                    raise MemberTypeError(self, item, name)
+                    raise MemberTypeError(self, item, member=member)
                 self.append(item)
 
     def __bytes__(self):
@@ -852,7 +923,7 @@ class Sequence(MutableSequence, Container):
             or :class:`Field` instance.
         """
         if not is_any(item):
-            raise MemberTypeError(self, item, len(self))
+            raise MemberTypeError(self, item, member=len(self))
         self._data.append(item)
 
     def insert(self, index, item):
@@ -863,7 +934,7 @@ class Sequence(MutableSequence, Container):
             or :class:`Field` instance.
         """
         if not is_any(item):
-            raise MemberTypeError(self, item, len(self))
+            raise MemberTypeError(self, item, member=len(self))
         self._data.insert(index, item)
 
     def pop(self, index=-1):
@@ -911,7 +982,7 @@ class Sequence(MutableSequence, Container):
         elif isinstance(iterable, (set, tuple, list)):
             self._data.extend(Sequence(iterable))
         else:
-            raise MemberTypeError(self, iterable, len(self))
+            raise MemberTypeError(self, iterable, member=len(self))
 
     @nested_option()
     def read_from(self, provider, **options):
@@ -940,7 +1011,7 @@ class Sequence(MutableSequence, Container):
         bytes to the :attr:`~Field.value` for each :class:`Field` in the
         `Sequence` in accordance with the decoding *byte order* for the
         de-serialization and the decoding :attr:`byte_order` of each
-        :class:`Field` in the `Structure`.
+        :class:`Field` in the `Sequence`.
 
         A specific decoding :attr:`~Field.byte_order` of a :class:`Field`
         overrules the decoding *byte order* for the de-serialization.
@@ -1084,40 +1155,49 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def view_fields(self, *attributes, **options):
-        """ Returns a list of ``(name, attributes)`` tuples for each
-        :class:`Field` in the `Sequence`.
+        """ Returns a list with the selected field *attribute* or a list with the
+        dictionaries of the selected field *attributes* for each :class:`Field`
+        *nested* in the `Sequence`.
+
+        The *attributes* of each :class:`Field` for containers *nested* in the
+        `Sequence` are viewed as well (chained method call).
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            `Sequence` lists their referenced :attr:`~Pointer.data` object
-            field values as well (chained method call).
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields nested in the
+            `Sequence` views their referenced :attr:`~Pointer.data` object field
+            attributes as well (chained method call).
         """
-        values = list()
-        for name, item in enumerate(self):
-            # Container
+        items = list()
+
+        for index, item in enumerate(self):
             if is_container(item):
-                values.append(item.view_fields(*attributes, **options))
-            # Pointer
+                # Container
+                items.append(item.view_fields(*attributes, **options))
             elif is_pointer(item) and get_nested(options):
-                values.append(item.view_fields(*attributes, **options))
-            # Field
+                # Pointer
+                items.append(item.view_fields(*attributes, **options))
             elif is_field(item):
+                # Field
                 if attributes:
                     field_getter = attrgetter(*attributes)
                 else:
                     field_getter = attrgetter('value')
-                values.append(field_getter(item))
+
+                if len(attributes) > 1:
+                    items.append(dict(zip(attributes, field_getter(item))))
+                else:
+                    items.append(field_getter(item))
             else:
-                raise MemberTypeError(self, item, name)
-        return values
+                raise MemberTypeError(self, item, index)
+        return items
 
     @nested_option()
     def field_items(self, path=str(), **options):
         """ Returns a **flat** list which contains the ``(path, field)`` tuples
         for each :class:`Field` in the `Sequence`.
 
-        :param str path: path of the `Sequence`.
+        :param str path: field path of the `Sequence`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`~Pointer.data` objects of all :class:`Pointer` fields in
             the `Sequence` list their referenced :attr:`~Pointer.data` object
@@ -1198,35 +1278,34 @@ class Sequence(MutableSequence, Container):
 
 class Array(Sequence):
     """ An `Array` is a :class:`Sequence` which contains *elements* of one type.
-    The *template* for the `Array` element can be any :class:`Field` instance
-    or a *callable* which returns a :class:`Structure`, :class:`Sequence`,
+    The *template* for the *array element* can be any :class:`Field` instance or a
+    *callable* (factory) which returns a :class:`Structure`, :class:`Sequence`,
     :class:`Array` or any :class:`Field` instance.
 
-    A *callable template* is necessary to ensure that the internal constructor
-    for the `Array` element produces complete copies for each `Array` element
-    including the *nested* objects in the *template* for the `Array` element.
+    A *callable template* (factory) is necessary to ensure that the internal
+    constructor for the array element produces complete copies for each array element
+    including the *nested* objects in the *template* for the array element.
 
     An `Array` of :class:`Pointer` fields should use a *callable* instead of
-    assigning a :class:`Pointer` field instance directly as the `Array` element
+    assigning a :class:`Pointer` field instance directly as the array element
     *template* to ensure that the referenced :attr:`~Pointer.data` object of a
-    :class:`Pointer` field is also complete copied for each `Array` element.
+    :class:`Pointer` field is also complete copied for each array element.
 
-    An `Array` adapts and extends a :class:`Sequence` with the following
-    features:
+    An `Array` adapts and extends a :class:`Sequence` with the following features:
 
-    *   **Append** a new `Array` element to the `Array` via :meth:`append()`.
-    *   **Insert** a new `Array` element before the *index* into the `Array`
+    *   **Append** a new *array element* to the `Array` via :meth:`append()`.
+    *   **Insert** a new *array element* before the *index* into the `Array`
         via :meth:`insert()`.
     *   **Re-size** the `Array` via :meth:`resize()`.
 
     An `Array` replaces the ``'type'`` key of the :attr:`~Sequence.metadata`
     of a :class:`Sequence` with its own `item` type.
 
-    :param template: template for the `Array` element.
+    :param template: template for the *array element*.
         The *template* can be any :class:`Field` instance or any *callable*
         that returns a :class:`Structure`, :class:`Sequence`, :class:`Array`
         or any :class:`Field` instance.
-    :param int capacity: capacity of the `Array` in number of `Array` elements.
+    :param int capacity: capacity of the `Array` in number of *array elements*.
     """
     # Item type of a Array.
     item_type = ItemClass.Array
@@ -1260,22 +1339,21 @@ class Array(Sequence):
             return self._template()
 
     def append(self):
-        """ Appends a new `Array` element to the `Array`."""
+        """ Appends a new *array element* to the `Array`."""
         super().append(self.__create__())
 
     def insert(self, index):
-        """ Inserts a new `Array` element before the *index* of the `Array`.
+        """ Inserts a new *array element* before the *index* of the `Array`.
 
         :param int index: `Array` index.
         """
         super().insert(index, self.__create__())
 
     def resize(self, capacity):
-        """ Re-sizes the `Array` by appending new `Array` elements or
-        removing `Array` elements from the end.
+        """ Re-sizes the `Array` by appending new *array elements* or
+        removing *array elements* from the end.
 
-        :param int capacity: new capacity of the `Array` in number of `Array`
-            elements.
+        :param int capacity: new capacity of the `Array` in number of *array elements*.
         """
         count = max(int(capacity), 0) - len(self)
 
@@ -1380,10 +1458,8 @@ class Field:
 
     @property
     def alignment(self):
-        """ Returns the alignment of the `Field` (read-only) as a tuple in the
-        form of ``(aligns to bytes, bit offset within the aligned bytes)``
-        """
-        return self._align_to_byte_size, self._align_to_bit_offset
+        """ Returns the :class:`Alignment` of the `Field` (read-only)."""
+        return Alignment(self._align_to_byte_size, self._align_to_bit_offset)
 
     @property
     def bit_size(self):
@@ -1428,18 +1504,20 @@ class Field:
             group_size += 1
 
         # Bad aligned field group?
-        if self.alignment[0] < group_size:
-            alignment = group_size, self.alignment[1]
-            raise FieldGroupSizeError(self, value, alignment)
+        if self.alignment.byte_size < group_size:
+            raise FieldGroupSizeError(self, value,
+                                      Alignment(group_size,
+                                                self.alignment.bit_offset))
 
         # No Bit field?
         if not self.is_bit():
-            # Set field alignment offset
+            # Set field alignment bit offset
             self._align_to_bit_offset = bit
         # Bad aligned field group?
-        elif self.alignment[1] != bit:
-            alignment = self.alignment[0], bit
-            raise FieldGroupOffsetError(self, value, alignment)
+        elif self.alignment.bit_offset != bit:
+            raise FieldGroupOffsetError(self, value,
+                                        Alignment(self.alignment.byte_size,
+                                                  bit))
 
         # Invalid field address
         if address < 0:
@@ -1623,22 +1701,20 @@ class Field:
         # Field group size
         group_size, offset = divmod(bit, 8)
 
-        # Field alignment size
-        field_size, _ = self.alignment
-
         # End of field group?
-        if field_size == group_size:
+        if self.alignment.byte_size == group_size:
             # Bad aligned field group?
             if offset is not 0:
-                alignment = group_size + 1, self.alignment[1]
-                raise FieldGroupSizeError(self, index, alignment)
+                raise FieldGroupSizeError(self, index,
+                                          Alignment(group_size + 1,
+                                                    self.alignment.bit_offset))
             else:
                 # Move byte index for the next field group
-                byte += field_size
+                byte += self.alignment.byte_size
                 # Reset bit offset for the next field group
                 bit = 0
                 # Move address for the next field group
-                address += field_size
+                address += self.alignment.byte_size
         # Index for the next field
         return Index(byte, bit, address, base, update)
 
@@ -1651,7 +1727,7 @@ class Field:
 
             metadata = {
                 'address': self.index.address,
-                'alignment': [self.alignment[0], self.alignment[1]],
+                'alignment': [self.alignment.byte_size, self.alignment.bit_offset],
                 'class': self.name,
                 'index': [self.index.byte, self.index.bit],
                 'name': name if name else self.name,
@@ -1669,7 +1745,7 @@ class Field:
         """
         metadata = {
             'address': self.index.address,
-            'alignment': [self.alignment[0], self.alignment[1]],
+            'alignment': list(self.alignment),
             'class': self.name,
             'order': self.byte_order.value,
             'index': [self.index.byte, self.index.bit],
@@ -1708,7 +1784,7 @@ class Stream(Field):
     >>> stream.name
     'Stream'
     >>> stream.alignment
-    (0, 0)
+    Alignment(byte_size=0, bit_offset=0)
     >>> stream.byte_order
     Byteorder.auto = 'auto'
     >>> stream.index
@@ -1731,7 +1807,7 @@ class Stream(Field):
     >>> stream.name
     'Stream10'
     >>> stream.alignment
-    (10, 0)
+    Alignment(byte_size=10, bit_offset=0)
     >>> stream.bit_size
     80
     >>> stream.index_field()
@@ -1914,7 +1990,7 @@ class String(Stream):
     >>> string.name
     'String'
     >>> string.alignment
-    (0, 0)
+    Alignment(byte_size=0, bit_offset=0)
     >>> string.byte_order
     Byteorder.auto = 'auto'
     >>> string.index
@@ -1937,7 +2013,7 @@ class String(Stream):
     >>> string.name
     'String10'
     >>> string.alignment
-    (10, 0)
+    Alignment(byte_size=10, bit_offset=0)
     >>> string.bit_size
     80
     >>> string.index_field()
@@ -2034,7 +2110,7 @@ class Float(Field):
     >>> real.name
     'Float32'
     >>> real.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> real.byte_order
     Byteorder.auto = 'auto'
     >>> real.index
@@ -2161,7 +2237,7 @@ class Float(Field):
 
         # Content of the buffer mapped by the field
         offset = index.byte
-        size = offset + self.alignment[0]
+        size = offset + self.alignment.byte_size
         content = buffer[offset:size]
 
         # Not enough content!
@@ -2233,7 +2309,7 @@ class Decimal(Field):
     >>> unsigned.name
     'Decimal16'
     >>> unsigned.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> unsigned.byte_order
     Byteorder.auto = 'auto'
     >>> unsigned.index
@@ -2310,7 +2386,7 @@ class Decimal(Field):
     >>> signed.name
     'Decimal16'
     >>> signed.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> signed.byte_order
     Byteorder.auto = 'auto'
     >>> signed.index
@@ -2475,7 +2551,7 @@ class Decimal(Field):
             field_size = int(group_size)
 
         # Field alignment
-        alignment = field_size, field_offset
+        alignment = Alignment(field_size, field_offset)
 
         # Invalid field alignment size
         if field_size not in range(1, 8):
@@ -2490,8 +2566,8 @@ class Decimal(Field):
             raise FieldAlignmentError(self, self.index, alignment)
 
         # Set field alignment
-        self._align_to_byte_size = field_size
-        self._align_to_bit_offset = field_offset
+        self._align_to_byte_size = alignment.byte_size
+        self._align_to_bit_offset = alignment.bit_offset
 
     def _set_bit_size(self, size, step=1, auto_align=False):
         """ Sets the *size* of the `Decimal` field.
@@ -2520,9 +2596,10 @@ class Decimal(Field):
             else:
                 self._align_to_byte_size = group_size
         # Invalid field alignment
-        elif group_size > self.alignment[0]:
-            alignment = group_size, self.alignment[1]
-            raise FieldAlignmentError(self, self.index, alignment)
+        elif group_size > self.alignment.byte_size:
+            raise FieldAlignmentError(self, self.index,
+                                      Alignment(group_size,
+                                                self.alignment.bit_offset))
         # Set field size
         self._bit_size = bit_size
 
@@ -2572,7 +2649,7 @@ class Decimal(Field):
     def unpack(self, buffer=bytes(), index=Index(), **options):
         # Content of the buffer mapped by the field group
         offset = index.byte
-        size = offset + self.alignment[0]
+        size = offset + self.alignment.byte_size
         content = buffer[offset:size]
 
         # Decoding byte order of the buffer
@@ -2652,17 +2729,17 @@ class Decimal(Field):
 
         # Content for the buffer mapped by the field group
         offset = self.index.byte
-        size = offset + self.alignment[0]
+        size = offset + self.alignment.byte_size
         if len(buffer) == size:
             # Map the field value into the existing field group content of the buffer
             view = memoryview(buffer)
             value |= int.from_bytes(buffer[offset:size], byte_order.value)
-            view[offset:size] = value.to_bytes(self.alignment[0],
+            view[offset:size] = value.to_bytes(self.alignment.byte_size,
                                                byte_order.value)
             return bytes()
         else:
             # Extent the buffer with the field group content and the field value
-            return value.to_bytes(self.alignment[0], byte_order.value)
+            return value.to_bytes(self.alignment.byte_size, byte_order.value)
 
     def describe(self, name=None, **options):
         metadata = super().describe(name, **options)
@@ -2691,7 +2768,7 @@ class Bit(Decimal):
     >>> bit.name
     'Bit'
     >>> bit.alignment
-    (1, 0)
+    Alignment(byte_size=1, bit_offset=0)
     >>> bit.byte_order
     Byteorder.auto = 'auto'
     >>> bit.index
@@ -2811,7 +2888,7 @@ class Byte(Decimal):
     >>> byte.name
     'Byte'
     >>> byte.alignment
-    (1, 0)
+    Alignment(byte_size=1, bit_offset=0)
     >>> byte.byte_order
     Byteorder.auto = 'auto'
     >>> byte.index
@@ -2919,7 +2996,7 @@ class Char(Decimal):
     >>> char.name
     'Char'
     >>> char.alignment
-    (1, 0)
+    Alignment(byte_size=1, bit_offset=0)
     >>> char.byte_order
     Byteorder.auto = 'auto'
     >>> char.index
@@ -3034,7 +3111,7 @@ class Signed(Decimal):
     >>> signed.name
     'Signed16'
     >>> signed.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> signed.byte_order
     Byteorder.auto = 'auto'
     >>> signed.index
@@ -3134,7 +3211,7 @@ class Unsigned(Decimal):
     >>> unsigned.name
     'Unsigned16'
     >>> unsigned.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> unsigned.byte_order
     Byteorder.auto = 'auto'
     >>> unsigned.index
@@ -3243,7 +3320,7 @@ class Bitset(Decimal):
     >>> bitset.name
     'Bitset16'
     >>> bitset.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> bitset.byte_order
     Byteorder.auto = 'auto'
     >>> bitset.index
@@ -3353,7 +3430,7 @@ class Bool(Decimal):
     >>> boolean.name
     'Bool16'
     >>> boolean.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> boolean.byte_order
     Byteorder.auto = 'auto'
     >>> boolean.index
@@ -3471,7 +3548,7 @@ class Enum(Decimal):
     >>> enum.name
     'Enum16'
     >>> enum.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> enum.byte_order
     Byteorder.auto = 'auto'
     >>> enum.index
@@ -3626,7 +3703,7 @@ class Scaled(Decimal):
     >>> scaled.name
     'Scaled16'
     >>> scaled.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> scaled.byte_order
     Byteorder.auto = 'auto'
     >>> scaled.index
@@ -3797,7 +3874,7 @@ class Fraction(Decimal):
     >>> unipolar.name
     'Fraction2.16'
     >>> unipolar.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> unipolar.byte_order
     Byteorder.auto = 'auto'
     >>> unipolar.index
@@ -3878,7 +3955,7 @@ class Fraction(Decimal):
     >>> bipolar.name
     'Fraction2.16'
     >>> bipolar.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> bipolar.byte_order
     Byteorder.auto = 'auto'
     >>> bipolar.index
@@ -4054,7 +4131,7 @@ class Bipolar(Fraction):
     >>> bipolar.name
     'Bipolar2.16'
     >>> bipolar.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> bipolar.byte_order
     Byteorder.auto = 'auto'
     >>> bipolar.index
@@ -4162,7 +4239,7 @@ class Unipolar(Fraction):
     >>> unipolar.name
     'Unipolar2.16'
     >>> unipolar.alignment
-    (2, 0)
+    Alignment(byte_size=2, bit_offset=0)
     >>> unipolar.byte_order
     Byteorder.auto = 'auto'
     >>> unipolar.index
@@ -4260,7 +4337,7 @@ class Datetime(Decimal):
     >>> datetime.name
     'Datetime32'
     >>> datetime.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> datetime.byte_order
     Byteorder.auto = 'auto'
     >>> datetime.index
@@ -4367,7 +4444,7 @@ class IPv4Address(Decimal):
     >>> ipv4.name
     'Ipaddress32'
     >>> ipv4.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> ipv4.byte_order
     Byteorder.auto = 'auto'
     >>> ipv4.index
@@ -4516,7 +4593,7 @@ class Pointer(Decimal, Container):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -4614,15 +4691,15 @@ class Pointer(Decimal, Container):
     >>> pointer.view_fields() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('value', '0xffffffff'), ('data', None)])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-              alignment=(4, 0),
+              alignment=Alignment(byte_size=4, bit_offset=0),
               bit_size=32,
               value='0xffffffff'))]
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0xffffffff')]
+    [('Pointer.field', '0xffffffff')]
     >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
-    OrderedDict([('Pointer', OrderedDict([('value', '0xffffffff')]))])
+    OrderedDict([('Pointer', OrderedDict([('field', '0xffffffff')]))])
     """
     # Item type of a Pointer field.
     item_type = ItemClass.Pointer
@@ -5137,37 +5214,52 @@ class Pointer(Decimal, Container):
     @nested_option()
     def view_fields(self, *attributes, **options):
         """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        with two keys.
-        The ``['value']`` key contains the :attr:`~Pointer.value` of the `Pointer`
-        field and the ``['data']`` key contains the :attr:`~Field.value` for
-        each :class:`Field` in the :attr:`data` object referenced by the
-        `Pointer` field.
+        which the *attributes* of the `Pointer` field extended wit an ``['data']``
+        key contains the *attributes* for each  :class:`Field` in the :attr:`data`
+        object referenced by the `Pointer` field.
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            :attr:`data` object referenced by the `Pointer` field lists their
+            :attr:`data` object referenced by the `Pointer` field views their
             referenced :attr:`~Pointer.data` object field attributes as well
             (chained method call).
         """
-        values = OrderedDict()
-        values['value'] = self.value
-        # Container
+        items = OrderedDict()
+
+        # Pointer field
+        if attributes:
+            field_getter = attrgetter(*attributes)
+        else:
+            field_getter = attrgetter('value')
+
+        if len(attributes) > 1:
+            for key, value in zip(attributes, field_getter(self)):
+                items[key] = value
+        else:
+            items['value'] = field_getter(self)
+
+        # Data object
         if is_container(self._data):
-            values['data'] = self._data.view_fields(*attributes, **options)
-        # Pointer
+            # Container
+            items['data'] = self._data.view_fields(*attributes, **options)
         elif is_pointer(self._data) and get_nested(options):
-            values['data'] = self._data.view_fields(*attributes, **options)
-        # Field
+            # Pointer
+            items['data'] = self._data.view_fields(*attributes, **options)
         elif is_field(self._data):
+            # Field
             if attributes:
                 field_getter = attrgetter(*attributes)
             else:
                 field_getter = attrgetter('value')
-            values['data'] = field_getter(self._data)
+            if len(attributes) > 1:
+                items['data'] = dict(zip(attributes, field_getter(self._data)))
+            else:
+                items['data'] = field_getter(self._data)
         else:
-            values['data'] = self._data
-        return values
+            # None
+            items['data'] = self._data
+        return items
 
     @nested_option()
     def field_items(self, path=str(), **options):
@@ -5183,7 +5275,7 @@ class Pointer(Decimal, Container):
         """
         items = list()
         # Field
-        items.append((path if path else 'value', self))
+        items.append((path if path else 'field', self))
         # Data Object
         data_path = '{0}.{1}'.format(path, 'data') if path else 'data'
         # Container
@@ -5208,7 +5300,7 @@ class Pointer(Decimal, Container):
 
             metadata = {
                 'address': self.index.address,
-                'alignment': [self.alignment[0], self.alignment[1]],
+                'alignment': [self.alignment.byte_size, self.alignment.bit_offset],
                 'class': self.__class__.__name__,
                 'index': [self.index.byte, self.index.bit],
                 'max': self.max(),
@@ -5270,7 +5362,7 @@ class StructurePointer(Pointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -5367,17 +5459,17 @@ class StructurePointer(Pointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       StructurePointer(index=Index(byte=0, bit=0,
                                    address=0, base_address=0,
                                    update=False),
-                       alignment=(4, 0),
+                       alignment=Alignment(byte_size=4, bit_offset=0),
                        bit_size=32,
                        value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
-    [('StructurePointer.value', '0xffffffff')]
+    [('StructurePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True) # doctest: +NORMALIZE_WHITESPACE
-    OrderedDict([('StructurePointer', OrderedDict([('value', '0xffffffff')]))])
+    OrderedDict([('StructurePointer', OrderedDict([('field', '0xffffffff')]))])
     """
 
     def __init__(self, template=None, address=None, data_order=BYTEORDER,
@@ -5479,7 +5571,7 @@ class SequencePointer(Pointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -5555,20 +5647,20 @@ class SequencePointer(Pointer):
     >>> pointer.append(Field())
     >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
     Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-          alignment=(0, 0),
+          alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
     >>> len(pointer)
     1
     >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
     Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-          alignment=(0, 0),
+          alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
     >>> pointer.insert(0, Field())
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     [Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-           alignment=(0, 0),
+           alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
            value=None)]
     >>> pointer.remove(pointer[0])
@@ -5599,17 +5691,17 @@ class SequencePointer(Pointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       SequencePointer(index=Index(byte=0, bit=0,
                                   address=0, base_address=0,
                                   update=False),
-                      alignment=(4, 0),
+                      alignment=Alignment(byte_size=4, bit_offset=0),
                       bit_size=32,
                       value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
-    [('SequencePointer.value', '0xffffffff')]
+    [('SequencePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('SequencePointer', OrderedDict([('value', '0xffffffff')]))])
+    OrderedDict([('SequencePointer', OrderedDict([('field', '0xffffffff')]))])
     """
 
     def __init__(self, iterable=None, address=None, data_order=BYTEORDER,
@@ -5734,7 +5826,7 @@ class ArrayPointer(SequencePointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -5808,20 +5900,20 @@ class ArrayPointer(SequencePointer):
     >>> pointer.append()
     >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-         alignment=(1, 0),
+         alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
          value='0x0')
     >>> len(pointer)
     1
     >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-         alignment=(1, 0),
+         alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
          value='0x0')
     >>> pointer.insert(0)
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-          alignment=(1, 0),
+          alignment=Alignment(byte_size=1, bit_offset=0),
           bit_size=8,
           value='0x0')]
     >>> pointer.remove(pointer[0])
@@ -5855,17 +5947,17 @@ class ArrayPointer(SequencePointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       ArrayPointer(index=Index(byte=0, bit=0,
                                address=0, base_address=0,
                                update=False),
-                   alignment=(4, 0),
+                   alignment=Alignment(byte_size=4, bit_offset=0),
                    bit_size=32,
                    value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
-    [('ArrayPointer.value', '0xffffffff')]
+    [('ArrayPointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('ArrayPointer', OrderedDict([('value', '0xffffffff')]))])
+    OrderedDict([('ArrayPointer', OrderedDict([('field', '0xffffffff')]))])
     """
 
     def __init__(self, template, size=0, address=None, data_order=BYTEORDER,
@@ -5939,7 +6031,7 @@ class StreamPointer(Pointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -5962,7 +6054,7 @@ class StreamPointer(Pointer):
     True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-           alignment=(0, 0),
+           alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
            value='')
     >>> pointer.data_size
@@ -6069,26 +6161,26 @@ class StreamPointer(Pointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       StreamPointer(index=Index(byte=0, bit=0,
                                 address=0, base_address=0,
                                 update=False),
-                    alignment=(4, 0),
+                    alignment=Alignment(byte_size=4, bit_offset=0),
                     bit_size=32,
                     value='0xffffffff')),
      ('data',
       Stream(index=Index(byte=0, bit=0,
                          address=4294967295, base_address=4294967295,
                          update=False),
-             alignment=(10, 0),
+             alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='4b6f6e466f6f20697320'))]
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('StreamPointer.value', '0xffffffff'),
+    [('StreamPointer.field', '0xffffffff'),
      ('StreamPointer.data', '4b6f6e466f6f20697320')]
     >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('StreamPointer',
-                  OrderedDict([('value', '0xffffffff'),
+                  OrderedDict([('field', '0xffffffff'),
                                ('data', '4b6f6e466f6f20697320')]))])
     """
 
@@ -6150,7 +6242,7 @@ class StringPointer(StreamPointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -6173,7 +6265,7 @@ class StringPointer(StreamPointer):
     True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-           alignment=(0, 0),
+           alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
            value='')
     >>> pointer.data_size
@@ -6280,25 +6372,25 @@ class StringPointer(StreamPointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       StringPointer(index=Index(byte=0, bit=0,
                                 address=0, base_address=0,
                                 update=False),
-                    alignment=(4, 0),
+                    alignment=Alignment(byte_size=4, bit_offset=0),
                     bit_size=32,
                     value='0xffffffff')),
      ('data',
       String(index=Index(byte=0, bit=0,
                          address=4294967295, base_address=4294967295,
                          update=False),
-             alignment=(10, 0),
+             alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='KonFoo is '))]
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('StringPointer.value', '0xffffffff'), ('StringPointer.data', 'KonFoo is ')]
+    [('StringPointer.field', '0xffffffff'), ('StringPointer.data', 'KonFoo is ')]
     >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('StringPointer',
-                  OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')]))])
+                  OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """
 
     def __init__(self, size=0, address=None,
@@ -6338,7 +6430,7 @@ class AutoStringPointer(StringPointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -6361,7 +6453,7 @@ class AutoStringPointer(StringPointer):
     True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-           alignment=(64, 0),
+           alignment=Alignment(byte_size=64, bit_offset=0),
            bit_size=512,
            value='')
     >>> pointer.data_size
@@ -6468,26 +6560,26 @@ class AutoStringPointer(StringPointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       AutoStringPointer(index=Index(byte=0, bit=0,
                                 address=0, base_address=0,
                                 update=False),
-                        alignment=(4, 0),
+                        alignment=Alignment(byte_size=4, bit_offset=0),
                         bit_size=32,
                         value='0xffffffff')),
      ('data',
       String(index=Index(byte=0, bit=0,
                          address=4294967295, base_address=4294967295,
                          update=False),
-             alignment=(10, 0),
+             alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='KonFoo is '))]
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('AutoStringPointer.value', '0xffffffff'),
+    [('AutoStringPointer.field', '0xffffffff'),
      ('AutoStringPointer.data', 'KonFoo is ')]
     >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('AutoStringPointer',
-                  OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')]))])
+                  OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """
     #: Block size in *bytes* to read for the :class:`String` field.
     BLOCK_SIZE = 64
@@ -6573,7 +6665,7 @@ class RelativePointer(Pointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -6668,17 +6760,17 @@ class RelativePointer(Pointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', None)])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       RelativePointer(index=Index(byte=0, bit=0,
                                   address=0, base_address=0,
                                   update=False),
-                      alignment=(4, 0),
+                      alignment=Alignment(byte_size=4, bit_offset=0),
                       bit_size=32,
                       value='0xffffffff'))]
     >>> pointer.to_list()
-    [('RelativePointer.value', '0xffffffff')]
+    [('RelativePointer.field', '0xffffffff')]
     >>> pointer.to_dict()
-    OrderedDict([('RelativePointer', OrderedDict([('value', '0xffffffff')]))])
+    OrderedDict([('RelativePointer', OrderedDict([('field', '0xffffffff')]))])
     """
 
     def __init__(self, template=None, address=None, data_order=BYTEORDER,
@@ -6738,7 +6830,7 @@ class StructureRelativePointer(RelativePointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -6835,18 +6927,18 @@ class StructureRelativePointer(RelativePointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       StructureRelativePointer(index=Index(byte=0, bit=0,
                                            address=0, base_address=0,
                                            update=False),
-                               alignment=(4, 0),
+                               alignment=Alignment(byte_size=4, bit_offset=0),
                                bit_size=32,
                                value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
-    [('StructureRelativePointer.value', '0xffffffff')]
+    [('StructureRelativePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True) # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('StructureRelativePointer',
-                  OrderedDict([('value', '0xffffffff')]))])
+                  OrderedDict([('field', '0xffffffff')]))])
     """
 
     def __init__(self, template=None, address=None, data_order=BYTEORDER,
@@ -6948,7 +7040,7 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -7022,20 +7114,20 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer.append(Field())
     >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
     Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-          alignment=(0, 0),
+          alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
     >>> len(pointer)
     1
     >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
     Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-          alignment=(0, 0),
+          alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
     >>> pointer.insert(0, Field())
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     [Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-           alignment=(0, 0),
+           alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
            value=None)]
     >>> pointer.remove(pointer[0])
@@ -7066,18 +7158,18 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       SequenceRelativePointer(index=Index(byte=0, bit=0,
                                           address=0, base_address=0,
                                           update=False),
-                              alignment=(4, 0),
+                              alignment=Alignment(byte_size=4, bit_offset=0),
                               bit_size=32,
                               value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
-    [('SequenceRelativePointer.value', '0xffffffff')]
+    [('SequenceRelativePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True) # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('SequenceRelativePointer',
-                  OrderedDict([('value', '0xffffffff')]))])
+                  OrderedDict([('field', '0xffffffff')]))])
     """
 
     def __init__(self, iterable=None, address=None, data_order=BYTEORDER,
@@ -7203,7 +7295,7 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -7277,20 +7369,20 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> pointer.append()
     >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-         alignment=(1, 0),
+         alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
          value='0x0')
     >>> len(pointer)
     1
     >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-         alignment=(1, 0),
+         alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
          value='0x0')
     >>> pointer.insert(0)
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-          alignment=(1, 0),
+          alignment=Alignment(byte_size=1, bit_offset=0),
           bit_size=8,
           value='0x0')]
     >>> pointer.remove(pointer[0])
@@ -7324,17 +7416,17 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       ArrayRelativePointer(index=Index(byte=0, bit=0,
                                        address=0, base_address=0,
                                        update=False),
-                           alignment=(4, 0),
+                           alignment=Alignment(byte_size=4, bit_offset=0),
                            bit_size=32,
                            value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
-    [('ArrayRelativePointer.value', '0xffffffff')]
+    [('ArrayRelativePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('ArrayRelativePointer', OrderedDict([('value', '0xffffffff')]))])
+    OrderedDict([('ArrayRelativePointer', OrderedDict([('field', '0xffffffff')]))])
     """
 
     def __init__(self, template, size=0, address=None, data_order=BYTEORDER,
@@ -7408,7 +7500,7 @@ class StreamRelativePointer(RelativePointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -7431,7 +7523,7 @@ class StreamRelativePointer(RelativePointer):
     True
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-           alignment=(0, 0),
+           alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
            value='')
     >>> pointer.data_size
@@ -7538,26 +7630,26 @@ class StreamRelativePointer(RelativePointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       StreamRelativePointer(index=Index(byte=0, bit=0,
                                         address=0, base_address=0,
                                         update=False),
-                            alignment=(4, 0),
+                            alignment=Alignment(byte_size=4, bit_offset=0),
                             bit_size=32,
                             value='0xffffffff')),
      ('data',
       Stream(index=Index(byte=0, bit=0,
                          address=4294967295, base_address=0,
                          update=False),
-             alignment=(10, 0),
+             alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='4b6f6e466f6f20697320'))]
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('StreamRelativePointer.value', '0xffffffff'),
+    [('StreamRelativePointer.field', '0xffffffff'),
      ('StreamRelativePointer.data', '4b6f6e466f6f20697320')]
     >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('StreamRelativePointer',
-                  OrderedDict([('value', '0xffffffff'),
+                  OrderedDict([('field', '0xffffffff'),
                                ('data', '4b6f6e466f6f20697320')]))])
     """
 
@@ -7619,7 +7711,7 @@ class StringRelativePointer(StreamRelativePointer):
     >>> pointer.name
     'Pointer32'
     >>> pointer.alignment
-    (4, 0)
+    Alignment(byte_size=4, bit_offset=0)
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
     >>> pointer.index
@@ -7646,7 +7738,7 @@ class StringRelativePointer(StreamRelativePointer):
     0
     >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
-           alignment=(0, 0),
+           alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
            value='')
     >>> pointer.data_size
@@ -7749,26 +7841,26 @@ class StringRelativePointer(StreamRelativePointer):
     >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
-    [('value',
+    [('field',
       StringRelativePointer(index=Index(byte=0, bit=0,
                                         address=0, base_address=0,
                                         update=False),
-                            alignment=(4, 0),
+                            alignment=Alignment(byte_size=4, bit_offset=0),
                             bit_size=32,
                             value='0xffffffff')),
      ('data',
       String(index=Index(byte=0, bit=0,
                          address=4294967295, base_address=0,
                          update=False),
-             alignment=(10, 0),
+             alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='KonFoo is '))]
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('StringRelativePointer.value', '0xffffffff'),
+    [('StringRelativePointer.field', '0xffffffff'),
      ('StringRelativePointer.data', 'KonFoo is ')]
     >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('StringRelativePointer',
-                  OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')]))])
+                  OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """
 
     def __init__(self, size=0, address=None,

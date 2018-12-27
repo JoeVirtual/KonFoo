@@ -85,12 +85,14 @@ or
 
     >>> # Create the entry point for the mapper.
     >>> pointer = Pointer(mapper, address=0, data_order='little')
-    >>> # List the field values of the pointer and its attached data object.
+    >>> # List the field values of the pointer field and its attached data object.
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x0'),
+    [('Pointer.field', '0x0'),
      ('Pointer.data.length', 0),
      ('Pointer.data.content', '')]
-
+    >>> # View the pointer as a JSON string.
+    >>> pointer.to_json()
+    '{"value": "0x0", "data": {"length": 0, "content": ""}}'
 
 
 Read from the Data Source
@@ -117,10 +119,13 @@ referenced by the :ref:`pointer <pointer>` field with the :ref:`provider <provid
     '0f004b6f6e466f6f206973202746756e27'
     >>> bytes.fromhex(pointer.bytestream)
     b"\x0f\x00KonFoo is 'Fun'"
-    >>> # List the field values of the pointer and its attached data object.
+    >>> # List the field values of the pointer field and its attached data object.
     >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('Pointer.value', '0x0'),
+    [('Pointer.field', '0x0'),
      ('Pointer.data.length', 15),
      ('Pointer.data.content', "KonFoo is 'Fun'")]
     >>> len(pointer.data.content)
     15
+    >>> # View the pointer as a JSON string.
+    >>> pointer.to_json()
+    '{"value": "0x0", "data": {"length": 15, "content": "KonFoo is \'Fun\'"}}'

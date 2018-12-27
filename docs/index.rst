@@ -1,9 +1,11 @@
 .. |PyPI| image:: https://img.shields.io/pypi/v/KonFoo.svg
-    :target: https://pypi.python.org/pypi/KonFoo/
+    :target: https://pypi.org/project/KonFoo
 .. |License| image:: https://img.shields.io/pypi/l/KonFoo.svg
-    :target: https://pypi.python.org/pypi/KonFoo
+    :target: https://pypi.org/project/KonFoo
 .. |Python| image:: https://img.shields.io/pypi/pyversions/KonFoo.svg
-    :target: https://pypi.python.org/pypi/KonFoo
+    :target: https://pypi.org/project/KonFoo
+.. |Status| image:: https://img.shields.io/pypi/status/KonFoo.svg
+    :target: https://pypi.org/project/KonFoo
 .. |Binder| image:: https://mybinder.org/badge.svg
     :target: https://mybinder.org/v2/gh/JoeVirtual/KonFoo/master?filepath=notebooks
 
@@ -16,7 +18,7 @@
 Welcome to the KonF'00' Documentation
 =====================================
 
-|PyPI| |License| |Python| |Binder|
+|PyPI| |License| |Python| |Status| |Binder|
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the
@@ -29,18 +31,19 @@ and writing binary data from and back to a data provider as easy as possible.
 
 KonFoo in points:
 
--   declarative way to describe the mapping of binary data to Python types
--   declarative classes to read, deserialize, serialize and write binary data
-    from and back to a data source
--   easy adjustable data provider bridge to any kind of data source
--   nesting of classes
--   adaptable classes on the fly while reading/de-serializing binary data
--   easy syntax for accessing nested fields
--   loadable mapping content including nested data from an ``.ini`` file
--   savable mapping content including nested data to an ``.ini`` file
--   easy creatable blueprint of a mapper
--   blueprint converter to JSON to visualise templates with `d3js`_.
-
+* declarative way to describe the mapping of binary data to Python types
+* declarative classes to read, deserialize, view, serialize and write binary
+  data from and back to a data source
+* easy adjustable data provider bridge to any kind of data source
+* nesting of classes
+* adaptable classes on the fly while reading/de-serializing binary data
+* easy syntax for accessing nested fields
+* view the mapped binary data as a JSON string
+* list the mapped binary data as a flatten list or dictionary
+* save the mapped binary data to an ``.ini`` file
+* load the mapped binary data from an ``.ini`` file
+* easy creatable blueprint of a mapper
+* blueprint converter to JSON to visualise the mapper with `d3js`_.
 
 KonFoo runs on `Python 3.4.3 <https://www.python.org/>`_ or higher.
 

@@ -5,18 +5,20 @@
 .. |Build Status| image:: https://travis-ci.org/JoeVirtual/KonFoo.svg?branch=master
     :target: https://travis-ci.org/JoeVirtual/KonFoo
 .. |PyPI| image:: https://img.shields.io/pypi/v/KonFoo.svg
-    :target: https://pypi.python.org/pypi/KonFoo/
+    :target: https://pypi.org/project/KonFoo
 .. |License| image:: https://img.shields.io/pypi/l/KonFoo.svg
-    :target: https://pypi.python.org/pypi/KonFoo
+    :target: https://pypi.org/project/KonFoo
 .. |Python| image:: https://img.shields.io/pypi/pyversions/KonFoo.svg
-    :target: https://pypi.python.org/pypi/KonFoo
+    :target: https://pypi.org/project/KonFoo
+.. |Status| image:: https://img.shields.io/pypi/status/KonFoo.svg
+    :target: https://pypi.org/project/KonFoo
 .. |Binder| image:: https://mybinder.org/badge.svg
     :target: https://mybinder.org/v2/gh/JoeVirtual/KonFoo/master?filepath=notebooks
 
 KonF'00'
 ========
 
-|Doc Status| |Build Status| |PyPI| |License| |Python| |Binder|
+|Doc Status| |Build Status| |PyPI| |License| |Python| |Status| |Binder|
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the
@@ -37,8 +39,10 @@ KonFoo in points:
 - nesting of classes
 - adaptable classes on the fly while reading/de-serializing binary data
 - easy syntax for accessing nested fields
-- loadable mapping content including nested data from an ``.ini`` file
-- savable mapping content including nested data to an ``.ini`` file
+- view the mapped binary data as a JSON string
+- list the mapped binary data as a flatten list or dictionary
+- save the mapped binary data to an ``.ini`` file
+- load the mapped binary data from an ``.ini`` file
 - easy creatable blueprint of a mapper
 - blueprint converter to JSON to visualise the mapper with
   `d3.js <https://d3js.org>`_.
@@ -81,7 +85,7 @@ setup(
     download_url='http://github.com/JoeVirtual/KonFoo/zipball/master#egg=konfoo-dev',
     description='A declarative byte stream mapping engine.',
     long_description=__doc__,
-    keywords='byte binary data deserialize serialize parse decode encode unpack pack',
+    keywords='binary data deserialize serialize parse decode encode unpack pack',
     packages=['konfoo'],
     include_package_data=True,
     zip_safe=False,
@@ -102,6 +106,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: Software Development',
         'Topic :: Software Development :: Embedded Systems',
         'Topic :: Software Development :: Testing',
