@@ -112,7 +112,7 @@ Index = namedtuple('Index', [
     'bit',
     'address',
     'base_address',
-    'update'], defaults=(0, 0, 0, 0, False))
+    'update'])
 """ The `Index` class contains the relevant information of the location of a
 :class:`Field` in a `byte stream` and in a `data source`. The `byte stream` is
 normally provided by a :class:`Pointer` field. The `data source` is normally
@@ -124,11 +124,12 @@ accessed via a data :class:`Provider` by a :class:`Pointer` field.
 :param int base_address: start address of the byte stream in the data source.
 :param bool update: if ``True`` the byte stream needs to be updated.
 """
+Index.__new__.__defaults__ = (0, 0, 0, 0, False)
 
 # Field Alignment
 Alignment = namedtuple('Alignment', [
     'byte_size',
-    'bit_offset'], defaults=(0, 0))
+    'bit_offset'])
 """ The `Alignment` class contains the location of the :class:`Field` within an 
 aligned group of consecutive fields.
 
@@ -137,6 +138,7 @@ aligned group of consecutive fields.
 :param int bit_offset: bit offset of the :class:`Field` 
     within its aligned *field group*.
 """
+Alignment.__new__.__defaults__ = (0, 0)
 
 
 class _CategoryJSONEncoder(json.JSONEncoder):
