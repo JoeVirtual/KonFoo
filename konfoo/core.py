@@ -315,6 +315,21 @@ class Container:
         ...         self.array = Array(Byte, 3)
         ...         self.pointer = Pointer()
         >>> foo = Foo()
+        >>> foo.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+        [('Foo.stream', ''),
+         ('Foo.float', 0.0),
+         ('Foo.structure.decimal', 0),
+         ('Foo.array[0]', '0x0'),
+         ('Foo.array[1]', '0x0'),
+         ('Foo.array[2]', '0x0'),
+         ('Foo.pointer', '0x0')]
+        >>> foo.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+        '{"stream": "",
+          "float": 0.0,
+          "structure": {"decimal": 0},
+          "array": ["0x0", "0x0", "0x0"],
+          "pointer": {"value": "0x0",
+                      "data": null}}'
         >>> foo.save('foo.ini')
 
         File `foo.ini`:
@@ -387,6 +402,21 @@ class Container:
         Foo.array[1] = 0x0
         Foo.array[2] = 0x0
         Foo.pointer = 0x0
+        >>> foo.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+        [('Foo.stream', ''),
+         ('Foo.float', 0.0),
+         ('Foo.structure.decimal', 0),
+         ('Foo.array[0]', '0x0'),
+         ('Foo.array[1]', '0x0'),
+         ('Foo.array[2]', '0x0'),
+         ('Foo.pointer', '0x0')]
+        >>> foo.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+        '{"stream": "",
+          "float": 0.0,
+          "structure": {"decimal": 0},
+          "array": ["0x0", "0x0", "0x0"],
+          "pointer": {"value": "0x0",
+                      "data": null}}'
         """
         section = options.pop('section', self.__class__.__name__)
 
