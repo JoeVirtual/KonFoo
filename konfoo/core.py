@@ -174,17 +174,24 @@ class Container:
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` views their referenced :attr:`~Pointer.data` object
             field attributes as well (chained method call).
+
+        .. note::
+            This abstract method must be implemented by a derived class.
         """
         return
 
+    @nested_option()
     def to_json(self, *attributes, **options):
         """ Returns the selected field *attributes* for each :class:`Field` *nested*
         in the `Container` as a JSON formatted string.
 
+        The *attributes* of each :class:`Field` for containers *nested* in the
+        `Container` are viewed as well (chained method call).
+
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
-            `Container` lists their referenced :attr:`~Pointer.data` object
+            `Container` views their referenced :attr:`~Pointer.data` object
             field attributes as well (chained method call).
         """
         nested = options.pop('nested', False)
@@ -210,7 +217,8 @@ class Container:
             the `Container` list their referenced :attr:`~Pointer.data` object
             field items as well (chained method call).
 
-        .. note:: This abstract method must be implemented by a derived class.
+        .. note::
+            This abstract method must be implemented by a derived class.
         """
         return list()
 
@@ -250,7 +258,7 @@ class Container:
     @nested_option()
     def to_dict(self, *attributes, **options):
         """ Returns a **flatten** :class:`ordered dictionary <collections.OrderedDict>`
-        of ``{'field path': attribute}`` or ``{'field path': tuple(*attributes)}``
+        of ``{'field path': attribute}`` or ``{'field path': tuple(attributes)}``
         pairs for each :class:`Field` *nested* in the `Container`.
 
         :param str attributes: selected :class:`Field` attributes.
@@ -337,11 +345,11 @@ class Container:
 
         :param str file: name and location of the ``.ini`` *file*.
         :keyword str section: section in the ``.ini`` *file* to lookup the
-            attributes for each :class:`Field` in the `Container`.
+            value for each :class:`Field` in the `Container`.
             If no *section* is specified the class name of the instance is used.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` load their referenced :attr:`~Pointer.data` object
-            field attributes as well (chained method call).
+            field valus as well (chained method call).
         :keyword bool verbose: if ``True`` the loading is executed in verbose
             mode.
 
@@ -741,8 +749,8 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def field_items(self, path=str(), **options):
-        """ Returns a **flatten** list of ``(path, field)`` tuples for each
-        :class:`Field` in the `Structure`.
+        """ Returns a **flatten** list of ``('field path', field item)`` tuples
+        for each :class:`Field` *nested* in the `Structure`.
 
         :param str path: field path of the `Structure`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
@@ -1196,8 +1204,8 @@ class Sequence(MutableSequence, Container):
 
     @nested_option()
     def field_items(self, path=str(), **options):
-        """ Returns a **flat** list which contains the ``(path, field)`` tuples
-        for each :class:`Field` in the `Sequence`.
+        """ Returns a **flatten** list of ``('field path', field item)`` tuples
+        for each :class:`Field` *nested* in the `Sequence`.
 
         :param str path: field path of the `Sequence`.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
@@ -4561,10 +4569,9 @@ class Pointer(Decimal, Container):
     * View the selected *attributes* of the `Pointer` field and for each
       :class:`Field` in the :attr:`data` object referenced by the `Pointer`
       field via :meth:`view_fields`.
-    * List the **path** to the field and the field **item** itself for the
-      `Pointer` field and for each :class:`Field` in the :attr:`data` object
-      referenced by the `Pointer` field as a flat list
-      via :meth:`field_items`.
+    * List the **path** to the field and the field **item** for the `Pointer` field
+      and for each :class:`Field` in the :attr:`data` object referenced by the
+      `Pointer` field as a flatten list via :meth:`field_items`.
     * Get the **metadata** of the `Pointer` field via :meth:`describe`.
 
     :param template: template for the :attr:`data` object referenced by the
@@ -5217,10 +5224,15 @@ class Pointer(Decimal, Container):
 
     @nested_option()
     def view_fields(self, *attributes, **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>`
-        which the *attributes* of the `Pointer` field extended wit an ``['data']``
-        key contains the *attributes* for each  :class:`Field` in the :attr:`data`
-        object referenced by the `Pointer` field.
+        """ Returns an :class:`ordered dictionary <collections.OrderedDict>` which
+        contains the selected field *attributes* of the `Pointer` field itself
+        extended with a ``['data']`` key which contains the selected field *attribute*
+        or the dictionaries of the selected field *attributes* for each :class:`Field`
+        *nested* in the :attr:`data` object referenced by the `Pointer` field.
+
+        The *attributes* of each :class:`Field` for containers *nested* in the
+        :attr:`data` object referenced by the `Pointer` field are viewed as well
+        (chained method call).
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
@@ -5267,9 +5279,9 @@ class Pointer(Decimal, Container):
 
     @nested_option()
     def field_items(self, path=str(), **options):
-        """ Returns a **flat** list of ``(path, field)`` tuples for the `Pointer`
-        field itself and for each :class:`Field` in the :attr:`data` object
-        referenced by the `Pointer` field.
+        """ Returns a **flatten** list of ``('field path', field item)`` tuples
+        for the `Pointer` field itself and for each :class:`Field` *nested* in the
+        :attr:`data` object referenced by the `Pointer` field.
 
         :param str path: path of the `Pointer` field.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the

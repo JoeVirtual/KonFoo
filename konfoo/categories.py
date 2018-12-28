@@ -4,7 +4,7 @@
     ~~~~~~~~~~~~~
     <Add description of the module here>.
     
-    :copyright: (c) 2015 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 

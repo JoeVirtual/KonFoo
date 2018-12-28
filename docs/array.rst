@@ -2,6 +2,7 @@
 
 .. testsetup:: *
 
+    import copy
     import json
     from konfoo import *
 
@@ -26,130 +27,197 @@ An `array element`_ (member) can be any :ref:`field <field>` or
 Define an Array
 ---------------
 
-Define an `array`_ by calling the `array element`_ **class**.
+Define an `array`_ by using a **class** as the `array element`_ *template*.
 
-.. code-block:: python
-  :emphasize-lines: 4-5
-
-    class ByteArray(Array):
-
-        def __init__(self, capacity=0):
-            # Array element class.
-            super().__init__(template=Byte, capacity=capacity)
-
-
-Define an `array`_ by using an `array element`_ **instance**.
-
-.. code-block:: python
-   :emphasize-lines: 4-5
-
-    class ByteArray(Array):
-
-        def __init__(self, capacity=0):
-            # Array element instance.
-            super().__init__(template=Byte(), capacity=capacity)
-
-.. note:: Not recommended. It works only for simple :ref:`field <field>` instances.
-
-Define an `array`_ by using a **factory** class for an `array element`_ with
-arguments and/or keywords.
-
-.. code-block:: python
-   :emphasize-lines: 7-9
-
-    # Factory class for an array element with arguments and/or keywords.
-    class StringFactory:
-        def __init__(self, size):
-            # Argument for the array element.
-            self.size = size
-
-        def __call__(self):
-            # Create the array element with arguments and/or keywords.
-            return String(size)
+    >>> class ByteArray(Array):
+    ...
+    ...     def __init__(self, capacity=0):
+    ...         # Array element class.
+    ...         super().__init__(template=Byte, capacity=capacity)
+    >>> # Create an instance of the array.
+    >>> array = ByteArray(4)
+    >>> # List the field values in the array.
+    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('ByteArray[0]', '0x0'),
+     ('ByteArray[1]', '0x0'),
+     ('ByteArray[2]', '0x0'),
+     ('ByteArray[3]', '0x0')]
+    >>> # View the array as a JSON string.
+    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    '["0x0", "0x0", "0x0", "0x0"]'
 
 
-.. code-block:: python
-   :emphasize-lines: 4-5
+Define an `array`_ by using an **instance** as the `array element`_ *template*.
 
-    class StringArray(Array):
+    >>> class ByteArray(Array):
+    ...
+    ...     def __init__(self, capacity=0):
+    ...         # Array element instance.
+    ...         super().__init__(template=Byte(), capacity=capacity)
+    >>> # Create an instance of the array.
+    >>> array = ByteArray(4)
+    >>> # List the field values in the array.
+    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    [('ByteArray[0]', '0x0'),
+     ('ByteArray[1]', '0x0'),
+     ('ByteArray[2]', '0x0'),
+     ('ByteArray[3]', '0x0')]
+    >>> # View the array as a JSON string.
+    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    '["0x0", "0x0", "0x0", "0x0"]'
 
-        def __init__(self, length, capacity=0):
-             # Array element produced by a factory class.
-            super().__init__(template=StringFactory(length), capacity=capacity)
+.. important::
+    Only recommended for *primitive* :ref:`field <field>` instances without *nested*
+    members.
+    For an `array element`_ instance with *nested* members the *nested* members will
+    be assigned to all other *array elements* of the `array`_.
 
 
-Factorize an Array Element
---------------------------
+Array of Data Object Pointers
+-----------------------------
 
-You can factorize an `array element`_ with arguments and/or keywords by defining a
-**factory** class to instantiate the `array element`_. A **factory** is necessary
-whenever you use an `array element`_ class which needs arguments and/or keywords to
-be instantiated, in this case you must assign the **factory** instance as the
-`array element`_ to the `array`_.
+Define an `array`_ of :ref:`pointers <pointer>` by using a concrete data object
+pointer **class** for the the attached :ref:`data object <data object>` as the
+`array element`_ *template*.
 
-    >>> # Define an array element class with arguments and/or keywords.
-    >>> class ArrayElement(Structure):
-    ...     def __init__(self, arg, *args, **kwargs):
-    ...         super().__init__()
-    ...         self.field = arg
-    >>> # Define an factory class for the array element.
-    >>> class ArrayElementFactory:
-    ...     def __init__(self, arg, *args, **kwargs):
-    ...         self.arg = arg
-    ...         self.args = args
-    ...         self.kwargs = kwargs
+    >>> # Define an data object pointer class.
+    >>> class BytePointer(Pointer):
+    ...     def __init__(self):
+    ...         super().__init__(Byte())
+    >>> # Create an instance of the array.
+    >>> array = Array(BytePointer, 2)
+    >>> # List the field values in the array.
+    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x0'),
+     ('Array[0].data', '0x0'),
+     ('Array[1]', '0x0'),
+     ('Array[1].data', '0x0')]
+    >>> # View the array as a JSON string.
+    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    '[{"value": "0x0", "data": "0x0"},
+      {"value": "0x0", "data": "0x0"}]'
+    >>> # Set field value of the pointer of the fist array element.
+    >>> array[0].value = 1
+    >>> # Set field value of the data object of the fist array element.
+    >>> array[0].data.value = 2
+    >>> # List the field values in the array.
+    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x1'),
+     ('Array[0].data', '0x2'),
+     ('Array[1]', '0x0'),
+     ('Array[1].data', '0x0')]
+    >>> # View the array as a JSON string.
+    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    '[{"value": "0x1", "data": "0x2"},
+      {"value": "0x0", "data": "0x0"}]'
+
+
+.. _array element factory:
+
+Array Element Factory
+---------------------
+
+An `array element factory`_ is necessary whenever you use an `array element`_ which
+needs arguments and/or keywords to be instantiated **and** contains *nested* members,
+in this case you must assign an `array element factory`_ as the `array element`_
+*template* to the `array`_.
+
+For *primitive* :ref:`field <field>` instances without *nested* members, no factory
+is required, because the `array`_ is able to produce complete copies of a *primitive*
+:ref:`field <field>` instance.
+
+    >>> # Define an array element factory.
+    >>> class FieldPointerFactory:
+    ...     """ A factory class to produce a pointer array element to any field. """
+    ...
+    ...     def __init__(self, template):
+    ...         # Data object: field template (instance or class).
+    ...         self.template = template
+    ...
+    ...     def _create_data_object(self):
+    ...         """ Produces the data object attached to the pointer. """
+    ...         if is_field(self.template):
+    ...             # Copy data object instance from instance template
+    ...             return copy.copy(self.template)
+    ...         elif callable(self.template):
+    ...             # Create data object instance from class template
+    ...             data_object = self.template()
+    ...             if is_field(data_object):
+    ...                 return data_object
+    ...             else:
+    ...                 raise FactoryTypeError(self, self.template, data_object)
+    ...         else:
+    ...             raise MemberTypeError(self, self.template)
     ...
     ...     def __call__(self):
-    ...         # Create the array element with arguments and/or kywords
-    ...         return ArrayElement(self.arg, *self.args, **self.kwargs)
-    >>> # Create an instance of the array element factory.
-    >>> factory = ArrayElementFactory(Byte)
-    >>> # Use always a class not an instance in the arguments or keywords.
-    >>> factory.arg  # doctest: +NORMALIZE_WHITESPACE
-    <class 'konfoo.core.Byte'>
-    >>> factory.args
-    ()
-    >>> factory.kwargs
-    {}
-    >>> # Display the array element produced by the factory.
-    >>> factory() # doctest: +NORMALIZE_WHITESPACE
-    ArrayElement([('field',
-                    Byte(index=Index(byte=0, bit=0,
-                                     address=0, base_address=0,
-                                     update=False),
-                    alignment=Alignment(byte_size=1, bit_offset=0),
-                    bit_size=8,
-                    value='0x0'))])
-
-    >>> # Assign the factory as the array element. Use a class!
-    >>> array = Array(ArrayElementFactory(Byte), 2)
-    >>> [item.field.value for item in array]
-    ['0x0', '0x0']
-    >>> array[0].field.value = 255
-    >>> [item.field.value for item in array]
-    ['0xff', '0x0']
-
-    >>> # Assign the factory as the array element. Use not an instance!
-    >>> array = Array(ArrayElementFactory(Byte()), 2)
-    >>> [item.field.value for item in array]
-    ['0x0', '0x0']
-    >>> array[0].field.value = 255
-    >>> [item.field.value for item in array]
-    ['0xff', '0xff']
+    ...         """ Produces the array element. """
+    ...         return Pointer(self._create_data_object())
+    >>> # Create an instance of the array.
+    >>> array = Array(FieldPointerFactory(Byte()), 2)
+    >>> # List the field values in the array.
+    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x0'),
+     ('Array[0].data', '0x0'),
+     ('Array[1]', '0x0'),
+     ('Array[1].data', '0x0')]
+    >>> # View the array as a JSON string.
+    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    '[{"value": "0x0", "data": "0x0"},
+      {"value": "0x0", "data": "0x0"}]'
+    >>> # Set field value of the pointer of the fist array element.
+    >>> array[0].value = 1
+    >>> # Set field value of the data object of the fist array element.
+    >>> array[0].data.value = 2
+    >>> # List the field values in the array.
+    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x1'),
+     ('Array[0].data', '0x2'),
+     ('Array[1]', '0x0'),
+     ('Array[1].data', '0x0')]
+    >>> # View the array as a JSON string.
+    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    '[{"value": "0x1", "data": "0x2"},
+      {"value": "0x0", "data": "0x0"}]'
 
 
-.. warning::
-    If a factory argument/keyword is an **instance** of a :ref:`field <field>` or
-    :ref:`container <container>` class this **instance** will be assigned to
-    more than one `array element`_. To avoid this behavior assign the **class**
-    to the argument/keyword instead of an **instance**.
+Otherwise by creating an `array`_ using an **instance** with *nested* members as the
+`array element`_ *template* assigns the *nested* members of the `array element`_
+*template* to all other *array elements* of the `array`_.
+
+    >>> # Create an instance of the array with nested members and without a factory.
+    >>> array = Array(Pointer(Byte()), 2)
+    >>> # List the field values in the array.
+    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x0'),
+     ('Array[0].data', '0x0'),
+     ('Array[1]', '0x0'),
+     ('Array[1].data', '0x0')]
+    >>> # View the array as a JSON string.
+    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    '[{"value": "0x0", "data": "0x0"},
+      {"value": "0x0", "data": "0x0"}]'
+    >>> # Set field value of the pointer of the fist array element.
+    >>> array[0].value = 1
+    >>> # Set field value of the data object of the fist array element.
+    >>> array[0].data.value = 2
+    >>> # List the field values in the array.
+    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [('Array[0]', '0x1'),
+     ('Array[0].data', '0x2'),
+     ('Array[1]', '0x0'),
+     ('Array[1].data', '0x2')]
+    >>> # View the array as a JSON string.
+    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    '[{"value": "0x1", "data": "0x2"},
+      {"value": "0x0", "data": "0x2"}]'
 
 
 Create an Array
 ---------------
 
-You can **create** an `array`_ by assigning an `array element`_ class or factory to
-the `array`_ and the number of array elements the `array`_ holds.
+You can **create** an `array`_ by assigning an `array element`_ *class* or
+`array element factory`_ to the `array`_ and the number of array elements the
+`array`_ holds.
 
     >>> # Create an array with an array element class.
     >>> array = Array(template=Byte, capacity=4)
