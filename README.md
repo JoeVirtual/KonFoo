@@ -34,8 +34,8 @@ KonFoo in points:
 * list the mapped binary data as a flatten list or dictionary
 * save the mapped binary data to an `.ini` file
 * load the mapped binary data from an `.ini` file
-* easy creatable blueprint of a mapper
-* blueprint converter to JSON to visualise the mapper with 
+* easy creatable nested metadata dictionaries of the members of a byte stream mapper
+* metadata converter to the `flare.json` format to visualise the mapper with 
   [d3.js](https://d3js.org).
 
 This library is far away from stable but it works so far.

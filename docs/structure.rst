@@ -3,6 +3,7 @@
 .. testsetup:: *
 
     import json
+    import sys
     from konfoo import *
 
 .. _structure:
@@ -441,7 +442,7 @@ You can get the metadata of the `structure`_ by calling the method
                                 ('type', 'Field'),
                                 ('value', '\x00')])])])
 
-    >>> print(json.dumps(structure.describe(), indent=2))
+    >>> json.dump(structure.describe(), sys.stdout, indent=2)
     {
       "class": "Structure",
       "name": "Structure",

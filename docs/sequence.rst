@@ -3,6 +3,7 @@
 .. testsetup:: *
 
     import json
+    import sys
     from konfoo import *
 
 .. _sequence:
@@ -230,7 +231,7 @@ You can get the metadata of the `sequence`_ by calling the method
                                 ('type', 'Field'),
                                 ('value', '\x00')])])])
 
-    >>> print(json.dumps(sequence.describe(), indent=2))
+    >>> json.dump(sequence.describe(), sys.stdout, indent=2)
     {
       "class": "Sequence",
       "name": "Sequence",

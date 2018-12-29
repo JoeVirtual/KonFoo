@@ -630,10 +630,10 @@ Exceptions
 Utilities
 =========
 
-Metadata to JSON Converter
----------------------------
+Metadata Converter
+------------------
 
-.. autofunction:: d3json
+.. autofunction:: d3flare_json
 
 Hexadecimal Viewer
 ------------------

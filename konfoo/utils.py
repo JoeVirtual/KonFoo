@@ -165,22 +165,28 @@ class HexViewer:
             write_to(dst, output_line)
 
 
-def d3json(blueprint, **options):
-    """ Converts the *blueprint* metadata into a JSON string.
+def d3flare_json(metadata, file=None, **options):
+    """ Converts the *metadata* dictionary of a container or field into a
+    ``flare.json`` formatted string or formatted stream written to the *file*
+
+    The ``flare.json`` format is defined by the `d3.js <https://d3js.org/>`_ graphic
+    library.
+
+    The ``flare.json`` format looks like this:
 
     .. code-block:: JSON
 
         {
-            "class": "class name",
-            "name": "field name",
-            "size":  "field bit size",
-            "content": "field value",
+            "class": "class of the field or container",
+            "name":  "name of the field or container",
+            "size":  "bit size of the field",
+            "value": "value of the field",
             "children": []
         }
 
-    :param dict blueprint: metadata generated from a :class:`Structure`,
+    :param dict metadata: metadata generated from a :class:`Structure`,
         :class:`Sequence`, :class:`Array` or any :class:`Field` instance.
-    :keyword int indent: indentation for the JSON string. Default is *2*.
+    :param file file: file-like object.
     """
 
     def convert(root):
@@ -191,7 +197,7 @@ def d3json(blueprint, **options):
 
         if item_type is ItemClass.Field.name:
             dct['size'] = root.get('size')
-            dct['content'] = root.get('value')
+            dct['value'] = root.get('value')
 
         children = root.get('member')
         # Any containable class with children
@@ -203,7 +209,7 @@ def d3json(blueprint, **options):
                 field['class'] = dct['class']
                 field['name'] = '*' + dct['name']
                 field['size'] = root.get('size')
-                field['content'] = root.get('value')
+                field['value'] = root.get('value')
                 dct['children'].append(field)
             # Recursive function call map(fnc, args).
             for child in map(convert, children):
@@ -211,8 +217,12 @@ def d3json(blueprint, **options):
         # Null pointer (None pointer)
         elif item_type is ItemClass.Pointer.name:
             dct['size'] = root.get('size')
-            dct['content'] = root.get('value')
+            dct['value'] = root.get('value')
         return dct
 
     options['indent'] = options.get('indent', 2)
-    return json.dumps(convert(blueprint), **options)
+
+    if file:
+        return json.dump(convert(metadata), file, **options)
+    else:
+        return json.dumps(convert(metadata), **options)

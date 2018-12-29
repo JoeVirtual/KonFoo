@@ -4,6 +4,7 @@
 
     import copy
     import json
+    import sys
     from konfoo import *
 
 .. _array:
@@ -382,7 +383,7 @@ You can get the metadata of the `array`_ by calling the method
                                 ('type', 'Field'),
                                 ('value', '0x0')])])])
 
-    >>> print(json.dumps(array.describe(), indent=2))
+    >>> json.dump(array.describe(), sys.stdout, indent=2)
     {
       "class": "Array",
       "name": "Array",

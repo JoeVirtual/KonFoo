@@ -98,7 +98,7 @@ from .pointers import (
 # Providers
 from .providers import Provider, FileProvider
 # Utilities
-from .utils import d3json, HexViewer
+from .utils import d3flare_json, HexViewer
 
 __all__ = [
     # Enumerations
@@ -323,7 +323,7 @@ __all__ = [
     'StringRelativePointer64',
 
     # Utilities
-    'd3json', 'HexViewer',
+    'd3flare_json', 'HexViewer',
 ]
 
 __version__ = '0.2a0'
