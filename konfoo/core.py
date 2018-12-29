@@ -4984,21 +4984,20 @@ class Pointer(Decimal, Container):
         # Re-index the data object
         self.index_data()
 
-        # Container?
         if is_container(item):
-            # Incomplete container
             length = item.container_size()
             if length[1] is not 0:
+                # Incomplete container
                 raise ContainerLengthError(item, length)
 
-            # Empty container?
             field = item.first_field()
             if field is None:
+                # Empty container?
                 return None
 
-            # Bad placed container
             index = field.index
             if index.bit is not 0:
+                # Bad placed container
                 raise FieldIndexError(field, index)
 
             # Create a dummy byte array filled with zero bytes.
@@ -5013,8 +5012,8 @@ class Pointer(Decimal, Container):
             # Content of the buffer mapped by the container fields
             content = buffer[index.byte:]
 
-            # Not correct filled buffer!
             if len(content) != length[0]:
+                # Not correct filled buffer!
                 raise BufferError(len(content), length[0])
 
             return Patch(content,
@@ -5023,16 +5022,16 @@ class Pointer(Decimal, Container):
                          length[0] * 8,
                          0,
                          False)
-        # Field?
         elif is_field(item):
-            # Field alignment
-            group_size, group_offset = item.alignment
-
-            # Bad aligned field?
+            # Field index
             index = item.index
-            if index.bit != group_offset:
-                alignment = group_size, index.bit
-                raise FieldGroupOffsetError(item, index, alignment)
+            # Field alignment
+            alignment = item.alignment
+
+            if index.bit != alignment.bit_offset:
+                # Bad aligned field?
+                raise FieldGroupOffsetError(
+                    item, index, Alignment(alignment.byte_size, index.bit))
 
             # Create a dummy byte array filled with zero bytes.
             # The dummy byte array is necessary because the length of
@@ -5046,26 +5045,26 @@ class Pointer(Decimal, Container):
             # Content of the buffer mapped by the field group
             content = buffer[index.byte:]
 
-            # Not correct filled buffer!
-            if len(content) != group_size:
-                raise BufferError(len(content), group_size)
+            if len(content) != alignment.byte_size:
+                # Not correct filled buffer!
+                raise BufferError(len(content), alignment.byte_size)
 
-            # Patch size for the field in the content buffer
-            patch_size, offset = divmod(item.bit_size, 8)
-            if offset is not 0:
+            # Patch size in bytes for the field in the content buffer
+            patch_size, bit_offset = divmod(item.bit_size, 8)
+            if bit_offset is not 0:
                 inject = True
                 patch_size += 1
             else:
                 inject = False
 
-            # Patch offset for the field in the content buffer
-            patch_offset, field_offset = divmod(group_offset, 8)
-            if field_offset is not 0:
+            # Patch offset in bytes for the field in the content buffer
+            patch_offset, bit_offset = divmod(alignment.bit_offset, 8)
+            if bit_offset is not 0:
                 inject = True
 
             if byte_order is Byteorder.big:
-                start = group_size - (patch_offset + patch_size)
-                stop = group_size - patch_offset
+                start = alignment.byte_size - (patch_offset + patch_size)
+                stop = alignment.byte_size - patch_offset
             else:
                 start = patch_offset
                 stop = patch_offset + patch_size
@@ -5074,7 +5073,7 @@ class Pointer(Decimal, Container):
                          index.address + start,
                          byte_order,
                          item.bit_size,
-                         field_offset,
+                         bit_offset,
                          inject)
         else:
             raise MemberTypeError(self, item)

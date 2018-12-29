@@ -77,15 +77,15 @@ each other by using the ``align_to`` parameter of the :class:`Field` class.
     ...         self.index_fields()
     >>> # Create an instance.
     >>> identifier = Identifier()
-    >>> # List the field values in the structure.
-    >>> identifier.to_list() # doctest: +NORMALIZE_WHITESPACE
-    [('Identifier.version', '0x0'),
-     ('Identifier.id', '0x0'),
-     ('Identifier.length', 0),
-     ('Identifier.module', '\x00')]
-    >>> # View the structure as a JSON string.
-    >>> identifier.to_json() # doctest: +NORMALIZE_WHITESPACE
-    '{"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"}'
+    >>> # List the field alignments in the structure.
+    >>> identifier.to_list('alignment') # doctest: +NORMALIZE_WHITESPACE
+    [('Identifier.version', Alignment(byte_size=4, bit_offset=0)),
+     ('Identifier.id', Alignment(byte_size=4, bit_offset=8)),
+     ('Identifier.length', Alignment(byte_size=4, bit_offset=16)),
+     ('Identifier.module', Alignment(byte_size=4, bit_offset=24))]
+    >>> # View the structure field alignments as a JSON string.
+    >>> identifier.to_json('alignment') # doctest: +NORMALIZE_WHITESPACE
+    '{"version": [4, 0], "id": [4, 8], "length": [4, 16], "module": [4, 24]}'
 
 .. note::
     The field :ref:`alignment <field alignment>` works only for the
@@ -178,9 +178,6 @@ You can **declare** a `structure`_ on the fly.
     >>> structure.id = Unsigned8()
     >>> structure.length = Decimal8()
     >>> structure.module = Char()
-    >>> # Index the fields in the structure.
-    >>> structure.index_fields()
-    Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field values in the structure.
     >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.version', '0x0'),
@@ -202,21 +199,18 @@ the fly.
     >>> structure.id = Unsigned(8, 4)
     >>> structure.length = Decimal(8, 4)
     >>> structure.module = Char(4)
-    >>> # Index the fields in the structure.
+    >>> # Indexes the fields in the structure.
     >>> structure.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> # List the field indexes in the structure.
-    >>> structure.to_list('index') # doctest: +NORMALIZE_WHITESPACE
-    [('Structure.version', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-     ('Structure.id', Index(byte=0, bit=8, address=0, base_address=0, update=False)),
-     ('Structure.length', Index(byte=0, bit=16, address=0, base_address=0, update=False)),
-     ('Structure.module', Index(byte=0, bit=24, address=0, base_address=0, update=False))]
-    >>> # View the structure field indexes as a JSON string.
-    >>> structure.to_json('index') # doctest: +NORMALIZE_WHITESPACE
-     '{"version": [0,  0, 0, 0, false],
-       "id":      [0,  8, 0, 0, false],
-       "length":  [0, 16, 0, 0, false],
-       "module":  [0, 24, 0, 0, false]}'
+    >>> # List the field alignments in the structure.
+    >>> structure.to_list('alignment') # doctest: +NORMALIZE_WHITESPACE
+    [('Structure.version', Alignment(byte_size=4, bit_offset=0)),
+     ('Structure.id', Alignment(byte_size=4, bit_offset=8)),
+     ('Structure.length', Alignment(byte_size=4, bit_offset=16)),
+     ('Structure.module', Alignment(byte_size=4, bit_offset=24))]
+    >>> # View the structure field alignments as a JSON string.
+    >>> structure.to_json('alignment') # doctest: +NORMALIZE_WHITESPACE
+    '{"version": [4, 0], "id": [4, 8], "length": [4, 16], "module": [4, 24]}'
 
 You can **declare** a `structure`_ with keywords.
 
@@ -226,9 +220,6 @@ You can **declare** a `structure`_ with keywords.
     ...     id=Unsigned(8, 4),
     ...     length=Decimal(8, 4),
     ...     module=Char(4))
-    >>> # Index the fields in the structure.
-    >>> structure.index_fields()
-    Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field values in the structure.
     >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.version', '0x0'),
@@ -252,9 +243,6 @@ You can **nest** `structure`_'s on the fly.
     >>> structure.type.module = Char(4)
     >>> # Add a field to the structure.
     >>> structure.size = Decimal32()
-    >>> # Indexes the fields in the structure.
-    >>> structure.index_fields()
-    Index(byte=8, bit=0, address=8, base_address=0, update=False)
     >>> # Lists the field values in the structure.
     >>> structure.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Structure.type.version', '0x0'),
@@ -271,15 +259,15 @@ You can **nest** `structure`_'s on the fly.
 You can **assign** a `structure`_ to a member of another `structure`_ on the fly.
 
     >>> # Create a structure to be nested.
-    >>> nested = Structure(
+    >>> identifier = Structure(
     ...     version = Byte(4),
     ...     id = Unsigned(8, 4),
     ...     length = Decimal(8, 4),
     ...     module = Char(4))
     >>> # Create an empty structure.
     >>> structure = Structure()
-    >>> # Assign the nested structure to the structure.
-    >>> structure.type = nested
+    >>> # Add a nested structure to the structure.
+    >>> structure.type = identifier
     >>> # Add a field to the structure.
     >>> structure.size = Decimal32()
     >>> # Lists the field values in the structure.
@@ -585,9 +573,9 @@ returned.
     >>> # List the field indexes in the structure.
     >>> structure.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Structure.version', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-    ('Structure.id', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
-    ('Structure.length', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
-    ('Structure.module', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
+     ('Structure.id', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
+     ('Structure.length', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
+     ('Structure.module', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
     >>> # View the structure field indexes as a JSON string.
     >>> structure.to_json('index') # doctest: +NORMALIZE_WHITESPACE
     '{"version": [0, 0, 0, 0, false],
