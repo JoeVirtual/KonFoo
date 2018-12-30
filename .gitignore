@@ -10,3 +10,4 @@ docs/_build
 .tox
 .idea
 .cache
+.pytest_cache
