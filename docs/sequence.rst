@@ -38,13 +38,13 @@ You can **create** a `sequence`_ from a list of members.
     ...     Unsigned8(),
     ...     Decimal8(),
     ...     Char()])
-    >>> # List the field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
-    >>> # View the sequence as a JSON string.
+    >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", 0, "\\u0000"]'
 
@@ -58,10 +58,10 @@ You can **append** a new member to the end of a `sequence`_.
     >>> sequence = Sequence()
     >>> # Append a new member to the sequence.
     >>> sequence.append(Unsigned8())
-    >>> # List the field type names & field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x0')]
-    >>> # View the sequence as a JSON string.
+    >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0"]'
 
@@ -73,11 +73,11 @@ You can **insert** a new member at a given position in a `sequence`_.
 
     >>> # Insert a new member to the sequence.
     >>> sequence.insert(0, Byte())
-    >>> # List the field type names & field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0')]
-    >>> # View the sequence as a JSON string.
+    >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0"]'
 
@@ -89,13 +89,13 @@ You can **extend** a `sequence`_ with a list of new members.
 
     >>> # Extend a sequence with a list of new members.
     >>> sequence.extend([Decimal8(), Char()])
-    >>> # List the field type names & field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
-    >>> # View the sequence as a JSON string.
+    >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", 0, "\\u0000"]'
 
@@ -112,25 +112,25 @@ You can **initialize** the fields in a `sequence`_ by calling the method
     ...     Unsigned8(),
     ...     Decimal8(),
     ...     Char()])
-    >>> # List the field type names & field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
-    >>> # View the sequence as a JSON string.
+    >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", 0, "\\u0000"]'
 
     >>> # Initialize the fields in the sequence.
     >>> sequence.initialize_fields([1, 2, 9, 0x46])
-    >>> # List the field type names & field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
-    >>> # View the sequence as a JSON string.
+    >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x1", "0x2", 9, "F"]'
 
@@ -352,7 +352,7 @@ returned.
     ...     Unsigned8(),
     ...     Decimal8(),
     ...     Char()])
-    >>> # List the field indexes in the sequence.
+    >>> # List the field indexes of the sequence.
     >>> sequence.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[1]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
@@ -371,7 +371,7 @@ returned.
     >>> # Index the fields in the sequence with a start index.
     >>> sequence.index_fields(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> # List the field indexes in the sequence.
+    >>> # List the field indexes of the sequence.
     >>> sequence.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
@@ -402,13 +402,13 @@ You can **deserialize** a byte stream with a `sequence`_ by calling the method
     >>> # Deserialize the byte stream and map it to the sequence.
     >>> sequence.deserialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> # List the field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
-    >>> # View the sequence as a JSON string.
+    >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x1", "0x2", 9, "F"]'
 
@@ -439,10 +439,10 @@ or
 Number of Members
 -----------------
 
-You can **get** the number of members in the `sequence`_ with the built-in
-function :func:`len`.
+You can **get** the number of `sequence`_ members with the built-in function
+:func:`len`.
 
-    >>> # Number of the members in the sequence.
+    >>> # Number of sequence members.
     >>> len(sequence)
     4
 
@@ -450,9 +450,9 @@ function :func:`len`.
 Access a Member
 ---------------
 
-You can **access** a member in a `sequence`_ by its index.
+You can **access** a `sequence member`_ by its index.
 
-    >>> # Access a sequence member with its index.
+    >>> # Access a sequence member by its index.
     >>> sequence[0] # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
@@ -464,7 +464,7 @@ Attributes of a Member Field
 ----------------------------
 
 You can **access** the :class:`Field` attributes of a :ref:`field <field>`
-member in a `sequence`_ with the attribute names:
+member of a `sequence`_ with the attribute names:
 
     >>> # Field name.
     >>> sequence[0].name
@@ -508,6 +508,15 @@ member in a `sequence`_ with the attribute names:
     >>> # Field index: update request for the byte stream.
     >>> sequence[0].index.update
     False
+
+
+You can **check** if a `sequence member`_ is a :ref:`field <field>`.
+
+    >>> is_field(sequence[0])
+    True
+
+
+You can **check** what kind of :ref:`field <field>` it is.
 
     >>> # Field is a bit field.
     >>> sequence[0].is_bit()
@@ -553,20 +562,20 @@ You can **iterate** over all :ref:`field <field>` members of a `sequence`_.
 View Field Attributes
 ---------------------
 
-You can **view** the *attributes* of each :ref:`field <field>` *nested* in a
-`sequence`_ as a list by calling the method :meth:`~Sequence.view_fields`.
+You can **view** the *attributes* of each :ref:`field <field>` of a `sequence`_
+as a list by calling the method :meth:`~Sequence.view_fields`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> # View the field values.
+    >>> # View the sequence field values.
     >>> sequence.view_fields() # doctest: +NORMALIZE_WHITESPACE
     ['0x1', '0x2', 9, 'F']
-    >>> # View the field type name, field value pairs.
+    >>> # View the sequence field type name & field values.
     >>> sequence.view_fields('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     [{'name': 'Byte', 'value': '0x1'},
      {'name': 'Unsigned8', 'value': '0x2'},
      {'name': 'Decimal8', 'value': 9},
      {'name': 'Char', 'value': 'F'}]
-    >>> # View the field indexes.
+    >>> # View the sequence field indexes.
     >>> sequence.view_fields('index') # doctest: +NORMALIZE_WHITESPACE
     [Index(byte=0, bit=0, address=0, base_address=0, update=False),
      Index(byte=1, bit=0, address=1, base_address=0, update=False),
@@ -581,10 +590,11 @@ Default attribute is the field :attr:`~Field.value`.
 View as a JSON string
 ---------------------
 
-You can view the *attributes* of each :ref:`field <field>` *nested* in a `sequence`_
+You can view the *attributes* of each :ref:`field <field>` of a `sequence`_
 as a **JSON** formatted string by calling the method :meth:`~Container.to_json`.
 Default attribute is the field :attr:`~Field.value`.
 
+    >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json()
     '["0x1", "0x2", 9, "F"]'
     >>> print(sequence.to_json(indent=2)) # doctest: +NORMALIZE_WHITESPACE
@@ -594,11 +604,18 @@ Default attribute is the field :attr:`~Field.value`.
       9,
       "F"
     ]
+    >>> # View the sequence field type names & field values as a JSON string.
     >>> sequence.to_json('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     '[{"name": "Byte", "value": "0x1"},
       {"name": "Unsigned8", "value": "0x2"},
       {"name": "Decimal8", "value": 9},
       {"name": "Char", "value": "F"}]'
+    >>> # View the sequence field indexes as a JSON string.
+    >>> sequence.to_json('index')  # doctest: +NORMALIZE_WHITESPACE
+    '[[0, 0, 0, 0, false],
+      [1, 0, 1, 0, false],
+      [2, 0, 2, 0, false],
+      [3, 0, 3, 0, false]]'
 
 .. note::
     The *attributes* of each :ref:`field <field>` for containers *nested* in the
@@ -608,10 +625,10 @@ Default attribute is the field :attr:`~Field.value`.
 List Field Items
 ----------------
 
-You can list all :ref:`field <field>` items *nested* in a `sequence`_
+You can list all :ref:`field <field>` items of a `sequence`_
 as a **flatten** list by calling the method :meth:`~Sequence.field_items`.
 
-    >>> # List the field items in the sequence.
+    >>> # List the field items of the sequence.
     >>> sequence.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('[0]', Byte(index=Index(byte=0, bit=0,
                               address=0, base_address=0,
@@ -642,23 +659,23 @@ as a **flatten** list by calling the method :meth:`~Sequence.field_items`.
 List Field Attributes
 ---------------------
 
-You can **list** the *attributes* of each :ref:`field <field>` *nested* in a
-`sequence`_ as a **flatten** list by calling the method :meth:`~Container.to_list`.
+You can **list** the *attributes* of each :ref:`field <field>` of a `sequence`_
+as a **flatten** list by calling the method :meth:`~Container.to_list`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> # List the field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
-    >>> # List the field type names & field values in the sequence.
+    >>> # List the field type names & field values of the sequence.
     >>> sequence.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', ('Byte', '0x1')),
      ('Sequence[1]', ('Unsigned8', '0x2')),
      ('Sequence[2]', ('Decimal8', 9)),
      ('Sequence[3]', ('Char', 'F'))]
-    >>> # List the field indexes in the sequence.
+    >>> # List the field indexes of the sequence.
     >>> sequence.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
@@ -670,26 +687,25 @@ Default attribute is the field :attr:`~Field.value`.
     *name* is given.
 
 
-You can **list** the *attributes* of each :ref:`field <field>` *nested* in a
-`sequence`_ as a **flatten** ordered dictionary by calling the method
-:meth:`~Container.to_dict`.
+You can **list** the *attributes* of each :ref:`field <field>` of a `sequence`_
+as a **flatten** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> # List the field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Sequence',
                   OrderedDict([('[0]', '0x1'),
                                ('[1]', '0x2'),
                                ('[2]', 9),
                                ('[3]', 'F')]))])
-    >>> # List the field type names & field values in the sequence.
+    >>> # List the field type names & field values of the sequence.
     >>> sequence.to_dict('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Sequence',
                   OrderedDict([('[0]', ('Byte', '0x1')),
                                ('[1]', ('Unsigned8', '0x2')),
                                ('[2]', ('Decimal8', 9)),
                                ('[3]', ('Char', 'F'))]))])
-    >>> # List the field indexes in the sequence.
+    >>> # List the field indexes of the sequence.
     >>> sequence.to_dict('index') # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Sequence',
                   OrderedDict([('[0]', Index(byte=0, bit=0,
@@ -713,11 +729,11 @@ Default attribute is the field :attr:`~Field.value`.
 Save Field Attributes
 ---------------------
 
-You can **save** the *attributes* of each :ref:`field <field>` *nested* in a
-`sequence`_ to an ``.ini`` file by calling the method :meth:`~Container.save`.
+You can **save** the *attributes* of each :ref:`field <field>` of a `sequence`_
+to an ``.ini`` file by calling the method :meth:`~Container.save`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> # List the field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
@@ -739,7 +755,7 @@ The generated ``.ini`` file for the sequence looks like this:
 Load Field Values
 -----------------
 
-You can **load** the *value* of each :ref:`field <field>` *nested* in a `sequence`_
+You can **load** the *value* of each :ref:`field <field>` of a `sequence`_
 from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
     >>> # Create a sequence.
@@ -748,14 +764,14 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     ...     Unsigned8(),
     ...     Decimal8(),
     ...     Char()])
-    >>> # Load the field values from an '.ini' file.
-    >>> sequence.load("_static/sequence.ini", nested=True)
+    >>> # Load the sequence field values from an '.ini' file.
+    >>> sequence.load("_static/sequence.ini")
     [Sequence]
     Sequence[0] = 0x1
     Sequence[1] = 0x2
     Sequence[2] = 9
     Sequence[3] = F
-    >>> # List the field values in the sequence.
+    >>> # List the field values of the sequence.
     >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),

@@ -37,13 +37,13 @@ Define an `array`_ by using a **class** as the `array element`_ *template*.
     ...         super().__init__(template=Byte, capacity=capacity)
     >>> # Create an instance of the array.
     >>> array = ByteArray(4)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('ByteArray[0]', '0x0'),
      ('ByteArray[1]', '0x0'),
      ('ByteArray[2]', '0x0'),
      ('ByteArray[3]', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
 
@@ -57,13 +57,13 @@ Define an `array`_ by using an **instance** as the `array element`_ *template*.
     ...         super().__init__(template=Byte(), capacity=capacity)
     >>> # Create an instance of the array.
     >>> array = ByteArray(4)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('ByteArray[0]', '0x0'),
      ('ByteArray[1]', '0x0'),
      ('ByteArray[2]', '0x0'),
      ('ByteArray[3]', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
 
@@ -87,13 +87,13 @@ pointer **class** for the the attached :ref:`data object <data object>` as the
     ...         super().__init__(Byte())
     >>> # Create an instance of the array.
     >>> array = Array(BytePointer, 2)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array and nested pointers.
     >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x0'),
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x0", "data": "0x0"},
       {"value": "0x0", "data": "0x0"}]'
@@ -101,13 +101,13 @@ pointer **class** for the the attached :ref:`data object <data object>` as the
     >>> array[0].value = 1
     >>> # Set field value of the data object of the fist array element.
     >>> array[0].data.value = 2
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x1", "data": "0x2"},
       {"value": "0x0", "data": "0x0"}]'
@@ -155,13 +155,13 @@ is required, because the `array`_ is able to produce complete copies of a *primi
     ...         return Pointer(self._create_data_object())
     >>> # Create an instance of the array.
     >>> array = Array(FieldPointerFactory(Byte()), 2)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array and nested pointers.
     >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x0'),
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x0", "data": "0x0"},
       {"value": "0x0", "data": "0x0"}]'
@@ -169,13 +169,13 @@ is required, because the `array`_ is able to produce complete copies of a *primi
     >>> array[0].value = 1
     >>> # Set field value of the data object of the fist array element.
     >>> array[0].data.value = 2
-    >>> # List the field values in the array.
+    >>> # List the field values of the array and nested pointers.
     >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x1", "data": "0x2"},
       {"value": "0x0", "data": "0x0"}]'
@@ -187,13 +187,13 @@ Otherwise by creating an `array`_ using an **instance** with *nested* members as
 
     >>> # Create an instance of the array with nested members and without a factory.
     >>> array = Array(Pointer(Byte()), 2)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array and nested pointers.
     >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x0'),
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x0", "data": "0x0"},
       {"value": "0x0", "data": "0x0"}]'
@@ -201,13 +201,13 @@ Otherwise by creating an `array`_ using an **instance** with *nested* members as
     >>> array[0].value = 1
     >>> # Set field value of the data object of the fist array element.
     >>> array[0].data.value = 2
-    >>> # List the field values in the array.
+    >>> # List the field values of the array and nested pointers.
     >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x2')]
-    >>> # View the array as a JSON string.
+    >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x1", "data": "0x2"},
       {"value": "0x0", "data": "0x2"}]'
@@ -223,13 +223,13 @@ You can **create** an `array`_ by assigning an `array element`_ *class* or
     >>> # Create an array with an array element class.
     >>> array = Array(template=Byte, capacity=4)
     >>> array = Array(Byte, 4)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
 
@@ -241,21 +241,21 @@ You can **resize** an `array`_ by calling :meth:`~Array.resize`.
 
     >>> # Create an empty array.
     >>> array = Array(Byte)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     []
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '[]'
     >>> # Resize the array.
     >>> array.resize(4)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
 
@@ -268,25 +268,25 @@ You can **initialize** the fields in an `array`_ by calling the method
 
     >>> # Create an array.
     >>> array = Array(Byte, 4)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
 
-    >>> # Initialize the fields in the array with a fill pattern.
+    >>> # Initialize the fields of the array with a fill pattern.
     >>> array.initialize_fields([1 ,2])
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x1'),
      ('Array[3]', '0x2')]
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x1", "0x2", "0x1", "0x2"]'
 
@@ -298,7 +298,7 @@ You can **display** the `array`_.
 
     >>> # Create an array.
     >>> array = Array(Byte, 4)
-    >>> # Index the fields in the sequence.
+    >>> # Index the fields in the array.
     >>> array.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Display the array.
@@ -500,7 +500,7 @@ returned.
 
     >>> # Create an array.
     >>> array = Array(Byte, 4)
-    >>> # List the field indexes in the array.
+    >>> # List the field indexes of the array.
     >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
@@ -519,7 +519,7 @@ returned.
     >>> # Index the fields in the array with a start index.
     >>> array.index_fields(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> # List the field indexes in the array.
+    >>> # List the field indexes of the array.
     >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
@@ -546,13 +546,13 @@ You can **deserialize** a byte stream with an `array`_ by calling the method
     >>> # Deserialize the byte stream and map it to the array.
     >>> array.deserialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),
      ('Array[3]', '0x4')]
-    >>> # View the array as a JSON string.
+    >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x1", "0x2", "0x3", "0x4"]'
 
@@ -583,10 +583,10 @@ or
 Number of Array Elements
 ------------------------
 
-You can **get** the number of array elements in the `array`_ with the built-in
-function :func:`len`.
+You can **get** the number of `array`_ elements with the built-in function
+:func:`len`.
 
-    >>> # Number of the array elements in the array.
+    >>> # Number of the array elements.
     >>> len(array)
     4
 
@@ -596,7 +596,7 @@ Access an Array Element
 
 You can **access** an `array element`_ of an `array`_ by its index.
 
-    >>> # Access an array member with its index.
+    >>> # Access an array member by its index.
     >>> array[0] # doctest: +NORMALIZE_WHITESPACE
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
@@ -653,6 +653,15 @@ You can **access** the :class:`Field` attributes of an :ref:`field <field>`
     >>> array[0].index.update
     False
 
+
+You can **check** if an `array element`_ is a :ref:`field <field>`.
+
+    >>> is_field(array[0])
+    True
+
+
+You can **check** what kind of :ref:`field <field>` it is.
+
     >>> # Field is a bit field.
     >>> array[0].is_bit()
     False
@@ -691,20 +700,20 @@ You can **iterate** over the array elements of an `array`_.
 View Field Attributes
 ---------------------
 
-You can **view** the *attributes* of each :ref:`field <field>` *nested* in an
-`array`_ as a list by calling the method :meth:`~Sequence.view_fields`.
+You can **view** the *attributes* of each :ref:`field <field>` of an `array`_
+as a list by calling the method :meth:`~Sequence.view_fields`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> # View the field values.
+    >>> # View the array field values.
     >>> array.view_fields()  # doctest: +NORMALIZE_WHITESPACE
     ['0x1', '0x2', '0x3', '0x4']
-    >>> # View the field type name, field value pairs.
+    >>> # View the array field type names & field values.
     >>> array.view_fields('name', 'value')  # doctest: +NORMALIZE_WHITESPACE
     [{'name': 'Byte', 'value': '0x1'},
      {'name': 'Byte', 'value': '0x2'},
      {'name': 'Byte', 'value': '0x3'},
      {'name': 'Byte', 'value': '0x4'}]
-    >>> # View the field indexes.
+    >>> # View the array field indexes.
     >>> array.view_fields('index') # doctest: +NORMALIZE_WHITESPACE
     [Index(byte=0, bit=0, address=0, base_address=0, update=False),
      Index(byte=1, bit=0, address=1, base_address=0, update=False),
@@ -719,10 +728,11 @@ Default attribute is the field :attr:`~Field.value`.
 View as a JSON string
 ---------------------
 
-You can view the *attributes* of each :ref:`field <field>` *nested* in an `array`_
+You can view the *attributes* of each :ref:`field <field>` of an `array`_
 as a **JSON** formatted string by calling the method :meth:`~Container.to_json`.
 Default attribute is the field :attr:`~Field.value`.
 
+    >>> # View the array field values as a JSON string.
     >>> array.to_json()
     '["0x1", "0x2", "0x3", "0x4"]'
     >>> print(array.to_json(indent=2)) # doctest: +NORMALIZE_WHITESPACE
@@ -732,11 +742,18 @@ Default attribute is the field :attr:`~Field.value`.
       "0x3",
       "0x4"
     ]
+    >>> # View the array field type names & field values as a JSON string.
     >>> array.to_json('name', 'value')  # doctest: +NORMALIZE_WHITESPACE
     '[{"name": "Byte", "value": "0x1"},
       {"name": "Byte", "value": "0x2"},
       {"name": "Byte", "value": "0x3"},
       {"name": "Byte", "value": "0x4"}]'
+    >>> # View the array field indexes as a JSON string.
+    >>> array.to_json('index')  # doctest: +NORMALIZE_WHITESPACE
+    '[[0, 0, 0, 0, false],
+      [1, 0, 1, 0, false],
+      [2, 0, 2, 0, false],
+      [3, 0, 3, 0, false]]'
 
 .. note::
     The *attributes* of each :ref:`field <field>` for containers *nested* in the
@@ -746,10 +763,10 @@ Default attribute is the field :attr:`~Field.value`.
 List Field Items
 ----------------
 
-You can list all :ref:`field <field>` items *nested* in an `array`_
+You can list all :ref:`field <field>` items of an `array`_
 as a **flatten** list by calling the method :meth:`~Sequence.field_items`.
 
-    >>> # List the field items in the array.
+    >>> # List the field items of the array.
     >>> array.field_items() # doctest: +NORMALIZE_WHITESPACE
     [('[0]', Byte(index=Index(byte=0, bit=0,
                               address=0, base_address=0,
@@ -780,23 +797,23 @@ as a **flatten** list by calling the method :meth:`~Sequence.field_items`.
 List Field Attributes
 ---------------------
 
-You can **list** the *attributes* of each :ref:`field <field>` *nested* in an
-`array`_ as a **flatten** list by calling the method :meth:`~Container.to_list`.
+You can **list** the *attributes* of each :ref:`field <field>` of an `array`_
+as a **flatten** list by calling the method :meth:`~Container.to_list`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),
      ('Array[3]', '0x4')]
-    >>> # List the field type names & field values in the array.
+    >>> # List the field type names & field values of the array.
     >>> array.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', ('Byte', '0x1')),
      ('Array[1]', ('Byte', '0x2')),
      ('Array[2]', ('Byte', '0x3')),
      ('Array[3]', ('Byte', '0x4'))]
-    >>> # List the field indexes in the array.
+    >>> # List the field indexes of the array.
     >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
@@ -808,26 +825,25 @@ Default attribute is the field :attr:`~Field.value`.
     *name* is given.
 
 
-You can **list** the *attribute* of each :ref:`field <field>` *nested* in an
-`array`_ as a **flatten** ordered dictionary by calling the method
-:meth:`~Container.to_dict`.
+You can **list** the *attribute* of each :ref:`field <field>` of an `array`_
+as a **flatten** ordered dictionary by calling the method :meth:`~Container.to_dict`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_dict() # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Array',
                   OrderedDict([('[0]', '0x1'),
                                ('[1]', '0x2'),
                                ('[2]', '0x3'),
                                ('[3]', '0x4')]))])
-    >>> # List the field type names & field values in the array.
+    >>> # List the field type names & field values of the array.
     >>> array.to_dict('name', 'value') # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Array',
                   OrderedDict([('[0]', ('Byte', '0x1')),
                                ('[1]', ('Byte', '0x2')),
                                ('[2]', ('Byte', '0x3')),
                                ('[3]', ('Byte', '0x4'))]))])
-    >>> # List the field indexes in the array.
+    >>> # List the field indexes of the array.
     >>> array.to_dict('index') # doctest: +NORMALIZE_WHITESPACE
     OrderedDict([('Array',
                   OrderedDict([('[0]', Index(byte=0, bit=0,
@@ -851,17 +867,17 @@ Default attribute is the field :attr:`~Field.value`.
 Save Field Attributes
 ---------------------
 
-You can **save** the *attributes* of each :ref:`field <field>` *nested* in an
-`array`_ to an ``.ini`` file by calling the method :meth:`~Container.save`.
+You can **save** the *attributes* of each :ref:`field <field>` of an `array`_
+to an ``.ini`` file by calling the method :meth:`~Container.save`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),
      ('Array[3]', '0x4')]
-    >>> # Save the field values to an '.ini' file.
+    >>> # Save the array field values to an '.ini' file.
     >>> array.save("_static/array.ini", nested=True)
 
 
@@ -878,19 +894,19 @@ The generated ``.ini`` file for the array looks like this:
 Load Field Values
 -----------------
 
-You can **load** the *value* of each :ref:`field <field>` *nested* in an `array`_
+You can **load** the *value* of each :ref:`field <field>` of an `array`_
 from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
     >>> # Create an array.
     >>> array = Array(Byte, 4)
-    >>> # Load the field values from an '.ini' file.
-    >>> array.load("_static/array.ini", nested=True)
+    >>> # Load the array field values from an '.ini' file.
+    >>> array.load("_static/array.ini")
     [Array]
     Array[0] = 0x1
     Array[1] = 0x2
     Array[2] = 0x3
     Array[3] = 0x4
-    >>> # List the field values in the array.
+    >>> # List the field values of the array.
     >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
