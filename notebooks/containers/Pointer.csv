@@ -1,0 +1,5 @@
+id,type,size,value
+Pointer.field,Pointer32,32,0x1
+Pointer.data.size,Decimal16,16,14
+Pointer.data.item,Pointer32,32,0x10
+Pointer.data.item.data,String14,112,Konfoo is Fun

@@ -1,0 +1,5 @@
+id,type,size,value
+Sequence[0],Byte,8,0x1
+Sequence[1],Unsigned8,8,0x2
+Sequence[2],Decimal8,8,9
+Sequence[3],Char,8,F

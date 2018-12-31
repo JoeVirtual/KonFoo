@@ -44,6 +44,12 @@ You can **create** a `sequence`_ from a list of members.
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x0'},
+     {'id': 'Sequence[1]', 'value': '0x0'},
+     {'id': 'Sequence[2]', 'value': 0},
+     {'id': 'Sequence[3]', 'value': '\x00'}]
     >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", 0, "\\u0000"]'
@@ -61,6 +67,9 @@ You can **append** a new member to the end of a `sequence`_.
     >>> # List the field values of the sequence.
     >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x0')]
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x0'}]
     >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0"]'
@@ -77,6 +86,10 @@ You can **insert** a new member at a given position in a `sequence`_.
     >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0')]
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x0'},
+     {'id': 'Sequence[1]', 'value': '0x0'}]
     >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0"]'
@@ -95,6 +108,12 @@ You can **extend** a `sequence`_ with a list of new members.
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x0'},
+     {'id': 'Sequence[1]', 'value': '0x0'},
+     {'id': 'Sequence[2]', 'value': 0},
+     {'id': 'Sequence[3]', 'value': '\x00'}]
     >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", 0, "\\u0000"]'
@@ -118,6 +137,12 @@ You can **initialize** the fields in a `sequence`_ by calling the method
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x0'},
+     {'id': 'Sequence[1]', 'value': '0x0'},
+     {'id': 'Sequence[2]', 'value': 0},
+     {'id': 'Sequence[3]', 'value': '\x00'}]
     >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", 0, "\\u0000"]'
@@ -130,6 +155,12 @@ You can **initialize** the fields in a `sequence`_ by calling the method
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x1'},
+     {'id': 'Sequence[1]', 'value': '0x2'},
+     {'id': 'Sequence[2]', 'value': 9},
+     {'id': 'Sequence[3]', 'value': 'F'}]
     >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x1", "0x2", 9, "F"]'
@@ -358,6 +389,12 @@ returned.
      ('Sequence[1]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[2]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[3]', Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+    >>> # List the field indexes of the sequence as a CSV list.
+    >>> sequence.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Sequence[1]', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Sequence[2]', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Sequence[3]', 'index.byte': 0, 'index.address': 0}]
     >>> # View the sequence field indexes as a JSON string.
     >>> sequence.to_json('index') # doctest: +NORMALIZE_WHITESPACE
     '[[0, 0, 0, 0, false],
@@ -377,6 +414,12 @@ returned.
      ('Sequence[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
      ('Sequence[2]', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
      ('Sequence[3]', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
+    >>> # List the field indexes of the sequence as a CSV list.
+    >>> sequence.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Sequence[1]', 'index.byte': 1, 'index.address': 1},
+     {'id': 'Sequence[2]', 'index.byte': 2, 'index.address': 2},
+     {'id': 'Sequence[3]', 'index.byte': 3, 'index.address': 3}]
     >>> # View the sequence field indexes as a JSON string.
     >>> sequence.to_json('index') # doctest: +NORMALIZE_WHITESPACE
     '[[0, 0, 0, 0, false],
@@ -408,6 +451,12 @@ You can **deserialize** a byte stream with a `sequence`_ by calling the method
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x1'},
+     {'id': 'Sequence[1]', 'value': '0x2'},
+     {'id': 'Sequence[2]', 'value': 9},
+     {'id': 'Sequence[3]', 'value': 'F'}]
     >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x1", "0x2", 9, "F"]'
@@ -720,6 +769,54 @@ Default attribute is the field :attr:`~Field.value`.
                                ('[3]', Index(byte=3, bit=0,
                                              address=3, base_address=0,
                                              update=False))]))])
+
+.. note::
+    The class name of the instance is used for the root name as long as no
+    *name* is given.
+
+
+You can **list** the *attributes* of each :ref:`field <field>` of a `sequence`_
+as a **flatten** list of dictionaries containing the field *path* and the selected
+field *attributes* by calling the method :meth:`~Container.to_csv`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x1'},
+     {'id': 'Sequence[1]', 'value': '0x2'},
+     {'id': 'Sequence[2]', 'value': 9},
+     {'id': 'Sequence[3]', 'value': 'F'}]
+    >>> # List the field type names & values of the sequence as a CSV list.
+    >>> sequence.to_csv('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'name': 'Byte', 'value': '0x1'},
+     {'id': 'Sequence[1]', 'name': 'Unsigned8', 'value': '0x2'},
+     {'id': 'Sequence[2]', 'name': 'Decimal8', 'value': 9},
+     {'id': 'Sequence[3]', 'name': 'Char', 'value': 'F'}]
+
+.. note::
+    The class name of the instance is used for the root name as long as no
+    *name* is given.
+
+
+Write Field Attributes
+----------------------
+
+You can **write** the *attributes* of each :ref:`field <field>` of a `sequence`_
+to a ``.csv`` file by calling the method :meth:`~Container.write_csv`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> # List the field values of the sequence as a CSV list.
+    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Sequence[0]', 'value': '0x1'},
+     {'id': 'Sequence[1]', 'value': '0x2'},
+     {'id': 'Sequence[2]', 'value': 9},
+     {'id': 'Sequence[3]', 'value': 'F'}]
+    >>> # Save the structure field values to a '.csv' file.
+    >>> sequence.write_csv("_static/sequence.csv")
+
+The generated ``.csv`` file for the structure looks like this:
+
+.. literalinclude:: _static/sequence.csv
 
 .. note::
     The class name of the instance is used for the root name as long as no

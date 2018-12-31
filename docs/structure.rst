@@ -50,6 +50,12 @@ constructor method of the :class:`Structure` class.
      ('Identifier.id', '0x0'),
      ('Identifier.length', 0),
      ('Identifier.module', '\x00')]
+    >>> # List the field values of the structure as a CSV list.
+    >>> identifier.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Identifier.version', 'value': '0x0'},
+     {'id': 'Identifier.id', 'value': '0x0'},
+     {'id': 'Identifier.length', 'value': 0},
+     {'id': 'Identifier.module', 'value': '\x00'}]
     >>> # View the structure field values as a JSON string.
     >>> identifier.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"}'
@@ -83,6 +89,12 @@ each other by using the ``align_to`` parameter of the :class:`Field` class.
      ('Identifier.id', Alignment(byte_size=4, bit_offset=8)),
      ('Identifier.length', Alignment(byte_size=4, bit_offset=16)),
      ('Identifier.module', Alignment(byte_size=4, bit_offset=24))]
+    >>> # List the field alignments of the structure as a CSV list.
+    >>> identifier.to_csv('alignment.byte_size', 'alignment.bit_offset') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Identifier.version', 'alignment.byte_size': 4, 'alignment.bit_offset': 0},
+     {'id': 'Identifier.id', 'alignment.byte_size': 4, 'alignment.bit_offset': 8},
+     {'id': 'Identifier.length', 'alignment.byte_size': 4, 'alignment.bit_offset': 16},
+     {'id': 'Identifier.module', 'alignment.byte_size': 4, 'alignment.bit_offset': 24}]
     >>> # View the structure field alignments as a JSON string.
     >>> identifier.to_json('alignment') # doctest: +NORMALIZE_WHITESPACE
     '{"version": [4, 0], "id": [4, 8], "length": [4, 16], "module": [4, 24]}'
@@ -114,6 +126,13 @@ You can **nest** a `structure`_ in another `structure`_.
      ('Header.type.length', 0),
      ('Header.type.module', '\x00'),
      ('Header.size', 0)]
+    >>> # List the field values of the structure as a CSV list.
+    >>> header.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Header.type.version', 'value': '0x0'},
+     {'id': 'Header.type.id', 'value': '0x0'},
+     {'id': 'Header.type.length', 'value': 0},
+     {'id': 'Header.type.module', 'value': '\x00'},
+     {'id': 'Header.size', 'value': 0}]
     >>> # View the structure field values as a JSON string.
     >>> header.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"type": {"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"},
@@ -140,6 +159,12 @@ You can **inherit** the members from a `structure`_ class to extend or change it
      ('HeaderV1.type.id', '0x0'),
      ('HeaderV1.type.length', 0),
      ('HeaderV1.type.module', '\x00')]
+    >>> # List the field values of the structure as a CSV list.
+    >>> header.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'HeaderV1.type.version', 'value': '0x0'},
+     {'id': 'HeaderV1.type.id', 'value': '0x0'},
+     {'id': 'HeaderV1.type.length', 'value': 0},
+     {'id': 'HeaderV1.type.module', 'value': '\x00'}]
     >>> # View the structure field values as a JSON string.
     >>> header.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"type": {"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"}}'
@@ -160,6 +185,13 @@ You can **inherit** the members from a `structure`_ class to extend or change it
      ('HeaderV2.type.length', 0),
      ('HeaderV2.type.module', '\x00'),
      ('HeaderV2.size', 0)]
+    >>> # List the field values of the structure as a CSV list.
+    >>> header.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'HeaderV2.type.version', 'value': '0x0'},
+     {'id': 'HeaderV2.type.id', 'value': '0x0'},
+     {'id': 'HeaderV2.type.length', 'value': 0},
+     {'id': 'HeaderV2.type.module', 'value': '\x00'},
+     {'id': 'HeaderV2.size', 'value': 0}]
     >>> # View the structure field values as a JSON string.
     >>> header.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"type": {"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"},
@@ -184,6 +216,12 @@ You can **declare** a `structure`_ on the fly.
      ('Structure.id', '0x0'),
      ('Structure.length', 0),
      ('Structure.module', '\x00')]
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'value': '0x0'},
+     {'id': 'Structure.id', 'value': '0x0'},
+     {'id': 'Structure.length', 'value': 0},
+     {'id': 'Structure.module', 'value': '\x00'}]
     >>> # View the structure field values as a JSON string.
     >>> structure.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"}'
@@ -208,6 +246,12 @@ the fly.
      ('Structure.id', Alignment(byte_size=4, bit_offset=8)),
      ('Structure.length', Alignment(byte_size=4, bit_offset=16)),
      ('Structure.module', Alignment(byte_size=4, bit_offset=24))]
+    >>> # List the field alignments of the structure as a CSV list.
+    >>> structure.to_csv('alignment.byte_size', 'alignment.bit_offset') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'alignment.byte_size': 4, 'alignment.bit_offset': 0},
+     {'id': 'Structure.id', 'alignment.byte_size': 4, 'alignment.bit_offset': 8},
+     {'id': 'Structure.length', 'alignment.byte_size': 4, 'alignment.bit_offset': 16},
+     {'id': 'Structure.module', 'alignment.byte_size': 4, 'alignment.bit_offset': 24}]
     >>> # View the structure field alignments as a JSON string.
     >>> structure.to_json('alignment') # doctest: +NORMALIZE_WHITESPACE
     '{"version": [4, 0], "id": [4, 8], "length": [4, 16], "module": [4, 24]}'
@@ -226,6 +270,12 @@ You can **declare** a `structure`_ with keywords.
      ('Structure.id', '0x0'),
      ('Structure.length', 0),
      ('Structure.module', '\x00')]
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'value': '0x0'},
+     {'id': 'Structure.id', 'value': '0x0'},
+     {'id': 'Structure.length', 'value': 0},
+     {'id': 'Structure.module', 'value': '\x00'}]
     >>> # View the structure field values as a JSON string.
     >>> structure.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"}'
@@ -250,6 +300,13 @@ You can **nest** `structure`_'s on the fly.
      ('Structure.type.length', 0),
      ('Structure.type.module', '\x00'),
      ('Structure.size', 0)]
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.type.version', 'value': '0x0'},
+     {'id': 'Structure.type.id', 'value': '0x0'},
+     {'id': 'Structure.type.length', 'value': 0},
+     {'id': 'Structure.type.module', 'value': '\x00'},
+     {'id': 'Structure.size', 'value': 0}]
     >>> # View the structure field values as a JSON string.
     >>> structure.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"type": {"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"},
@@ -276,6 +333,13 @@ You can **assign** a `structure`_ to a member of another `structure`_ on the fly
      ('Structure.type.length', 0),
      ('Structure.type.module', '\x00'),
      ('Structure.size', 0)]
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.type.version', 'value': '0x0'},
+     {'id': 'Structure.type.id', 'value': '0x0'},
+     {'id': 'Structure.type.length', 'value': 0},
+     {'id': 'Structure.type.module', 'value': '\x00'},
+     {'id': 'Structure.size', 'value': 0}]
     >>> # View the structure field values as a JSON string.
     >>> structure.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"type": {"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"},
@@ -300,6 +364,12 @@ You can **initialize** the fields in a `structure`_ by calling the method
      ('Structure.id', '0x0'),
      ('Structure.length', 0),
      ('Structure.module', '\x00')]
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'value': '0x0'},
+     {'id': 'Structure.id', 'value': '0x0'},
+     {'id': 'Structure.length', 'value': 0},
+     {'id': 'Structure.module', 'value': '\x00'}]
     >>> # View the structure field values as a JSON string.
     >>> structure.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"}'
@@ -320,6 +390,12 @@ You can **initialize** the fields in a `structure`_ by calling the method
      ('Structure.id', '0x2'),
      ('Structure.length', 9),
      ('Structure.module', 'F')]
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'value': '0x1'},
+     {'id': 'Structure.id', 'value': '0x2'},
+     {'id': 'Structure.length', 'value': 9},
+     {'id': 'Structure.module', 'value': 'F'}]
     >>> # View the structure field values as a JSON string.
     >>> structure.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"version": "0x1", "id": "0x2", "length": 9, "module": "F"}'
@@ -556,6 +632,12 @@ returned.
      ('Structure.id', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Structure.length', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Structure.module', Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+    >>> # List the field indexes of the structure as a CSV list.
+    >>> structure.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Structure.id', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Structure.length', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Structure.module', 'index.byte': 0, 'index.address': 0}]
     >>> # View the structure field indexes as a JSON string.
     >>> structure.to_json('index') # doctest: +NORMALIZE_WHITESPACE
     '{"version": [0, 0, 0, 0, false],
@@ -575,6 +657,12 @@ returned.
      ('Structure.id', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
      ('Structure.length', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
      ('Structure.module', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
+    >>> # List the field indexes of the structure as a CSV list.
+    >>> structure.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Structure.id', 'index.byte': 1, 'index.address': 1},
+     {'id': 'Structure.length', 'index.byte': 2, 'index.address': 2},
+     {'id': 'Structure.module', 'index.byte': 3, 'index.address': 3}]
     >>> # View the structure field indexes as a JSON string.
     >>> structure.to_json('index') # doctest: +NORMALIZE_WHITESPACE
     '{"version": [0, 0, 0, 0, false],
@@ -606,6 +694,12 @@ You can **deserialize** a byte stream with a `structure`_ by calling the method
      ('Structure.id', '0x2'),
      ('Structure.length', 9),
      ('Structure.module', 'F')]
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'value': '0x1'},
+     {'id': 'Structure.id', 'value': '0x2'},
+     {'id': 'Structure.length', 'value': 9},
+     {'id': 'Structure.module', 'value': 'F'}]
     >>> # View the structure field values as a JSON string.
     >>> structure.to_json() # doctest: +NORMALIZE_WHITESPACE
     '{"version": "0x1", "id": "0x2", "length": 9, "module": "F"}'
@@ -841,7 +935,6 @@ Default attribute is the field :attr:`~Field.value`.
       "length": [2, 0, 2, 0, false],
       "module": [3, 0, 3, 0, false]}'
 
-
 .. note::
     The *attributes* of each :ref:`field <field>` for containers *nested* in the
     `structure`_ are viewed as well (chained method call).
@@ -942,6 +1035,53 @@ Default attribute is the field :attr:`~Field.value`.
                                                 address=3, base_address=0,
                                                 update=False))]))])
 
+.. note::
+    The class name of the instance is used for the root name as long as no
+    *name* is given.
+
+
+You can **list** the *attributes* of each :ref:`field <field>` of a `structure`_
+as a **flatten** list of dictionaries containing the field *path* and the selected
+field *attributes* by calling the method :meth:`~Container.to_csv`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'value': '0x1'},
+     {'id': 'Structure.id', 'value': '0x2'},
+     {'id': 'Structure.length', 'value': 9},
+     {'id': 'Structure.module', 'value': 'F'}]
+    >>> # List the field type names & values of the structure as a CSV list.
+    >>> structure.to_csv('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'name': 'Byte', 'value': '0x1'},
+     {'id': 'Structure.id', 'name': 'Unsigned8', 'value': '0x2'},
+     {'id': 'Structure.length', 'name': 'Decimal8', 'value': 9},
+     {'id': 'Structure.module', 'name': 'Char', 'value': 'F'}]
+
+.. note::
+    The class name of the instance is used for the root name as long as no
+    *name* is given.
+
+
+Write Field Attributes
+----------------------
+
+You can **write** the *attributes* of each :ref:`field <field>` of a `structure`_
+to a ``.csv`` file by calling the method :meth:`~Container.write_csv`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> # List the field values of the structure as a CSV list.
+    >>> structure.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Structure.version', 'value': '0x1'},
+     {'id': 'Structure.id', 'value': '0x2'},
+     {'id': 'Structure.length', 'value': 9},
+     {'id': 'Structure.module', 'value': 'F'}]
+    >>> # Save the structure field values to a '.csv' file.
+    >>> structure.write_csv("_static/structure.csv")
+
+The generated ``.csv`` file for the structure looks like this:
+
+.. literalinclude:: _static/structure.csv
 
 .. note::
     The class name of the instance is used for the root name as long as no

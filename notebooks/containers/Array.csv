@@ -1,0 +1,5 @@
+id,type,size,value
+Array[0],Byte,8,0x1
+Array[1],Byte,8,0x2
+Array[2],Byte,8,0x3
+Array[3],Byte,8,0x4

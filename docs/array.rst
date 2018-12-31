@@ -43,6 +43,12 @@ Define an `array`_ by using a **class** as the `array element`_ *template*.
      ('ByteArray[1]', '0x0'),
      ('ByteArray[2]', '0x0'),
      ('ByteArray[3]', '0x0')]
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'ByteArray[0]', 'value': '0x0'},
+     {'id': 'ByteArray[1]', 'value': '0x0'},
+     {'id': 'ByteArray[2]', 'value': '0x0'},
+     {'id': 'ByteArray[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
@@ -63,6 +69,12 @@ Define an `array`_ by using an **instance** as the `array element`_ *template*.
      ('ByteArray[1]', '0x0'),
      ('ByteArray[2]', '0x0'),
      ('ByteArray[3]', '0x0')]
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'ByteArray[0]', 'value': '0x0'},
+     {'id': 'ByteArray[1]', 'value': '0x0'},
+     {'id': 'ByteArray[2]', 'value': '0x0'},
+     {'id': 'ByteArray[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
@@ -93,6 +105,12 @@ pointer **class** for the the attached :ref:`data object <data object>` as the
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
+    >>> # List the field values of the array and nested pointers as a CSV list.
+    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x0'},
+     {'id': 'Array[0].data', 'value': '0x0'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x0", "data": "0x0"},
@@ -101,12 +119,18 @@ pointer **class** for the the attached :ref:`data object <data object>` as the
     >>> array[0].value = 1
     >>> # Set field value of the data object of the fist array element.
     >>> array[0].data.value = 2
-    >>> # List the field values of the array.
+    >>> # List the field values of the array and nested pointers.
     >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
     [('Array[0]', '0x1'),
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
+    >>> # List the field values of the array and nested pointers as a CSV list.
+    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x1'},
+     {'id': 'Array[0].data', 'value': '0x2'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x1", "data": "0x2"},
@@ -161,6 +185,12 @@ is required, because the `array`_ is able to produce complete copies of a *primi
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
+    >>> # List the field values of the array and nested pointers as a CSV list.
+    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x0'},
+     {'id': 'Array[0].data', 'value': '0x0'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x0", "data": "0x0"},
@@ -175,6 +205,12 @@ is required, because the `array`_ is able to produce complete copies of a *primi
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
+    >>> # List the field values of the array and nested pointers as a CSV list.
+    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x1'},
+     {'id': 'Array[0].data', 'value': '0x2'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x1", "data": "0x2"},
@@ -193,6 +229,12 @@ Otherwise by creating an `array`_ using an **instance** with *nested* members as
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
+    >>> # List the field values of the array and nested pointers as a CSV list.
+    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x0'},
+     {'id': 'Array[0].data', 'value': '0x0'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x0", "data": "0x0"},
@@ -207,6 +249,12 @@ Otherwise by creating an `array`_ using an **instance** with *nested* members as
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x2')]
+    >>> # List the field values of the array and nested pointers as a CSV list.
+    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x1'},
+     {'id': 'Array[0].data', 'value': '0x2'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[1].data', 'value': '0x2'}]
     >>> # View the array and nested pointers field values as a JSON string.
     >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
     '[{"value": "0x1", "data": "0x2"},
@@ -229,6 +277,12 @@ You can **create** an `array`_ by assigning an `array element`_ *class* or
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x0'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[2]', 'value': '0x0'},
+     {'id': 'Array[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
@@ -255,6 +309,12 @@ You can **resize** an `array`_ by calling :meth:`~Array.resize`.
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x0'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[2]', 'value': '0x0'},
+     {'id': 'Array[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
@@ -274,6 +334,12 @@ You can **initialize** the fields in an `array`_ by calling the method
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x0'},
+     {'id': 'Array[1]', 'value': '0x0'},
+     {'id': 'Array[2]', 'value': '0x0'},
+     {'id': 'Array[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x0", "0x0", "0x0", "0x0"]'
@@ -286,6 +352,12 @@ You can **initialize** the fields in an `array`_ by calling the method
      ('Array[1]', '0x2'),
      ('Array[2]', '0x1'),
      ('Array[3]', '0x2')]
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x1'},
+     {'id': 'Array[1]', 'value': '0x2'},
+     {'id': 'Array[2]', 'value': '0x1'},
+     {'id': 'Array[3]', 'value': '0x2'}]
     >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x1", "0x2", "0x1", "0x2"]'
@@ -506,6 +578,12 @@ returned.
      ('Array[1]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[2]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[3]', Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+    >>> # List the field indexes of the array as a CSV list.
+    >>> array.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Array[1]', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Array[2]', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Array[3]', 'index.byte': 0, 'index.address': 0}]
     >>> # View the array field indexes as a JSON string.
     >>> array.to_json('index') # doctest: +NORMALIZE_WHITESPACE
     '[[0, 0, 0, 0, false],
@@ -525,6 +603,12 @@ returned.
      ('Array[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
      ('Array[2]', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
      ('Array[3]', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
+    >>> # List the field indexes of the array as a CSV list.
+    >>> array.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'index.byte': 0, 'index.address': 0},
+     {'id': 'Array[1]', 'index.byte': 1, 'index.address': 1},
+     {'id': 'Array[2]', 'index.byte': 2, 'index.address': 2},
+     {'id': 'Array[3]', 'index.byte': 3, 'index.address': 3}]
     >>> # View the array field indexes as a JSON string.
     >>> array.to_json('index') # doctest: +NORMALIZE_WHITESPACE
     '[[0, 0, 0, 0, false],
@@ -552,6 +636,12 @@ You can **deserialize** a byte stream with an `array`_ by calling the method
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),
      ('Array[3]', '0x4')]
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x1'},
+     {'id': 'Array[1]', 'value': '0x2'},
+     {'id': 'Array[2]', 'value': '0x3'},
+     {'id': 'Array[3]', 'value': '0x4'}]
     >>> # View the array field values as a JSON string.
     >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
     '["0x1", "0x2", "0x3", "0x4"]'
@@ -858,6 +948,54 @@ Default attribute is the field :attr:`~Field.value`.
                                ('[3]', Index(byte=3, bit=0,
                                              address=3, base_address=0,
                                              update=False))]))])
+
+.. note::
+    The class name of the instance is used for the root name as long as no
+    *name* is given.
+
+
+You can **list** the *attributes* of each :ref:`field <field>` of a `array`_
+as a **flatten** list of dictionaries containing the field *path* and the selected
+field *attributes* by calling the method :meth:`~Container.to_csv`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x1'},
+     {'id': 'Array[1]', 'value': '0x2'},
+     {'id': 'Array[2]', 'value': '0x3'},
+     {'id': 'Array[3]', 'value': '0x4'}]
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'name': 'Byte', 'value': '0x1'},
+     {'id': 'Array[1]', 'name': 'Byte', 'value': '0x2'},
+     {'id': 'Array[2]', 'name': 'Byte', 'value': '0x3'},
+     {'id': 'Array[3]', 'name': 'Byte', 'value': '0x4'}]
+
+.. note::
+    The class name of the instance is used for the root name as long as no
+    *name* is given.
+
+
+Write Field Attributes
+----------------------
+
+You can **write** the *attributes* of each :ref:`field <field>` of a `array`_
+to a ``.csv`` file by calling the method :meth:`~Container.write_csv`.
+Default attribute is the field :attr:`~Field.value`.
+
+    >>> # List the field values of the array as a CSV list.
+    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    [{'id': 'Array[0]', 'value': '0x1'},
+     {'id': 'Array[1]', 'value': '0x2'},
+     {'id': 'Array[2]', 'value': '0x3'},
+     {'id': 'Array[3]', 'value': '0x4'}]
+    >>> # Save the structure field values to a '.csv' file.
+    >>> array.write_csv("_static/array.csv")
+
+The generated ``.csv`` file for the structure looks like this:
+
+.. literalinclude:: _static/array.csv
 
 .. note::
     The class name of the instance is used for the root name as long as no

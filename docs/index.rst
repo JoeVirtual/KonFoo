@@ -40,6 +40,7 @@ KonFoo in points:
 * easy syntax for accessing nested fields
 * view the mapped binary data as a JSON string
 * list the mapped binary data as a flatten list or dictionary
+* write the mapped binary data to a ``.csv`` file
 * save the mapped binary data to an ``.ini`` file
 * load the mapped binary data from an ``.ini`` file
 * easy creatable nested metadata dictionaries of the members of a byte stream mapper

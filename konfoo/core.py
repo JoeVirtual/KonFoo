@@ -11,6 +11,7 @@
 import abc
 import calendar
 import copy
+import csv
 import datetime
 import ipaddress
 import json
@@ -200,7 +201,6 @@ class Container:
                                                nested=nested),
                               **options)
         else:
-
             return json.dumps(self.view_fields(*attributes,
                                                nested=nested),
                               cls=_CategoryJSONEncoder,
@@ -232,6 +232,8 @@ class Container:
             Fallback is the field :attr:`~Field.value`.
         :keyword str name: name of the `Container`.
             Default is the class name of the instance.
+        :keyword bool chain: if ``True`` the field *attributes* are chained to its
+            field path. Defaults to ``False``.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` lists their referenced :attr:`~Pointer.data` object
             field attributes as well (chained method call).
@@ -252,7 +254,10 @@ class Container:
                 field_path = '{0}{1}'.format(name, field_path)
             else:
                 field_path = '{0}.{1}'.format(name, field_path)
-            fields.append((field_path, field_getter(field)))
+            if options.get('chain', False) and len(attributes) > 1:
+                fields.append((field_path, *field_getter(field)))
+            else:
+                fields.append((field_path, field_getter(field)))
         return fields
 
     @nested_option()
@@ -287,6 +292,63 @@ class Container:
                 field_path = '_' + field_path
             fields[name][field_path] = field_getter(field)
         return fields
+
+    @staticmethod
+    def _get_fieldnames(*attributes, **options):
+        # Default dictionary keys
+        keys = ['id']
+        if attributes:
+            keys.extend(attributes)
+        else:
+            keys.append('value')
+        # Customized dictionary keys
+        return options.get('fieldnames', keys)
+
+    @nested_option()
+    def to_csv(self, *attributes, **options):
+        """ Returns a **flatten** list of dictionaries containing the field *path*
+        and the selected field *attributes* for each :class:`Field` *nested* in the
+        `Container`.
+
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword str name: name of the `Container`.
+            Default is the class name of the instance.
+        :keyword tuple fieldnames: sequence of dictionary keys for the field *path*
+            and the selected field *attributes*.
+            Defaults to ``('id', *attributes)``.
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
+            `Container` lists their referenced :attr:`~Pointer.data` object
+            field attributes as well (chained method call).
+        """
+        keys = self._get_fieldnames(*attributes, **options)
+        options['chain'] = True
+        return [dict(zip(keys, field)) for field in
+                self.to_list(*attributes, **options)]
+
+    @nested_option()
+    def write_csv(self, file, *attributes, **options):
+        """ Writes the field *path* and the selected field *attributes* for each
+        :class:`Field` *nested* in the `Container` to  a ``.csv`` *file*.
+
+        :param str file: name and location of the ``.csv`` *file*.
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword str name: name of the `Container`.
+            Default is the class name of the instance.
+        :keyword tuple fieldnames: sequence of dictionary keys for the field *path*
+            and the selected field *attributes*.
+            Defaults to ``('id', *attributes)``.
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
+            `Container` lists their referenced :attr:`~Pointer.data` object
+            field attributes as well (chained method call).
+        """
+        with open(file, 'w', newline='') as file_handle:
+            fieldnames = self._get_fieldnames(*attributes, **options)
+            writer = csv.DictWriter(file_handle, fieldnames)
+            writer.writeheader()
+            for row in self.to_csv(*attributes, **options):
+                writer.writerow(row)
 
     @nested_option()
     def save(self, file, *attributes, **options):
@@ -348,9 +410,9 @@ class Container:
         options['save'] = True
         parser = ConfigParser()
         parser.read_dict(self.to_dict(*attributes, **options))
-        with open(file, 'w') as handle:
-            parser.write(handle)
-        handle.close()
+        with open(file, 'w') as file_handle:
+            parser.write(file_handle)
+        file_handle.close()
 
     @nested_option()
     @verbose_option(True)
@@ -5145,7 +5207,7 @@ class Pointer(Decimal, Container):
         index = super().deserialize(buffer, index, **options)
         # Data Object
         if self._data and get_nested(options):
-            options[Option.byte_order] = self.data_byte_order
+            options[Option.byte_order.value] = self.data_byte_order
             self._data.deserialize(self._data_stream,
                                    Index(0, 0,
                                          self.address, self.base_address,
@@ -5183,7 +5245,7 @@ class Pointer(Decimal, Container):
         index = super().serialize(buffer, index, **options)
         # Data Object
         if self._data and get_nested(options):
-            options[Option.byte_order] = self.data_byte_order
+            options[Option.byte_order.value] = self.data_byte_order
             self._data_stream = bytearray()
             self._data.serialize(self._data_stream,
                                  Index(0, 0,

@@ -1,0 +1,5 @@
+id,type,size,value
+Structure.version,Decimal8,8,1
+Structure.id,Decimal8,8,2
+Structure.length,Decimal8,8,9
+Structure.module,Char,8,F
