@@ -39,8 +39,7 @@ KonFoo in points:
 * metadata converter to the `flare.json` format to visualise the mapper with 
   [d3.js](https://d3js.org).
 
-This library is far away from stable but it works so far.
-Feedback is very welcomed!
+This library is stable. Feedback is very welcomed!
 
 
 ## Installation

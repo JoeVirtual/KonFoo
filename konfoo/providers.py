@@ -47,9 +47,10 @@ class Provider:
 
 
 class FileProvider(Provider):
-    """ A `FileProvider` is a data :class:`Provider` for binary files. The *file*
-    content is internal stored in a :attr:`~Provider.cache`. The :meth:`read` and
-    :meth:`write` methods only operate on the internal :attr:`~Provider.cache`.
+    """ A `FileProvider` is a byte stream :class:`Provider` for binary files.
+    The *file* content is internal stored in a :attr:`~Provider.cache`. The
+    :meth:`read` and :meth:`write` methods only operate on the internal
+    :attr:`~Provider.cache`.
 
     Call :meth:`flush` to store the updated file content to the same or a new file.
 
@@ -75,7 +76,7 @@ class FileProvider(Provider):
 
     @property
     def cache(self):
-        """ Returns the internal byte cache of the data `Provider` (read-only)."""
+        """ Returns the internal byte stream cache of the `Provider` (read-only)."""
         return self._cache
 
     def read(self, address=0, count=0):

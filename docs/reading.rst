@@ -100,10 +100,10 @@ or
 Read from the Data Source
 -------------------------
 
-Fourth, **read** the required *byte stream* for the :ref:`data object <data object>`
-attached to the :ref:`pointer <pointer>` field with the *byte stream*
-:ref:`provider <provider>` **from** the *data source* by calling the method
-:meth:`~Pointer.read_from` of the :ref:`pointer <pointer>` field.
+Fourth, **read** the required :ref:`byte stream <data object byte stream>` for the
+:ref:`data object <data object>` attached to the :ref:`pointer <pointer>` field with
+the *byte stream* :ref:`provider <provider>` **from** the *data source* by calling
+the method :meth:`~Pointer.read_from` of the :ref:`pointer <pointer>` field.
 
     >>> # Start address to read the byte stream for the data object from the data source.
     >>> reader.address

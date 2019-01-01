@@ -64,10 +64,10 @@ Third, create a *writer* for the *byte stream* :ref:`mapper <mapper>` to the
 Read from the Data Source
 -------------------------
 
-Fourth, **read** the required *byte stream* for the :ref:`data object <data object>`
-attached to the :ref:`pointer <pointer>` field with the *byte stream*
-:ref:`provider <provider>` **from** the *data source* by calling the method
-:meth:`~Pointer.read_from` of the :ref:`pointer <pointer>` field.
+Fourth, **read** the required :ref:`byte stream <data object byte stream>` for the
+:ref:`data object <data object>` attached to the :ref:`pointer <pointer>` field with
+the *byte stream* :ref:`provider <provider>` **from** the *data source* by calling
+the method :meth:`~Pointer.read_from` of the :ref:`pointer <pointer>` field.
 
     >>> # Read from the provider the byte stream
     >>> writer.read_from(provider, null_allowed=True)
@@ -90,9 +90,10 @@ attached to the :ref:`pointer <pointer>` field with the *byte stream*
 Write to the Data Source
 ------------------------
 
-Firth, **write** the *bytes* represented by any :ref:`field <field>` of the
-:ref:`data object <data object>` attached to a :ref:`pointer <pointer>` **to** the
-*byte stream* :ref:`provider <provider>` by calling method :meth:`~Pointer.write_to`.
+Fifth, **write** the field :ref:`value <field value>` of any :ref:`field <field>`
+of the :ref:`data object <data object>` attached to a :ref:`pointer <pointer>`
+**to** a *data source* with the *byte stream* :ref:`provider <provider>` by
+calling method :meth:`~Pointer.write_to`.
 
     >>> writer.data.length.value = 0x0f00
     >>> # Write to the provider the bytes represented by the field.
@@ -103,9 +104,10 @@ Firth, **write** the *bytes* represented by any :ref:`field <field>` of the
     b"\x0f\x00KonFoo is 'Fun'"
 
 
-or **write** the *bytes* represented by any :ref:`container <container>` of the
-:ref:`data object <data object>` attached to a :ref:`pointer <pointer>` **to** the
-*byte stream* :ref:`provider <provider>` by calling method :meth:`~Pointer.write_to`.
+or **write** the field :ref:`values <field value>` of any :ref:`container <container>`
+of the :ref:`data object <data object>` attached to a :ref:`pointer <pointer>`
+**to** a *data source* with the *byte stream* :ref:`provider <provider>` by
+calling method :meth:`~Pointer.write_to`.
 
     >>> writer.data.length.value = 14
     >>> writer.data.content.value = 'Konfoo is Fun'
