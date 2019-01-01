@@ -26,7 +26,7 @@ KonFoo in points:
 * declarative way to describe the mapping of binary data to Python types
 * declarative classes to read, deserialize, view, serialize and write binary 
   data from and back to a data source
-* easy adjustable data provider bridge to any kind of data source
+* easy adjustable byte stream provider bridge to any kind of data source
 * nesting of classes
 * adaptable classes on the fly while reading/de-serializing binary data
 * easy syntax for accessing nested fields

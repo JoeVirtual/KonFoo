@@ -2,7 +2,6 @@
 
 .. testsetup:: *
 
-    from pprint import pprint
     from konfoo import *
 
 .. _provider:
@@ -34,9 +33,8 @@ Define a Provider
 -----------------
 
 You define a `provider`_ by creating a class derived from the *abstract*
-:class:`Provider` class and implement the two *abstract* methods
-:meth:`~Provider.read` and :meth:`~Provider.write` for your kind of *data source*
-like shown below:
+:class:`Provider` class and implement the two *abstract* methods :meth:`~Provider.read`
+and :meth:`~Provider.write` for your kind of *data source* like shown below:
 
 .. code-block:: python
 

@@ -13,8 +13,8 @@ Introduction
 ============
 
 **KonFoo** is a Python package for de-serializing *byte streams* into a meaningful
-representation. KonFoo helps you to deserialize a *byte stream* retrievable
-through a data :ref:`provider <provider>` to any kind of data source into a
+representation. KonFoo helps you to deserialize a *byte stream* retrievable through
+a *byte stream* :ref:`provider <provider>` to any kind of data source into a
 meaningful representation by just declaring how the parts of a *byte stream*
 should be represented, respectively mapped to :ref:`fields <field>`.
 
@@ -26,17 +26,16 @@ available for all `container`_ and `field`_ classes allows you to adapt even
 expand or declare the representation during the de-serialization process on the fly.
 
 The built-in **deserializer** provided by the :ref:`pointer <pointer>` class
-(called through the :meth:`Pointer.read_from` method) is able to follow even
-nested absolute or relative pointers to retrieve the *byte stream* from the
-data :ref:`provider <provider>` necessary for its referenced :ref:`data object
-<data object>` and to de-serialize (map) it.
+(called through the :meth:`Pointer.read_from` method) is able to follow even nested
+absolute or relative pointers to retrieve the *byte stream* from the *byte stream*
+:ref:`provider <provider>` necessary for its referenced :ref:`data object <data object>`
+and to de-serialize (map) it.
 
-After de-serializing the *byte stream* provided by the data :ref:`provider
-<provider>` the built-in **serializer** provided also by the :ref:`pointer
-<pointer>` class (called through the :meth:`Pointer.write_to` method) is able
-to transfer the manipulated values of any `container`_ or `field`_ in the
-representation back to the data :ref:`provider <provider>` to write it into its
-data source.
+After de-serializing the *byte stream* provided by the *byte stream* :ref:`provider
+<provider>` the built-in **serializer** provided also by the :ref:`pointer <pointer>`
+class (called through the :meth:`Pointer.write_to` method) is able to transfer the
+manipulated values of any `container`_ or `field`_ in the representation back to the
+*byte stream* :ref:`provider <provider>` to write it into its data source.
 
 Concept
 =======
@@ -53,15 +52,14 @@ A `field`_ represents the *value* of a content area in a *byte stream* which
 the `field`_ maps and knows how to **unpack** and **pack** its *value* from and
 to a *byte stream*.
 
-The mixin :ref:`pointer <pointer>` class has both features of the two base
-classes and has an interface to a data :ref:`provider <provider>` to **read**
-and **write** *byte streams* from and back to the data :ref:`provider <provider>`
-for its referenced :ref:`data object <data object>` respectively its *byte
-stream* `mapper`_.
+The mixin :ref:`pointer <pointer>` class has both features of the two base classes
+and has an interface to a *byte stream* :ref:`provider <provider>` to **read**
+and **write** *byte streams* from and back to the *byte stream*
+:ref:`provider <provider>` for its referenced :ref:`data object <data object>`
+respectively its *byte stream* `mapper`_.
 
-The built-in **deserializer** and **serializer** unpacks and packs the *byte
-stream* sequential to and from each `field`_ in the declared *byte stream*
-`mapper`_.
+The built-in **deserializer** and **serializer** unpacks and packs the *byte stream*
+sequential to and from each `field`_ in the declared *byte stream* `mapper`_.
 
 
 .. _mapper:
@@ -72,7 +70,7 @@ Mapper
 A *byte stream* `mapper`_ consists of a collection of `container`_ and `field`_
 members, whereby the `container`_ members describe the structure and the `field`_
 members describe the content of one or more memory areas in a *data source*.
-The mix-in :ref:`pointer <pointer>` field serves in combination with a data
+The mix-in :ref:`pointer <pointer>` field serves in combination with a *byte stream*
 :ref:`provider <provider>` as an entry point to a *data source* for the *byte
 stream* `mapper`_ to deserialize and serialize its *byte stream*.
 
@@ -245,9 +243,9 @@ Fields
 
 The role of a :class:`Field` is to map a specific content area of a *byte stream*.
 A `field`_ is always placed in a `container`_ except from a :ref:`pointer <pointer>`
-field which is the entry point for a `mapper`_ to connect the attached :ref:`data
-object <data object>` via a data :ref:`provider <provider>` to a *data source* to
-retrieve the required *byte stream* for the `mapper`_.
+field which is the entry point for a `mapper`_ to connect the attached
+:ref:`data object <data object>` via a *byte stream* :ref:`provider <provider>` to
+a *data source* to retrieve the required *byte stream* for the `mapper`_.
 
     >>> # Create a field.
     >>> field = Field()

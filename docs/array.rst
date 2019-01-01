@@ -694,8 +694,8 @@ You can **access** an `array element`_ of an `array`_ by its index.
          value='0x1')
 
 
-Attributes of a Array Element Field
------------------------------------
+Attributes of an Array Element Field
+------------------------------------
 
 You can **access** the :class:`Field` attributes of an :ref:`field <field>`
 *array element* of an `array`_ with the attribute names:
