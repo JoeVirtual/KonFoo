@@ -1,3 +1,5 @@
+.. _d3js: http://d3js.org/
+
 .. |PyPI| image:: https://img.shields.io/pypi/v/KonFoo.svg
     :target: https://pypi.org/project/KonFoo
 .. |License| image:: https://img.shields.io/pypi/l/KonFoo.svg
@@ -9,16 +11,14 @@
 .. |Binder| image:: https://mybinder.org/badge.svg
     :target: https://mybinder.org/v2/gh/JoeVirtual/KonFoo/master?filepath=notebooks
 
+|PyPI| |License| |Python| |Status| |Binder|
+
 .. image:: _static/logo.png
    :align: right
    :alt: Logo
 
-.. _d3js: http://d3js.org/
-
 Welcome to the KonF'00' Documentation
 =====================================
-
-|PyPI| |License| |Python| |Status| |Binder|
 
 KonFoo is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the

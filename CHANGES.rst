@@ -9,4 +9,4 @@ Version 0.1
 
 (Major release, unreleased)
 
-* First public preview.
+* First release.

@@ -48,6 +48,80 @@ KonFoo in points:
 - metadata converter to the ``flare.json`` format to visualise the mapper with
   `d3.js <https://d3js.org>`_.
 
+
+Example
+-------
+
+A short example how to define a byte stream mapper.
+
+>>> from konfoo import *
+
+>>> class Identifier(Structure):
+...     def __init__(self):
+...         super().__init__()
+...         self.version = Byte(align_to=4)
+...         self.id = Unsigned(8, align_to=4)
+...         self.length = Decimal(8, align_to=4)
+...         self.module = Char(align_to=4)
+...         self.index_fields()
+>>> class HeaderV1(Structure)
+...     def __init__(self):
+...         super().__init__()
+...         self.type = Identifier()
+>>> class HeaderV2(HeaderV1)
+...     def __init__(self):
+...         super().__init__()
+...         self.size = Decimal(16)
+>>> header = HeaderV2()
+>>> header.to_list()
+[('Structure.type.version', '0x0'),
+ ('Structure.type.id', '0x0'),
+ ('Structure.type.length', 0),
+ ('Structure.type.module', '\x00'),
+ ('Structure.size', 0)]
+>>> header.type.to_csv()
+[{'id': 'Identifier.version', 'value': '0x0'},
+ {'id': 'Identifier.id', 'value': '0x0'},
+ {'id': 'Identifier.length', 'value': 0},
+ {'id': 'Identifier.module', 'value': '\x00'}]
+>>> header.to_json()
+'{"type": {"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"},
+  "size": 0}'
+>>> header.deserialize(bytes.fromhex('0102094610'))
+>>> header.to_json()
+'{"type": {"version": "0x1", "id": "0x2", "length": 9, "module": "F"},
+  "size": 16}'
+>>> bytes(header).hex()
+'0102094610'
+
+>>> header = Structure(
+...     type=Structure(version=Byte(4),
+...                    id=Unsigned(8, 4),
+...                    length=Decimal(8, 4),
+...                    module=Char(4)),
+...     size=Decimal(16))
+>>> header.to_list()
+[('Structure.type.version', '0x0'),
+ ('Structure.type.id', '0x0'),
+ ('Structure.type.length', 0),
+ ('Structure.type.module', '\x00'),
+ ('Structure.size', 0)]
+>>> header.type.to_csv()
+[{'id': 'Structure.version', 'value': '0x0'},
+ {'id': 'Structure.id', 'value': '0x0'},
+ {'id': 'Structure.length', 'value': 0},
+ {'id': 'Structure.module', 'value': '\x00'}]
+>>> header.to_json()
+'{"type": {"version": "0x0", "id": "0x0", "length": 0, "module": "\\u0000"},
+  "size": 0}'
+>>> header.deserialize(bytes.fromhex('0102094610'))
+>>> header.to_json()
+'{"type": {"version": "0x1", "id": "0x2", "length": 9, "module": "F"},
+  "size": 16}'
+>>> bytes(header).hex()
+'0102094610'
+
+
 Installing
 ----------
 
@@ -92,10 +166,10 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[],
-    python_requires='>=3.4',
+    python_requires='>=3.5',
     tests_require=['pytest'],
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',

@@ -326,4 +326,4 @@ __all__ = [
     'd3flare_json', 'HexViewer',
 ]
 
-__version__ = '0.1b8'
+__version__ = '0.1'
