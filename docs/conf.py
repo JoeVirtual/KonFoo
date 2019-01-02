@@ -33,9 +33,9 @@ copyright = '2015-{}, Jochen Gerhäußer'.format(datetime.datetime.utcnow().year
 author = 'Jochen Gerhäußer'
 
 # The short X.Y version.
-version = '1.0'
+version = '1.1'
 # The full version, including alpha/beta/rc tags.
-release = '1.0'
+release = '1.1.dev1'
 
 # -- General configuration ---------------------------------------------------
 
