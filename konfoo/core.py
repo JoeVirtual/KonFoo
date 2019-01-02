@@ -4,7 +4,7 @@
     ~~~~~~~
     <Add description of the module here>.
 
-    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2019 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
@@ -377,7 +377,7 @@ class Container:
         ...         self.array = Array(Byte, 3)
         ...         self.pointer = Pointer()
         >>> foo = Foo()
-        >>> foo.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+        >>> foo.to_list(nested=True)
         [('Foo.stream', ''),
          ('Foo.float', 0.0),
          ('Foo.structure.decimal', 0),
@@ -385,7 +385,7 @@ class Container:
          ('Foo.array[1]', '0x0'),
          ('Foo.array[2]', '0x0'),
          ('Foo.pointer', '0x0')]
-        >>> foo.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+        >>> foo.to_json(nested=True)
         '{"stream": "",
           "float": 0.0,
           "structure": {"decimal": 0},
@@ -455,7 +455,7 @@ class Container:
         ...         self.array = Array(Byte, 3)
         ...         self.pointer = Pointer()
         >>> foo = Foo()
-        >>> foo.load('foo.ini') # doctest: +NORMALIZE_WHITESPACE
+        >>> foo.load('foo.ini')
         [Foo]
         Foo.stream =
         Foo.float = 0.0
@@ -464,7 +464,7 @@ class Container:
         Foo.array[1] = 0x0
         Foo.array[2] = 0x0
         Foo.pointer = 0x0
-        >>> foo.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+        >>> foo.to_list(nested=True)
         [('Foo.stream', ''),
          ('Foo.float', 0.0),
          ('Foo.structure.decimal', 0),
@@ -472,7 +472,7 @@ class Container:
          ('Foo.array[1]', '0x0'),
          ('Foo.array[2]', '0x0'),
          ('Foo.pointer', '0x0')]
-        >>> foo.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+        >>> foo.to_json(nested=True)
         '{"stream": "",
           "float": 0.0,
           "structure": {"decimal": 0},
@@ -1942,7 +1942,7 @@ class Stream(Field):
     False
     >>> hexlify(stream[5:])  # converts to bytes
     b'060708090a'
-    >>> stream.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> stream.describe()
     OrderedDict([('address', 0),
                  ('alignment', [10, 0]),
                  ('class', 'Stream10'),
@@ -2152,7 +2152,7 @@ class String(Stream):
     b'KonFoo'
     >>> string[3:6]  # converts to bytes
     b'Foo'
-    >>> string.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> string.describe()
     OrderedDict([('address', 0),
                  ('alignment', [10, 0]),
                  ('class', 'String10'),
@@ -2248,7 +2248,7 @@ class Float(Field):
     >>> real.value = 3.4028234663852887e+38
     >>> real.value
     3.4028234663852886e+38
-    >>> real.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> real.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Float32'),
@@ -2466,7 +2466,7 @@ class Decimal(Field):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> unsigned.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> unsigned.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Decimal16'),
@@ -2539,7 +2539,7 @@ class Decimal(Field):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> signed.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> signed.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Decimal16'),
@@ -2935,7 +2935,7 @@ class Bit(Decimal):
     Index(byte=0, bit=1, address=0, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'01'
-    >>> bit.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> bit.describe()
     OrderedDict([('address', 0),
                  ('alignment', [1, 0]),
                  ('class', 'Bit'),
@@ -3045,7 +3045,7 @@ class Byte(Decimal):
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff'
-    >>> byte.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> byte.describe()
     OrderedDict([('address', 0),
                  ('alignment', [1, 0]),
                  ('class', 'Byte'),
@@ -3155,7 +3155,7 @@ class Char(Decimal):
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'46'
-    >>> char.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> char.describe()
     OrderedDict([('address', 0),
                  ('alignment', [1, 0]),
                  ('class', 'Char'),
@@ -3268,7 +3268,7 @@ class Signed(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> signed.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> signed.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Signed16'),
@@ -3368,7 +3368,7 @@ class Unsigned(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> unsigned.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> unsigned.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Unsigned16'),
@@ -3477,7 +3477,7 @@ class Bitset(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> bitset.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> bitset.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Bitset16'),
@@ -3587,7 +3587,7 @@ class Bool(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> boolean.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> boolean.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Bool16'),
@@ -3711,7 +3711,7 @@ class Enum(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> enum.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> enum.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Enum16'),
@@ -3864,7 +3864,7 @@ class Scaled(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> scaled.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> scaled.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Scaled16'),
@@ -4035,7 +4035,7 @@ class Fraction(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> unipolar.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> unipolar.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Fraction2.16'),
@@ -4120,7 +4120,7 @@ class Fraction(Decimal):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> bipolar.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> bipolar.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Fraction2.16'),
@@ -4292,7 +4292,7 @@ class Bipolar(Fraction):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ff7f'
-    >>> bipolar.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> bipolar.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Bipolar2.16'),
@@ -4400,7 +4400,7 @@ class Unipolar(Fraction):
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffff'
-    >>> unipolar.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> unipolar.describe()
     OrderedDict([('address', 0),
                  ('alignment', [2, 0]),
                  ('class', 'Unipolar2.16'),
@@ -4491,7 +4491,7 @@ class Datetime(Decimal):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffffffff'
-    >>> datetime.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> datetime.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Datetime32'),
@@ -4598,7 +4598,7 @@ class IPv4Address(Decimal):
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> hexlify(bytestream)
     b'ffffffff'
-    >>> ipv4.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> ipv4.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Ipaddress32'),
@@ -4774,7 +4774,7 @@ class Pointer(Decimal, Container):
     Index(byte=0, bit=0, address=4294967295, base_address=4294967295, update=False)
     >>> pointer.serialize_data()
     b''
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Pointer'),
@@ -4787,21 +4787,21 @@ class Pointer(Decimal, Container):
                  ('size', 32),
                  ('type', 'Pointer'),
                  ('value', '0xffffffff')])
-    >>> pointer.index_fields() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> pointer.view_fields() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.view_fields()
     OrderedDict([('value', '0xffffffff'), ('data', None)])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": null}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
               alignment=Alignment(byte_size=4, bit_offset=0),
               bit_size=32,
               value='0xffffffff'))]
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('Pointer.field', '0xffffffff')]
-    >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict()
     OrderedDict([('Pointer', OrderedDict([('field', '0xffffffff')]))])
     """
     # Item type of a Pointer field.
@@ -5542,7 +5542,7 @@ class StructurePointer(Pointer):
     []
     >>> [(name, member.value) for name, member in pointer.items()]
     []
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StructurePointer'),
@@ -5567,7 +5567,7 @@ class StructurePointer(Pointer):
     OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": {}}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       StructurePointer(index=Index(byte=0, bit=0,
                                    address=0, base_address=0,
@@ -5577,7 +5577,7 @@ class StructurePointer(Pointer):
                        value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
     [('StructurePointer.field', '0xffffffff')]
-    >>> pointer.to_dict(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict(nested=True)
     OrderedDict([('StructurePointer', OrderedDict([('field', '0xffffffff')]))])
     """
 
@@ -5754,20 +5754,20 @@ class SequencePointer(Pointer):
     >>> pointer[:]
     []
     >>> pointer.append(Field())
-    >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer[0]
     Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
     >>> len(pointer)
     1
-    >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.pop()
     Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
     >>> pointer.insert(0, Field())
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     [Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
@@ -5776,7 +5776,7 @@ class SequencePointer(Pointer):
     >>> pointer.data
     []
     >>> pointer.clear()
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'SequencePointer'),
@@ -5801,7 +5801,7 @@ class SequencePointer(Pointer):
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": []}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       SequencePointer(index=Index(byte=0, bit=0,
                                   address=0, base_address=0,
@@ -6009,20 +6009,20 @@ class ArrayPointer(SequencePointer):
     >>> pointer[:]
     []
     >>> pointer.append()
-    >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer[0]
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
          value='0x0')
     >>> len(pointer)
     1
-    >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.pop()
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
          value='0x0')
     >>> pointer.insert(0)
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=Alignment(byte_size=1, bit_offset=0),
           bit_size=8,
@@ -6034,7 +6034,7 @@ class ArrayPointer(SequencePointer):
     >>> len(pointer)
     10
     >>> pointer.clear()
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'ArrayPointer'),
@@ -6059,7 +6059,7 @@ class ArrayPointer(SequencePointer):
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": []}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       ArrayPointer(index=Index(byte=0, bit=0,
                                address=0, base_address=0,
@@ -6165,7 +6165,7 @@ class StreamPointer(Pointer):
     0
     >>> pointer.is_null()
     True
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
@@ -6246,7 +6246,7 @@ class StreamPointer(Pointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StreamPointer'),
@@ -6275,7 +6275,7 @@ class StreamPointer(Pointer):
     OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "4b6f6e466f6f20697320"}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       StreamPointer(index=Index(byte=0, bit=0,
                                 address=0, base_address=0,
@@ -6290,10 +6290,10 @@ class StreamPointer(Pointer):
              alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='4b6f6e466f6f20697320'))]
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('StreamPointer.field', '0xffffffff'),
      ('StreamPointer.data', '4b6f6e466f6f20697320')]
-    >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict()
     OrderedDict([('StreamPointer',
                   OrderedDict([('field', '0xffffffff'),
                                ('data', '4b6f6e466f6f20697320')]))])
@@ -6378,7 +6378,7 @@ class StringPointer(StreamPointer):
     0
     >>> pointer.is_null()
     True
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
@@ -6459,7 +6459,7 @@ class StringPointer(StreamPointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StringPointer'),
@@ -6488,7 +6488,7 @@ class StringPointer(StreamPointer):
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "KonFoo is "}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       StringPointer(index=Index(byte=0, bit=0,
                                 address=0, base_address=0,
@@ -6503,9 +6503,9 @@ class StringPointer(StreamPointer):
              alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='KonFoo is '))]
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('StringPointer.field', '0xffffffff'), ('StringPointer.data', 'KonFoo is ')]
-    >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict()
     OrderedDict([('StringPointer',
                   OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """
@@ -6568,7 +6568,7 @@ class AutoStringPointer(StringPointer):
     0
     >>> pointer.is_null()
     True
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=Alignment(byte_size=64, bit_offset=0),
            bit_size=512,
@@ -6649,7 +6649,7 @@ class AutoStringPointer(StringPointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'AutoStringPointer'),
@@ -6678,7 +6678,7 @@ class AutoStringPointer(StringPointer):
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "KonFoo is "}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       AutoStringPointer(index=Index(byte=0, bit=0,
                                 address=0, base_address=0,
@@ -6693,10 +6693,10 @@ class AutoStringPointer(StringPointer):
              alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='KonFoo is '))]
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('AutoStringPointer.field', '0xffffffff'),
      ('AutoStringPointer.data', 'KonFoo is ')]
-    >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict()
     OrderedDict([('AutoStringPointer',
                   OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """
@@ -6861,7 +6861,7 @@ class RelativePointer(Pointer):
     Index(byte=0, bit=0, address=4294967295, base_address=0, update=False)
     >>> pointer.serialize_data()
     b''
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'RelativePointer'),
@@ -6880,7 +6880,7 @@ class RelativePointer(Pointer):
     OrderedDict([('value', '0xffffffff'), ('data', None)])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": null}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       RelativePointer(index=Index(byte=0, bit=0,
                                   address=0, base_address=0,
@@ -7024,7 +7024,7 @@ class StructureRelativePointer(RelativePointer):
     []
     >>> [(name, member.value) for name, member in pointer.items()]
     []
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StructureRelativePointer'),
@@ -7049,7 +7049,7 @@ class StructureRelativePointer(RelativePointer):
     OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": {}}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       StructureRelativePointer(index=Index(byte=0, bit=0,
                                            address=0, base_address=0,
@@ -7059,7 +7059,7 @@ class StructureRelativePointer(RelativePointer):
                                value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
     [('StructureRelativePointer.field', '0xffffffff')]
-    >>> pointer.to_dict(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict(nested=True)
     OrderedDict([('StructureRelativePointer',
                   OrderedDict([('field', '0xffffffff')]))])
     """
@@ -7235,20 +7235,20 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer[:]
     []
     >>> pointer.append(Field())
-    >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer[0]
     Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
     >>> len(pointer)
     1
-    >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.pop()
     Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=Alignment(byte_size=0, bit_offset=0),
           bit_size=0,
           value=None)
     >>> pointer.insert(0, Field())
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     [Field(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
@@ -7257,7 +7257,7 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer.data
     []
     >>> pointer.clear()
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'SequenceRelativePointer'),
@@ -7282,7 +7282,7 @@ class SequenceRelativePointer(RelativePointer):
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": []}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       SequenceRelativePointer(index=Index(byte=0, bit=0,
                                           address=0, base_address=0,
@@ -7292,7 +7292,7 @@ class SequenceRelativePointer(RelativePointer):
                               value='0xffffffff'))]
     >>> pointer.to_list(nested=True)
     [('SequenceRelativePointer.field', '0xffffffff')]
-    >>> pointer.to_dict(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict(nested=True)
     OrderedDict([('SequenceRelativePointer',
                   OrderedDict([('field', '0xffffffff')]))])
     """
@@ -7492,20 +7492,20 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> pointer[:]
     []
     >>> pointer.append()
-    >>> pointer[0] # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer[0]
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
          value='0x0')
     >>> len(pointer)
     1
-    >>> pointer.pop() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.pop()
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
          value='0x0')
     >>> pointer.insert(0)
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=Alignment(byte_size=1, bit_offset=0),
           bit_size=8,
@@ -7517,7 +7517,7 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> len(pointer)
     10
     >>> pointer.clear()
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'ArrayRelativePointer'),
@@ -7542,7 +7542,7 @@ class ArrayRelativePointer(SequenceRelativePointer):
     OrderedDict([('value', '0xffffffff'), ('data', [])])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": []}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       ArrayRelativePointer(index=Index(byte=0, bit=0,
                                        address=0, base_address=0,
@@ -7648,7 +7648,7 @@ class StreamRelativePointer(RelativePointer):
     0
     >>> pointer.is_null()
     True
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     Stream(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
@@ -7729,7 +7729,7 @@ class StreamRelativePointer(RelativePointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StreamRelativePointer'),
@@ -7758,7 +7758,7 @@ class StreamRelativePointer(RelativePointer):
     OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "4b6f6e466f6f20697320"}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       StreamRelativePointer(index=Index(byte=0, bit=0,
                                         address=0, base_address=0,
@@ -7773,10 +7773,10 @@ class StreamRelativePointer(RelativePointer):
              alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='4b6f6e466f6f20697320'))]
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('StreamRelativePointer.field', '0xffffffff'),
      ('StreamRelativePointer.data', '4b6f6e466f6f20697320')]
-    >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict()
     OrderedDict([('StreamRelativePointer',
                   OrderedDict([('field', '0xffffffff'),
                                ('data', '4b6f6e466f6f20697320')]))])
@@ -7865,7 +7865,7 @@ class StringRelativePointer(StreamRelativePointer):
     0
     >>> pointer.as_unsigned()
     0
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     String(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
            alignment=Alignment(byte_size=0, bit_offset=0),
            bit_size=0,
@@ -7942,7 +7942,7 @@ class StringRelativePointer(StreamRelativePointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'StringRelativePointer'),
@@ -7971,7 +7971,7 @@ class StringRelativePointer(StreamRelativePointer):
     OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "KonFoo is "}'
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       StringRelativePointer(index=Index(byte=0, bit=0,
                                         address=0, base_address=0,
@@ -7986,10 +7986,10 @@ class StringRelativePointer(StreamRelativePointer):
              alignment=Alignment(byte_size=10, bit_offset=0),
              bit_size=80,
              value='KonFoo is '))]
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('StringRelativePointer.field', '0xffffffff'),
      ('StringRelativePointer.data', 'KonFoo is ')]
-    >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict()
     OrderedDict([('StringRelativePointer',
                   OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
     """

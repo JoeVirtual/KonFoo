@@ -6,7 +6,6 @@
     import sys
     from konfoo import *
 
-
 .. _pointer:
 
 Pointer
@@ -86,26 +85,26 @@ Define a `data object`_ by defining an *data object* class.
     >>> # Create an instance of the data object.
     >>> data_object = DataObject()
     >>> # List the field values of the data object.
-    >>> data_object.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_list()
     [('DataObject.size', 0),
      ('DataObject.item', '0x0')]
     >>> # List the field values of the data object as a CSV list.
-    >>> data_object.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_csv()
     [{'id': 'DataObject.size', 'value': 0},
      {'id': 'DataObject.item', 'value': '0x0'}]
     >>> # View the data object field values as a JSON string.
-    >>> data_object.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_json()
     '{"size": 0, "item": "0x0"}'
     >>> # List the field values of the data object and nested pointers.
-    >>> data_object.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_list(nested=True)
     [('DataObject.size', 0),
      ('DataObject.item', '0x0')]
     >>> # List the field values of the data object and nested pointers as a CSV list.
-    >>> data_object.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_csv(nested=True)
     [{'id': 'DataObject.size', 'value': 0},
      {'id': 'DataObject.item', 'value': '0x0'}]
     >>> # View the data object and nested pointers field values as a JSON string.
-    >>> data_object.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_json(nested=True)
     '{"size": 0,
       "item": {"value": "0x0",
                "data": null}}'
@@ -128,32 +127,32 @@ Define a `data object pointer`_ class for the `data object`_ attached to the
     >>> # Create an instance of the pointer.
     >>> pointer = DataObjectPointer()
     >>> # List the field values of the pointer.
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('DataObjectPointer.field', '0x0'),
      ('DataObjectPointer.data.size', 0),
      ('DataObjectPointer.data.item', '0x0')]
     >>> # List the field values of the pointer as a CSV list.
-    >>> pointer.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv()
     [{'id': 'DataObjectPointer.field', 'value': '0x0'},
      {'id': 'DataObjectPointer.data.size', 'value': 0},
      {'id': 'DataObjectPointer.data.item', 'value': '0x0'}]
     >>> # View the pointer field values as a JSON string.
-    >>> pointer.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json()
     '{"value": "0x0",
       "data": {"size": 0,
                "item": "0x0"}}'
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('DataObjectPointer.field', '0x0'),
      ('DataObjectPointer.data.size', 0),
      ('DataObjectPointer.data.item', '0x0')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'DataObjectPointer.field', 'value': '0x0'},
      {'id': 'DataObjectPointer.data.size', 'value': 0},
      {'id': 'DataObjectPointer.data.item', 'value': '0x0'}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"size": 0,
                "item": {"value": "0x0",
@@ -168,27 +167,27 @@ You can *nest* `pointer`_.
     >>> # Create an nested pointer with no data object attached.
     >>> pointer = Pointer(Pointer())
     >>> # List the field values of the pointer.
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('Pointer.field', '0x0'),
      ('Pointer.data', '0x0')]
     >>> # List the field values of the pointer as a CSV list.
-    >>> pointer.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv()
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data', 'value': '0x0'}]
     >>> # View the pointer field values as a JSON string.
-    >>> pointer.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json()
     '{"value": "0x0",
       "data": "0x0"}'
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data', '0x0')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data', 'value': '0x0'}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"value": "0x0",
                "data": null}}'
@@ -196,29 +195,29 @@ You can *nest* `pointer`_.
     >>> # Create an nested pointer with a data object attached.
     >>> pointer = Pointer(Pointer(Byte()))
     >>> # List the field values of the pointer.
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('Pointer.field', '0x0'),
      ('Pointer.data', '0x0')]
     >>> # List the field values of the pointer as a CSV list.
-    >>> pointer.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv()
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data', 'value': '0x0'}]
     >>> # View the pointer field values as a JSON string.
-    >>> pointer.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json()
     '{"value": "0x0",
       "data": "0x0"}'
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data', '0x0'),
      ('Pointer.data.data', '0x0')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data', 'value': '0x0'},
      {'id': 'Pointer.data.data', 'value': '0x0'}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"value": "0x0",
                "data": "0x0"}}'
@@ -238,13 +237,13 @@ You can **access** the `data object`_ attached to a `pointer`_ with the
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Access the data object referenced the pointer field.
-    >>> pointer.data  # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data 
     Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
             alignment=Alignment(byte_size=4, bit_offset=0),
             bit_size=32,
             value='0x0')
     >>> # Access the data object referenced a nested pointer field.
-    >>> pointer.data.data  # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data.data 
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
@@ -360,28 +359,28 @@ You can **declare** a `data object`_ on the fly.
     ...     size = Decimal(16),
     ...     item = Pointer(String()))
     >>> # List the field values of the data object.
-    >>> data_object.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_list()
     [('Structure.size', 0),
      ('Structure.item', '0x0')]
     >>> # List the field values of the data object as a CSV list.
-    >>> data_object.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_csv()
     [{'id': 'Structure.size', 'value': 0},
      {'id': 'Structure.item', 'value': '0x0'}]
     >>> # View the data object field values as a JSON string.
-    >>> data_object.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_json()
     '{"size": 0, "item": "0x0"}'
     >>> # List the field values of the data object and nested pointers.
-    >>> data_object.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_list(nested=True)
     [('Structure.size', 0),
      ('Structure.item', '0x0'),
      ('Structure.item.data', '')]
     >>> # List the field values of the data object and nested pointers as a CSV list.
-    >>> data_object.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_csv(nested=True)
     [{'id': 'Structure.size', 'value': 0},
      {'id': 'Structure.item', 'value': '0x0'},
      {'id': 'Structure.item.data', 'value': ''}]
     >>> # View the data object and nested pointers field values as a JSON string.
-    >>> data_object.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> data_object.to_json(nested=True)
     '{"size": 0,
       "item": {"value": "0x0",
                "data": ""}}'
@@ -391,34 +390,34 @@ You can **declare** a `pointer`_ on the fly.
     >>> # Create a pointer for the data object.
     >>> pointer = Pointer(data_object)
     >>> # List the field values of the pointer.
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0')]
     >>> # List the field values of the pointer as a CSV list.
-    >>> pointer.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv()
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'}]
     >>> # View the pointer field values as a JSON string.
-    >>> pointer.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json()
     '{"value": "0x0",
       "data": {"size": 0,
                "item": "0x0"}}'
     >>> # List all field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"size": 0,
                "item": {"value": "0x0",
@@ -437,19 +436,19 @@ You can **initialize** the fields in a `pointer`_ by calling the method
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"size": 0,
                "item": {"value": "0x0",
@@ -467,19 +466,19 @@ You can **initialize** the fields in a `pointer`_ by calling the method
     ...     }
     ... })
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
@@ -500,7 +499,7 @@ You can **display** a `pointer`_ field.
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Display the pointer field.
-    >>> pointer # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer
     Pointer(index=Index(byte=0, bit=0,
                         address=0, base_address=0,
                         update=False),
@@ -515,7 +514,7 @@ Display the Data Object
 You can **display** the `data object`_ of a `pointer`_ field.
 
     >>> # Display the data object referenced by the pointer
-    >>> pointer.data # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.data
     Structure([('size',
                 Decimal(index=Index(byte=0, bit=0,
                                     address=0, base_address=0,
@@ -538,7 +537,7 @@ You can get the metadata of a `pointer`_ by calling the method
 :meth:`~Pointer.describe`.
 
     >>> # Get the description of the pointer.
-    >>> pointer.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.describe()
     OrderedDict([('address', 0),
                  ('alignment', [4, 0]),
                  ('class', 'Pointer'),
@@ -717,7 +716,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
     >>> # List the field indexes of the pointer and nested pointers.
-    >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
      Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.size',
@@ -727,13 +726,13 @@ The :class:`Index` after the `pointer`_ field is returned.
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=0, base_address=0, update=False))]
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv('index.byte', 'index.address', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
     >>> # View the pointer and nested pointers field indexes as a JSON string.
-    >>> pointer.to_json('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 0, 0, false],
                "item": {"value": [0, 0, 0, 0, false],
@@ -747,7 +746,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     >>> pointer.index_fields(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field indexes of the pointer and nested pointers.
-    >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('index', nested=True)
      [('Pointer.field',
       Index(byte=0, bit=0, address=0, base_address=0, update=False)),
       ('Pointer.data.size',
@@ -757,13 +756,13 @@ The :class:`Index` after the `pointer`_ field is returned.
       ('Pointer.data.item.data',
       Index(byte=0, bit=0, address=0, base_address=0, update=False))]
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv('index.byte', 'index.address', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 1},
      {'id': 'Pointer.data.item', 'index.byte': 2, 'index.address': 3},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
     >>> # View the pointer and nested pointers field indexes as a JSON string.
-    >>> pointer.to_json('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 1, 1, false],
                "item": {"value": [2, 0, 3, 1, false],
@@ -773,7 +772,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     >>> pointer.index_fields(nested=True)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field indexes of the pointer and nested pointers.
-    >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
       Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.size',
@@ -783,13 +782,13 @@ The :class:`Index` after the `pointer`_ field is returned.
      ('Pointer.data.item.data',
       Index(byte=0, bit=0, address=16, base_address=16, update=False))]
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv('index.byte', 'index.address', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 1},
      {'id': 'Pointer.data.item', 'index.byte': 2, 'index.address': 3},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 16}]
     >>> # View the pointer and nested pointers field indexes as a JSON string.
-    >>> pointer.to_json('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 1, 1, false],
                "item": {"value": [2, 0, 3, 1, false],
@@ -816,7 +815,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
     >>> # List the field indexes of the pointer and nested pointers.
-    >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
      Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.size',
@@ -826,26 +825,26 @@ The :class:`Index` after the `pointer`_ field is returned.
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=0, base_address=0, update=False))]
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv('index.byte', 'index.address', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
     >>> # View the pointer and nested pointers field indexes as a JSON string.
-    >>> pointer.to_json('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 0, 0, false],
                "item": {"value": [0, 0, 0, 0, false],
                         "data": [0, 0, 0, 0, false]}}}'
 
     >>> # Index the pointer field.
-    >>> pointer.index_field() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Index the pointer field with a start index.
     >>> pointer.index_field(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field indexes of the pointer and nested pointers.
-    >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
      Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.size',
@@ -855,13 +854,13 @@ The :class:`Index` after the `pointer`_ field is returned.
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=0, base_address=0, update=False))]
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv('index.byte', 'index.address', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
     >>> # View the pointer and nested pointers field indexes as a JSON string.
-    >>> pointer.to_json('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 0, 0, false],
                "item": {"value": [0, 0, 0, 0, false],
@@ -888,7 +887,7 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
     >>> # List the field indexes of the pointer and nested pointers.
-    >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
       Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.size',
@@ -898,13 +897,13 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=0, base_address=0, update=False))]
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv('index.byte', 'index.address', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
     >>> # View the pointer and nested pointers field indexes as a JSON string.
-    >>> pointer.to_json('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 0, 0, false],
                "item": {"value": [0, 0, 0, 0, false],
@@ -913,7 +912,7 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
     >>> # Index the data object and nested pointers of the pointer.
     >>> pointer.index_data()
     >>> # List the field indexes of the pointer and nested pointers.
-    >>> pointer.to_list('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
       Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.size',
@@ -923,13 +922,13 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=16, base_address=16, update=False))]
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv('index.byte', 'index.address', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 1},
      {'id': 'Pointer.data.item', 'index.byte': 2, 'index.address': 3},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 16}]
     >>> # View the pointer and nested pointers field indexes as a JSON string.
-    >>> pointer.to_json('index', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 1, 1, false],
                "item": {"value": [2, 0, 3, 1, false],
@@ -961,19 +960,19 @@ a `pointer`_ by calling the method :meth:`~Pointer.deserialize`.
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
     >>> # List the field values of the pointer and nested pointers
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"size": 0,
                "item": {"value": "0x0",
@@ -989,19 +988,19 @@ a `pointer`_ by calling the method :meth:`~Pointer.deserialize`.
     >>> pointer.deserialize(bytes.fromhex('01000000f00f00'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 0,
                "item": {"value": "0x0",
@@ -1015,19 +1014,19 @@ a `pointer`_ by calling the method :meth:`~Pointer.deserialize`.
     >>> pointer.deserialize(bytes.fromhex('01000000f00f00'), nested=True)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
@@ -1047,19 +1046,19 @@ the method :meth:`~Pointer.deserialize_data` of a `pointer`_ field.
     ...         item=Pointer(String(14))),
     ...     address=1)
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 0,
                "item": {"value": "0x0",
@@ -1077,19 +1076,19 @@ the method :meth:`~Pointer.deserialize_data` of a `pointer`_ field.
     >>> pointer.bytestream
     ''
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', '')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
@@ -1099,19 +1098,19 @@ the method :meth:`~Pointer.deserialize_data` of a `pointer`_ field.
     >>> pointer.data.item.deserialize_data()
     Index(byte=14, bit=0, address=30, base_address=16, update=False)
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
@@ -1139,19 +1138,19 @@ a `pointer`_ by calling the method :meth:`~Pointer.serialize`.
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
@@ -1220,19 +1219,19 @@ the method :meth:`~Pointer.serialize_data` of a `pointer`_ field.
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
@@ -1337,13 +1336,13 @@ by calling the method :meth:`~Pointer.view_fields`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # View the pointer field values.
-    >>> pointer.view_fields() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.view_fields()
     OrderedDict([('value', '0x1'),
                  ('data',
                   OrderedDict([('size', 14),
                                ('item', '0x10')]))])
     >>> # View the pointer and nested pointers field values.
-    >>> pointer.view_fields(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.view_fields(nested=True)
     OrderedDict([('value', '0x1'),
                  ('data',
                   OrderedDict([('size', 14),
@@ -1351,7 +1350,7 @@ Default attribute is the field :attr:`~Field.value`.
                                 OrderedDict([('value', '0x10'),
                                              ('data', 'Konfoo is Fun')]))]))])
     >>> # View the pointer field type names & field values.
-    >>> pointer.view_fields('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.view_fields('name', 'value')
     OrderedDict([('name', 'Pointer32'),
                  ('value', '0x1'),
                  ('data',
@@ -1360,7 +1359,7 @@ Default attribute is the field :attr:`~Field.value`.
                                ('item', {'name': 'Pointer32',
                                          'value': '0x10'})]))])
     >>> # View the pointer field indexes.
-    >>> pointer.view_fields('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.view_fields('index')
     OrderedDict([('value',
                   Index(byte=0, bit=0, address=0, base_address=0, update=False)),
                  ('data',
@@ -1379,11 +1378,11 @@ string by calling the method :meth:`~Container.to_json`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # View the pointer field values as a JSON string.
-    >>> pointer.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json()
     '{"value": "0x1",
       "data": {"size": 14,
                "item": "0x10"}}'
-    >>> print(pointer.to_json(indent=2)) # doctest: +NORMALIZE_WHITESPACE
+    >>> print(pointer.to_json(indent=2))
     {
       "value": "0x1",
       "data": {
@@ -1392,13 +1391,13 @@ Default attribute is the field :attr:`~Field.value`.
       }
     }
     >>> # View the pointer and nested pointers field values as a JSON string.
-    >>> pointer.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
                         "data": "Konfoo is Fun"}}}'
     >>> # View the pointer field type names & field values as a JSON string.
-    >>> pointer.to_json('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('name', 'value')
     '{"name": "Pointer32",
       "value": "0x1",
       "data": {"size": {"name": "Decimal16",
@@ -1406,7 +1405,7 @@ Default attribute is the field :attr:`~Field.value`.
                "item": {"name": "Pointer32",
                         "value": "0x10"}}}'
     >>> # View the pointer field indexes as a JSON string.
-    >>> pointer.to_json('index')  # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_json('index') 
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 1, 1, false],
                "item": [2, 0, 3, 1, false]}}'
@@ -1420,7 +1419,7 @@ You can list all :ref:`field <field>` items of a `pointer`_
 as a **flatten** list by calling the method :meth:`~Pointer.field_items`.
 
     >>> # List the field items of the pointer.
-    >>> pointer.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items()
     [('field',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
               alignment=Alignment(byte_size=4, bit_offset=0),
@@ -1438,7 +1437,7 @@ as a **flatten** list by calling the method :meth:`~Pointer.field_items`.
               value='0x10'))]
 
     >>> # List the field items of the pointer and nested pointers.
-    >>> pointer.field_items(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.field_items(nested=True)
     [('field',
       Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
               alignment=Alignment(byte_size=4, bit_offset=0),
@@ -1469,23 +1468,23 @@ as a **flatten** list by calling the method :meth:`~Container.to_list`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and its attached data object.
-    >>> pointer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list()
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10')]
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
     >>> # List the field type names & values of the pointer and its attached data object.
-    >>> pointer.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('name', 'value')
     [('Pointer.field', ('Pointer32', '0x1')),
      ('Pointer.data.size', ('Decimal16', 14)),
      ('Pointer.data.item', ('Pointer32', '0x10'))]
     >>> # List the field indexes of the pointer and its attached data object.
-    >>> pointer.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list('index')
     [('Pointer.field',
       Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.size',
@@ -1503,26 +1502,26 @@ as a **flatten** ordered dictionary by calling the method :meth:`~Container.to_d
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and its attached data object.
-    >>> pointer.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict()
     OrderedDict([('Pointer',
         OrderedDict([('field', '0x1'),
                      ('data.size', 14),
                      ('data.item', '0x10')]))])
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_dict(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict(nested=True)
     OrderedDict([('Pointer',
         OrderedDict([('field', '0x1'),
                      ('data.size', 14),
                      ('data.item', '0x10'),
                      ('data.item.data', 'Konfoo is Fun')]))])
     >>> # List the field type names & values of the pointer and its attached data object.
-    >>> pointer.to_dict('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict('name', 'value')
     OrderedDict([('Pointer',
         OrderedDict([('field', ('Pointer32', '0x1')),
                      ('data.size', ('Decimal16', 14)),
                      ('data.item', ('Pointer32', '0x10'))]))])
     >>> # List the field indexes of the pointer and its attached data object.
-    >>> pointer.to_dict('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_dict('index')
     OrderedDict([('Pointer',
         OrderedDict([('field',
                       Index(byte=0, bit=0, address=0, base_address=0, update=False)),
@@ -1542,13 +1541,13 @@ field *attributes* by calling the method :meth:`~Container.to_csv`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
     >>> # List the field type names & values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv('name', 'value', nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv('name', 'value', nested=True)
     [{'id': 'Pointer.field', 'name': 'Pointer32', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'name': 'Decimal16', 'value': 14},
      {'id': 'Pointer.data.item', 'name': 'Pointer32', 'value': '0x10'},
@@ -1567,7 +1566,7 @@ to a ``.csv`` file by calling the method :meth:`~Container.write_csv`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and nested pointers as a CSV list.
-    >>> pointer.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
@@ -1592,7 +1591,7 @@ to an ``.ini`` file by calling the method :meth:`~Container.save`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
@@ -1617,14 +1616,14 @@ You can **load** the *values* of each :ref:`field <field>` of a `pointer`_
 from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
     >>> # Load the pointer and nested pointers field values from an '.ini' file.
-    >>> pointer.load("_static/pointer.ini", nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.load("_static/pointer.ini", nested=True)
     [Pointer]
     Pointer.field = 0x1
     Pointer.data.size = 14
     Pointer.data.item = 0x10
     Pointer.data.item.data = Konfoo is Fun
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),

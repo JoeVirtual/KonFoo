@@ -1,4 +1,4 @@
-.. _d3js: http://d3js.org/
+.. _d3js: https://d3js.org/
 
 .. |PyPI| image:: https://img.shields.io/pypi/v/KonFoo.svg
     :target: https://pypi.org/project/KonFoo

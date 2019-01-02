@@ -1,14 +1,14 @@
 include README.md
 include CHANGES.rst
 include LICENSE
+include requirements.txt
+include Makefile
+include make.bat
 
 # Documentation
 graft artwork
 graft docs
 prune docs/_build
-
-# Examples
-graft examples
 
 # Tests
 graft tests

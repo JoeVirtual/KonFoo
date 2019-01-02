@@ -23,7 +23,7 @@ if "%1" == "docs" (
 
 if "%1" == "doctest" (
     cd docs
-    make doctest
+    make doctest -o +NORMALIZE_WHITESPACE
     cd ..
     goto end
 )
@@ -36,13 +36,15 @@ if "%1" == "test" (
 )
 
 if "%1" == "build" (
-    python setup.py sdist bdist_wheel
+    python setup.py sdist
+    python setup.py bdist_wheel
     goto end
 )
 
 if "%1" == "release" (
     set HOME=.
-    python setup.py sdist bdist_wheel
+    python setup.py sdist
+    python setup.py bdist_wheel
     twine upload dist/*
     goto end
 )

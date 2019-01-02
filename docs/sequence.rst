@@ -39,19 +39,19 @@ You can **create** a `sequence`_ from a list of members.
     ...     Decimal8(),
     ...     Char()])
     >>> # List the field values of the sequence.
-    >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list() 
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x0'},
      {'id': 'Sequence[1]', 'value': '0x0'},
      {'id': 'Sequence[2]', 'value': 0},
      {'id': 'Sequence[3]', 'value': '\x00'}]
     >>> # View the sequence field values as a JSON string.
-    >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json()
     '["0x0", "0x0", 0, "\\u0000"]'
 
 
@@ -65,13 +65,13 @@ You can **append** a new member to the end of a `sequence`_.
     >>> # Append a new member to the sequence.
     >>> sequence.append(Unsigned8())
     >>> # List the field values of the sequence.
-    >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list() 
     [('Sequence[0]', '0x0')]
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x0'}]
     >>> # View the sequence field values as a JSON string.
-    >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json()
     '["0x0"]'
 
 
@@ -83,15 +83,15 @@ You can **insert** a new member at a given position in a `sequence`_.
     >>> # Insert a new member to the sequence.
     >>> sequence.insert(0, Byte())
     >>> # List the field values of the sequence.
-    >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list() 
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0')]
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x0'},
      {'id': 'Sequence[1]', 'value': '0x0'}]
     >>> # View the sequence field values as a JSON string.
-    >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json()
     '["0x0", "0x0"]'
 
 
@@ -103,19 +103,19 @@ You can **extend** a `sequence`_ with a list of new members.
     >>> # Extend a sequence with a list of new members.
     >>> sequence.extend([Decimal8(), Char()])
     >>> # List the field values of the sequence.
-    >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list() 
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x0'},
      {'id': 'Sequence[1]', 'value': '0x0'},
      {'id': 'Sequence[2]', 'value': 0},
      {'id': 'Sequence[3]', 'value': '\x00'}]
     >>> # View the sequence field values as a JSON string.
-    >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json()
     '["0x0", "0x0", 0, "\\u0000"]'
 
 
@@ -132,37 +132,37 @@ You can **initialize** the fields in a `sequence`_ by calling the method
     ...     Decimal8(),
     ...     Char()])
     >>> # List the field values of the sequence.
-    >>> sequence.to_list()  # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list() 
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
      ('Sequence[3]', '\x00')]
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x0'},
      {'id': 'Sequence[1]', 'value': '0x0'},
      {'id': 'Sequence[2]', 'value': 0},
      {'id': 'Sequence[3]', 'value': '\x00'}]
     >>> # View the sequence field values as a JSON string.
-    >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json()
     '["0x0", "0x0", 0, "\\u0000"]'
 
     >>> # Initialize the fields in the sequence.
     >>> sequence.initialize_fields([1, 2, 9, 0x46])
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list()
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x1'},
      {'id': 'Sequence[1]', 'value': '0x2'},
      {'id': 'Sequence[2]', 'value': 9},
      {'id': 'Sequence[3]', 'value': 'F'}]
     >>> # View the sequence field values as a JSON string.
-    >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json()
     '["0x1", "0x2", 9, "F"]'
 
 
@@ -181,7 +181,7 @@ You can **display** the `sequence`_.
     >>> sequence.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Display the sequence.
-    >>> sequence # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence
     [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=Alignment(byte_size=1, bit_offset=0),
           bit_size=8,
@@ -207,7 +207,7 @@ You can get the metadata of the `sequence`_ by calling the method
 :meth:`~Sequence.describe`.
 
     >>> # Get the description of the sequence.
-    >>> sequence.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.describe()
     OrderedDict([('class', 'Sequence'),
                  ('name', 'Sequence'),
                  ('size', 4),
@@ -384,19 +384,19 @@ returned.
     ...     Decimal8(),
     ...     Char()])
     >>> # List the field indexes of the sequence.
-    >>> sequence.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list('index')
     [('Sequence[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[1]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[2]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[3]', Index(byte=0, bit=0, address=0, base_address=0, update=False))]
     >>> # List the field indexes of the sequence as a CSV list.
-    >>> sequence.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv('index.byte', 'index.address')
     [{'id': 'Sequence[0]', 'index.byte': 0, 'index.address': 0},
      {'id': 'Sequence[1]', 'index.byte': 0, 'index.address': 0},
      {'id': 'Sequence[2]', 'index.byte': 0, 'index.address': 0},
      {'id': 'Sequence[3]', 'index.byte': 0, 'index.address': 0}]
     >>> # View the sequence field indexes as a JSON string.
-    >>> sequence.to_json('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json('index')
     '[[0, 0, 0, 0, false],
       [0, 0, 0, 0, false],
       [0, 0, 0, 0, false],
@@ -409,19 +409,19 @@ returned.
     >>> sequence.index_fields(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field indexes of the sequence.
-    >>> sequence.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list('index')
     [('Sequence[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
      ('Sequence[2]', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
      ('Sequence[3]', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
     >>> # List the field indexes of the sequence as a CSV list.
-    >>> sequence.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv('index.byte', 'index.address')
     [{'id': 'Sequence[0]', 'index.byte': 0, 'index.address': 0},
      {'id': 'Sequence[1]', 'index.byte': 1, 'index.address': 1},
      {'id': 'Sequence[2]', 'index.byte': 2, 'index.address': 2},
      {'id': 'Sequence[3]', 'index.byte': 3, 'index.address': 3}]
     >>> # View the sequence field indexes as a JSON string.
-    >>> sequence.to_json('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json('index')
     '[[0, 0, 0, 0, false],
       [1, 0, 1, 0, false],
       [2, 0, 2, 0, false],
@@ -446,19 +446,19 @@ You can **deserialize** a byte stream with a `sequence`_ by calling the method
     >>> sequence.deserialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list()
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x1'},
      {'id': 'Sequence[1]', 'value': '0x2'},
      {'id': 'Sequence[2]', 'value': 9},
      {'id': 'Sequence[3]', 'value': 'F'}]
     >>> # View the sequence field values as a JSON string.
-    >>> sequence.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json()
     '["0x1", "0x2", 9, "F"]'
 
 
@@ -502,7 +502,7 @@ Access a Member
 You can **access** a `sequence member`_ by its index.
 
     >>> # Access a sequence member by its index.
-    >>> sequence[0] # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence[0]
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
@@ -595,7 +595,7 @@ Iterate over Members
 
 You can **iterate** over all kind of members of a `sequence`_.
 
-    >>> [member.item_type for member in sequence] # doctest: +NORMALIZE_WHITESPACE
+    >>> [member.item_type for member in sequence]
     [ItemClass.Byte = 42,
      ItemClass.Unsigned = 45,
      ItemClass.Decimal = 40,
@@ -616,16 +616,16 @@ as a list by calling the method :meth:`~Sequence.view_fields`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # View the sequence field values.
-    >>> sequence.view_fields() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.view_fields()
     ['0x1', '0x2', 9, 'F']
     >>> # View the sequence field type name & field values.
-    >>> sequence.view_fields('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.view_fields('name', 'value')
     [{'name': 'Byte', 'value': '0x1'},
      {'name': 'Unsigned8', 'value': '0x2'},
      {'name': 'Decimal8', 'value': 9},
      {'name': 'Char', 'value': 'F'}]
     >>> # View the sequence field indexes.
-    >>> sequence.view_fields('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.view_fields('index')
     [Index(byte=0, bit=0, address=0, base_address=0, update=False),
      Index(byte=1, bit=0, address=1, base_address=0, update=False),
      Index(byte=2, bit=0, address=2, base_address=0, update=False),
@@ -646,7 +646,7 @@ Default attribute is the field :attr:`~Field.value`.
     >>> # View the sequence field values as a JSON string.
     >>> sequence.to_json()
     '["0x1", "0x2", 9, "F"]'
-    >>> print(sequence.to_json(indent=2)) # doctest: +NORMALIZE_WHITESPACE
+    >>> print(sequence.to_json(indent=2))
     [
       "0x1",
       "0x2",
@@ -654,13 +654,13 @@ Default attribute is the field :attr:`~Field.value`.
       "F"
     ]
     >>> # View the sequence field type names & field values as a JSON string.
-    >>> sequence.to_json('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json('name', 'value')
     '[{"name": "Byte", "value": "0x1"},
       {"name": "Unsigned8", "value": "0x2"},
       {"name": "Decimal8", "value": 9},
       {"name": "Char", "value": "F"}]'
     >>> # View the sequence field indexes as a JSON string.
-    >>> sequence.to_json('index')  # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_json('index') 
     '[[0, 0, 0, 0, false],
       [1, 0, 1, 0, false],
       [2, 0, 2, 0, false],
@@ -678,7 +678,7 @@ You can list all :ref:`field <field>` items of a `sequence`_
 as a **flatten** list by calling the method :meth:`~Sequence.field_items`.
 
     >>> # List the field items of the sequence.
-    >>> sequence.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.field_items()
     [('[0]', Byte(index=Index(byte=0, bit=0,
                               address=0, base_address=0,
                               update=False),
@@ -713,19 +713,19 @@ as a **flatten** list by calling the method :meth:`~Container.to_list`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list()
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
     >>> # List the field type names & field values of the sequence.
-    >>> sequence.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list('name', 'value')
     [('Sequence[0]', ('Byte', '0x1')),
      ('Sequence[1]', ('Unsigned8', '0x2')),
      ('Sequence[2]', ('Decimal8', 9)),
      ('Sequence[3]', ('Char', 'F'))]
     >>> # List the field indexes of the sequence.
-    >>> sequence.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list('index')
     [('Sequence[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Sequence[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
      ('Sequence[2]', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
@@ -741,21 +741,21 @@ as a **flatten** ordered dictionary by calling the method :meth:`~Container.to_d
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the sequence.
-    >>> sequence.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_dict()
     OrderedDict([('Sequence',
                   OrderedDict([('[0]', '0x1'),
                                ('[1]', '0x2'),
                                ('[2]', 9),
                                ('[3]', 'F')]))])
     >>> # List the field type names & field values of the sequence.
-    >>> sequence.to_dict('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_dict('name', 'value')
     OrderedDict([('Sequence',
                   OrderedDict([('[0]', ('Byte', '0x1')),
                                ('[1]', ('Unsigned8', '0x2')),
                                ('[2]', ('Decimal8', 9)),
                                ('[3]', ('Char', 'F'))]))])
     >>> # List the field indexes of the sequence.
-    >>> sequence.to_dict('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_dict('index')
     OrderedDict([('Sequence',
                   OrderedDict([('[0]', Index(byte=0, bit=0,
                                              address=0, base_address=0,
@@ -781,13 +781,13 @@ field *attributes* by calling the method :meth:`~Container.to_csv`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x1'},
      {'id': 'Sequence[1]', 'value': '0x2'},
      {'id': 'Sequence[2]', 'value': 9},
      {'id': 'Sequence[3]', 'value': 'F'}]
     >>> # List the field type names & values of the sequence as a CSV list.
-    >>> sequence.to_csv('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv('name', 'value')
     [{'id': 'Sequence[0]', 'name': 'Byte', 'value': '0x1'},
      {'id': 'Sequence[1]', 'name': 'Unsigned8', 'value': '0x2'},
      {'id': 'Sequence[2]', 'name': 'Decimal8', 'value': 9},
@@ -806,7 +806,7 @@ to a ``.csv`` file by calling the method :meth:`~Container.write_csv`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the sequence as a CSV list.
-    >>> sequence.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_csv()
     [{'id': 'Sequence[0]', 'value': '0x1'},
      {'id': 'Sequence[1]', 'value': '0x2'},
      {'id': 'Sequence[2]', 'value': 9},
@@ -831,7 +831,7 @@ to an ``.ini`` file by calling the method :meth:`~Container.save`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list()
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),
@@ -869,7 +869,7 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     Sequence[2] = 9
     Sequence[3] = F
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> sequence.to_list()
     [('Sequence[0]', '0x1'),
      ('Sequence[1]', '0x2'),
      ('Sequence[2]', 9),

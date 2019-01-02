@@ -46,17 +46,17 @@ Third, create a *writer* for the *byte stream* :ref:`mapper <mapper>` to the
     >>> # Create the byte stream writer.
     >>> writer = Pointer(mapper)
     >>> # List the field values of the pointer and data object.
-    >>> writer.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> writer.to_list()
     [('Pointer.field', '0x0'),
      ('Pointer.data.length', 0),
      ('Pointer.data.content', '')]
     >>> # List the field values of the pointer and data object as a CSV list.
-    >>> writer.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> writer.to_csv()
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.length', 'value': 0},
      {'id': 'Pointer.data.content', 'value': ''}]
     >>> # View the pointer and data object field values as a JSON string.
-    >>> writer.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> writer.to_json()
     '{"value": "0x0",
       "data": {"length": 0, "content": ""}}'
 
@@ -75,15 +75,15 @@ the method :meth:`~Pointer.read_from` of the :ref:`pointer <pointer>` field.
     b"\x0f\x00KonFoo is 'Fun'"
 
     >>> # List the field values of the data object.
-    >>> writer.data.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> writer.data.to_list()
     [('Structure.length', 15),
      ('Structure.content', "KonFoo is 'Fun'")]
     >>> # List the field values of the data object as a CSV list.
-    >>> writer.data.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> writer.data.to_csv()
     [{'id': 'Structure.length', 'value': 15},
      {'id': 'Structure.content', 'value': "KonFoo is 'Fun'"}]
     >>> # View the data object field values as a JSON string.
-    >>> writer.data.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> writer.data.to_json()
     '{"length": 15, "content": "KonFoo is \'Fun\'"}'
 
 

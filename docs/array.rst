@@ -38,19 +38,19 @@ Define an `array`_ by using a **class** as the `array element`_ *template*.
     >>> # Create an instance of the array.
     >>> array = ByteArray(4)
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('ByteArray[0]', '0x0'),
      ('ByteArray[1]', '0x0'),
      ('ByteArray[2]', '0x0'),
      ('ByteArray[3]', '0x0')]
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'ByteArray[0]', 'value': '0x0'},
      {'id': 'ByteArray[1]', 'value': '0x0'},
      {'id': 'ByteArray[2]', 'value': '0x0'},
      {'id': 'ByteArray[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
-    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json()
     '["0x0", "0x0", "0x0", "0x0"]'
 
 
@@ -64,19 +64,19 @@ Define an `array`_ by using an **instance** as the `array element`_ *template*.
     >>> # Create an instance of the array.
     >>> array = ByteArray(4)
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('ByteArray[0]', '0x0'),
      ('ByteArray[1]', '0x0'),
      ('ByteArray[2]', '0x0'),
      ('ByteArray[3]', '0x0')]
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'ByteArray[0]', 'value': '0x0'},
      {'id': 'ByteArray[1]', 'value': '0x0'},
      {'id': 'ByteArray[2]', 'value': '0x0'},
      {'id': 'ByteArray[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
-    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json()
     '["0x0", "0x0", "0x0", "0x0"]'
 
 .. important::
@@ -100,19 +100,19 @@ pointer **class** for the the attached :ref:`data object <data object>` as the
     >>> # Create an instance of the array.
     >>> array = Array(BytePointer, 2)
     >>> # List the field values of the array and nested pointers.
-    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list(nested=True)
     [('Array[0]', '0x0'),
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
     >>> # List the field values of the array and nested pointers as a CSV list.
-    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv(nested=True)
     [{'id': 'Array[0]', 'value': '0x0'},
      {'id': 'Array[0].data', 'value': '0x0'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array and nested pointers field values as a JSON string.
-    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json(nested=True)
     '[{"value": "0x0", "data": "0x0"},
       {"value": "0x0", "data": "0x0"}]'
     >>> # Set field value of the pointer of the fist array element.
@@ -120,19 +120,19 @@ pointer **class** for the the attached :ref:`data object <data object>` as the
     >>> # Set field value of the data object of the fist array element.
     >>> array[0].data.value = 2
     >>> # List the field values of the array and nested pointers.
-    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list(nested=True)
     [('Array[0]', '0x1'),
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
     >>> # List the field values of the array and nested pointers as a CSV list.
-    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv(nested=True)
     [{'id': 'Array[0]', 'value': '0x1'},
      {'id': 'Array[0].data', 'value': '0x2'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
-    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json(nested=True)
     '[{"value": "0x1", "data": "0x2"},
       {"value": "0x0", "data": "0x0"}]'
 
@@ -180,19 +180,19 @@ is required, because the `array`_ is able to produce complete copies of a *primi
     >>> # Create an instance of the array.
     >>> array = Array(FieldPointerFactory(Byte()), 2)
     >>> # List the field values of the array and nested pointers.
-    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list(nested=True)
     [('Array[0]', '0x0'),
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
     >>> # List the field values of the array and nested pointers as a CSV list.
-    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv(nested=True)
     [{'id': 'Array[0]', 'value': '0x0'},
      {'id': 'Array[0].data', 'value': '0x0'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array and nested pointers field values as a JSON string.
-    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json(nested=True)
     '[{"value": "0x0", "data": "0x0"},
       {"value": "0x0", "data": "0x0"}]'
     >>> # Set field value of the pointer of the fist array element.
@@ -200,19 +200,19 @@ is required, because the `array`_ is able to produce complete copies of a *primi
     >>> # Set field value of the data object of the fist array element.
     >>> array[0].data.value = 2
     >>> # List the field values of the array and nested pointers.
-    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list(nested=True)
     [('Array[0]', '0x1'),
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
     >>> # List the field values of the array and nested pointers as a CSV list.
-    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv(nested=True)
     [{'id': 'Array[0]', 'value': '0x1'},
      {'id': 'Array[0].data', 'value': '0x2'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array and nested pointers field values as a JSON string.
-    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json(nested=True)
     '[{"value": "0x1", "data": "0x2"},
       {"value": "0x0", "data": "0x0"}]'
 
@@ -224,19 +224,19 @@ Otherwise by creating an `array`_ using an **instance** with *nested* members as
     >>> # Create an instance of the array with nested members and without a factory.
     >>> array = Array(Pointer(Byte()), 2)
     >>> # List the field values of the array and nested pointers.
-    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list(nested=True)
     [('Array[0]', '0x0'),
      ('Array[0].data', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x0')]
     >>> # List the field values of the array and nested pointers as a CSV list.
-    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv(nested=True)
     [{'id': 'Array[0]', 'value': '0x0'},
      {'id': 'Array[0].data', 'value': '0x0'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[1].data', 'value': '0x0'}]
     >>> # View the array and nested pointers field values as a JSON string.
-    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json(nested=True)
     '[{"value": "0x0", "data": "0x0"},
       {"value": "0x0", "data": "0x0"}]'
     >>> # Set field value of the pointer of the fist array element.
@@ -244,19 +244,19 @@ Otherwise by creating an `array`_ using an **instance** with *nested* members as
     >>> # Set field value of the data object of the fist array element.
     >>> array[0].data.value = 2
     >>> # List the field values of the array and nested pointers.
-    >>> array.to_list(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list(nested=True)
     [('Array[0]', '0x1'),
      ('Array[0].data', '0x2'),
      ('Array[1]', '0x0'),
      ('Array[1].data', '0x2')]
     >>> # List the field values of the array and nested pointers as a CSV list.
-    >>> array.to_csv(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv(nested=True)
     [{'id': 'Array[0]', 'value': '0x1'},
      {'id': 'Array[0].data', 'value': '0x2'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[1].data', 'value': '0x2'}]
     >>> # View the array and nested pointers field values as a JSON string.
-    >>> array.to_json(nested=True) # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json(nested=True)
     '[{"value": "0x1", "data": "0x2"},
       {"value": "0x0", "data": "0x2"}]'
 
@@ -272,19 +272,19 @@ You can **create** an `array`_ by assigning an `array element`_ *class* or
     >>> array = Array(template=Byte, capacity=4)
     >>> array = Array(Byte, 4)
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('Array[0]', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'Array[0]', 'value': '0x0'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[2]', 'value': '0x0'},
      {'id': 'Array[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
-    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json()
     '["0x0", "0x0", "0x0", "0x0"]'
 
 
@@ -296,27 +296,27 @@ You can **resize** an `array`_ by calling :meth:`~Array.resize`.
     >>> # Create an empty array.
     >>> array = Array(Byte)
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     []
     >>> # View the array field values as a JSON string.
-    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json()
     '[]'
     >>> # Resize the array.
     >>> array.resize(4)
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('Array[0]', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'Array[0]', 'value': '0x0'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[2]', 'value': '0x0'},
      {'id': 'Array[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
-    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json()
     '["0x0", "0x0", "0x0", "0x0"]'
 
 
@@ -329,37 +329,37 @@ You can **initialize** the fields in an `array`_ by calling the method
     >>> # Create an array.
     >>> array = Array(Byte, 4)
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('Array[0]', '0x0'),
      ('Array[1]', '0x0'),
      ('Array[2]', '0x0'),
      ('Array[3]', '0x0')]
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'Array[0]', 'value': '0x0'},
      {'id': 'Array[1]', 'value': '0x0'},
      {'id': 'Array[2]', 'value': '0x0'},
      {'id': 'Array[3]', 'value': '0x0'}]
     >>> # View the array field values as a JSON string.
-    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json()
     '["0x0", "0x0", "0x0", "0x0"]'
 
     >>> # Initialize the fields of the array with a fill pattern.
     >>> array.initialize_fields([1 ,2])
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x1'),
      ('Array[3]', '0x2')]
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'Array[0]', 'value': '0x1'},
      {'id': 'Array[1]', 'value': '0x2'},
      {'id': 'Array[2]', 'value': '0x1'},
      {'id': 'Array[3]', 'value': '0x2'}]
     >>> # View the array field values as a JSON string.
-    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json()
     '["0x1", "0x2", "0x1", "0x2"]'
 
 
@@ -374,7 +374,7 @@ You can **display** the `array`_.
     >>> array.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Display the array.
-    >>> array # doctest: +NORMALIZE_WHITESPACE
+    >>> array
     [Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
           alignment=Alignment(byte_size=1, bit_offset=0),
           bit_size=8,
@@ -400,7 +400,7 @@ You can get the metadata of the `array`_ by calling the method
 :meth:`~Sequence.describe`.
 
     >>> # Get the description of the array.
-    >>> array.describe() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.describe()
     OrderedDict([('class', 'Array'),
                  ('name', 'Array'),
                  ('size', 4),
@@ -573,19 +573,19 @@ returned.
     >>> # Create an array.
     >>> array = Array(Byte, 4)
     >>> # List the field indexes of the array.
-    >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list('index')
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[2]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[3]', Index(byte=0, bit=0, address=0, base_address=0, update=False))]
     >>> # List the field indexes of the array as a CSV list.
-    >>> array.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv('index.byte', 'index.address')
     [{'id': 'Array[0]', 'index.byte': 0, 'index.address': 0},
      {'id': 'Array[1]', 'index.byte': 0, 'index.address': 0},
      {'id': 'Array[2]', 'index.byte': 0, 'index.address': 0},
      {'id': 'Array[3]', 'index.byte': 0, 'index.address': 0}]
     >>> # View the array field indexes as a JSON string.
-    >>> array.to_json('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json('index')
     '[[0, 0, 0, 0, false],
       [0, 0, 0, 0, false],
       [0, 0, 0, 0, false],
@@ -598,19 +598,19 @@ returned.
     >>> array.index_fields(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field indexes of the array.
-    >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list('index')
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
      ('Array[2]', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
      ('Array[3]', Index(byte=3, bit=0, address=3, base_address=0, update=False))]
     >>> # List the field indexes of the array as a CSV list.
-    >>> array.to_csv('index.byte', 'index.address') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv('index.byte', 'index.address')
     [{'id': 'Array[0]', 'index.byte': 0, 'index.address': 0},
      {'id': 'Array[1]', 'index.byte': 1, 'index.address': 1},
      {'id': 'Array[2]', 'index.byte': 2, 'index.address': 2},
      {'id': 'Array[3]', 'index.byte': 3, 'index.address': 3}]
     >>> # View the array field indexes as a JSON string.
-    >>> array.to_json('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json('index')
     '[[0, 0, 0, 0, false],
       [1, 0, 1, 0, false],
       [2, 0, 2, 0, false],
@@ -631,19 +631,19 @@ You can **deserialize** a byte stream with an `array`_ by calling the method
     >>> array.deserialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),
      ('Array[3]', '0x4')]
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'Array[0]', 'value': '0x1'},
      {'id': 'Array[1]', 'value': '0x2'},
      {'id': 'Array[2]', 'value': '0x3'},
      {'id': 'Array[3]', 'value': '0x4'}]
     >>> # View the array field values as a JSON string.
-    >>> array.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json()
     '["0x1", "0x2", "0x3", "0x4"]'
 
 
@@ -687,7 +687,7 @@ Access an Array Element
 You can **access** an `array element`_ of an `array`_ by its index.
 
     >>> # Access an array member by its index.
-    >>> array[0] # doctest: +NORMALIZE_WHITESPACE
+    >>> array[0]
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
@@ -780,7 +780,7 @@ Iterate over Array Elements
 
 You can **iterate** over the array elements of an `array`_.
 
-    >>> [element.item_type for element in array] # doctest: +NORMALIZE_WHITESPACE
+    >>> [element.item_type for element in array]
     [ItemClass.Byte = 42,
      ItemClass.Byte = 42,
      ItemClass.Byte = 42,
@@ -795,16 +795,16 @@ as a list by calling the method :meth:`~Sequence.view_fields`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # View the array field values.
-    >>> array.view_fields()  # doctest: +NORMALIZE_WHITESPACE
+    >>> array.view_fields() 
     ['0x1', '0x2', '0x3', '0x4']
     >>> # View the array field type names & field values.
-    >>> array.view_fields('name', 'value')  # doctest: +NORMALIZE_WHITESPACE
+    >>> array.view_fields('name', 'value') 
     [{'name': 'Byte', 'value': '0x1'},
      {'name': 'Byte', 'value': '0x2'},
      {'name': 'Byte', 'value': '0x3'},
      {'name': 'Byte', 'value': '0x4'}]
     >>> # View the array field indexes.
-    >>> array.view_fields('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.view_fields('index')
     [Index(byte=0, bit=0, address=0, base_address=0, update=False),
      Index(byte=1, bit=0, address=1, base_address=0, update=False),
      Index(byte=2, bit=0, address=2, base_address=0, update=False),
@@ -825,7 +825,7 @@ Default attribute is the field :attr:`~Field.value`.
     >>> # View the array field values as a JSON string.
     >>> array.to_json()
     '["0x1", "0x2", "0x3", "0x4"]'
-    >>> print(array.to_json(indent=2)) # doctest: +NORMALIZE_WHITESPACE
+    >>> print(array.to_json(indent=2))
     [
       "0x1",
       "0x2",
@@ -833,13 +833,13 @@ Default attribute is the field :attr:`~Field.value`.
       "0x4"
     ]
     >>> # View the array field type names & field values as a JSON string.
-    >>> array.to_json('name', 'value')  # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json('name', 'value') 
     '[{"name": "Byte", "value": "0x1"},
       {"name": "Byte", "value": "0x2"},
       {"name": "Byte", "value": "0x3"},
       {"name": "Byte", "value": "0x4"}]'
     >>> # View the array field indexes as a JSON string.
-    >>> array.to_json('index')  # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_json('index') 
     '[[0, 0, 0, 0, false],
       [1, 0, 1, 0, false],
       [2, 0, 2, 0, false],
@@ -857,7 +857,7 @@ You can list all :ref:`field <field>` items of an `array`_
 as a **flatten** list by calling the method :meth:`~Sequence.field_items`.
 
     >>> # List the field items of the array.
-    >>> array.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.field_items()
     [('[0]', Byte(index=Index(byte=0, bit=0,
                               address=0, base_address=0,
                               update=False),
@@ -892,19 +892,19 @@ as a **flatten** list by calling the method :meth:`~Container.to_list`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),
      ('Array[3]', '0x4')]
     >>> # List the field type names & field values of the array.
-    >>> array.to_list('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list('name', 'value')
     [('Array[0]', ('Byte', '0x1')),
      ('Array[1]', ('Byte', '0x2')),
      ('Array[2]', ('Byte', '0x3')),
      ('Array[3]', ('Byte', '0x4'))]
     >>> # List the field indexes of the array.
-    >>> array.to_list('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list('index')
     [('Array[0]', Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Array[1]', Index(byte=1, bit=0, address=1, base_address=0, update=False)),
      ('Array[2]', Index(byte=2, bit=0, address=2, base_address=0, update=False)),
@@ -920,21 +920,21 @@ as a **flatten** ordered dictionary by calling the method :meth:`~Container.to_d
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the array.
-    >>> array.to_dict() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_dict()
     OrderedDict([('Array',
                   OrderedDict([('[0]', '0x1'),
                                ('[1]', '0x2'),
                                ('[2]', '0x3'),
                                ('[3]', '0x4')]))])
     >>> # List the field type names & field values of the array.
-    >>> array.to_dict('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_dict('name', 'value')
     OrderedDict([('Array',
                   OrderedDict([('[0]', ('Byte', '0x1')),
                                ('[1]', ('Byte', '0x2')),
                                ('[2]', ('Byte', '0x3')),
                                ('[3]', ('Byte', '0x4'))]))])
     >>> # List the field indexes of the array.
-    >>> array.to_dict('index') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_dict('index')
     OrderedDict([('Array',
                   OrderedDict([('[0]', Index(byte=0, bit=0,
                                              address=0, base_address=0,
@@ -960,13 +960,13 @@ field *attributes* by calling the method :meth:`~Container.to_csv`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'Array[0]', 'value': '0x1'},
      {'id': 'Array[1]', 'value': '0x2'},
      {'id': 'Array[2]', 'value': '0x3'},
      {'id': 'Array[3]', 'value': '0x4'}]
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv('name', 'value') # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv('name', 'value')
     [{'id': 'Array[0]', 'name': 'Byte', 'value': '0x1'},
      {'id': 'Array[1]', 'name': 'Byte', 'value': '0x2'},
      {'id': 'Array[2]', 'name': 'Byte', 'value': '0x3'},
@@ -985,7 +985,7 @@ to a ``.csv`` file by calling the method :meth:`~Container.write_csv`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the array as a CSV list.
-    >>> array.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_csv()
     [{'id': 'Array[0]', 'value': '0x1'},
      {'id': 'Array[1]', 'value': '0x2'},
      {'id': 'Array[2]', 'value': '0x3'},
@@ -1010,7 +1010,7 @@ to an ``.ini`` file by calling the method :meth:`~Container.save`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),
@@ -1045,7 +1045,7 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     Array[2] = 0x3
     Array[3] = 0x4
     >>> # List the field values of the array.
-    >>> array.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> array.to_list()
     [('Array[0]', '0x1'),
      ('Array[1]', '0x2'),
      ('Array[2]', '0x3'),

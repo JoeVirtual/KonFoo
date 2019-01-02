@@ -2,7 +2,7 @@ docs:
 	@cd docs; make html
 
 test:
-	@cd tests; py.test
+	@cd tests; pytest
 
 build:
 	python setup.py sdist bdist_wheel

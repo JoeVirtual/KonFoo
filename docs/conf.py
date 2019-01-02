@@ -6,6 +6,7 @@
 # For a full list see the documentation:
 # http://www.sphinx-doc.org/en/stable/config
 import datetime
+import doctest
 import os
 import sys
 
@@ -199,3 +200,7 @@ extlinks = {
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3.7', None)
 }
+
+# -- Options for Doctest ------------------------------------------------------
+
+doctest_default_flags = doctest.ELLIPSIS | doctest.IGNORE_EXCEPTION_DETAIL | doctest.NORMALIZE_WHITESPACE

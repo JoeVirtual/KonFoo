@@ -109,7 +109,7 @@ Default attribute is the field :attr:`~Field.value`.
     >>> # Create an empty container.
     >>> container = Container()
     >>> # View the field values in the container.
-    >>> container.view_fields() # doctest: +NORMALIZE_WHITESPACE
+    >>> container.view_fields()
 
 .. note::
     The *attributes* of each `field`_ for containers *nested* in the `container`_
@@ -123,7 +123,7 @@ A `container`_ can **view** the *attributes* of each `field`_ *nested* in the
 :meth:`~Container.to_json`.
 Default attribute is the field :attr:`~Field.value`.
 
-    >>> container.to_json() # doctest: +NORMALIZE_WHITESPACE
+    >>> container.to_json()
     'null'
 
 .. note::
@@ -139,7 +139,7 @@ as a **flatten** list in the form of ``('field path', field item)`` tuples
 by calling its method :meth:`~Container.field_items`.
 
     >>> # List the field items in the container.
-    >>> container.field_items() # doctest: +NORMALIZE_WHITESPACE
+    >>> container.field_items()
     []
 
 
@@ -153,7 +153,7 @@ A `container`_ can **list** the *attributes* of each `field`_ item *nested* in t
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values in the container.
-    >>> container.to_list() # doctest: +NORMALIZE_WHITESPACE
+    >>> container.to_list()
     []
 
 
@@ -164,7 +164,7 @@ by calling its method :meth:`~Container.to_dict`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values in the container.
-    >>> container.to_dict()  # doctest: +NORMALIZE_WHITESPACE
+    >>> container.to_dict() 
     OrderedDict([('Container', OrderedDict())])
 
 
@@ -174,7 +174,7 @@ the selected field *attributes* by calling its method :meth:`~Container.to_csv`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values in the container.
-    >>> container.to_csv() # doctest: +NORMALIZE_WHITESPACE
+    >>> container.to_csv()
     []
 
 .. note::
@@ -250,7 +250,7 @@ a *data source* to retrieve the required *byte stream* for the `mapper`_.
     >>> # Create a field.
     >>> field = Field()
     >>> # Display the field.
-    >>> field # doctest: +NORMALIZE_WHITESPACE
+    >>> field
     Field(index=Index(byte=0, bit=0,
                       address=0, base_address=0,
                       update=False),
@@ -453,7 +453,7 @@ For example to describe a 2-bit ambivalent enumeration by an :class:`Enum`
     >>> int(ambivalent)
     0
     >>> # Display the field.
-    >>> ambivalent # doctest: +NORMALIZE_WHITESPACE
+    >>> ambivalent
     Enum(index=Index(byte=0, bit=0,
                      address=0, base_address=0,
                      update=False),
