@@ -172,6 +172,8 @@ class Container:
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
+        :keyword tuple fieldnames: sequence of dictionary keys for the selected
+            field *attributes*. Defaults to ``(*attributes)``.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` views their referenced :attr:`~Pointer.data` object
             field attributes as well (chained method call).
@@ -191,18 +193,24 @@ class Container:
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
+        :keyword tuple fieldnames: sequence of dictionary keys for the selected
+            field *attributes*.
+            Defaults to ``(*attributes)``.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             `Container` views their referenced :attr:`~Pointer.data` object
             field attributes as well (chained method call).
         """
         nested = options.pop('nested', False)
+        fieldnames = options.pop('fieldnames', attributes)
         if 'cls' in options.keys():
             return json.dumps(self.view_fields(*attributes,
-                                               nested=nested),
+                                               nested=nested,
+                                               fieldnames=fieldnames),
                               **options)
         else:
             return json.dumps(self.view_fields(*attributes,
-                                               nested=nested),
+                                               nested=nested,
+                                               fieldnames=fieldnames),
                               cls=_CategoryJSONEncoder,
                               **options)
 
@@ -814,6 +822,8 @@ class Structure(OrderedDict, Container):
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
+        :keyword tuple fieldnames: sequence of dictionary keys for the selected
+            field *attributes*. Defaults to ``(*attributes)``.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields nested in the
             `Structure` views their referenced :attr:`~Pointer.data` object field
             attributes as well (chained method call).
@@ -833,7 +843,8 @@ class Structure(OrderedDict, Container):
                 else:
                     field_getter = attrgetter('value')
                 if len(attributes) > 1:
-                    members[name] = dict(zip(attributes, field_getter(item)))
+                    fieldnames = options.get('fieldnames', attributes)
+                    members[name] = dict(zip(fieldnames, field_getter(item)))
                 else:
                     members[name] = field_getter(item)
 
@@ -1266,6 +1277,8 @@ class Sequence(MutableSequence, Container):
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
+        :keyword tuple fieldnames: sequence of dictionary keys for the selected
+            field *attributes*. Defaults to ``(*attributes)``.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields nested in the
             `Sequence` views their referenced :attr:`~Pointer.data` object field
             attributes as well (chained method call).
@@ -1287,7 +1300,8 @@ class Sequence(MutableSequence, Container):
                     field_getter = attrgetter('value')
 
                 if len(attributes) > 1:
-                    items.append(dict(zip(attributes, field_getter(item))))
+                    fieldnames = options.get('fieldnames', attributes)
+                    items.append(dict(zip(fieldnames, field_getter(item))))
                 else:
                     items.append(field_getter(item))
             else:
@@ -5327,6 +5341,8 @@ class Pointer(Decimal, Container):
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
+        :keyword tuple fieldnames: sequence of dictionary keys for the selected
+            field *attributes*. Defaults to ``(*attributes)``.
         :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
             :attr:`data` object referenced by the `Pointer` field views their
             referenced :attr:`~Pointer.data` object field attributes as well
@@ -5360,7 +5376,8 @@ class Pointer(Decimal, Container):
             else:
                 field_getter = attrgetter('value')
             if len(attributes) > 1:
-                items['data'] = dict(zip(attributes, field_getter(self._data)))
+                fieldnames = options.get('fieldnames', attributes)
+                items['data'] = dict(zip(fieldnames, field_getter(self._data)))
             else:
                 items['data'] = field_getter(self._data)
         else:
