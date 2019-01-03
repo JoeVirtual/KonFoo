@@ -200,22 +200,22 @@ def d3flare_json(metadata, file=None, **options):
             dct['value'] = root.get('value')
 
         children = root.get('member')
-        # Any containable class with children
         if children:
+            # Any containable class with children
             dct['children'] = list()
-            # Create pointer address field as child
             if item_type is ItemClass.Pointer.name:
+                # Create pointer address field as child
                 field = OrderedDict()
                 field['class'] = dct['class']
                 field['name'] = '*' + dct['name']
                 field['size'] = root.get('size')
                 field['value'] = root.get('value')
                 dct['children'].append(field)
-            # Recursive function call map(fnc, args).
             for child in map(convert, children):
+                # Recursive function call map(fnc, args).
                 dct['children'].append(child)
-        # Null pointer (None pointer)
         elif item_type is ItemClass.Pointer.name:
+            # Null pointer (None pointer)
             dct['size'] = root.get('size')
             dct['value'] = root.get('value')
         return dct
