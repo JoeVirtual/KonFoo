@@ -19,11 +19,18 @@ Enhancements
 Backward-incompatible Changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+
 Maintenance
 ~~~~~~~~~~~
 
+
 Bug Fixes
 ~~~~~~~~~
+
+* Fixed the :class:`Structure` class that the built-in :func:`help` function works
+  correctly on an instance of :class:`Structure`.
+* Fixed :class:`Structure` to raise the correct :class:`AttributeError` exception
+  instead of an :class:`KeyError` exception when an unknown attribute is accessed.
 
 
 Version 1.0 (Released 2019-01-02)

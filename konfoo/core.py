@@ -15,7 +15,6 @@ import csv
 import datetime
 import ipaddress
 import json
-import math
 import struct
 import time
 from binascii import hexlify
@@ -23,6 +22,8 @@ from collections import namedtuple, OrderedDict
 from collections.abc import Mapping, MutableSequence
 from configparser import ConfigParser
 from operator import attrgetter
+
+import math
 
 from konfoo.categories import Category
 from konfoo.enums import Enumeration
@@ -616,8 +617,11 @@ class Structure(OrderedDict, Container):
         # Namespace check for ordered dictionary attribute
         if name.startswith('_OrderedDict__'):
             return super().__getattribute__(name)
-        else:
+        try:
             return self[name]
+        except KeyError:
+            raise AttributeError("'{0}' object has not attribute '{1}'".format(
+                self.__class__.__name__, name))
 
     def __setattr__(self, name, item):
         """ Assigns the *item* to the member of the `Structure` whose dictionary
