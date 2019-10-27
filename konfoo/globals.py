@@ -4,7 +4,7 @@
     ~~~~~~~~~~
     <Add description of the module here>.
 
-    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
+    :copyright: (c) 2015-2019 by Jochen Gerhaeusser.
     :license: BSD, see LICENSE for details
 """
 
@@ -22,6 +22,7 @@ class ItemClass(Enumeration):
     Stream = 20
     String = 21
     Float = 30
+    Double = 31
     Decimal = 40
     Bit = 41
     Byte = 42

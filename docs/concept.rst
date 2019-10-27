@@ -164,7 +164,7 @@ by calling its method :meth:`~Container.to_dict`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values in the container.
-    >>> container.to_dict() 
+    >>> container.to_dict()
     OrderedDict([('Container', OrderedDict())])
 
 
@@ -265,7 +265,7 @@ Overview
 Here is an overview of the different available `field`_ classes.
 
 * :class:`Stream`, :class:`String`
-* :class:`Float`
+* :class:`Float`, :class:`Double`
 * :class:`Decimal` :class:`Bit`, :class:`Byte`, :class:`Char`, :class:`Signed`,
   :class:`Unsigned`, :class:`Bitset`, :class:`Bool`, :class:`Enum`,
   :class:`Scaled`, :class:`Fraction`, :class:`Bipolar`, :class:`Unipolar`,

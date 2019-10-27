@@ -75,6 +75,12 @@ Float
 .. autoclass:: Float
     :members:
 
+Double
+------
+
+.. autoclass:: Double
+    :members:
+
 Decimal
 -------
 

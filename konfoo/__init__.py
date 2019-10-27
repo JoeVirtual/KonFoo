@@ -22,7 +22,7 @@ from .core import (
     Container, Structure, Sequence, Array,
     Field,
     Stream, String,
-    Float,
+    Float, Double,
     Decimal, Bit, Byte, Char, Signed, Unsigned, Bitset, Bool, Enum, Scaled,
     Fraction, Bipolar, Unipolar, Datetime, IPv4Address,
     Pointer, StructurePointer, SequencePointer, ArrayPointer, StreamPointer,
@@ -163,7 +163,7 @@ __all__ = [
     'Stream',
     'String',
 
-    'Float',
+    'Float', 'Double',
 
     'Decimal',
     'Bit',
@@ -326,4 +326,4 @@ __all__ = [
     'd3flare_json', 'HexViewer',
 ]
 
-__version__ = '1.1.dev1'
+__version__ = '1.1a0'

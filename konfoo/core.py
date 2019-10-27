@@ -2209,7 +2209,7 @@ class String(Stream):
 
 class Float(Field):
     """ A `Float` field is a :class:`Field` with a fix *size* of four bytes
-    and returns its field :attr:`value` as a single float.
+    and returns its field :attr:`value` as a single precision float.
 
     Internally a `Float` field uses a :class:`float` class to store the
     data of its field :attr:`~Float.value`.
@@ -2329,18 +2329,18 @@ class Float(Field):
 
     @staticmethod
     def smallest():
-        """ Returns the smallest possible field *value* of the `Float` field."""
+        """ Returns the smallest normalized field *value* of the `Float` field."""
         return 2 ** -126
 
     @staticmethod
     def max():
         """ Returns the maximal possible field *value* of the `Float` field."""
-        return (1 - Float.epsilon()) * 2 ** 128
+        return (2 - 2 ** -23) * 2 ** 127
 
     @staticmethod
     def min():
         """ Returns the minimal possible field *value* of the `Float` field."""
-        return -(1 - Float.epsilon()) * 2 ** 128
+        return -Float.max()
 
     @byte_order_option()
     def unpack(self, buffer=bytes(), index=Index(), **options):
@@ -2388,6 +2388,195 @@ class Float(Field):
             return struct.pack('>f', self._value)
         else:
             return struct.pack('<f', self._value)
+
+    def describe(self, name=str(), **options):
+        metadata = super().describe(name, **options)
+        metadata['max'] = self.max()
+        metadata['min'] = self.min()
+        return OrderedDict(sorted(metadata.items()))
+
+
+class Double(Field):
+    """ A `Double` field is a :class:`Field` with a fix *size* of eight bytes
+    and returns its field :attr:`value` as a double precision float.
+
+    Internally a `Double` field uses a :class:`float` class to store the
+    data of its field :attr:`~Float.value`.
+
+    A `Double` field extends the :attr:`~Field.metadata` of a :class:`Field`
+    with a ``'max'`` and ``'min'`` key for its maximum and minimum possible
+    field :attr:`.value`.
+
+    :param byte_order: byte order used to unpack and pack the :attr:`value`
+        of the `Double` field.
+    :type byte_order: :class:`Byteorder`, :class:`str`
+
+    Example:
+
+    >>> double = Double()
+    >>> double.is_float()
+    True
+    >>> double.name
+    'Double64'
+    >>> double.alignment
+    Alignment(byte_size=8, bit_offset=0)
+    >>> double.byte_order
+    Byteorder.auto = 'auto'
+    >>> double.index
+    Index(byte=0, bit=0, address=0, base_address=0, update=False)
+    >>> double.index_field()
+    Index(byte=8, bit=0, address=8, base_address=0, update=False)
+    >>> double.bit_size
+    64
+    >>> double.min()
+    -1.7976931348623157e+308
+    >>> double.max()
+    1.7976931348623157e+308
+    >>> double.smallest()
+    2.2250738585072014e-308
+    >>> double.epsilon()
+    1.1102230246251565e-16
+    >>> double.value
+    0.0
+    >>> bytes(double)
+    b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00'
+    >>> int(double)
+    0
+    >>> float(double)
+    0.0
+    >>> bool(double)
+    False
+    >>> double.value = 0x10
+    >>> double.value
+    16.0
+    >>> double.value = -1.7976931348623158e+308
+    >>> double.value
+    -1.7976931348623157e+308
+    >>> double.value = 1.7976931348623158e+308
+    >>> double.value
+    1.7976931348623157e+308
+    >>> double.describe()
+    OrderedDict([('address', 0),
+                 ('alignment', [8, 0]),
+                 ('class', 'Double64'),
+                 ('index', [0, 0]),
+                 ('max', 1.7976931348623157e+308),
+                 ('min', -1.7976931348623157e+308),
+                 ('name', 'Double64'),
+                 ('order', 'auto'),
+                 ('size', 64),
+                 ('type', 'Field'),
+                 ('value', 1.7976931348623157e+308)])
+    """
+    # Item type of a Double field.
+    item_type = ItemClass.Double
+
+    def __init__(self, byte_order='auto'):
+        super().__init__(bit_size=64, align_to=8, byte_order=byte_order)
+        # Field value
+        self._value = float()
+
+    def __bytes__(self):
+        if self.byte_order is Byteorder.big:
+            return struct.pack('>d', self._value)
+        elif self.byte_order is Byteorder.little:
+            return struct.pack('<d', self._value)
+        elif BYTEORDER is Byteorder.big:
+            return struct.pack('>d', self._value)
+        else:
+            return struct.pack('<d', self._value)
+
+    def __bool__(self):
+        return bool(self._value)
+
+    def __int__(self):
+        return int(self._value)
+
+    def __float__(self):
+        return float(self._value)
+
+    @property
+    def value(self):
+        """ Field value as a double precision floating point number."""
+        return float(self._value)
+
+    @value.setter
+    def value(self, x):
+        self._value = self.to_float(x)
+
+    @staticmethod
+    def is_float():
+        """ Returns ``True``."""
+        return True
+
+    def to_float(self, value):
+        return clamp(float(value), self.min(), self.max())
+
+    @staticmethod
+    def epsilon():
+        return 2 ** -53
+
+    @staticmethod
+    def smallest():
+        """ Returns the smallest normalized field *value* of the `Double` field."""
+        return 2 ** -1022
+
+    @staticmethod
+    def max():
+        """ Returns the maximal possible field *value* of the `Double` field."""
+        return (2 - 2 ** -52) * 2 ** 1023
+
+    @staticmethod
+    def min():
+        """ Returns the minimal possible field *value* of the `Double` field."""
+        return -Double.max()
+
+    @byte_order_option()
+    def unpack(self, buffer=bytes(), index=Index(), **options):
+        # Bad placed field
+        if index.bit:
+            raise FieldIndexError(self, index)
+
+        # Decoding byte order of the buffer
+        byte_order = get_byte_order(options)
+
+        # Field byte order overrules!
+        if self.byte_order is not Byteorder.auto:
+            byte_order = self.byte_order
+
+        # Content of the buffer mapped by the field
+        offset = index.byte
+        size = offset + self.alignment.byte_size
+        content = buffer[offset:size]
+
+        # Not enough content!
+        if len(content) != 8:
+            return float()
+
+        # Unpack the content from the buffer
+        if byte_order is Byteorder.big:
+            return struct.unpack('>d', content)[0]
+        else:
+            return struct.unpack('<d', content)[0]
+
+    @byte_order_option()
+    def pack(self, buffer=bytearray(), **options):
+        # Bad placed field
+        if self.index.bit:
+            raise FieldIndexError(self, self.index)
+
+        # Encoding byte order of the buffer
+        byte_order = get_byte_order(options)
+
+        # Field byte order overrules!
+        if self.byte_order is not Byteorder.auto:
+            byte_order = self.byte_order
+
+        # Pack the field value to bytes
+        if byte_order is Byteorder.big:
+            return struct.pack('>d', self._value)
+        else:
+            return struct.pack('<d', self._value)
 
     def describe(self, name=str(), **options):
         metadata = super().describe(name, **options)
