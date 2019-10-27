@@ -5122,7 +5122,7 @@ class Pointer(Decimal, Container):
 
     def is_null(self):
         """ Returns ``True`` if the `Pointer` field points to zero."""
-        return self._value is 0
+        return self._value == 0
 
     def deserialize_data(self, buffer=bytes(), byte_order=None):
         """ De-serializes the :attr:`data` object referenced by the `Pointer`

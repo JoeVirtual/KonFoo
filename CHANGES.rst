@@ -3,8 +3,8 @@ Changelog
 
 Here you can see the full list of changes between each KonFoo release.
 
-Version 1.1a0 (Unreleased)
---------------------------
+Version 1.1 (Released 2019-10-27)
+---------------------------------
 
 Enhancements
 ~~~~~~~~~~~~
@@ -20,7 +20,7 @@ Enhancements
 Bug Fixes
 ~~~~~~~~~
 
-* Fixed warnings to support Python 3.8.
+* Fixed syntax warnings to support Python 3.8 correctly.
 * Fixed :class:`Structure` to raise the correct :class:`AttributeError` exception
   instead of a :class:`KeyError` exception when an unknown attribute is accessed.
 * Fixed the :class:`Structure` class that the built-in :func:`help` function works
