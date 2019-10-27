@@ -1824,7 +1824,7 @@ class Field:
         # End of field group?
         if self.alignment.byte_size == group_size:
             # Bad aligned field group?
-            if offset is not 0:
+            if offset != 0:
                 raise FieldGroupSizeError(self, index,
                                           Alignment(group_size + 1,
                                                     self.alignment.bit_offset))
@@ -2851,7 +2851,7 @@ class Decimal(Field):
         if auto_align:
             # Field alignment size
             field_size, bit_offset = divmod(field_offset, 8)
-            if bit_offset is not 0:
+            if bit_offset != 0:
                 field_size += 1
             field_size = max(field_size, 1)
         # No auto alignment
@@ -2900,7 +2900,7 @@ class Decimal(Field):
         group_size, offset = divmod(bit_size, 8)
         # Auto alignment
         if auto_align:
-            if offset is not 0:
+            if offset != 0:
                 self._align_to_byte_size = group_size + 1
             else:
                 self._align_to_byte_size = group_size
@@ -5255,7 +5255,7 @@ class Pointer(Decimal, Container):
 
         if is_container(item):
             length = item.container_size()
-            if length[1] is not 0:
+            if length[1] != 0:
                 # Incomplete container
                 raise ContainerLengthError(item, length)
 
@@ -5265,7 +5265,7 @@ class Pointer(Decimal, Container):
                 return None
 
             index = field.index
-            if index.bit is not 0:
+            if index.bit != 0:
                 # Bad placed container
                 raise FieldIndexError(field, index)
 
@@ -5320,7 +5320,7 @@ class Pointer(Decimal, Container):
 
             # Patch size in bytes for the field in the content buffer
             patch_size, bit_offset = divmod(item.bit_size, 8)
-            if bit_offset is not 0:
+            if bit_offset != 0:
                 inject = True
                 patch_size += 1
             else:
@@ -5328,7 +5328,7 @@ class Pointer(Decimal, Container):
 
             # Patch offset in bytes for the field in the content buffer
             patch_offset, bit_offset = divmod(alignment.bit_offset, 8)
-            if bit_offset is not 0:
+            if bit_offset != 0:
                 inject = True
 
             if byte_order is Byteorder.big:
@@ -5477,9 +5477,9 @@ class Pointer(Decimal, Container):
             `Pointer` field.
         """
         for name, value in content.items():
-            if name is 'value':
+            if name == 'value':
                 self.value = value
-            elif name is 'data':
+            elif name == 'data':
                 # Container or Pointer
                 if is_mixin(self._data):
                     self._data.initialize_fields(value)

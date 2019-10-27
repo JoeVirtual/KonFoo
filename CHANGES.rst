@@ -20,6 +20,7 @@ Enhancements
 Bug Fixes
 ~~~~~~~~~
 
+* Fixed warnings to support Python 3.8.
 * Fixed :class:`Structure` to raise the correct :class:`AttributeError` exception
   instead of a :class:`KeyError` exception when an unknown attribute is accessed.
 * Fixed the :class:`Structure` class that the built-in :func:`help` function works
