@@ -416,31 +416,27 @@ You can **display** the `structure`_.
     >>> structure.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Display the structure.
-    >>> structure
-    Structure([('version', Byte(index=Index(byte=0, bit=0,
-                                            address=0, base_address=0,
-                                            update=False),
-                                alignment=Alignment(byte_size=4, bit_offset=0),
-                                bit_size=8,
-                                value='0x0')),
-                ('id', Unsigned(index=Index(byte=0, bit=8,
-                                            address=0, base_address=0,
-                                            update=False),
-                                alignment=Alignment(byte_size=4, bit_offset=8),
-                                bit_size=8,
-                                value='0x0')),
-                ('length', Decimal(index=Index(byte=0, bit=16,
-                                               address=0, base_address=0,
-                                               update=False),
-                                   alignment=Alignment(byte_size=4, bit_offset=16),
-                                   bit_size=8,
-                                   value=0)),
-                ('module', Char(index=Index(byte=0, bit=24,
-                                            address=0, base_address=0,
-                                            update=False),
-                                alignment=Alignment(byte_size=4, bit_offset=24),
-                                bit_size=8,
-                                value='\x00'))])
+    >>> structure  #doctest: +SKIP
+    {'version': Byte(
+        index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+        alignment=Alignment(byte_size=4, bit_offset=0),
+        bit_size=8,
+        value='0x0'),
+     'id': Unsigned(
+        index=Index(byte=0, bit=8, address=0, base_address=0, update=False),
+        alignment=Alignment(byte_size=4, bit_offset=8),
+        bit_size=8,
+        value='0x0'),
+     'length': Decimal(
+        index=Index(byte=0, bit=16, address=0, base_address=0, update=False),
+        alignment=Alignment(byte_size=4, bit_offset=16),
+        bit_size=8,
+        value=0),
+     'module': Char(
+        index=Index(byte=0, bit=24, address=0, base_address=0, update=False),
+        alignment=Alignment(byte_size=4, bit_offset=24),
+        bit_size=8,
+        value='\x00')}
 
 
 Metadata of a Structure
@@ -450,61 +446,63 @@ You can get the metadata of the `structure`_ by calling the method
 :meth:`~Structure.describe`.
 
     >>> # Get the description of the structure.
-    >>> structure.describe()
-    OrderedDict([('class', 'Structure'),
-                 ('name', 'Structure'),
-                 ('size', 4),
-                 ('type', 'Structure'),
-                 ('member',
-                  [OrderedDict([('address', 0),
-                                ('alignment', [4, 0]),
-                                ('class', 'Byte'),
-                                ('index', [0, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'version'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '0x0')]),
-                   OrderedDict([('address', 0),
-                                ('alignment', [4, 8]),
-                                ('class', 'Unsigned8'),
-                                ('index', [0, 8]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'id'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '0x0')]),
-                   OrderedDict([('address', 0),
-                                ('alignment', [4, 16]),
-                                ('class', 'Decimal8'),
-                                ('index', [0, 16]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'length'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', 0)]),
-                   OrderedDict([('address', 0),
-                                ('alignment', [4, 24]),
-                                ('class', 'Char'),
-                                ('index', [0, 24]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'module'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '\x00')])])])
-
+    >>> structure.describe()  #doctest: +SKIP
+    {'class': 'Structure',
+     'name': 'Structure',
+     'size': 4,
+     'type': 'Structure',
+     'member': [
+        {'address': 0,
+         'alignment': [4, 0],
+         'class': 'Byte',
+         'index': [0, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'version',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '0x0'},
+        {'address': 0,
+         'alignment': [4, 8],
+         'class': 'Unsigned8',
+         'index': [0, 8],
+         'max': 255,
+         'min': 0,
+         'name': 'id',
+         'order': 'auto',
+         'signed': False,
+         'size': 8, 'type':
+         'Field',
+         'value': '0x0'},
+        {'address': 0,
+         'alignment': [4, 16],
+         'class': 'Decimal8',
+         'index': [0, 16],
+         'max': 255,
+         'min': 0,
+         'name': 'length',
+         'order': 'auto',
+         'signed': False,
+         'size': 8, 'type':
+         'Field',
+         'value': 0},
+        {'address': 0,
+         'alignment': [4, 24],
+         'class': 'Char',
+         'index': [0, 24],
+         'max': 255,
+         'min': 0,
+         'name':
+         'module',
+         'order':
+         'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '\x00'}]
+    }
     >>> json.dump(structure.describe(), sys.stdout, indent=2)
     {
       "class": "Structure",
@@ -644,7 +642,6 @@ returned.
       "id":      [0, 0, 0, 0, false],
       "length":  [0, 0, 0, 0, false],
       "module":  [0, 0, 0, 0, false]}'
-
     >>> # Index the fields in the structure.
     >>> structure.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
@@ -879,26 +876,23 @@ Default attribute is the field :attr:`~Field.value`.
 
     >>> # View the structure field values.
     >>> structure.view_fields()
-    OrderedDict([('version', '0x1'),
-                 ('id', '0x2'),
-                 ('length', 9),
-                 ('module', 'F')])
+    {'version': '0x1',
+     'id': '0x2',
+     'length': 9,
+     'module': 'F'}
     >>> # View the structure field type names & field values.
     >>> structure.view_fields('name', 'value')
-    OrderedDict([('version', {'name': 'Byte', 'value': '0x1'}),
-                 ('id', {'name': 'Unsigned8', 'value': '0x2'}),
-                 ('length', {'name': 'Decimal8', 'value': 9}),
-                 ('module', {'name': 'Char', 'value': 'F'})])
+    {'version': {'name': 'Byte', 'value': '0x1'},
+     'id': {'name': 'Unsigned8', 'value': '0x2'},
+     'length': {'name': 'Decimal8', 'value': 9},
+     'module': {'name': 'Char', 'value': 'F'}}
     >>> # View the structure field indexes.
     >>> structure.view_fields('index')
-    OrderedDict([('version',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('id',
-                  Index(byte=1, bit=0, address=1, base_address=0, update=False)),
-                 ('length',
-                  Index(byte=2, bit=0, address=2, base_address=0, update=False)),
-                 ('module',
-                  Index(byte=3, bit=0, address=3, base_address=0, update=False))])
+    {'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'id': Index(byte=1, bit=0, address=1, base_address=0, update=False),
+     'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
+     'module': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
+
 
 .. note::
     The *attributes* of each :ref:`field <field>` for containers *nested* in the
@@ -1007,33 +1001,23 @@ Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the structure.
     >>> structure.to_dict()
-    OrderedDict([('Structure',
-                  OrderedDict([('version', '0x1'),
-                               ('id', '0x2'),
-                               ('length', 9),
-                               ('module', 'F')]))])
+    {'Structure': {'version': '0x1', 'id': '0x2', 'length': 9, 'module': 'F'}}
     >>> # List the field type names & values of the structure.
-    >>> structure.to_dict('name', 'value')
-    OrderedDict([('Structure',
-                  OrderedDict([('version', ('Byte', '0x1')),
-                                ('id', ('Unsigned8', '0x2')),
-                                ('length', ('Decimal8', 9)),
-                                ('module', ('Char', 'F'))]))])
+    >>> structure.to_dict('name', 'value')  #doctest: +SKIP
+    {'Structure': {
+     'version': ('Byte', '0x1'),
+     'id': ('Unsigned8', '0x2'),
+     'length': ('Decimal8', 9),
+     'module': ('Char', 'F')}
+    }
     >>> # List the field indexes in the structure.
-    >>> structure.to_dict('index')
-    OrderedDict([('Structure',
-                  OrderedDict([('version', Index(byte=0, bit=0,
-                                                 address=0, base_address=0,
-                                                 update=False)),
-                               ('id', Index(byte=1, bit=0,
-                                            address=1, base_address=0,
-                                            update=False)),
-                               ('length', Index(byte=2, bit=0,
-                                                address=2, base_address=0,
-                                                update=False)),
-                               ('module', Index(byte=3, bit=0,
-                                                address=3, base_address=0,
-                                                update=False))]))])
+    >>> structure.to_dict('index')  #doctest: +SKIP
+    {'Structure': {
+     'version': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'id': Index(byte=1, bit=0,address=1, base_address=0, update=False),
+     'length': Index(byte=2, bit=0, address=2, base_address=0, update=False),
+     'module', Index(byte=3, bit=0, address=3, base_address=0, update=False)}
+    }
 
 .. note::
     The class name of the instance is used for the root name as long as no

@@ -165,7 +165,7 @@ Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values in the container.
     >>> container.to_dict()
-    OrderedDict([('Container', OrderedDict())])
+    {'Container': {}}
 
 
 A `container`_ can **list** the *attributes* of each `field`_ item *nested* in the

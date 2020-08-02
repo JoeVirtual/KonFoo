@@ -237,13 +237,13 @@ You can **access** the `data object`_ attached to a `pointer`_ with the
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> # Access the data object referenced the pointer field.
-    >>> pointer.data 
+    >>> pointer.data
     Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
             alignment=Alignment(byte_size=4, bit_offset=0),
             bit_size=32,
             value='0x0')
     >>> # Access the data object referenced a nested pointer field.
-    >>> pointer.data.data 
+    >>> pointer.data.data
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
          alignment=Alignment(byte_size=1, bit_offset=0),
          bit_size=8,
@@ -514,21 +514,18 @@ Display the Data Object
 You can **display** the `data object`_ of a `pointer`_ field.
 
     >>> # Display the data object referenced by the pointer
-    >>> pointer.data
-    Structure([('size',
-                Decimal(index=Index(byte=0, bit=0,
-                                    address=0, base_address=0,
-                                    update=False),
-                        alignment=Alignment(byte_size=2, bit_offset=0),
-                        bit_size=16,
-                        value=0)),
-               ('item',
-                Pointer(index=Index(byte=2, bit=0,
-                                    address=2, base_address=0,
-                                    update=False),
-                        alignment=Alignment(byte_size=4, bit_offset=0),
-                        bit_size=32,
-                        value='0x0'))])
+    >>> pointer.data  #doctest: +SKIP
+    {'size': Decimal(
+        index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
+        alignment=Alignment(byte_size=2, bit_offset=0),
+        bit_size=16,
+        value=0),
+     'item': Pointer(
+        index=Index(byte=2, bit=0, address=2, base_address=0, update=False),
+        alignment=Alignment(byte_size=4, bit_offset=0),
+        bit_size=32,
+        value='0x0')}
+    >>>
 
 Metadata of a Pointer
 ---------------------
@@ -537,61 +534,59 @@ You can get the metadata of a `pointer`_ by calling the method
 :meth:`~Pointer.describe`.
 
     >>> # Get the description of the pointer.
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'Pointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'Pointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0x0'),
-                 ('member',
-                  [OrderedDict([('class', 'Structure'),
-                                ('name', 'data'),
-                                ('size', 2),
-                                ('type', 'Structure'),
-                                ('member',
-                                 [OrderedDict([('address', 0),
-                                               ('alignment', [2, 0]),
-                                               ('class', 'Decimal16'),
-                                               ('index', [0, 0]),
-                                               ('max', 65535),
-                                               ('min', 0),
-                                               ('name', 'size'),
-                                               ('order', 'auto'),
-                                               ('signed', False),
-                                               ('size', 16),
-                                               ('type', 'Field'),
-                                               ('value', 0)]),
-                                  OrderedDict([('address', 2),
-                                               ('alignment', [4, 0]),
-                                               ('class', 'Pointer'),
-                                               ('index', [2, 0]),
-                                               ('max', 4294967295),
-                                               ('min', 0),
-                                               ('name', 'item'),
-                                               ('order', 'auto'),
-                                               ('signed', False),
-                                               ('size', 32),
-                                               ('type', 'Pointer'),
-                                               ('value', '0x0'),
-                                               ('member',
-                                                [OrderedDict([('address', 0),
-                                                              ('alignment', [0, 0]),
-                                                              ('class', 'String'),
-                                                              ('index', [0, 0]),
-                                                              ('name', 'data'),
-                                                              ('order', 'auto'),
-                                                              ('size', 0),
-                                                              ('type', 'Field'),
-                                                              ('value',
-                                                               '')])])])])])])])
-
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'Pointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'Pointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0x0',
+     'member': [
+        {'class': 'Structure',
+         'name': 'data',
+         'size': 2,
+         'type': 'Structure',
+         'member': [
+            {'address': 0,
+             'alignment': [2, 0],
+             'class': 'Decimal16',
+             'index': [0, 0],
+             'max': 65535,
+             'min': 0,
+             'name': 'size',
+             'order': 'auto',
+             'signed': False,
+             'size': 16,
+             'type': 'Field',
+             'value': 0},
+            {'address': 2,
+             'alignment': [4, 0],
+             'class': 'Pointer',
+             'index': [2, 0],
+             'max': 4294967295,
+             'min': 0,
+             'name': 'item',
+             'order':'auto',
+             'signed': False,
+             'size': 32,
+             'type': 'Pointer',
+             'value': '0x0',
+             'member': [
+                {'address': 0,
+                 'alignment': [0, 0],
+                 'class': 'String',
+                 'index': [0, 0],
+                 'name': 'data',
+                 'order': 'auto',
+                 'size': 0,
+                 'type': 'Field',
+                 'value': ''}]}]}]}
     >>> json.dump(pointer.describe(), sys.stdout, indent=2)
     {
       "address": 0,
@@ -1337,37 +1332,29 @@ Default attribute is the field :attr:`~Field.value`.
 
     >>> # View the pointer field values.
     >>> pointer.view_fields()
-    OrderedDict([('value', '0x1'),
-                 ('data',
-                  OrderedDict([('size', 14),
-                               ('item', '0x10')]))])
+    {'value': '0x1', 'data': {'size': 14, 'item': '0x10'}}
     >>> # View the pointer and nested pointers field values.
-    >>> pointer.view_fields(nested=True)
-    OrderedDict([('value', '0x1'),
-                 ('data',
-                  OrderedDict([('size', 14),
-                               ('item',
-                                OrderedDict([('value', '0x10'),
-                                             ('data', 'Konfoo is Fun')]))]))])
+    >>> pointer.view_fields(nested=True)  #doctest: +SKIP
+    {'value': '0x1',
+      'data': {
+        'size': 14,
+        'item': {
+            'value': '0x10',
+            'data': 'Konfoo is Fun'}}}
     >>> # View the pointer field type names & field values.
-    >>> pointer.view_fields('name', 'value')
-    OrderedDict([('name', 'Pointer32'),
-                 ('value', '0x1'),
-                 ('data',
-                  OrderedDict([('size', {'name': 'Decimal16',
-                                         'value': 14}),
-                               ('item', {'name': 'Pointer32',
-                                         'value': '0x10'})]))])
+    >>> pointer.view_fields('name', 'value')  #doctest: +SKIP
+    {'name': 'Pointer32',
+     'value': '0x1',
+     'data': {
+        'size': {'name': 'Decimal16', 'value': 14},
+        'item': {'name': 'Pointer32', 'value': '0x10'}}}
     >>> # View the pointer field indexes.
-    >>> pointer.view_fields('index')
-    OrderedDict([('value',
-                  Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                 ('data',
-                  OrderedDict([('size',
-                                Index(byte=0, bit=0, address=1, base_address=1, update=False)),
-                               ('item',
-                                Index(byte=2, bit=0, address=3, base_address=1, update=False))]))])
-
+    >>> pointer.view_fields('index')  #doctest: +SKIP
+    {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data': {
+        'size': Index(byte=0, bit=0, address=1, base_address=1, update=False),
+        'item': Index(byte=2, bit=0, address=3, base_address=1, update=False)}
+    }
 
 View as a JSON string
 ---------------------
@@ -1405,7 +1392,7 @@ Default attribute is the field :attr:`~Field.value`.
                "item": {"name": "Pointer32",
                         "value": "0x10"}}}'
     >>> # View the pointer field indexes as a JSON string.
-    >>> pointer.to_json('index') 
+    >>> pointer.to_json('index')
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 1, 1, false],
                "item": [2, 0, 3, 1, false]}}'
@@ -1503,32 +1490,30 @@ Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and its attached data object.
     >>> pointer.to_dict()
-    OrderedDict([('Pointer',
-        OrderedDict([('field', '0x1'),
-                     ('data.size', 14),
-                     ('data.item', '0x10')]))])
+    {'Pointer': {'field': '0x1', 'data.size': 14, 'data.item': '0x10'}}
     >>> # List the field values of the pointer and nested pointers.
-    >>> pointer.to_dict(nested=True)
-    OrderedDict([('Pointer',
-        OrderedDict([('field', '0x1'),
-                     ('data.size', 14),
-                     ('data.item', '0x10'),
-                     ('data.item.data', 'Konfoo is Fun')]))])
+    >>> pointer.to_dict(nested=True)  #doctest: +SKIP
+    {'Pointer': {
+     'field': '0x1',
+     'data.size': 14,
+     'data.item': '0x10',
+     'data.item.data': 'Konfoo is Fun'}
+    }
     >>> # List the field type names & values of the pointer and its attached data object.
-    >>> pointer.to_dict('name', 'value')
-    OrderedDict([('Pointer',
-        OrderedDict([('field', ('Pointer32', '0x1')),
-                     ('data.size', ('Decimal16', 14)),
-                     ('data.item', ('Pointer32', '0x10'))]))])
+    >>> pointer.to_dict('name', 'value')  #doctest: +SKIP
+    {'Pointer': {
+     'field': ('Pointer32', '0x1'),
+     'data.size': ('Decimal16', 14),
+     'data.item': ('Pointer32', '0x10')}
+    }
     >>> # List the field indexes of the pointer and its attached data object.
-    >>> pointer.to_dict('index')
-    OrderedDict([('Pointer',
-        OrderedDict([('field',
-                      Index(byte=0, bit=0, address=0, base_address=0, update=False)),
-                     ('data.size',
-                      Index(byte=0, bit=0, address=1, base_address=1, update=False)),
-                     ('data.item',
-                      Index(byte=2, bit=0, address=3, base_address=1, update=False))]))])
+    >>> pointer.to_dict('index')  #doctest: +SKIP
+    {'Pointer': {
+     'field': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     'data.size': Index(byte=0, bit=0, address=1, base_address=1, update=False),
+     'data.item': Index(byte=2, bit=0, address=3, base_address=1, update=False)}
+    }
+
 
 .. note::
     The class name of the instance is used for the root name as long as no

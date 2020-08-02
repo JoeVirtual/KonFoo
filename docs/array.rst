@@ -400,61 +400,60 @@ You can get the metadata of the `array`_ by calling the method
 :meth:`~Sequence.describe`.
 
     >>> # Get the description of the array.
-    >>> array.describe()
-    OrderedDict([('class', 'Array'),
-                 ('name', 'Array'),
-                 ('size', 4),
-                 ('type', 'Array'),
-                 ('member',
-                  [OrderedDict([('address', 0),
-                                ('alignment', [1, 0]),
-                                ('class', 'Byte'),
-                                ('index', [0, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'Array[0]'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '0x0')]),
-                  OrderedDict([('address', 1),
-                                ('alignment', [1, 0]),
-                                ('class', 'Byte'),
-                                ('index', [1, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'Array[1]'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '0x0')]),
-                   OrderedDict([('address', 2),
-                                ('alignment', [1, 0]),
-                                ('class', 'Byte'),
-                                ('index', [2, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'Array[2]'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '0x0')]),
-                   OrderedDict([('address', 3),
-                                ('alignment', [1, 0]),
-                                ('class', 'Byte'),
-                                ('index', [3, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'Array[3]'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '0x0')])])])
-
+    >>> array.describe()  #doctest: +SKIP
+    {'class': 'Array',
+     'name': 'Array',
+     'size': 4,
+     'type': 'Array',
+     'member': [
+        {'address': 0,
+         'alignment': [1, 0],
+         'class': 'Byte',
+         'index': [0, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'Array[0]',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '0x0'},
+        {'address': 1,
+         'alignment': [1, 0],
+         'class': 'Byte',
+         'index': [1, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'Array[1]',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '0x0'},
+        {'address': 2,
+         'alignment': [1, 0],
+         'class': 'Byte',
+         'index': [2, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'Array[2]',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '0x0'},
+        {'address': 3,
+         'alignment': [1, 0],
+         'class': 'Byte',
+         'index': [3, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'Array[3]',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '0x0'}]}
     >>> json.dump(array.describe(), sys.stdout, indent=2)
     {
       "class": "Array",
@@ -795,10 +794,10 @@ as a list by calling the method :meth:`~Sequence.view_fields`.
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # View the array field values.
-    >>> array.view_fields() 
+    >>> array.view_fields()
     ['0x1', '0x2', '0x3', '0x4']
     >>> # View the array field type names & field values.
-    >>> array.view_fields('name', 'value') 
+    >>> array.view_fields('name', 'value')
     [{'name': 'Byte', 'value': '0x1'},
      {'name': 'Byte', 'value': '0x2'},
      {'name': 'Byte', 'value': '0x3'},
@@ -833,13 +832,13 @@ Default attribute is the field :attr:`~Field.value`.
       "0x4"
     ]
     >>> # View the array field type names & field values as a JSON string.
-    >>> array.to_json('name', 'value') 
+    >>> array.to_json('name', 'value')
     '[{"name": "Byte", "value": "0x1"},
       {"name": "Byte", "value": "0x2"},
       {"name": "Byte", "value": "0x3"},
       {"name": "Byte", "value": "0x4"}]'
     >>> # View the array field indexes as a JSON string.
-    >>> array.to_json('index') 
+    >>> array.to_json('index')
     '[[0, 0, 0, 0, false],
       [1, 0, 1, 0, false],
       [2, 0, 2, 0, false],
@@ -921,33 +920,24 @@ Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the array.
     >>> array.to_dict()
-    OrderedDict([('Array',
-                  OrderedDict([('[0]', '0x1'),
-                               ('[1]', '0x2'),
-                               ('[2]', '0x3'),
-                               ('[3]', '0x4')]))])
+    {'Array': {'[0]': '0x1', '[1]': '0x2', '[2]': '0x3', '[3]': '0x4'}}
     >>> # List the field type names & field values of the array.
-    >>> array.to_dict('name', 'value')
-    OrderedDict([('Array',
-                  OrderedDict([('[0]', ('Byte', '0x1')),
-                               ('[1]', ('Byte', '0x2')),
-                               ('[2]', ('Byte', '0x3')),
-                               ('[3]', ('Byte', '0x4'))]))])
+    >>> array.to_dict('name', 'value')  #doctest: +SKIP
+    {'Array': {
+     '[0]': ('Byte', '0x1'),
+     '[1]': ('Byte', '0x2'),
+     '[2]': ('Byte', '0x3'),
+     '[3]': ('Byte', '0x4')}
+    }
     >>> # List the field indexes of the array.
-    >>> array.to_dict('index')
-    OrderedDict([('Array',
-                  OrderedDict([('[0]', Index(byte=0, bit=0,
-                                             address=0, base_address=0,
-                                             update=False)),
-                               ('[1]', Index(byte=1, bit=0,
-                                             address=1, base_address=0,
-                                             update=False)),
-                               ('[2]', Index(byte=2, bit=0,
-                                             address=2, base_address=0,
-                                             update=False)),
-                               ('[3]', Index(byte=3, bit=0,
-                                             address=3, base_address=0,
-                                             update=False))]))])
+    >>> array.to_dict('index')  #doctest: +SKIP
+    {'Array': {
+     '[0]': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     '[1]': Index(byte=1, bit=0, address=1, base_address=0, update=False),
+     '[2]': Index(byte=2, bit=0, address=2, base_address=0, update=False),
+     '[3]': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
+    }
+    >>>
 
 .. note::
     The class name of the instance is used for the root name as long as no

@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-    utils.py
-    ~~~~~~~~
-    <Add description of the module here>.
+utils.py
+~~~~~~~~
+<Add description of the module here>.
 
-    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
-    :license: BSD, see LICENSE for details.
+:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:license: BSD, see LICENSE for details.
 """
 
 import json
-from collections import OrderedDict
 
 from konfoo.globals import ItemClass
 
@@ -169,8 +168,8 @@ def d3flare_json(metadata, file=None, **options):
     """ Converts the *metadata* dictionary of a container or field into a
     ``flare.json`` formatted string or formatted stream written to the *file*
 
-    The ``flare.json`` format is defined by the `d3.js <https://d3js.org/>`_ graphic
-    library.
+    The ``flare.json`` format is defined by the `d3.js <https://d3js.org/>`_
+    graphic library.
 
     The ``flare.json`` format looks like this:
 
@@ -190,7 +189,7 @@ def d3flare_json(metadata, file=None, **options):
     """
 
     def convert(root):
-        dct = OrderedDict()
+        dct = dict()
         item_type = root.get('type')
         dct['class'] = root.get('class')
         dct['name'] = root.get('name')
@@ -205,7 +204,7 @@ def d3flare_json(metadata, file=None, **options):
             dct['children'] = list()
             if item_type is ItemClass.Pointer.name:
                 # Create pointer address field as child
-                field = OrderedDict()
+                field = dict()
                 field['class'] = dct['class']
                 field['name'] = '*' + dct['name']
                 field['size'] = root.get('size')

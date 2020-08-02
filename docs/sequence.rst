@@ -6,6 +6,7 @@
     import sys
     from konfoo import *
 
+
 .. _sequence:
 
 Sequence
@@ -39,7 +40,7 @@ You can **create** a `sequence`_ from a list of members.
     ...     Decimal8(),
     ...     Char()])
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() 
+    >>> sequence.to_list()
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
@@ -65,7 +66,7 @@ You can **append** a new member to the end of a `sequence`_.
     >>> # Append a new member to the sequence.
     >>> sequence.append(Unsigned8())
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() 
+    >>> sequence.to_list()
     [('Sequence[0]', '0x0')]
     >>> # List the field values of the sequence as a CSV list.
     >>> sequence.to_csv()
@@ -83,7 +84,7 @@ You can **insert** a new member at a given position in a `sequence`_.
     >>> # Insert a new member to the sequence.
     >>> sequence.insert(0, Byte())
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() 
+    >>> sequence.to_list()
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0')]
     >>> # List the field values of the sequence as a CSV list.
@@ -103,7 +104,7 @@ You can **extend** a `sequence`_ with a list of new members.
     >>> # Extend a sequence with a list of new members.
     >>> sequence.extend([Decimal8(), Char()])
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() 
+    >>> sequence.to_list()
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
@@ -132,7 +133,7 @@ You can **initialize** the fields in a `sequence`_ by calling the method
     ...     Decimal8(),
     ...     Char()])
     >>> # List the field values of the sequence.
-    >>> sequence.to_list() 
+    >>> sequence.to_list()
     [('Sequence[0]', '0x0'),
      ('Sequence[1]', '0x0'),
      ('Sequence[2]', 0),
@@ -207,61 +208,60 @@ You can get the metadata of the `sequence`_ by calling the method
 :meth:`~Sequence.describe`.
 
     >>> # Get the description of the sequence.
-    >>> sequence.describe()
-    OrderedDict([('class', 'Sequence'),
-                 ('name', 'Sequence'),
-                 ('size', 4),
-                 ('type', 'Sequence'),
-                 ('member',
-                  [OrderedDict([('address', 0),
-                                ('alignment', [1, 0]),
-                                ('class', 'Byte'),
-                                ('index', [0, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'Sequence[0]'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '0x0')]),
-                  OrderedDict([('address', 1),
-                                ('alignment', [1, 0]),
-                                ('class', 'Unsigned8'),
-                                ('index', [1, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'Sequence[1]'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '0x0')]),
-                   OrderedDict([('address', 2),
-                                ('alignment', [1, 0]),
-                                ('class', 'Decimal8'),
-                                ('index', [2, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'Sequence[2]'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', 0)]),
-                   OrderedDict([('address', 3),
-                                ('alignment', [1, 0]),
-                                ('class', 'Char'),
-                                ('index', [3, 0]),
-                                ('max', 255),
-                                ('min', 0),
-                                ('name', 'Sequence[3]'),
-                                ('order', 'auto'),
-                                ('signed', False),
-                                ('size', 8),
-                                ('type', 'Field'),
-                                ('value', '\x00')])])])
-
+    >>> sequence.describe()  #doctest: +SKIP
+    {'class': 'Sequence',
+     'name': 'Sequence',
+     'size': 4,
+     'type': 'Sequence',
+     'member': [
+        {'address': 0,
+         'alignment': [1, 0],
+         'class': 'Byte',
+         'index': [0, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'Sequence[0]',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '0x0'},
+        {'address': 1,
+         'alignment': [1, 0],
+         'class': 'Unsigned8',
+         'index': [1, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'Sequence[1]',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '0x0'},
+        {'address': 2,
+         'alignment': [1, 0],
+         'class': 'Decimal8',
+         'index': [2, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'Sequence[2]',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': 0},
+        {'address': 3,
+         'alignment': [1, 0],
+         'class': 'Char',
+         'index': [3, 0],
+         'max': 255,
+         'min': 0,
+         'name': 'Sequence[3]',
+         'order': 'auto',
+         'signed': False,
+         'size': 8,
+         'type': 'Field',
+         'value': '\x00'}]}
     >>> json.dump(sequence.describe(), sys.stdout, indent=2)
     {
       "class": "Sequence",
@@ -660,7 +660,7 @@ Default attribute is the field :attr:`~Field.value`.
       {"name": "Decimal8", "value": 9},
       {"name": "Char", "value": "F"}]'
     >>> # View the sequence field indexes as a JSON string.
-    >>> sequence.to_json('index') 
+    >>> sequence.to_json('index')
     '[[0, 0, 0, 0, false],
       [1, 0, 1, 0, false],
       [2, 0, 2, 0, false],
@@ -742,33 +742,23 @@ Default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the sequence.
     >>> sequence.to_dict()
-    OrderedDict([('Sequence',
-                  OrderedDict([('[0]', '0x1'),
-                               ('[1]', '0x2'),
-                               ('[2]', 9),
-                               ('[3]', 'F')]))])
+    {'Sequence': {'[0]': '0x1', '[1]': '0x2', '[2]': 9, '[3]': 'F'}}
     >>> # List the field type names & field values of the sequence.
-    >>> sequence.to_dict('name', 'value')
-    OrderedDict([('Sequence',
-                  OrderedDict([('[0]', ('Byte', '0x1')),
-                               ('[1]', ('Unsigned8', '0x2')),
-                               ('[2]', ('Decimal8', 9)),
-                               ('[3]', ('Char', 'F'))]))])
+    >>> sequence.to_dict('name', 'value')  #doctest: +SKIP
+    {'Sequence': {
+     '[0]': ('Byte', '0x1'),
+     '[1]': ('Unsigned8', '0x2'),
+     '[2]': ('Decimal8', 9),
+     '[3]': ('Char', 'F')}
+    }
     >>> # List the field indexes of the sequence.
-    >>> sequence.to_dict('index')
-    OrderedDict([('Sequence',
-                  OrderedDict([('[0]', Index(byte=0, bit=0,
-                                             address=0, base_address=0,
-                                             update=False)),
-                               ('[1]', Index(byte=1, bit=0,
-                                             address=1, base_address=0,
-                                             update=False)),
-                               ('[2]', Index(byte=2, bit=0,
-                                             address=2, base_address=0,
-                                             update=False)),
-                               ('[3]', Index(byte=3, bit=0,
-                                             address=3, base_address=0,
-                                             update=False))]))])
+    >>> sequence.to_dict('index')  #doctest: +SKIP
+    {'Sequence': {
+     '[0]': Index(byte=0, bit=0, address=0, base_address=0, update=False),
+     '[1]': Index(byte=1, bit=0, address=1, base_address=0, update=False),
+     '[2]': Index(byte=2, bit=0, address=2, base_address=0, update=False),
+     '[3]': Index(byte=3, bit=0, address=3, base_address=0, update=False)}
+    }
 
 .. note::
     The class name of the instance is used for the root name as long as no

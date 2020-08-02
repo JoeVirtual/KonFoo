@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-    enums.py
-    ~~~~~~~~
-    <Add description of the module here>.
+enums.py
+~~~~~~~~
+<Add description of the module here>.
 
-    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
-    :license: BSD, see LICENSE for details.
+:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:license: BSD, see LICENSE for details.
 """
 
 import enum
 
 
 class Enumeration(enum.IntEnum):
-    """ The `Enumeration` class is a subclass from the :class:`~enum.IntEnum` class
-    provided by the Python standard module :mod:`enum` and extends its
+    """ The `Enumeration` class is a subclass from the :class:`~enum.IntEnum`
+    class provided by the Python standard module :mod:`enum` and extends its
     base class with methods
 
     * to `describe` a specific `Enumeration` member by its `name`, `value` pair
@@ -95,7 +95,7 @@ class Enumeration(enum.IntEnum):
         >>> str(Color.maroon)
         '(maroon, 524288)'
         """
-        return "({0.name!s}, {0.value!s})".format(self)
+        return f"({self.name!s}, {self.value!s})"
 
     def __repr__(self):
         """ Return repr(self). See help(type(self)) for accurate signature.
@@ -109,10 +109,11 @@ class Enumeration(enum.IntEnum):
         >>> repr(Color.maroon)
         'Color.maroon = 524288'
         """
-        return self.__class__.__name__ + ".{0.name!s} = {0.value!r}".format(self)
+        return f"{self.__class__.__name__}.{self.name!s} = {self.value!r}"
 
     def describe(self):
-        """ Returns the `name`, `value` pair to describe a specific `Enumeration` member.
+        """ Returns the `name`, `value` pair to describe a specific
+        `Enumeration` member.
 
         Example:
 
@@ -157,8 +158,8 @@ class Enumeration(enum.IntEnum):
 
     @classmethod
     def get_name(cls, value):
-        """ Returns the `name` of the `Enumeration` member with the matching *value*
-        or an empty string if no member match.
+        """ Returns the `name` of the `Enumeration` member with the matching
+        *value* or an empty string if no member match.
 
         Example:
 

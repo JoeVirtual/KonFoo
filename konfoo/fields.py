@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-    fields.py
-    ~~~~~~~~~
-    <Add description of the module here>.
+fields.py
+~~~~~~~~~
+<Add description of the module here>.
 
-    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
-    :license: BSD, see LICENSE for details
+:copyright: (c) 2015-2018 by Jochen Gerhaeusser.
+:license: BSD, see LICENSE for details
 """
 
 from .core import (

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-    providers.py
-    ~~~~~~~~~~~~
-    <Add description of the module here>.
+providers.py
+~~~~~~~~~~~~
+<Add description of the module here>.
 
-    :copyright: (c) 2015-2018 by Jochen Gerhaeusser.
-    :license: BSD, see LICENSE for details
+:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:license: BSD, see LICENSE for details
 """
 
 import abc
@@ -65,18 +65,17 @@ class FileProvider(Provider):
         self._cache = bytearray(self.path.read_bytes())
 
     def __str__(self):
-        return self.__class__.__name__ + "({0.path!s}, " \
-                                         "{1!s})".format(self,
-                                                         len(self._cache))
+        return (f"{self.__class__.__name__}"
+                f"({self.path!s}, {len(self._cache)!s})")
 
     def __repr__(self):
-        return self.__class__.__name__ + "(file={0.path!r}, " \
-                                         "size={1!r})".format(self,
-                                                              len(self._cache))
+        return (f"{self.__class__.__name__}"
+                f"(file={self.path!r}, size={len(self._cache)!r})")
 
     @property
     def cache(self):
-        """ Returns the internal byte stream cache of the `Provider` (read-only)."""
+        """ Returns the internal byte stream cache of the `Provider`
+        (read-only)."""
         return self._cache
 
     def read(self, address=0, count=0):

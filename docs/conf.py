@@ -29,13 +29,13 @@ sys.path.append(os.path.abspath('.'))
 
 # General information about the project.
 project = 'KonFoo'
-copyright = '2015-{}, Jochen Gerhäußer'.format(datetime.datetime.utcnow().year)
+copyright = f"2015-{datetime.datetime.utcnow().year}, Jochen Gerhäußer"
 author = 'Jochen Gerhäußer'
 
 # The short X.Y version.
-version = '1.1'
+version = '2.0'
 # The full version, including alpha/beta/rc tags.
-release = '1.1'
+release = '2.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -198,7 +198,7 @@ extlinks = {
 # -- Options for InterSphinx --------------------------------------------------
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3.7', None)
+    'python': ('https://docs.python.org/3.8', None)
 }
 
 # -- Options for Doctest ------------------------------------------------------

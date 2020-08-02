@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-    core.py
-    ~~~~~~~
-    <Add description of the module here>.
+core.py
+~~~~~~~
+<Add description of the module here>.
 
-    :copyright: (c) 2015-2019 by Jochen Gerhaeusser.
-    :license: BSD, see LICENSE for details
+:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:license: BSD, see LICENSE for details
 """
 
 import abc
@@ -17,8 +17,7 @@ import ipaddress
 import json
 import struct
 import time
-from binascii import hexlify
-from collections import namedtuple, OrderedDict
+from collections import namedtuple
 from collections.abc import Mapping, MutableSequence
 from configparser import ConfigParser
 from operator import attrgetter
@@ -186,8 +185,8 @@ class Container:
 
     @nested_option()
     def to_json(self, *attributes, **options):
-        """ Returns the selected field *attributes* for each :class:`Field` *nested*
-        in the `Container` as a JSON formatted string.
+        """ Returns the selected field *attributes* for each :class:`Field`
+        *nested* in the `Container` as a JSON formatted string.
 
         The *attributes* of each :class:`Field` for containers *nested* in the
         `Container` are viewed as well (chained method call).
@@ -260,9 +259,9 @@ class Container:
             field_path, field = item
             if field_path.startswith('['):
                 # Sequence
-                field_path = '{0}{1}'.format(name, field_path)
+                field_path = f"{name}{field_path}"
             else:
-                field_path = '{0}.{1}'.format(name, field_path)
+                field_path = f"{name}.{field_path}"
             if options.get('chain', False) and len(attributes) > 1:
                 fields.append((field_path, *field_getter(field)))
             else:
@@ -271,9 +270,9 @@ class Container:
 
     @nested_option()
     def to_dict(self, *attributes, **options):
-        """ Returns a **flatten** :class:`ordered dictionary <collections.OrderedDict>`
-        of ``{'field path': attribute}`` or ``{'field path': tuple(attributes)}``
-        pairs for each :class:`Field` *nested* in the `Container`.
+        """ Returns a **flatten** :class:`dict` of ``{'field path': attribute}``
+        or ``{'field path': tuple(attributes)}`` pairs for each :class:`Field`
+        *nested* in the `Container`.
 
         :param str attributes: selected :class:`Field` attributes.
             Fallback is the field :attr:`~Field.value`.
@@ -288,8 +287,8 @@ class Container:
         # Save to file
         save = options.pop('save', False)
 
-        fields = OrderedDict()
-        fields[name] = OrderedDict()
+        fields = dict()
+        fields[name] = dict()
         if attributes:
             field_getter = attrgetter(*attributes)
         else:
@@ -352,12 +351,32 @@ class Container:
             `Container` lists their referenced :attr:`~Pointer.data` object
             field attributes as well (chained method call).
         """
-        with open(file, 'w', newline='') as file_handle:
+        with open(file, 'w', newline='') as file_:
             fieldnames = self._get_fieldnames(*attributes, **options)
-            writer = csv.DictWriter(file_handle, fieldnames)
+            writer = csv.DictWriter(file_, fieldnames)
             writer.writeheader()
-            for row in self.to_csv(*attributes, **options):
+            content = self.to_csv(*attributes, **options)
+            for row in content:
                 writer.writerow(row)
+
+    @nested_option()
+    def write_json(self, file, *attributes, **options):
+        """ Writes the selected field *attributes* for each :class:`Field`
+        *nested* in the `Container` to  a ``.json`` *file*.
+
+        :param str file: name and location of the ``.json`` *file*.
+        :param str attributes: selected :class:`Field` attributes.
+            Fallback is the field :attr:`~Field.value`.
+        :keyword tuple fieldnames: sequence of dictionary keys for the selected
+            field *attributes*.
+            Defaults to ``(*attributes)``.
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields in the
+            `Container` lists their referenced :attr:`~Pointer.data` object
+            field attributes as well (chained method call).
+        """
+        content = self.to_json(*attributes, **options)
+        with open(file, 'w', newline='') as file_:
+            file_.write(content)
 
     @nested_option()
     def save(self, file, *attributes, **options):
@@ -419,9 +438,9 @@ class Container:
         options['save'] = True
         parser = ConfigParser()
         parser.read_dict(self.to_dict(*attributes, **options))
-        with open(file, 'w') as file_handle:
-            parser.write(file_handle)
-        file_handle.close()
+        with open(file, 'w') as file_:
+            parser.write(file_)
+        file_.close()
 
     @nested_option()
     @verbose_option(True)
@@ -495,7 +514,7 @@ class Container:
         parser.read(file)
 
         if parser.has_section(section):
-            verbose(options, "[{0}]".format(section))
+            verbose(options, f"[{section}]")
 
             for field_path, field in self.field_items(**options):
                 if field_path.startswith('['):
@@ -526,31 +545,26 @@ class Container:
                         field.value = parser.get(section, option)
                     if field_path.startswith('['):
                         verbose(options,
-                                "{0}{1} = {2}".format(section,
-                                                      field_path,
-                                                      field.value))
+                                f"{section}{field_path} = {field.value}")
                     else:
                         verbose(options,
-                                "{0}.{1} = {2}".format(section,
-                                                       field_path,
-                                                       field.value))
+                                f"{section}.{field_path} = {field.value}")
         else:
-            verbose(options, "No section [{0}] found.".format(section))
+            verbose(options, f"No section [{section}] found.")
 
 
-# noinspection PyIncorrectDocstring
-class Structure(OrderedDict, Container):
-    """ A `Structure` is an :class:`ordered dictionary <collections.OrderedDict>`
-    whereby the dictionary `key` describes the *name* of a *member* of the
-    `Structure` and the `value` of the dictionary `key` describes the *type* of
-    the *member*. Allowed *members* are :class:`Structure`, :class:`Sequence`,
-    :class:`Array` or :class:`Field` instances.
+class Structure(dict, Container):
+    """ A `Structure` is a :class:`dict` whereby the dictionary `key` describes
+    the *name* of a *member* of the `Structure` and the `value` of the dictionary
+    `key` describes the *type* of the *member*. Allowed *members* are
+    :class:`Structure`, :class:`Sequence`, :class:`Array` or :class:`Field`
+    instances.
 
-    The `Structure` class extends the :class:`ordered dictionary
-    <collections.OrderedDict>` with the :class:`Container` interface and
-    attribute getter and setter for the ``{'key': value}`` pairs to access and
-    to assign the *members* of the `Structure` easier, but this comes with the
-    trade-off that the dictionary `keys` must be valid Python attribute names.
+    The `Structure` class extends the :class:`dict` with the :class:`Container`
+    interface and attribute getter and setter for the ``{'key': value}`` pairs
+    to access and to assign the *members* of the `Structure` easier, but this
+    comes with the trade-off that the dictionary `keys` must be valid Python
+    attribute names.
 
     A `Structure` has additional methods to **read**, **deserialize**,
     **serialize** and **view** binary data:
@@ -605,33 +619,33 @@ class Structure(OrderedDict, Container):
             raise MemberTypeError(self, item, name)
 
     def __getattr__(self, name):
-        """ Returns the :class:`Field` of the `Structure` member whose dictionary key
-        is equal to the *name*.
+        """ Returns the :class:`Field` of the `Structure` member whose dictionary
+        key is equal to the *name*.
 
-        If the attribute *name* is in the namespace of the `Ordered Dictionary`
-        base class then the base class is called instead.
+        If the attribute *name* is in the namespace of the `Structure` class
+        then the base class is called instead.
 
         The `__getattr__` method is only called when the method
         `__getattribute__` raises an `AttributeError` exception.
         """
-        # Namespace check for ordered dictionary attribute
-        if name.startswith('_OrderedDict__'):
+        # Namespace check for dict attribute
+        if hasattr(Structure, name):
             return super().__getattribute__(name)
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'{0}' object has not attribute '{1}'".format(
-                self.__class__.__name__, name))
+            raise AttributeError(
+                f"'{self.__class__.__name__,}' object has not attribute '{name}'")
 
     def __setattr__(self, name, item):
         """ Assigns the *item* to the member of the `Structure` whose dictionary
         key is equal to the *name*.
 
-        If the attribute *name* is in the namespace of the `Ordered Dictionary`
-        base class then the base class is called instead.
+        If the attribute *name* is in the namespace of the `Structure` base class
+        then the base class is called instead.
         """
-        # Namespace check for ordered dictionary attribute
-        if name.startswith('_OrderedDict__'):
+        # Attribute check
+        if hasattr(Structure, name):
             return super().__setattr__(name, item)
         elif is_any(item):
             self[name] = item
@@ -816,10 +830,9 @@ class Structure(OrderedDict, Container):
 
     @nested_option()
     def view_fields(self, *attributes, **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>` which
-        contains the ``{'member name': field attribute}`` or the
-        ``{'member name': dict(field attributes)}`` pairs for each :class:`Field`
-        *nested* in the `Structure`.
+        """ Returns an :class:`dict` which contains the ``{'member name':
+        field attribute}`` or the  ``{'member name': dict(field attributes)}``
+        pairs for each :class:`Field` *nested* in the `Structure`.
 
         The *attributes* of each :class:`Field` for containers *nested* in the
         `Structure` are viewed as well (chained method call).
@@ -828,11 +841,11 @@ class Structure(OrderedDict, Container):
             Fallback is the field :attr:`~Field.value`.
         :keyword tuple fieldnames: sequence of dictionary keys for the selected
             field *attributes*. Defaults to ``(*attributes)``.
-        :keyword bool nested: if ``True`` all :class:`Pointer` fields nested in the
-            `Structure` views their referenced :attr:`~Pointer.data` object field
-            attributes as well (chained method call).
+        :keyword bool nested: if ``True`` all :class:`Pointer` fields nested in
+            the `Structure` views their referenced :attr:`~Pointer.data` object
+            field attributes as well (chained method call).
         """
-        members = OrderedDict()
+        members = dict()
         for name, item in self.items():
             # Container
             if is_container(item):
@@ -869,7 +882,7 @@ class Structure(OrderedDict, Container):
 
         items = list()
         for name, item in self.items():
-            item_path = '{0}.{1}'.format(parent, name) if parent else name
+            item_path = f"{parent}.{name}" if parent else name
             # Container
             if is_container(item):
                 for field in item.field_items(item_path, **options):
@@ -887,8 +900,7 @@ class Structure(OrderedDict, Container):
 
     @nested_option(True)
     def describe(self, name=str(), **options):
-        """ Returns the **metadata** of the `Structure` as an
-        :class:`ordered dictionary <collections.OrderedDict>`.
+        """ Returns the **metadata** of the `Structure` as a :class:`dict`.
 
         .. code-block:: python
 
@@ -909,7 +921,7 @@ class Structure(OrderedDict, Container):
             as well (chained method call). Default is ``True``.
         """
         members = list()
-        metadata = OrderedDict()
+        metadata = dict()
         metadata['class'] = self.__class__.__name__
         metadata['name'] = name if name else self.__class__.__name__
         metadata['size'] = len(self)
@@ -1326,9 +1338,9 @@ class Sequence(MutableSequence, Container):
         items = list()
         for index, item in enumerate(self):
             if path:
-                item_path = "{0}[{1}]".format(path, str(index))
+                item_path = f"{path}[{str(index)}]"
             else:
-                item_path = "[{0}]".format(str(index))
+                item_path = f"[{str(index)}]"
             # Container
             if is_container(item):
                 for field_item in item.field_items(item_path, **options):
@@ -1346,8 +1358,7 @@ class Sequence(MutableSequence, Container):
 
     @nested_option(True)
     def describe(self, name=str(), **options):
-        """ Returns the **metadata** of the `Sequence` as an
-        :class:`ordered dictionary <collections.OrderedDict>`.
+        """ Returns the **metadata** of the `Sequence` as a :class:`dict`.
 
         .. code-block:: python
 
@@ -1368,7 +1379,7 @@ class Sequence(MutableSequence, Container):
             as well (chained method call). Default is ``True``.
         """
         members = list()
-        metadata = OrderedDict()
+        metadata = dict()
         metadata['class'] = self.__class__.__name__
         metadata['name'] = name if name else self.__class__.__name__
         metadata['size'] = len(self)
@@ -1378,19 +1389,16 @@ class Sequence(MutableSequence, Container):
         for member_name, item in enumerate(self):
             # Container
             if is_container(item):
-                members.append(item.describe("{0}[{1}]".
-                                             format(metadata['name'], member_name),
-                                             **options))
+                members.append(item.describe(
+                    f"{metadata['name']}[{member_name}]", **options))
             # Pointer
             elif is_pointer(item) and get_nested(options):
-                members.append(item.describe("{0}[{1}]".
-                                             format(metadata['name'], member_name),
-                                             **options))
+                members.append(item.describe(
+                    f"{metadata['name']}[{member_name}]", **options))
             # Field
             elif is_field(item):
-                members.append(item.describe("{0}[{1}]".
-                                             format(metadata['name'], member_name),
-                                             nested=False))
+                members.append(item.describe(
+                    f"{metadata['name']}[{member_name}]", nested=False))
             else:
                 raise MemberTypeError(self, item, member_name)
         return metadata
@@ -1565,16 +1573,18 @@ class Field:
         self._value = None
 
     def __str__(self):
-        return self.name + "({0.index!s}, " \
-                           "{0.alignment!s}, " \
-                           "{0.bit_size!s}, " \
-                           "{0.value!s})".format(self)
+        return (f"{self.name}" 
+                f"({self.index!s}, "
+                f"{self.alignment!s}, "
+                f"{self.bit_size!s}, "
+                f"{self.value!s})")
 
     def __repr__(self):
-        return self.__class__.__name__ + "(index={0.index!r}, " \
-                                         "alignment={0.alignment!r}, " \
-                                         "bit_size={0.bit_size!r}, " \
-                                         "value={0.value!r})".format(self)
+        return (f"{self.__class__.__name__}"
+                f"(index={self.index!r}, "
+                f"alignment={self.alignment!r}, "
+                f"bit_size={self.bit_size!r}, "
+                f"value={self.value!r})")
 
     @property
     def alignment(self):
@@ -1840,8 +1850,7 @@ class Field:
 
     @nested_option(True)
     def describe(self, name=str(), **options):
-        """ Returns the **metadata** of a `Field` as an
-        :class:`ordered dictionary <collections.OrderedDict>`.
+        """ Returns the **metadata** of a `Field` as a :class:`dict`.
 
         .. code-block:: python
 
@@ -1874,7 +1883,7 @@ class Field:
             'type': Field.item_type.name,
             'value': self.value
         }
-        return OrderedDict(sorted(metadata.items()))
+        return dict(sorted(metadata.items()))
 
 
 class Stream(Field):
@@ -1958,18 +1967,18 @@ class Stream(Field):
     True
     >>> 0x0 in stream
     False
-    >>> hexlify(stream[5:])  # converts to bytes
-    b'060708090a'
+    >>> stream[5:].hex()  # converts to bytes
+    '060708090a'
     >>> stream.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [10, 0]),
-                 ('class', 'Stream10'),
-                 ('index', [0, 0]),
-                 ('name', 'Stream10'),
-                 ('order', 'auto'),
-                 ('size', 80),
-                 ('type', 'Field'),
-                 ('value', '0102030405060708090a')])
+    {'address': 0,
+     'alignment': [10, 0],
+     'class': 'Stream10',
+     'index': [0, 0],
+     'name': 'Stream10',
+     'order': 'auto',
+     'size': 80,
+     'type': 'Field',
+     'value': '0102030405060708090a'}
     """
     # Item type of a Stream field.
     item_type = ItemClass.Stream
@@ -2008,7 +2017,7 @@ class Stream(Field):
     @property
     def value(self):
         """ Field value as a lowercase hexadecimal encoded string."""
-        return hexlify(self._value).decode('ascii')
+        return self._value.hex()
 
     @value.setter
     def value(self, x):
@@ -2018,7 +2027,7 @@ class Stream(Field):
         """ Returns a string containing two hexadecimal digits for each byte
         in the :attr:`value` of the `Stream` field.
         """
-        return hexlify(self._value).decode('ascii')
+        return self._value.hex()
 
     @staticmethod
     def is_stream():
@@ -2171,15 +2180,15 @@ class String(Stream):
     >>> string[3:6]  # converts to bytes
     b'Foo'
     >>> string.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [10, 0]),
-                 ('class', 'String10'),
-                 ('index', [0, 0]),
-                 ('name', 'String10'),
-                 ('order', 'auto'),
-                 ('size', 80),
-                 ('type', 'Field'),
-                 ('value', 'KonFoo is ')])
+    {'address': 0,
+     'alignment': [10, 0],
+     'class': 'String10',
+     'index': [0, 0],
+     'name': 'String10',
+     'order': 'auto',
+     'size': 80,
+     'type': 'Field',
+     'value': 'KonFoo is '}
     """
     # Item type of a String field.
     item_type = ItemClass.String
@@ -2267,17 +2276,17 @@ class Float(Field):
     >>> real.value
     3.4028234663852886e+38
     >>> real.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'Float32'),
-                 ('index', [0, 0]),
-                 ('max', 3.4028234663852886e+38),
-                 ('min', -3.4028234663852886e+38),
-                 ('name', 'Float32'),
-                 ('order', 'auto'),
-                 ('size', 32),
-                 ('type', 'Field'),
-                 ('value', 3.4028234663852886e+38)])
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'Float32',
+     'index': [0, 0],
+     'max': 3.4028234663852886e+38,
+     'min': -3.4028234663852886e+38,
+     'name': 'Float32',
+     'order': 'auto',
+     'size': 32,
+     'type': 'Field',
+     'value': 3.4028234663852886e+38}
     """
     # Item type of a Float field.
     item_type = ItemClass.Float
@@ -2393,7 +2402,7 @@ class Float(Field):
         metadata = super().describe(name, **options)
         metadata['max'] = self.max()
         metadata['min'] = self.min()
-        return OrderedDict(sorted(metadata.items()))
+        return dict(sorted(metadata.items()))
 
 
 class Double(Field):
@@ -2456,17 +2465,17 @@ class Double(Field):
     >>> double.value
     1.7976931348623157e+308
     >>> double.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [8, 0]),
-                 ('class', 'Double64'),
-                 ('index', [0, 0]),
-                 ('max', 1.7976931348623157e+308),
-                 ('min', -1.7976931348623157e+308),
-                 ('name', 'Double64'),
-                 ('order', 'auto'),
-                 ('size', 64),
-                 ('type', 'Field'),
-                 ('value', 1.7976931348623157e+308)])
+    {'address': 0,
+     'alignment': [8, 0],
+     'class': 'Double64',
+     'index': [0, 0],
+     'max': 1.7976931348623157e+308,
+     'min': -1.7976931348623157e+308,
+     'name': 'Double64',
+     'order': 'auto',
+     'size': 64,
+     'type': 'Field',
+     'value': 1.7976931348623157e+308}
     """
     # Item type of a Double field.
     item_type = ItemClass.Double
@@ -2582,7 +2591,7 @@ class Double(Field):
         metadata = super().describe(name, **options)
         metadata['max'] = self.max()
         metadata['min'] = self.min()
-        return OrderedDict(sorted(metadata.items()))
+        return dict(sorted(metadata.items()))
 
 
 class Decimal(Field):
@@ -2671,21 +2680,21 @@ class Decimal(Field):
     bytearray(b'')
     >>> unsigned.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffff'
+    >>> bytestream.hex()
+    'ffff'
     >>> unsigned.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Decimal16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Decimal16'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 65535)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Decimal16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Decimal16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'Field',
+     'value': 65535}
 
     Example:
 
@@ -2744,21 +2753,21 @@ class Decimal(Field):
     bytearray(b'')
     >>> signed.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ff7f'
+    >>> bytestream.hex()
+    'ff7f'
     >>> signed.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Decimal16'),
-                 ('index', [0, 0]),
-                 ('max', 32767),
-                 ('min', -32768),
-                 ('name', 'Decimal16'),
-                 ('order', 'auto'),
-                 ('signed', True),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 32767)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Decimal16',
+     'index': [0, 0],
+     'max': 32767,
+     'min': -32768,
+     'name': 'Decimal16',
+     'order': 'auto',
+     'signed': True,
+     'size': 16,
+     'type': 'Field',
+     'value': 32767}
     """
     # Item type of a Decimal field.
     item_type = ItemClass.Decimal
@@ -2947,7 +2956,8 @@ class Decimal(Field):
         return self._min(self._signed)
 
     def as_unsigned(self):
-        """ Returns the field *value* of the `Decimal` field as an unsigned integer."""
+        """ Returns the field *value* of the `Decimal` field as an unsigned integer.
+        """
         return self._cast(self._value, self._min(False), self._max(False), False)
 
     def as_signed(self):
@@ -3055,7 +3065,7 @@ class Decimal(Field):
         metadata['max'] = self.max()
         metadata['min'] = self.min()
         metadata['signed'] = self.signed
-        return OrderedDict(sorted(metadata.items()))
+        return dict(sorted(metadata.items()))
 
 
 class Bit(Decimal):
@@ -3140,21 +3150,21 @@ class Bit(Decimal):
     bytearray(b'')
     >>> bit.serialize(bytestream)
     Index(byte=0, bit=1, address=0, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'01'
+    >>> bytestream.hex()
+    '01'
     >>> bit.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [1, 0]),
-                 ('class', 'Bit'),
-                 ('index', [0, 0]),
-                 ('max', 1),
-                 ('min', 0),
-                 ('name', 'Bit'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 1),
-                 ('type', 'Field'),
-                 ('value', 1)])
+    {'address': 0,
+     'alignment': [1, 0],
+     'class': 'Bit',
+     'index': [0, 0],
+     'max': 1,
+     'min': 0,
+     'name': 'Bit',
+     'order': 'auto',
+     'signed': False,
+     'size': 1,
+     'type': 'Field',
+     'value': 1}
     """
     # Item type of a Bit field.
     item_type = ItemClass.Bit
@@ -3250,21 +3260,21 @@ class Byte(Decimal):
     bytearray(b'')
     >>> byte.serialize(bytestream)
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ff'
+    >>> bytestream.hex()
+    'ff'
     >>> byte.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [1, 0]),
-                 ('class', 'Byte'),
-                 ('index', [0, 0]),
-                 ('max', 255),
-                 ('min', 0),
-                 ('name', 'Byte'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 8),
-                 ('type', 'Field'),
-                 ('value', '0xff')])
+    {'address': 0,
+     'alignment': [1, 0],
+     'class': 'Byte',
+     'index': [0, 0],
+     'max': 255,
+     'min': 0,
+     'name': 'Byte',
+     'order': 'auto',
+     'signed': False,
+     'size': 8,
+     'type': 'Field',
+     'value': '0xff'}
     """
     # Item type of a Byte field.
     item_type = ItemClass.Byte
@@ -3360,21 +3370,21 @@ class Char(Decimal):
     bytearray(b'')
     >>> char.serialize(bytestream)
     Index(byte=1, bit=0, address=1, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'46'
+    >>> bytestream.hex()
+    '46'
     >>> char.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [1, 0]),
-                 ('class', 'Char'),
-                 ('index', [0, 0]),
-                 ('max', 255),
-                 ('min', 0),
-                 ('name', 'Char'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 8),
-                 ('type', 'Field'),
-                 ('value', 'F')])
+    {'address': 0,
+     'alignment': [1, 0],
+     'class': 'Char',
+     'index': [0, 0],
+     'max': 255,
+     'min': 0,
+     'name': 'Char',
+     'order': 'auto',
+     'signed': False,
+     'size': 8,
+     'type': 'Field',
+     'value': 'F'}
     """
     # Item type of a Char field.
     item_type = ItemClass.Char
@@ -3473,21 +3483,21 @@ class Signed(Decimal):
     bytearray(b'')
     >>> signed.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ff7f'
+    >>> bytestream.hex()
+    'ff7f'
     >>> signed.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Signed16'),
-                 ('index', [0, 0]),
-                 ('max', 32767),
-                 ('min', -32768),
-                 ('name', 'Signed16'),
-                 ('order', 'auto'),
-                 ('signed', True),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 32767)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Signed16',
+     'index': [0, 0],
+     'max': 32767,
+     'min': -32768,
+     'name': 'Signed16',
+     'order': 'auto',
+     'signed': True,
+     'size': 16,
+     'type': 'Field',
+     'value': 32767}
     """
     # Item type of a Signed field.
     item_type = ItemClass.Signed
@@ -3573,21 +3583,21 @@ class Unsigned(Decimal):
     bytearray(b'')
     >>> unsigned.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffff'
+    >>> bytestream.hex()
+    'ffff'
     >>> unsigned.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Unsigned16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Unsigned16'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', '0xffff')])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Unsigned16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Unsigned16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'Field',
+     'value': '0xffff'}
     """
     # Item type of an Unsigned field.
     item_type = ItemClass.Unsigned
@@ -3682,21 +3692,21 @@ class Bitset(Decimal):
     bytearray(b'')
     >>> bitset.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffff'
+    >>> bytestream.hex()
+    'ffff'
     >>> bitset.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Bitset16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Bitset16'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', '0b1111111111111111')])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Bitset16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Bitset16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'Field',
+     'value': '0b1111111111111111'}
     """
     # Item type of a Bitset field.
     item_type = ItemClass.Bitset
@@ -3707,7 +3717,7 @@ class Bitset(Decimal):
     @property
     def value(self):
         """ Field value as a binary string prefixed with ``0b``."""
-        return '{0:#0{1}b}'.format(self._value, self.bit_size + 2)
+        return f"{self._value:#0{self.bit_size + 2}b}"
 
     @value.setter
     def value(self, x):
@@ -3792,21 +3802,21 @@ class Bool(Decimal):
     bytearray(b'')
     >>> boolean.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffff'
+    >>> bytestream.hex()
+    'ffff'
     >>> boolean.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Bool16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Bool16'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', True)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Bool16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Bool16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'Field',
+     'value': True}
     """
     # Item type of a Bool field.
     item_type = ItemClass.Bool
@@ -3916,21 +3926,21 @@ class Enum(Decimal):
     bytearray(b'')
     >>> enum.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffff'
+    >>> bytestream.hex()
+    'ffff'
     >>> enum.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Enum16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Enum16'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 65535)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Enum16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Enum16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'Field',
+     'value': 65535}
     """
     # Item type of an Enum field.
     item_type = ItemClass.Enum
@@ -3948,7 +3958,9 @@ class Enum(Decimal):
 
     @property
     def value(self):
-        """ Field value as an enum name string. Fall back is an unsigned integer number."""
+        """ Field value as an enum name string.
+        Fall back is an unsigned integer number.
+        """
         if self._enum and issubclass(self._enum, Enumeration):
             name = self._enum.get_name(self._value)
             if name:
@@ -4069,22 +4081,22 @@ class Scaled(Decimal):
     bytearray(b'')
     >>> scaled.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ff7f'
+    >>> bytestream.hex()
+    'ff7f'
     >>> scaled.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Scaled16'),
-                 ('index', [0, 0]),
-                 ('max', 32767),
-                 ('min', -32768),
-                 ('name', 'Scaled16'),
-                 ('order', 'auto'),
-                 ('scale', 100.0),
-                 ('signed', True),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 199.993896484375)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Scaled16',
+     'index': [0, 0],
+     'max': 32767,
+     'min': -32768,
+     'name': 'Scaled16',
+     'order': 'auto',
+     'scale': 100.0,
+     'signed': True,
+     'size': 16,
+     'type': 'Field',
+     'value': 199.993896484375}
     """
     # Item type of a Scaled field.
     item_type = ItemClass.Scaled
@@ -4129,7 +4141,7 @@ class Scaled(Decimal):
     def describe(self, name=None, **options):
         metadata = super().describe(name, **options)
         metadata['scale'] = self.scale
-        return OrderedDict(sorted(metadata.items()))
+        return dict(sorted(metadata.items()))
 
 
 class Fraction(Decimal):
@@ -4240,21 +4252,21 @@ class Fraction(Decimal):
     bytearray(b'')
     >>> unipolar.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffff'
+    >>> bytestream.hex()
+    'ffff'
     >>> unipolar.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Fraction2.16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Fraction2.16'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 399.993896484375)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Fraction2.16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Fraction2.16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'Field',
+     'value': 399.993896484375}
 
     Example:
 
@@ -4325,21 +4337,21 @@ class Fraction(Decimal):
     bytearray(b'')
     >>> bipolar.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ff7f'
+    >>> bytestream.hex()
+    'ff7f'
     >>> bipolar.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Fraction2.16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Fraction2.16'),
-                 ('order', 'auto'),
-                 ('signed', True),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 199.993896484375)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Fraction2.16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Fraction2.16',
+     'order': 'auto',
+     'signed': True,
+     'size': 16,
+     'type': 'Field',
+     'value': 199.993896484375}
     """
     # Item type of a Fraction field.
     item_type = ItemClass.Fraction
@@ -4410,7 +4422,7 @@ class Fraction(Decimal):
     def describe(self, name=None, **options):
         metadata = super().describe(name, **options)
         metadata['signed'] = self._signed_fraction
-        return OrderedDict(sorted(metadata.items()))
+        return dict(sorted(metadata.items()))
 
 
 class Bipolar(Fraction):
@@ -4497,21 +4509,21 @@ class Bipolar(Fraction):
     bytearray(b'')
     >>> bipolar.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ff7f'
+    >>> bytestream.hex()
+    'ff7f'
     >>> bipolar.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Bipolar2.16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Bipolar2.16'),
-                 ('order', 'auto'),
-                 ('signed', True),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 199.993896484375)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Bipolar2.16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Bipolar2.16',
+     'order': 'auto',
+     'signed': True,
+     'size': 16,
+     'type': 'Field',
+     'value': 199.993896484375}
     """
     # Item type of a Bipolar field.
     item_type = ItemClass.Bipolar
@@ -4605,21 +4617,21 @@ class Unipolar(Fraction):
     bytearray(b'')
     >>> unipolar.serialize(bytestream)
     Index(byte=2, bit=0, address=2, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffff'
+    >>> bytestream.hex()
+    'ffff'
     >>> unipolar.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [2, 0]),
-                 ('class', 'Unipolar2.16'),
-                 ('index', [0, 0]),
-                 ('max', 65535),
-                 ('min', 0),
-                 ('name', 'Unipolar2.16'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 16),
-                 ('type', 'Field'),
-                 ('value', 399.993896484375)])
+    {'address': 0,
+     'alignment': [2, 0],
+     'class': 'Unipolar2.16',
+     'index': [0, 0],
+     'max': 65535,
+     'min': 0,
+     'name': 'Unipolar2.16',
+     'order': 'auto',
+     'signed': False,
+     'size': 16,
+     'type': 'Field',
+     'value': 399.993896484375}
     """
     # Item type of a Unipolar field.
     item_type = ItemClass.Unipolar
@@ -4696,21 +4708,21 @@ class Datetime(Decimal):
     bytearray(b'')
     >>> datetime.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> datetime.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'Datetime32'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'Datetime32'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Field'),
-                 ('value', '2106-02-07 06:28:15')])
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'Datetime32',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'Datetime32',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Field',
+     'value': '2106-02-07 06:28:15'}
     """
     # Item type of a Datetime field.
     item_type = ItemClass.Datetime
@@ -4803,21 +4815,21 @@ class IPv4Address(Decimal):
     bytearray(b'')
     >>> ipv4.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> ipv4.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'Ipaddress32'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'Ipaddress32'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Field'),
-                 ('value', '255.255.255.255')])
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'Ipaddress32',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'Ipaddress32',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Field',
+     'value': '255.255.255.255'}
     """
     # Item type of a IPAddress field.
     item_type = ItemClass.IPAddress
@@ -4970,8 +4982,8 @@ class Pointer(Decimal, Container):
     bytearray(b'')
     >>> pointer.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     '4b6f6e466f6f2069732046756e'
@@ -4982,22 +4994,22 @@ class Pointer(Decimal, Container):
     >>> pointer.serialize_data()
     b''
     >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'Pointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'Pointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff')])
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'Pointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'Pointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff'}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', None)])
+    {'value': '0xffffffff', 'data': None}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": null}'
     >>> pointer.field_items()
@@ -5009,7 +5021,7 @@ class Pointer(Decimal, Container):
     >>> pointer.to_list()
     [('Pointer.field', '0xffffffff')]
     >>> pointer.to_dict()
-    OrderedDict([('Pointer', OrderedDict([('field', '0xffffffff')]))])
+    {'Pointer': {'field': '0xffffffff'}}
     """
     # Item type of a Pointer field.
     item_type = ItemClass.Pointer
@@ -5048,7 +5060,7 @@ class Pointer(Decimal, Container):
         """ Byte stream of the `Pointer` field for the referenced :attr:`data`
         object. Returned as a lowercase hexadecimal encoded string.
         """
-        return hexlify(self._data_stream).decode('ascii')
+        return self._data_stream.hex()
 
     @bytestream.setter
     def bytestream(self, value):
@@ -5522,11 +5534,11 @@ class Pointer(Decimal, Container):
 
     @nested_option()
     def view_fields(self, *attributes, **options):
-        """ Returns an :class:`ordered dictionary <collections.OrderedDict>` which
-        contains the selected field *attributes* of the `Pointer` field itself
-        extended with a ``['data']`` key which contains the selected field *attribute*
-        or the dictionaries of the selected field *attributes* for each :class:`Field`
-        *nested* in the :attr:`data` object referenced by the `Pointer` field.
+        """ Returns a :class:`dict` which contains the selected field
+        *attributes* of the `Pointer` field itself extended with a ``['data']``
+        key which contains the selected field *attribute* or the dictionaries of
+        the selected field *attributes* for each :class:`Field` *nested* in the
+        :attr:`data` object referenced by the `Pointer` field.
 
         The *attributes* of each :class:`Field` for containers *nested* in the
         :attr:`data` object referenced by the `Pointer` field are viewed as well
@@ -5541,7 +5553,7 @@ class Pointer(Decimal, Container):
             referenced :attr:`~Pointer.data` object field attributes as well
             (chained method call).
         """
-        items = OrderedDict()
+        items = dict()
 
         # Pointer field
         if attributes:
@@ -5594,7 +5606,7 @@ class Pointer(Decimal, Container):
         # Field
         items.append((path if path else 'field', self))
         # Data Object
-        data_path = '{0}.{1}'.format(path, 'data') if path else 'data'
+        data_path = f"{path}.data" if path else 'data'
         # Container
         if is_container(self._data):
             for field_item in self._data.field_items(data_path, **options):
@@ -5610,8 +5622,7 @@ class Pointer(Decimal, Container):
 
     @nested_option(True)
     def describe(self, name=str(), **options):
-        """ Returns the **metadata** of a `Pointer` as an
-        :class:`ordered dictionary <collections.OrderedDict>`.
+        """ Returns the **metadata** of a `Pointer` as a :class:`dict`.
 
         .. code-block:: python
 
@@ -5701,7 +5712,7 @@ class StructurePointer(Pointer):
     >>> pointer.is_null()
     True
     >>> pointer.data
-    Structure()
+    {}
     >>> pointer.data_size
     0
     >>> pointer.data_byte_order
@@ -5752,29 +5763,30 @@ class StructurePointer(Pointer):
     []
     >>> [(name, member.value) for name, member in pointer.items()]
     []
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'StructurePointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'StructurePointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('class', 'Structure'),
-                                ('name', 'data'),
-                                ('size', 0),
-                                ('type', 'Structure'),
-                                ('member', [])])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StructurePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StructurePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'class': 'Structure',
+         'name': 'data',
+         'size': 0,
+         'type': 'Structure',
+         'member': []}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
+    {'value': '0xffffffff', 'data': {}}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": {}}'
     >>> pointer.field_items()
@@ -5788,7 +5800,7 @@ class StructurePointer(Pointer):
     >>> pointer.to_list(nested=True)
     [('StructurePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('StructurePointer', OrderedDict([('field', '0xffffffff')]))])
+    {'StructurePointer': {'field': '0xffffffff'}}
     """
 
     def __init__(self, template=None, address=None, data_order=BYTEORDER,
@@ -5921,8 +5933,8 @@ class SequencePointer(Pointer):
     ''
     >>> pointer.value
     '0x0'
-    >>> hexlify(bytes(pointer))
-    b'00000000'
+    >>> bytes(pointer).hex()
+    '00000000'
     >>> bytes(pointer)
     b'\\x00\\x00\\x00\\x00'
     >>> int(pointer)
@@ -5986,29 +5998,30 @@ class SequencePointer(Pointer):
     >>> pointer.data
     []
     >>> pointer.clear()
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'SequencePointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'SequencePointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('class', 'Sequence'),
-                                ('name', 'data'),
-                                ('size', 0),
-                                ('type', 'Sequence'),
-                                ('member', [])])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'SequencePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'SequencePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'class': 'Sequence',
+         'name': 'data',
+         'size': 0,
+         'type': 'Sequence',
+         'member': []}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', [])])
+    {'value': '0xffffffff', 'data': []}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": []}'
     >>> pointer.field_items()
@@ -6022,7 +6035,7 @@ class SequencePointer(Pointer):
     >>> pointer.to_list(nested=True)
     [('SequencePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('SequencePointer', OrderedDict([('field', '0xffffffff')]))])
+    {'SequencePointer': {'field': '0xffffffff'}}
     """
 
     def __init__(self, iterable=None, address=None, data_order=BYTEORDER,
@@ -6244,29 +6257,30 @@ class ArrayPointer(SequencePointer):
     >>> len(pointer)
     10
     >>> pointer.clear()
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'ArrayPointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'ArrayPointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('class', 'Array'),
-                                ('name', 'data'),
-                                ('size', 0),
-                                ('type', 'Array'),
-                                ('member', [])])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'ArrayPointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'ArrayPointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'class': 'Array',
+         'name': 'data',
+         'size': 0,
+         'type': 'Array',
+         'member': []}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', [])])
+    {'value': '0xffffffff', 'data': []}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": []}'
     >>> pointer.field_items()
@@ -6280,7 +6294,7 @@ class ArrayPointer(SequencePointer):
     >>> pointer.to_list(nested=True)
     [('ArrayPointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('ArrayPointer', OrderedDict([('field', '0xffffffff')]))])
+    {'ArrayPointer': {'field': '0xffffffff'}}
     """
 
     def __init__(self, template, size=0, address=None, data_order=BYTEORDER,
@@ -6426,8 +6440,8 @@ class StreamPointer(Pointer):
     bytearray(b'')
     >>> pointer.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> pointer.resize(10)
     >>> pointer.data_size
     10
@@ -6436,8 +6450,8 @@ class StreamPointer(Pointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     '4b6f6e466f6f2069732046756e'
-    >>> hexlify(pointer.serialize_data())
-    b'00000000000000000000'
+    >>> pointer.serialize_data().hex()
+    '00000000000000000000'
     >>> pointer.deserialize_data()
     Index(byte=10, bit=0, address=4294967305, base_address=4294967295, update=False)
     >>> pointer.serialize_data()
@@ -6456,33 +6470,34 @@ class StreamPointer(Pointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'StreamPointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'StreamPointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('address', 4294967295),
-                                ('alignment', [10, 0]),
-                                ('class', 'Stream10'),
-                                ('index', [0, 0]),
-                                ('name', 'data'),
-                                ('order', 'auto'),
-                                ('size', 80),
-                                ('type', 'Field'),
-                                ('value', '4b6f6e466f6f20697320')])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StreamPointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StreamPointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'address': 4294967295,
+         'alignment': [10, 0],
+         'class': 'Stream10',
+         'index': [0, 0],
+         'name': 'data',
+         'order': 'auto',
+         'size': 80,
+         'type': 'Field',
+         'value': '4b6f6e466f6f20697320'}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
+    {'value': '0xffffffff', 'data': '4b6f6e466f6f20697320'}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "4b6f6e466f6f20697320"}'
     >>> pointer.field_items()
@@ -6504,9 +6519,7 @@ class StreamPointer(Pointer):
     [('StreamPointer.field', '0xffffffff'),
      ('StreamPointer.data', '4b6f6e466f6f20697320')]
     >>> pointer.to_dict()
-    OrderedDict([('StreamPointer',
-                  OrderedDict([('field', '0xffffffff'),
-                               ('data', '4b6f6e466f6f20697320')]))])
+    {'StreamPointer': {'field': '0xffffffff', 'data': '4b6f6e466f6f20697320'}}
     """
 
     def __init__(self, size=0, address=None,
@@ -6639,8 +6652,8 @@ class StringPointer(StreamPointer):
     bytearray(b'')
     >>> pointer.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> pointer.resize(10)
     >>> pointer.data_size
     10
@@ -6649,8 +6662,8 @@ class StringPointer(StreamPointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     '4b6f6e466f6f2069732046756e'
-    >>> hexlify(pointer.serialize_data())
-    b'00000000000000000000'
+    >>> pointer.serialize_data().hex()
+    '00000000000000000000'
     >>> pointer.deserialize_data()
     Index(byte=10, bit=0, address=4294967305, base_address=4294967295, update=False)
     >>> pointer.serialize_data()
@@ -6669,33 +6682,34 @@ class StringPointer(StreamPointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'StringPointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'StringPointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('address', 4294967295),
-                                ('alignment', [10, 0]),
-                                ('class', 'String10'),
-                                ('index', [0, 0]),
-                                ('name', 'data'),
-                                ('order', 'auto'),
-                                ('size', 80),
-                                ('type', 'Field'),
-                                ('value', 'KonFoo is ')])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StringPointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StringPointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'address': 4294967295,
+         'alignment': [10, 0],
+         'class': 'String10',
+         'index': [0, 0],
+         'name': 'data',
+         'order': 'auto',
+         'size': 80,
+         'type': 'Field',
+         'value': 'KonFoo is '}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    {'value': '0xffffffff', 'data': 'KonFoo is '}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "KonFoo is "}'
     >>> pointer.field_items()
@@ -6714,10 +6728,10 @@ class StringPointer(StreamPointer):
              bit_size=80,
              value='KonFoo is '))]
     >>> pointer.to_list()
-    [('StringPointer.field', '0xffffffff'), ('StringPointer.data', 'KonFoo is ')]
+    [('StringPointer.field', '0xffffffff'),
+     ('StringPointer.data', 'KonFoo is ')]
     >>> pointer.to_dict()
-    OrderedDict([('StringPointer',
-                  OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
+    {'StringPointer': {'field': '0xffffffff', 'data': 'KonFoo is '}}
     """
 
     def __init__(self, size=0, address=None,
@@ -6829,8 +6843,8 @@ class AutoStringPointer(StringPointer):
     bytearray(b'')
     >>> pointer.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> pointer.resize(10)
     >>> pointer.data_size
     10
@@ -6839,8 +6853,8 @@ class AutoStringPointer(StringPointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     '4b6f6e466f6f2069732046756e'
-    >>> hexlify(pointer.serialize_data())
-    b'00000000000000000000'
+    >>> pointer.serialize_data().hex()
+    '00000000000000000000'
     >>> pointer.deserialize_data()
     Index(byte=10, bit=0, address=4294967305, base_address=4294967295, update=False)
     >>> pointer.serialize_data()
@@ -6859,33 +6873,34 @@ class AutoStringPointer(StringPointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'AutoStringPointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'AutoStringPointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('address', 4294967295),
-                                ('alignment', [10, 0]),
-                                ('class', 'String10'),
-                                ('index', [0, 0]),
-                                ('name', 'data'),
-                                ('order', 'auto'),
-                                ('size', 80),
-                                ('type', 'Field'),
-                                ('value', 'KonFoo is ')])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'AutoStringPointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'AutoStringPointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'address': 4294967295,
+         'alignment': [10, 0],
+         'class': 'String10',
+         'index': [0, 0],
+         'name': 'data',
+         'order': 'auto',
+         'size': 80,
+         'type': 'Field',
+         'value': 'KonFoo is '}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    {'value': '0xffffffff', 'data': 'KonFoo is '}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "KonFoo is "}'
     >>> pointer.field_items()
@@ -6907,8 +6922,7 @@ class AutoStringPointer(StringPointer):
     [('AutoStringPointer.field', '0xffffffff'),
      ('AutoStringPointer.data', 'KonFoo is ')]
     >>> pointer.to_dict()
-    OrderedDict([('AutoStringPointer',
-                  OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
+    {'AutoStringPointer': {'field': '0xffffffff', 'data': 'KonFoo is '}}
     """
     #: Block size in *bytes* to read for the :class:`String` field.
     BLOCK_SIZE = 64
@@ -7060,8 +7074,8 @@ class RelativePointer(Pointer):
     bytearray(b'')
     >>> pointer.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     '4b6f6e466f6f2069732046756e'
@@ -7072,22 +7086,22 @@ class RelativePointer(Pointer):
     >>> pointer.serialize_data()
     b''
     >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'RelativePointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'RelativePointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff')])
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'RelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'RelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff'}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', None)])
+    {'value': '0xffffffff', 'data': None}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": null}'
     >>> pointer.field_items()
@@ -7101,7 +7115,7 @@ class RelativePointer(Pointer):
     >>> pointer.to_list()
     [('RelativePointer.field', '0xffffffff')]
     >>> pointer.to_dict()
-    OrderedDict([('RelativePointer', OrderedDict([('field', '0xffffffff')]))])
+    {'RelativePointer': {'field': '0xffffffff'}}
     """
 
     def __init__(self, template=None, address=None, data_order=BYTEORDER,
@@ -7183,7 +7197,7 @@ class StructureRelativePointer(RelativePointer):
     >>> pointer.is_null()
     True
     >>> pointer.data
-    Structure()
+    {}
     >>> pointer.data_size
     0
     >>> pointer.data_byte_order
@@ -7234,29 +7248,30 @@ class StructureRelativePointer(RelativePointer):
     []
     >>> [(name, member.value) for name, member in pointer.items()]
     []
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'StructureRelativePointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'StructureRelativePointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('class', 'Structure'),
-                                ('name', 'data'),
-                                ('size', 0),
-                                ('type', 'Structure'),
-                                ('member', [])])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StructureRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StructureRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'class': 'Structure',
+         'name': 'data',
+         'size': 0,
+         'type': 'Structure',
+         'member': []}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', OrderedDict())])
+    {'value': '0xffffffff', 'data': {}}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": {}}'
     >>> pointer.field_items()
@@ -7270,8 +7285,7 @@ class StructureRelativePointer(RelativePointer):
     >>> pointer.to_list(nested=True)
     [('StructureRelativePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('StructureRelativePointer',
-                  OrderedDict([('field', '0xffffffff')]))])
+    {'StructureRelativePointer': {'field': '0xffffffff'}}
     """
 
     def __init__(self, template=None, address=None, data_order=BYTEORDER,
@@ -7467,29 +7481,30 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer.data
     []
     >>> pointer.clear()
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'SequenceRelativePointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'SequenceRelativePointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('class', 'Sequence'),
-                                ('name', 'data'),
-                                ('size', 0),
-                                ('type', 'Sequence'),
-                                ('member', [])])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'SequenceRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'SequenceRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'class': 'Sequence',
+         'name': 'data',
+         'size': 0,
+         'type': 'Sequence',
+         'member': []}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', [])])
+    {'value': '0xffffffff', 'data': []}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": []}'
     >>> pointer.field_items()
@@ -7503,8 +7518,7 @@ class SequenceRelativePointer(RelativePointer):
     >>> pointer.to_list(nested=True)
     [('SequenceRelativePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('SequenceRelativePointer',
-                  OrderedDict([('field', '0xffffffff')]))])
+    {'SequenceRelativePointer': {'field': '0xffffffff'}}
     """
 
     def __init__(self, iterable=None, address=None, data_order=BYTEORDER,
@@ -7727,29 +7741,30 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> len(pointer)
     10
     >>> pointer.clear()
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'ArrayRelativePointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'ArrayRelativePointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('class', 'Array'),
-                                ('name', 'data'),
-                                ('size', 0),
-                                ('type', 'Array'),
-                                ('member', [])])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'ArrayRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'ArrayRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'class': 'Array',
+         'name': 'data',
+         'size': 0,
+         'type': 'Array',
+         'member': []}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', [])])
+    {'value': '0xffffffff', 'data': []}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": []}'
     >>> pointer.field_items()
@@ -7763,7 +7778,7 @@ class ArrayRelativePointer(SequenceRelativePointer):
     >>> pointer.to_list(nested=True)
     [('ArrayRelativePointer.field', '0xffffffff')]
     >>> pointer.to_dict(nested=True)
-    OrderedDict([('ArrayRelativePointer', OrderedDict([('field', '0xffffffff')]))])
+    {'ArrayRelativePointer': {'field': '0xffffffff'}}
     """
 
     def __init__(self, template, size=0, address=None, data_order=BYTEORDER,
@@ -7909,8 +7924,8 @@ class StreamRelativePointer(RelativePointer):
     bytearray(b'')
     >>> pointer.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> pointer.resize(10)
     >>> pointer.data_size
     10
@@ -7919,8 +7934,8 @@ class StreamRelativePointer(RelativePointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     '4b6f6e466f6f2069732046756e'
-    >>> hexlify(pointer.serialize_data())
-    b'00000000000000000000'
+    >>> pointer.serialize_data().hex()
+    '00000000000000000000'
     >>> pointer.deserialize_data()
     Index(byte=10, bit=0, address=4294967305, base_address=0, update=False)
     >>> pointer.serialize_data()
@@ -7939,33 +7954,34 @@ class StreamRelativePointer(RelativePointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'StreamRelativePointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'StreamRelativePointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('address', 4294967295),
-                                ('alignment', [10, 0]),
-                                ('class', 'Stream10'),
-                                ('index', [0, 0]),
-                                ('name', 'data'),
-                                ('order', 'auto'),
-                                ('size', 80),
-                                ('type', 'Field'),
-                                ('value', '4b6f6e466f6f20697320')])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StreamRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StreamRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'address': 4294967295,
+         'alignment': [10, 0],
+         'class': 'Stream10',
+         'index': [0, 0],
+         'name': 'data',
+         'order': 'auto',
+         'size': 80,
+         'type': 'Field',
+         'value': '4b6f6e466f6f20697320'}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', '4b6f6e466f6f20697320')])
+    {'value': '0xffffffff', 'data': '4b6f6e466f6f20697320'}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "4b6f6e466f6f20697320"}'
     >>> pointer.field_items()
@@ -7987,9 +8003,7 @@ class StreamRelativePointer(RelativePointer):
     [('StreamRelativePointer.field', '0xffffffff'),
      ('StreamRelativePointer.data', '4b6f6e466f6f20697320')]
     >>> pointer.to_dict()
-    OrderedDict([('StreamRelativePointer',
-                  OrderedDict([('field', '0xffffffff'),
-                               ('data', '4b6f6e466f6f20697320')]))])
+    {'StreamRelativePointer': {'field': '0xffffffff', 'data': '4b6f6e466f6f20697320'}}
     """
 
     def __init__(self, size=0, address=None,
@@ -8122,8 +8136,8 @@ class StringRelativePointer(StreamRelativePointer):
     bytearray(b'')
     >>> pointer.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
-    >>> hexlify(bytestream)
-    b'ffffffff'
+    >>> bytestream.hex()
+    'ffffffff'
     >>> pointer.resize(10)
     >>> pointer.data_size
     10
@@ -8132,8 +8146,8 @@ class StringRelativePointer(StreamRelativePointer):
     >>> pointer.bytestream = b'KonFoo is Fun'
     >>> pointer.bytestream
     '4b6f6e466f6f2069732046756e'
-    >>> hexlify(pointer.serialize_data())
-    b'00000000000000000000'
+    >>> pointer.serialize_data().hex()
+    '00000000000000000000'
     >>> pointer.deserialize_data()
     Index(byte=10, bit=0, address=4294967305, base_address=0, update=False)
     >>> pointer.serialize_data()
@@ -8152,33 +8166,34 @@ class StringRelativePointer(StreamRelativePointer):
     b'KonFoo'
     >>> pointer[3:6]  # converts to bytes
     b'Foo'
-    >>> pointer.describe()
-    OrderedDict([('address', 0),
-                 ('alignment', [4, 0]),
-                 ('class', 'StringRelativePointer'),
-                 ('index', [0, 0]),
-                 ('max', 4294967295),
-                 ('min', 0),
-                 ('name', 'StringRelativePointer'),
-                 ('order', 'auto'),
-                 ('signed', False),
-                 ('size', 32),
-                 ('type', 'Pointer'),
-                 ('value', '0xffffffff'),
-                 ('member',
-                  [OrderedDict([('address', 4294967295),
-                                ('alignment', [10, 0]),
-                                ('class', 'String10'),
-                                ('index', [0, 0]),
-                                ('name', 'data'),
-                                ('order', 'auto'),
-                                ('size', 80),
-                                ('type', 'Field'),
-                                ('value', 'KonFoo is ')])])])
+    >>> pointer.describe()  #doctest: +SKIP
+    {'address': 0,
+     'alignment': [4, 0],
+     'class': 'StringRelativePointer',
+     'index': [0, 0],
+     'max': 4294967295,
+     'min': 0,
+     'name': 'StringRelativePointer',
+     'order': 'auto',
+     'signed': False,
+     'size': 32,
+     'type': 'Pointer',
+     'value': '0xffffffff',
+     'member': [
+        {'address': 4294967295,
+         'alignment': [10, 0],
+         'class': 'String10',
+         'index': [0, 0],
+         'name': 'data',
+         'order': 'auto',
+         'size': 80,
+         'type': 'Field',
+         'value': 'KonFoo is '}
+     ]}
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
     >>> pointer.view_fields()
-    OrderedDict([('value', '0xffffffff'), ('data', 'KonFoo is ')])
+    {'value': '0xffffffff', 'data': 'KonFoo is '}
     >>> pointer.to_json()
     '{"value": "0xffffffff", "data": "KonFoo is "}'
     >>> pointer.field_items()
@@ -8200,8 +8215,7 @@ class StringRelativePointer(StreamRelativePointer):
     [('StringRelativePointer.field', '0xffffffff'),
      ('StringRelativePointer.data', 'KonFoo is ')]
     >>> pointer.to_dict()
-    OrderedDict([('StringRelativePointer',
-                  OrderedDict([('field', '0xffffffff'), ('data', 'KonFoo is ')]))])
+    {'StringRelativePointer': {'field': '0xffffffff', 'data': 'KonFoo is '}}
     """
 
     def __init__(self, size=0, address=None,
