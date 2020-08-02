@@ -4,8 +4,8 @@ Changelog
 Here you can see the full list of changes between each KonFoo release.
 
 
-Version 2.0 (Unreleased)
-------------------------
+Version 2.0 (Released 2020-08-02)
+---------------------------------
 
 Enhancements
 ~~~~~~~~~~~~
