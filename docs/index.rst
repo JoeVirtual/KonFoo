@@ -48,7 +48,7 @@ KonFoo in points:
 * easy creatable nested metadata dictionaries of the members of a byte stream mapper
 * metadata converter to the ``flare.json`` format to visualise the mapper with `d3js`_.
 
-KonFoo runs on `Python 3.5 <https://www.python.org/>`_ or higher.
+KonFoo runs on `Python 3.6 <https://www.python.org/>`_ or higher.
 
 You can get the latest version of KonFoo directly from GitHub:
 
