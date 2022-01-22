@@ -1,26 +1,30 @@
+.. currentmodule:: konfoo
+
+.. |status| image:: https://img.shields.io/pypi/status/konfoo.svg
+   :target: https://pypi.org/project/konfoo
+.. |docs| image:: https://readthedocs.org/projects/konfoo/badge/?version=latest
+   :target: https://konfoo.readthedocs.io
+.. |pypi| image:: https://img.shields.io/pypi/v/konfoo.svg
+   :target: https://pypi.org/project/konfoo
+.. |python| image:: https://img.shields.io/pypi/pyversions/konfoo.svg
+   :target: https://docs.python.org/3
+.. |license| image:: https://img.shields.io/pypi/l/konfoo.svg
+   :target: https://github.com/JoeVirtual/konfoo/blob/master/LICENSE
+.. |downloads| image:: https://img.shields.io/pypi/dm/konfoo.svg
+   :target: https://pypistats.org/packages/konfoo
+.. |binder| image:: https://mybinder.org/badge_logo.svg
+   :target: https://mybinder.org/v2/gh/JoeVirtual/konfoo/master?labpath=notebooks
+
 .. _d3js: https://d3js.org/
 
-.. |PyPI| image:: https://img.shields.io/pypi/v/KonFoo.svg
-    :target: https://pypi.org/project/KonFoo
-.. |License| image:: https://img.shields.io/pypi/l/KonFoo.svg
-    :target: https://pypi.org/project/KonFoo
-.. |Python| image:: https://img.shields.io/pypi/pyversions/KonFoo.svg
-    :target: https://pypi.org/project/KonFoo
-.. |Status| image:: https://img.shields.io/pypi/status/KonFoo.svg
-    :target: https://pypi.org/project/KonFoo
-.. |Binder| image:: https://mybinder.org/badge.svg
-    :target: https://mybinder.org/v2/gh/JoeVirtual/KonFoo/master?filepath=notebooks
-
-|PyPI| |License| |Python| |Status| |Binder|
-
-.. image:: _static/logo.png
-   :align: right
-   :alt: Logo
+|status| |docs| |pypi| |python| |license| |downloads|
 
 Welcome to the KonF'00' Documentation
 =====================================
 
-KonFoo is a Python Package for creating byte stream mappers in a declarative
+|binder|
+
+**KonFoo** is a Python Package for creating byte stream mappers in a declarative
 way with as little code as necessary to help fighting the confusion with the
 foo of the all well-known memory dumps or hexadecimal views of binary data.
 
@@ -30,7 +34,7 @@ It aims to make the process of reading, de-serializing, viewing, serializing
 and writing binary data from and back to a *byte stream* provider as easy as
 possible.
 
-KonFoo in points:
+**KonFoo** in points:
 
 * declarative way to describe the mapping of binary data to Python types
 * declarative classes to read, deserialize, view, serialize and write binary
@@ -50,7 +54,7 @@ KonFoo in points:
 
 KonFoo runs on `Python 3.6 <https://www.python.org/>`_ or higher.
 
-You can get the latest version of KonFoo directly from GitHub:
+You can get the latest version of **KonFoo** directly from GitHub:
 
     `KonFoo @ github <https://github.com/JoeVirtual/KonFoo/>`_
 
@@ -60,49 +64,64 @@ You can get the library directly from PyPI:
 
     > pip install konfoo
 
+.. toctree::
+   :maxdepth: 2
+   :hidden:
 
-Documentation Contents
-----------------------
-
-This part of the documentation guides you through all of the library's
-usage patterns.
+   concept/index
 
 .. toctree::
-    :maxdepth: 2
+   :maxdepth: 2
+   :caption: Containers
+   :hidden:
 
-    concept
-    structure
-    sequence
-    array
-    pointer
-    provider
-    reading
-    writing
-    deserializing
-
-
-API Reference
--------------
-
-If you are looking for information on a specific function, class or
-method, this part of the documentation is for you.
-
-.. toctree::
-    :maxdepth: 4
-
-    api
+   containers/structure
+   containers/sequence
+   containers/array
 
 
 .. toctree::
-    :maxdepth: 2
-    :caption: Miscellaneous Pages
+   :maxdepth: 2
+   :caption: Pointers
+   :hidden:
 
-    changelog
-    license
-
+   pointers/index
 
 .. toctree::
-    :maxdepth: 1
-    :caption: Package
+   :maxdepth: 2
+   :caption: Providers
+   :hidden:
 
-    genindex
+   providers/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Bytestream
+   :hidden:
+
+   bytestream/reading
+   bytestream/writing
+   bytestream/deserializing
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Reference
+   :hidden:
+
+   api/index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Annex
+   :hidden:
+
+   annex/changelog
+   annex/license
+   annex/contributing
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Indexes
+   :hidden:
+
+   genindex

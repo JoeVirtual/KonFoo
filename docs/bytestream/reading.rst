@@ -20,7 +20,7 @@ First, create the *byte stream* :ref:`provider <provider>` to access the
 *data source*.
 
     >>> # Create the byte stream provider for the data source.
-    >>> provider = FileProvider('./_static/reading.bin')
+    >>> provider = FileProvider("./_static/reading.bin")
     >>> provider.cache
     bytearray(b"\x0f\x00KonFoo is \'Fun\'")
     >>> provider.cache.hex()

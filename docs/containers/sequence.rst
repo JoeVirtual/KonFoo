@@ -12,8 +12,8 @@
 Sequence
 ========
 
-KonFoo has a :class:`Sequence` class to map a consecutive area of a *byte
-stream* with different kind of :ref:`members <sequence member>`.
+**KonFoo** has a :class:`Sequence` class to map a consecutive area of a
+*byte stream* with different kind of :ref:`members <sequence member>`.
 The order how you append the members to the `sequence`_ defines the order how
 the members are deserialized and serialized by the built-in deserializer and
 serializer.
@@ -802,11 +802,11 @@ Default attribute is the field :attr:`~Field.value`.
      {'id': 'Sequence[2]', 'value': 9},
      {'id': 'Sequence[3]', 'value': 'F'}]
     >>> # Save the structure field values to a '.csv' file.
-    >>> sequence.write_csv("_static/sequence.csv")
+    >>> sequence.write_csv("./_static/sequence.csv")
 
 The generated ``.csv`` file for the structure looks like this:
 
-.. literalinclude:: _static/sequence.csv
+.. literalinclude:: ../_static/sequence.csv
 
 .. note::
     The class name of the instance is used for the root name as long as no
@@ -827,11 +827,11 @@ Default attribute is the field :attr:`~Field.value`.
      ('Sequence[2]', 9),
      ('Sequence[3]', 'F')]
     >>> # Save the field values to an '.ini' file.
-    >>> sequence.save("_static/sequence.ini", nested=True)
+    >>> sequence.save("./_static/sequence.ini", nested=True)
 
 The generated ``.ini`` file for the sequence looks like this:
 
-.. literalinclude:: _static/sequence.ini
+.. literalinclude:: ../_static/sequence.ini
     :language: ini
 
 .. note::
@@ -852,7 +852,7 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     ...     Decimal8(),
     ...     Char()])
     >>> # Load the sequence field values from an '.ini' file.
-    >>> sequence.load("_static/sequence.ini")
+    >>> sequence.load("./_static/sequence.ini")
     [Sequence]
     Sequence[0] = 0x1
     Sequence[1] = 0x2

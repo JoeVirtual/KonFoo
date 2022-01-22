@@ -12,9 +12,9 @@
 Array
 =====
 
-KonFoo has an :class:`Array` class to map a consecutive area of a *byte stream*
-with the same kind of :ref:`array elements <array element>` (member).
-
+**KonFoo** has an :class:`Array` class to map a consecutive area of a
+*byte stream* with the same kind of :ref:`array elements <array element>`
+(member).
 
 .. _array element:
 
@@ -981,11 +981,11 @@ Default attribute is the field :attr:`~Field.value`.
      {'id': 'Array[2]', 'value': '0x3'},
      {'id': 'Array[3]', 'value': '0x4'}]
     >>> # Save the structure field values to a '.csv' file.
-    >>> array.write_csv("_static/array.csv")
+    >>> array.write_csv("./_static/array.csv")
 
 The generated ``.csv`` file for the structure looks like this:
 
-.. literalinclude:: _static/array.csv
+.. literalinclude:: ../_static/array.csv
 
 .. note::
     The class name of the instance is used for the root name as long as no
@@ -1006,12 +1006,12 @@ Default attribute is the field :attr:`~Field.value`.
      ('Array[2]', '0x3'),
      ('Array[3]', '0x4')]
     >>> # Save the array field values to an '.ini' file.
-    >>> array.save("_static/array.ini", nested=True)
+    >>> array.save("./_static/array.ini", nested=True)
 
 
 The generated ``.ini`` file for the array looks like this:
 
-.. literalinclude:: _static/array.ini
+.. literalinclude:: ../_static/array.ini
     :language: ini
 
 .. note::
@@ -1028,7 +1028,7 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     >>> # Create an array.
     >>> array = Array(Byte, 4)
     >>> # Load the array field values from an '.ini' file.
-    >>> array.load("_static/array.ini")
+    >>> array.load("./_static/array.ini")
     [Array]
     Array[0] = 0x1
     Array[1] = 0x2

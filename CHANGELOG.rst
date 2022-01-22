@@ -1,30 +1,46 @@
-Changelog
-=========
+Change Log
+**********
 
-Here you can see the full list of changes between each KonFoo release.
+These are the enhancements, breaking changes and bug fixes of note between each
+release.
 
+`2.1.0`_ - Unreleased
+=====================
 
-Version 2.0 (Released 2020-08-02)
----------------------------------
+.. _2.1.0: https://github.com/JoeVirtual/KonFoo/compare/v2.0...master
 
 Enhancements
-~~~~~~~~~~~~
+------------
 
-* Using :class:`dict` instead of :class:`~collections.OrderedDict` to improve
+* Refactor repository and documentation structure
+* Change documentation theme
+
+
+`2.0.0`_ - 2020-08-02
+=====================
+
+.. _2.0.0: https://github.com/JoeVirtual/KonFoo/compare/v1.1...v2.0
+
+Enhancements
+------------
+
+* Use :class:`dict` instead of :class:`~collections.OrderedDict` to improve
   readability.
 * Add method :meth:`Container.write_json` to write to a ``.json`` file.
 
-Incompatible Changes
-~~~~~~~~~~~~~~~~~~~~
+Breaking Changes
+----------------
 
 * Drop support for Python 3.5
 
 
-Version 1.1 (Released 2019-10-27)
----------------------------------
+`1.1.0`_ - 2019-10-27
+=====================
+
+.. _1.1.0: https://github.com/JoeVirtual/KonFoo/compare/v1.0...v1.1
 
 Enhancements
-~~~~~~~~~~~~
+------------
 
 * Add a :class:`Double` field class to map a double precision float value
   within a byte stream.
@@ -35,7 +51,7 @@ Enhancements
   customized fieldnames for the selected field *attributes*.
 
 Bug Fixes
-~~~~~~~~~
+---------
 
 * Fix syntax warnings to support Python 3.8 correctly.
 * Fix :class:`Structure` to raise the correct :class:`AttributeError` exception
@@ -44,7 +60,9 @@ Bug Fixes
   correctly on an instance of :class:`Structure`.
 
 
-Version 1.0 (Released 2019-01-02)
----------------------------------
+`1.0.0`_ - 2019-01-02
+=====================
 
-* First release.
+.. _1.0.0: https://github.com/JoeVirtual/KonFoo/compare
+
+* First stable release.

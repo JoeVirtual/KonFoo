@@ -11,11 +11,11 @@
 Structure
 =========
 
-KonFoo has a :class:`Structure` class and many :ref:`field <field>` classes to
-declare the mapping part of a *byte stream* :ref:`mapper <mapper>`.
-The order how you declare the :ref:`members <structure member>` in the
-`structure`_ defines the order how the :ref:`members <structure member>` are
-deserialized and serialized by the built-in deserializer and serializer.
+**KonFoo** has a :class:`Structure` class and many :ref:`field <field>` classes
+to declare the mapping part of a *byte stream* :ref:`mapper <mapper>`.
+The order how you declare the :ref:`members <structure member>` in the `structure`_
+defines the order how the :ref:`members <structure member>` are deserialized and
+serialized by the built-in deserializer and serializer.
 
 
 .. _structure member:
@@ -1061,11 +1061,11 @@ Default attribute is the field :attr:`~Field.value`.
      {'id': 'Structure.length', 'value': 9},
      {'id': 'Structure.module', 'value': 'F'}]
     >>> # Save the structure field values to a '.csv' file.
-    >>> structure.write_csv("_static/structure.csv")
+    >>> structure.write_csv("./_static/structure.csv")
 
 The generated ``.csv`` file for the structure looks like this:
 
-.. literalinclude:: _static/structure.csv
+.. literalinclude:: ../_static/structure.csv
 
 .. note::
     The class name of the instance is used for the root name as long as no
@@ -1086,11 +1086,11 @@ Default attribute is the field :attr:`~Field.value`.
      ('Structure.length', 9),
      ('Structure.module', 'F')]
     >>> # Save the structure field values to an '.ini' file.
-    >>> structure.save("_static/structure.ini")
+    >>> structure.save("./_static/structure.ini")
 
 The generated ``.ini`` file for the structure looks like this:
 
-.. literalinclude:: _static/structure.ini
+.. literalinclude:: ../_static/structure.ini
     :language: ini
 
 .. note::
@@ -1111,7 +1111,7 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     ...     length=Decimal8(),
     ...     module=Char())
     >>> # Load the structure field values from an '.ini' file.
-    >>> structure.load("_static/structure.ini")
+    >>> structure.load("./_static/structure.ini")
     [Structure]
     Structure.version = 0x1
     Structure.id = 0x2

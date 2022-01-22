@@ -1,6 +1,9 @@
 API
 ***
 
+This part of the documentation lists the full API reference of all public
+classes and functions.
+
 .. module:: konfoo
 
 .. testsetup:: *
@@ -9,10 +12,6 @@ API
     from binascii import hexlify, unhexlify
     from konfoo.globals import ItemClass
     from konfoo import *
-
-This part of the documentation lists the full API reference of all public
-classes and functions.
-
 
 Provider
 ========

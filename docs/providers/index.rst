@@ -9,8 +9,8 @@
 Provider
 ========
 
-KonFoo has an *abstract* :class:`Provider` class with an abstract interface to
-**read** a *byte stream* from a *data source* and to **write** a *byte stream*
+**KonFoo** has an *abstract* :class:`Provider` class with an abstract interface
+to **read** a *byte stream* from a *data source* and to **write** a *byte stream*
 to a *data source*.
 
 Read Interface

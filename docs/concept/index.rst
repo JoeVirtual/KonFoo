@@ -13,9 +13,9 @@ Introduction
 ============
 
 **KonFoo** is a Python package for de-serializing *byte streams* into a meaningful
-representation. KonFoo helps you to deserialize a *byte stream* retrievable through
-a *byte stream* :ref:`provider <provider>` to any kind of data source into a
-meaningful representation by just declaring how the parts of a *byte stream*
+representation. **KonFoo** helps you to deserialize a *byte stream* retrievable
+through a *byte stream* :ref:`provider <provider>` to any kind of data source
+into a meaningful representation by just declaring how the parts of a *byte stream*
 should be represented, respectively mapped to :ref:`fields <field>`.
 
 You can store the representation into an ``.ini`` file to analyse the *byte
@@ -40,9 +40,9 @@ manipulated values of any `container`_ or `field`_ in the representation back to
 Concept
 =======
 
-KonFoo is based on defining or declaring a *byte stream* `mapper`_ (representation)
-through classes. KonFoo has two abstract base classes the `container`_ class and
-the `field`_ class.
+**KonFoo** is based on defining or declaring a *byte stream* `mapper`_
+(representation) through classes. **KonFoo** has two abstract base classes the
+`container`_ class and the `field`_ class.
 
 A `container`_ contains `field`_ and/or `container`_ classes and knows how to
 **view**, **save** and **load** the *values* of the `field`_ **items** within
@@ -190,11 +190,11 @@ A `container`_ can **write** the *attributes* of each `field`_ item *nested* in 
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # Save the field values to an '.csv' file.
-    >>> container.write_csv("_static/container.csv")
+    >>> container.write_csv("./_static/container.csv")
 
 The generated ``.csv`` file for the container looks like this:
 
-.. literalinclude:: _static/container.csv
+.. literalinclude:: ../_static/container.csv
 
 .. note::
     The class name of the instance is used for the root name as long as no
@@ -209,11 +209,11 @@ A `container`_ can **save** the *attributes* of each `field`_ item *nested* in t
 Default attribute is the field :attr:`~Field.value`.
 
     >>> # Save the field values to an '.ini' file.
-    >>> container.save("_static/container.ini")
+    >>> container.save("./_static/container.ini")
 
 The generated ``.ini`` file for the container looks like this:
 
-.. literalinclude:: _static/container.ini
+.. literalinclude:: ../_static/container.ini
     :language: ini
 
 .. note::
@@ -228,7 +228,7 @@ A `container`_ can **load** the *value* of each `field`_ item *nested* in the
 `container`_ from an ``.ini`` file by calling its method :meth:`~Container.load`.
 
     >>> # Load the field values from an '.ini' file.
-    >>> container.load("_static/container.ini")
+    >>> container.load("./_static/container.ini")
     [Container]
 
 .. note::

@@ -15,9 +15,8 @@ if "%1" == "help" (
 )
 
 if "%1" == "docs" (
-    cd docs
-    make html
-    cd ..
+    sphinx-build -b html ./docs ./docs/_build
+    goto end
     goto end
 )
 
@@ -36,8 +35,7 @@ if "%1" == "test" (
 )
 
 if "%1" == "build" (
-    python setup.py sdist
-    python setup.py bdist_wheel
+    python setup.py sdist bdist_wheel
     goto end
 )
 
@@ -45,7 +43,7 @@ if "%1" == "release" (
     set HOME=.
     python setup.py sdist
     python setup.py bdist_wheel
-    twine upload dist/*
+    twine upload --verbose -r pypi dist/*
     goto end
 )
 

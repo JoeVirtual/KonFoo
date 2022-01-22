@@ -2,13 +2,9 @@
 """
 KonFoo
 ~~~~~~
+Public package API.
 
-KonFoo is a Python Package for creating byte stream mappers in a declarative
-way with as little code as necessary to help fighting the confusion with the
-foo of the all too well-known memory dumps or hexadecimal views of binary
-data.
-
-:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:copyright: (c) 2015-2022 by Jochen Gerhaeusser.
 :license: BSD, see LICENSE for details.
 """
 
@@ -326,4 +322,4 @@ __all__ = [
     'd3flare_json', 'HexViewer',
 ]
 
-__version__ = '2.0'
+__version__ = '2.1.0a0'

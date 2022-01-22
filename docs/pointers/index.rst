@@ -11,11 +11,11 @@
 Pointer
 =======
 
-KonFoo has a :class:`Pointer` class to reference a memory area in a *data source*
-to be mapped with its attached `data object`_.
+**KonFoo** has a :class:`Pointer` class to reference a memory area in a
+*data source* to be mapped with its attached `data object`_.
 
-The :class:`Pointer` class provides an interface to *read* the necessary amount of
-bytes for its attached `data object`_ through a *byte stream*
+The :class:`Pointer` class provides an interface to *read* the necessary amount
+of bytes for its attached `data object`_ through a *byte stream*
 :ref:`provider <provider>` *from* a *data source*.
 
 The :class:`Pointer` class provides an interface to *write* the field :ref:`values
@@ -23,7 +23,7 @@ The :class:`Pointer` class provides an interface to *write* the field :ref:`valu
 attached `data object`_ through a *byte stream* :ref:`provider <provider>` *to* the
 *data source*.
 
-KonFoo provides the following specialized `pointer`_ fields
+**KonFoo** provides the following specialized `pointer`_ fields
 
 * a :class:`StructurePointer` field which refers to a
   :ref:`structure <structure>`.
@@ -42,12 +42,12 @@ KonFoo provides the following specialized `pointer`_ fields
 Relative Pointer
 ----------------
 
-KonFoo has a :class:`RelativePointer` class. The only difference between the a
-`pointer`_ field and a `relative pointer`_ field is that the `data object`_
+**KonFoo** has a :class:`RelativePointer` class. The only difference between the
+a `pointer`_ field and a `relative pointer`_ field is that the `data object`_
 is relative addressed by a `relative pointer`_ field instead of absolute
 addressed.
 
-KonFoo provides the following specialized `relative pointer`_ fields
+**KonFoo** provides the following specialized `relative pointer`_ fields
 
 * a :class:`StructureRelativePointer` field which refers to a
   :ref:`structure <structure>`
@@ -1557,11 +1557,11 @@ Default attribute is the field :attr:`~Field.value`.
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
     >>> # Save the structure field values to a '.csv' file.
-    >>> pointer.write_csv("_static/pointer.csv", nested=True)
+    >>> pointer.write_csv("./_static/pointer.csv", nested=True)
 
 The generated ``.csv`` file for the structure looks like this:
 
-.. literalinclude:: _static/pointer.csv
+.. literalinclude:: ../_static/pointer.csv
 
 .. note::
     The class name of the instance is used for the root name as long as no
@@ -1582,11 +1582,11 @@ Default attribute is the field :attr:`~Field.value`.
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
     >>> # Save the pointer and nested pointers field values to an '.ini' file.
-    >>> pointer.save("_static/pointer.ini", nested=True)
+    >>> pointer.save("./_static/pointer.ini", nested=True)
 
 The generated ``.ini`` file for the pointer looks like this:
 
-.. literalinclude:: _static/pointer.ini
+.. literalinclude:: ../_static/pointer.ini
     :language: ini
 
 .. note::
@@ -1601,7 +1601,7 @@ You can **load** the *values* of each :ref:`field <field>` of a `pointer`_
 from an ``.ini`` file by calling the method :meth:`~Container.load`.
 
     >>> # Load the pointer and nested pointers field values from an '.ini' file.
-    >>> pointer.load("_static/pointer.ini", nested=True)
+    >>> pointer.load("./_static/pointer.ini", nested=True)
     [Pointer]
     Pointer.field = 0x1
     Pointer.data.size = 14

@@ -1,13 +1,16 @@
-include README.md
-include CHANGES.rst
-include LICENSE
-include requirements.txt
 include Makefile
 include make.bat
+include CHANGELOG.rst
+include CONTRIBUTING.md
+include LICENSE
+include requirements.txt
+include runtime.txt
+include README.md
 
 # Documentation
-graft artwork
+graft assets
 graft docs
+graft notebooks
 prune docs/_build
 
 # Tests
