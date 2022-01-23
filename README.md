@@ -4,7 +4,7 @@
 [![docs](https://readthedocs.org/projects/konfoo/badge/?version=latest)](https://konfoo.readthedocs.io)
 [![pypi](https://img.shields.io/pypi/v/konfoo.svg)](https://pypi.org/project/konfoo)
 [![python](https://img.shields.io/pypi/pyversions/konfoo.svg)](https://docs.python.org/3/)
-[![license](https://img.shields.io/pypi/l/konfoo.svg)](https://github.com/joevirtual/konfoo/blob/master/LICENSE)
+[![license](https://img.shields.io/pypi/l/konfoo.svg)](https://github.com/JoeVirtual/KonFoo/blob/master/LICENSE)
 [![downloads](https://img.shields.io/pypi/dm/konfoo.svg)](https://pypistats.org/packages/konfoo)
 [![binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/joevirtual/konfoo/master?labpath=notebooks)
 
@@ -192,8 +192,8 @@ See also the list of [contributors] who participated in this [project].
 [Furo]: https://pypi.org/project/furo
 [sphinx-copybutton]: https://pypi.org/project/sphinx-copybutton
 [github]: https://github.com
-[project]: https://github.com/joevirtual/konfoo
-[repository tag list]: https://github.com/joevirtual/konfoo/releases
-[contributors]: https://github.com/joevirtual/konfoo/graphs/contributors
-[GitHub Pages]: https://joevirtual.github.io/konfoo/
+[project]: https://github.com/JoeVirtual/KonFoo
+[repository tag list]: https://github.com/JoeVirtual/KonFoo/releases
+[contributors]: https://github.com/JoeVirtual/KonFoo/graphs/contributors
+[GitHub Pages]: https://joevirtual.github.io/KonFoo/
 [Read The Docs]: https://konfoo.readthedocs.io
