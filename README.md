@@ -195,5 +195,5 @@ See also the list of [contributors] who participated in this [project].
 [project]: https://github.com/JoeVirtual/KonFoo
 [repository tag list]: https://github.com/JoeVirtual/KonFoo/releases
 [contributors]: https://github.com/JoeVirtual/KonFoo/graphs/contributors
-[GitHub Pages]: https://signalytics.gitlab.io/signalyzer
+[GitHub Pages]: https://joevirtual.github.io/KonFoo/
 [Read The Docs]: https://konfoo.readthedocs.io
