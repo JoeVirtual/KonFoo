@@ -1,0 +1,4 @@
+Symbol Index
+============
+
+* :ref:`genindex`

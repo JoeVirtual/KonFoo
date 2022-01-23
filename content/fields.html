@@ -1,0 +1,551 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Structure" href="../containers/structure.html" /><link rel="prev" title="Containers" href="containers.html" />
+
+    <meta name="generator" content="sphinx-4.4.0, furo 2022.01.02"/>
+        <title>Fields - KonFoo 2.1.0a0</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=df49af52631e7917044a9c21a57f7b83170a6dd0" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=fade93df149f7c5fedb3ff897f799dc7d283b420" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">KonFoo 2.1.0a0</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand centered" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo" src="../_static/logo.png" alt="Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">KonFoo 2.1.0a0</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Content</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concept.html">Concept</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mapper.html">Mapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containers.html">Containers</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Fields</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Containers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../containers/structure.html">Structure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../containers/sequence.html">Sequence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../containers/array.html">Array</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Pointers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../pointers/index.html">Pointer</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Providers</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../providers/index.html">Provider</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Bytestream</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../bytestream/reading.html">Reading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bytestream/writing.html">Writing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../bytestream/deserializing.html">De-Serializing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Annex</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../annex/changelog.html">Change Log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../annex/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../annex/contributing.html">Issue Reports</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Indexes</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Symbol Index</a></li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="fields">
+<span id="field"></span><h1>Fields<a class="headerlink" href="#fields" title="Permalink to this headline">¶</a></h1>
+<p>The role of a <a class="reference internal" href="../api/index.html#konfoo.Field" title="konfoo.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> is to map a specific content area of a <em>byte stream</em>.</p>
+<p>A <a class="reference internal" href="#field">field</a> is always placed in a <a class="reference internal" href="containers.html#container"><span class="std std-ref">container</span></a> except from a
+<a class="reference internal" href="../pointers/index.html#pointer"><span class="std std-ref">pointer</span></a> field which is the <strong>entry point</strong> for a
+<a class="reference internal" href="mapper.html#mapper"><span class="std std-ref">mapper</span></a> to connect the attached <a class="reference internal" href="../pointers/index.html#data-object"><span class="std std-ref">data object</span></a>
+via a <em>byte stream</em> <a class="reference internal" href="../providers/index.html#provider"><span class="std std-ref">provider</span></a> to a <em>data source</em> to retrieve
+the required <em>byte stream</em> for the <a class="reference internal" href="mapper.html#mapper"><span class="std std-ref">mapper</span></a> .</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a field.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">Field</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Display the field.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span>
+<span class="go">Field(index=Index(byte=0, bit=0,</span>
+<span class="go">                  address=0, base_address=0,</span>
+<span class="go">                  update=False),</span>
+<span class="go">      alignment=Alignment(byte_size=0, bit_offset=0),</span>
+<span class="go">      bit_size=0,</span>
+<span class="go">      value=None)</span>
+</pre></div>
+</div>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The list below shows the available <a class="reference internal" href="#field">field</a> classes.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api/index.html#konfoo.Stream" title="konfoo.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.String" title="konfoo.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/index.html#konfoo.Float" title="konfoo.Float"><code class="xref py py-class docutils literal notranslate"><span class="pre">Float</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Double" title="konfoo.Double"><code class="xref py py-class docutils literal notranslate"><span class="pre">Double</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/index.html#konfoo.Decimal" title="konfoo.Decimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> <a class="reference internal" href="../api/index.html#konfoo.Bit" title="konfoo.Bit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Bit</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Byte" title="konfoo.Byte"><code class="xref py py-class docutils literal notranslate"><span class="pre">Byte</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Char" title="konfoo.Char"><code class="xref py py-class docutils literal notranslate"><span class="pre">Char</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Signed" title="konfoo.Signed"><code class="xref py py-class docutils literal notranslate"><span class="pre">Signed</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.Unsigned" title="konfoo.Unsigned"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unsigned</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Bitset" title="konfoo.Bitset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Bitset</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Bool" title="konfoo.Bool"><code class="xref py py-class docutils literal notranslate"><span class="pre">Bool</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Enum" title="konfoo.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.Scaled" title="konfoo.Scaled"><code class="xref py py-class docutils literal notranslate"><span class="pre">Scaled</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Fraction" title="konfoo.Fraction"><code class="xref py py-class docutils literal notranslate"><span class="pre">Fraction</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Bipolar" title="konfoo.Bipolar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Bipolar</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Unipolar" title="konfoo.Unipolar"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unipolar</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.Datetime" title="konfoo.Datetime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datetime</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.IPv4Address" title="konfoo.IPv4Address"><code class="xref py py-class docutils literal notranslate"><span class="pre">IPv4Address</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/index.html#konfoo.Pointer" title="konfoo.Pointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pointer</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.StructurePointer" title="konfoo.StructurePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StructurePointer</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.SequencePointer" title="konfoo.SequencePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequencePointer</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.ArrayPointer" title="konfoo.ArrayPointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayPointer</span></code></a><a class="reference internal" href="../api/index.html#konfoo.StreamPointer" title="konfoo.StreamPointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamPointer</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.StringPointer" title="konfoo.StringPointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StringPointer</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.AutoStringPointer" title="konfoo.AutoStringPointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoStringPointer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../api/index.html#konfoo.RelativePointer" title="konfoo.RelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelativePointer</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.StructureRelativePointer" title="konfoo.StructureRelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StructureRelativePointer</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.SequenceRelativePointer" title="konfoo.SequenceRelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SequenceRelativePointer</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.ArrayRelativePointer" title="konfoo.ArrayRelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayRelativePointer</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.StreamRelativePointer" title="konfoo.StreamRelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamRelativePointer</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.StringRelativePointer" title="konfoo.StringRelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StringRelativePointer</span></code></a></p></li>
+</ul>
+</section>
+<section id="name">
+<span id="field-name"></span><h2>Name<a class="headerlink" href="#name" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#field">field</a> has a type <a class="reference internal" href="../api/index.html#konfoo.Field.name" title="konfoo.Field.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">name</span></code></a>.</p>
+<p>The <a class="reference internal" href="#field-name">field name</a> consists of the name of the <a class="reference internal" href="#field">field</a> base class and its
+<a class="reference internal" href="#field-size">field size</a> to describe the kind of the <a class="reference internal" href="#field">field</a>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field name.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">name</span>
+<span class="go">'Field0'</span>
+</pre></div>
+</div>
+</section>
+<section id="size">
+<span id="field-size"></span><h2>Size<a class="headerlink" href="#size" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#field">field</a> has a <a class="reference internal" href="../api/index.html#konfoo.Field.bit_size" title="konfoo.Field.bit_size"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bit_size</span></code></a>.</p>
+<p>The <a class="reference internal" href="#field-size">field size</a> defines the size of the content area of a <em>byte stream</em> that
+the <a class="reference internal" href="#field">field</a> map.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field bit size.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">bit_size</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+</section>
+<section id="value">
+<span id="field-value"></span><h2>Value<a class="headerlink" href="#value" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#field">field</a> has a <a class="reference internal" href="../api/index.html#konfoo.Field.value" title="konfoo.Field.value"><code class="xref py py-attr docutils literal notranslate"><span class="pre">value</span></code></a>.</p>
+<p>The <a class="reference internal" href="#field-value">field value</a> represents the content area of a <em>byte stream</em> that the
+<a class="reference internal" href="#field">field</a> map.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field value.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">value</span>
+</pre></div>
+</div>
+</section>
+<section id="index">
+<span id="field-index"></span><h2>Index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#field">field</a> has an <a class="reference internal" href="../api/index.html#konfoo.Field.index" title="konfoo.Field.index"><code class="xref py py-attr docutils literal notranslate"><span class="pre">index</span></code></a>.</p>
+<p>The <a class="reference internal" href="#field-index">field index</a> contains the location of the <a class="reference internal" href="#field">field</a> in a <em>byte stream</em> and
+in the providing <em>data source</em>.</p>
+<p>The <a class="reference internal" href="#field-index">field index</a> is automatically calculated by the built-in deserializer and
+serializer from the start point of the <em>byte stream</em> and the start address of
+the <em>byte stream</em> in the providing <em>data source</em>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field index.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">index</span>
+<span class="go">Index(byte=0, bit=0, address=0, base_address=0, update=False)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field index: byte offset of the field in the byte stream.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field index: bit offset of the field relative to its byte offset.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field index: memory address of the field in the data source.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">address</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field index: start address of the byte stream in the data source.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">base_address</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field index: update request for the byte stream.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">update</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+</section>
+<section id="alignment">
+<span id="field-alignment"></span><h2>Alignment<a class="headerlink" href="#alignment" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#field">field</a> has an <a class="reference internal" href="../api/index.html#konfoo.Field.alignment" title="konfoo.Field.alignment"><code class="xref py py-attr docutils literal notranslate"><span class="pre">alignment</span></code></a>.</p>
+<p>The <a class="reference internal" href="#field-alignment">field alignment</a> contains the location of the <a class="reference internal" href="#field">field</a> within an <em>aligned</em>
+group of consecutive fields.</p>
+<p>The order how the consecutive fields are declared in a <a class="reference internal" href="containers.html#container"><span class="std std-ref">container</span></a>
+defines the order how the consecutive fields are aligned to each other.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">bit</span> <span class="pre">offset</span></code> of the <a class="reference internal" href="#field-alignment">field alignment</a> is automatically calculated by the
+built-in deserializer and serializer.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field alignment.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">alignment</span>
+<span class="go">Alignment(byte_size=0, bit_offset=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">byte_size</span><span class="p">,</span> <span class="n">bit_offset</span> <span class="o">=</span> <span class="n">field</span><span class="o">.</span><span class="n">alignment</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field alignment: byte size of the aligned field group.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">byte_size</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field alignment: bit offset of the field in its field group.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bit_offset</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<p>A <a class="reference internal" href="#field">field</a> can be <em>aligned to</em> a group of consecutive fields by using the
+<code class="docutils literal notranslate"><span class="pre">align_to</span></code> argument of the <a class="reference internal" href="../api/index.html#konfoo.Field" title="konfoo.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a> class to describe an <strong>atomic</strong>
+content part of a <em>byte stream</em> with more than one <a class="reference internal" href="#field">field</a>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Decimal</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">alignment</span>
+<span class="go">Alignment(byte_size=2, bit_offset=0)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Bool</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">align_to</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">alignment</span>
+<span class="go">Alignment(byte_size=2, bit_offset=0)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A <a class="reference internal" href="#field">field</a> aligns it self to the next matching byte size when the <a class="reference internal" href="#field-size">field size</a>
+matches not full bytes and no <a class="reference internal" href="#field-alignment">field alignment</a> is given.</p>
+</div>
+<p>For example to describe an <strong>atomic</strong> 16-bit value in a <em>byte stream</em> with
+more than one <a class="reference internal" href="#field">field</a> can be achieved like this:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create an empty structure for the atomic 16-bit value.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic</span> <span class="o">=</span> <span class="n">Structure</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add field for the first 15 bits of an atomic 16-bit value.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add field for the last bit of an atomic 16-bit value.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Index the fields of the atomic 16-bit value.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic</span><span class="o">.</span><span class="n">index_fields</span><span class="p">()</span>
+<span class="go">Index(byte=2, bit=0, address=2, base_address=0, update=False)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Display alignment of the size field.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">alignment</span>
+<span class="go">Alignment(byte_size=2, bit_offset=0)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Display alignment of the flag field.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">atomic</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">alignment</span>
+<span class="go">Alignment(byte_size=2, bit_offset=15)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <a class="reference internal" href="#field-alignment">field alignment</a> works only for the <a class="reference internal" href="../api/index.html#konfoo.Decimal" title="konfoo.Decimal"><code class="xref py py-class docutils literal notranslate"><span class="pre">Decimal</span></code></a> <a class="reference internal" href="#field">field</a> classes.</p>
+</div>
+</section>
+<section id="byte-order">
+<span id="field-byte-order"></span><h2>Byte order<a class="headerlink" href="#byte-order" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="#field">field</a> defines its own decoding/encoding <a class="reference internal" href="../api/index.html#konfoo.Field.byte_order" title="konfoo.Field.byte_order"><code class="xref py py-attr docutils literal notranslate"><span class="pre">byte_order</span></code></a>.</p>
+<p>The default <a class="reference internal" href="#field-byte-order">field byte order</a> is <a class="reference internal" href="../api/index.html#konfoo.Byteorder.auto" title="konfoo.Byteorder.auto"><code class="xref py py-class docutils literal notranslate"><span class="pre">auto</span></code></a> it means that the
+<a class="reference internal" href="#field">field</a> use the byte order which the <em>byte stream</em> <a class="reference internal" href="mapper.html#mapper"><span class="std std-ref">mapper</span></a>
+defines to <a class="reference internal" href="../api/index.html#konfoo.Field.unpack" title="konfoo.Field.unpack"><code class="xref py py-attr docutils literal notranslate"><span class="pre">unpack</span></code></a> and <a class="reference internal" href="../api/index.html#konfoo.Field.pack" title="konfoo.Field.pack"><code class="xref py py-attr docutils literal notranslate"><span class="pre">pack</span></code></a> the required bytes and
+bits for its <a class="reference internal" href="#field-value">field value</a> from and to the <em>byte stream</em>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field byte order.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">byte_order</span>
+<span class="go">Byteorder.auto = 'auto'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Field byte order value.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span><span class="o">.</span><span class="n">byte_order</span><span class="o">.</span><span class="n">value</span>
+<span class="go">'auto'</span>
+</pre></div>
+</div>
+</section>
+<section id="enumeration">
+<span id="id1"></span><h2>Enumeration<a class="headerlink" href="#enumeration" title="Permalink to this headline">¶</a></h2>
+<p>The <em>name</em> instead of the <em>value</em> of an enumeration can be displayed with the
+<a class="reference internal" href="../api/index.html#konfoo.Enum" title="konfoo.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a> <a class="reference internal" href="#field">field</a> class by assigning an <a class="reference internal" href="../api/index.html#konfoo.Enumeration" title="konfoo.Enumeration"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enumeration</span></code></a> class to the
+<a class="reference internal" href="../api/index.html#konfoo.Enum" title="konfoo.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a> <a class="reference internal" href="#field">field</a>.</p>
+<p>For example to describe a 2-bit ambivalent enumeration by an <a class="reference internal" href="../api/index.html#konfoo.Enum" title="konfoo.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a>
+<a class="reference internal" href="#field">field</a> can be achieved like this:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Define the enumeration class.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Validity</span><span class="p">(</span><span class="n">Enumeration</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">error</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">... </span>    <span class="n">correct</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">... </span>    <span class="n">forced</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">... </span>    <span class="n">undefined</span> <span class="o">=</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create an enum field and assign an enumeration to the field.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ambivalent</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">enumeration</span><span class="o">=</span><span class="n">Validity</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Display the value of the field.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ambivalent</span><span class="o">.</span><span class="n">value</span>
+<span class="go">'error'</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Returns the field value as an integer.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="n">ambivalent</span><span class="p">)</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Display the field.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ambivalent</span>
+<span class="go">Enum(index=Index(byte=0, bit=0,</span>
+<span class="go">                 address=0, base_address=0,</span>
+<span class="go">                 update=False),</span>
+<span class="go">     alignment=Alignment(byte_size=1, bit_offset=0),</span>
+<span class="go">     bit_size=2,</span>
+<span class="go">     value='error')</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../containers/structure.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Structure</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="containers.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Containers</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2015-2022, Jochen Gerhaeusser |
+          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+            | <a class="muted-link" href="../_sources/content/fields.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Fields</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#name">Name</a></li>
+<li><a class="reference internal" href="#size">Size</a></li>
+<li><a class="reference internal" href="#value">Value</a></li>
+<li><a class="reference internal" href="#index">Index</a></li>
+<li><a class="reference internal" href="#alignment">Alignment</a></li>
+<li><a class="reference internal" href="#byte-order">Byte order</a></li>
+<li><a class="reference internal" href="#enumeration">Enumeration</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    </body>
+</html>
