@@ -20,7 +20,6 @@ A :class:`Provider` class has the *abstract* method :meth:`Provider.read` which
 must be implemented by a derived class to read at the given start address
 the given number of bytes from the data source and returns the :class:`bytes`.
 
-
 Write Interface
 ---------------
 
@@ -28,13 +27,13 @@ A :class:`Provider` class has the *abstract* method :meth:`Provider.write` which
 must be implemented by a derived class to write the given number of bytes at
 the given start address to the data source.
 
-
 Define a Provider
 -----------------
 
 You define a `provider`_ by creating a class derived from the *abstract*
-:class:`Provider` class and implement the two *abstract* methods :meth:`~Provider.read`
-and :meth:`~Provider.write` for your kind of *data source* like shown below:
+:class:`Provider` class and implement the two *abstract* methods
+:meth:`~Provider.read` and :meth:`~Provider.write` for your kind of *data source*
+like shown below:
 
 .. code-block:: python
 

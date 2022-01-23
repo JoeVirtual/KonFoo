@@ -8,8 +8,8 @@ Filing an Issue Report
 ----------------------
 
 If you encounter a bug, misfeature, or missing feature, please file an `issue`_
-report. We also appreciate reports of incomplete or misleading information in the
-documentation; file those against the "documentation" category.
+report. We also appreciate reports of incomplete or misleading information in
+the documentation; file those against the "documentation" category.
 
 Don't hesitate to file an `issue`_ report, even if you think I may know about it
 already, or aren't sure of the details. Just give us as much information as you

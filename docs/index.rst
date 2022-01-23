@@ -65,10 +65,15 @@ You can get the library directly from PyPI:
     > pip install konfoo
 
 .. toctree::
+   :caption: Content
    :maxdepth: 2
    :hidden:
 
-   concept/index
+   content/intro
+   content/concept
+   content/mapper
+   content/containers
+   content/fields
 
 .. toctree::
    :maxdepth: 2

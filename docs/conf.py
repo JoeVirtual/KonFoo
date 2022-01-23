@@ -21,8 +21,8 @@ sys.path.insert(0, os.path.abspath('../src'))
 # -- Project information -----------------------------------------------------
 
 project = 'KonFoo'
-copyright = f"2015-{datetime.datetime.utcnow().year}, Jochen Gerhaeusser"
 author = 'Jochen Gerhaeusser'
+copyright = f"2015-{datetime.datetime.utcnow().year}, {author}"
 version = '2.1.0'
 release = '2.1.0a0'
 
@@ -57,7 +57,7 @@ html_theme_options = {
     "dark_css_variables": {
     },
 }
-html_title = 'KonFoo'
+html_title = f'{project} {release}'
 html_logo = './_static/images/logo.png'
 # html_favicon = './_static/images/favicon.ico'
 html_show_sourcelink = True

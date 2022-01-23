@@ -5,6 +5,7 @@
 [![pypi](https://img.shields.io/pypi/v/KonFoo.svg)](https://pypi.org/project/KonFoo)
 [![python](https://img.shields.io/pypi/pyversions/KonFoo.svg)](https://docs.python.org/3/)
 [![license](https://img.shields.io/pypi/l/KonFoo.svg)](https://github.com/JoeVirtual/KonFoo/blob/master/LICENSE)
+[![downloads](https://img.shields.io/pypi/dm/konfoo.svg)](https://pypistats.org/packages/konfoo)
 [![binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/JoeVirtual/KonFoo/master?labpath=notebooks)
 
 **KonFoo** is a Python Package for creating byte stream mappers in a declarative
@@ -16,7 +17,7 @@ It comes with sensible defaults out of the box.
 It aims to make the process of reading, de-serializing, viewing, serializing
 and writing binary data from and back to a data provider as easy as possible.
 
-KonFoo in points:
+**KonFoo** in points:
 
 * declarative way to describe the mapping of binary data to Python types
 * declarative classes to read, deserialize, view, serialize and write binary

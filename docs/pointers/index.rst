@@ -36,7 +36,6 @@ attached `data object`_ through a *byte stream* :ref:`provider <provider>` *to* 
 * a :class:`StringPointer` field which refers to a
   :class:`String` :ref:`field <field>`.
 
-
 .. _relative pointer:
 
 Relative Pointer
@@ -60,7 +59,6 @@ addressed.
 * a :class:`StringRelativePointer` field which refers to a
   :class:`String` :ref:`field <field>`
 
-
 .. _data object:
 
 Data Object
@@ -68,7 +66,6 @@ Data Object
 
 A `data object`_ of a `pointer`_ field can be any :ref:`field <field>` or
 :ref:`container <container>` class.
-
 
 Define a Data Object
 --------------------
@@ -82,33 +79,39 @@ Define a `data object`_ by defining an *data object* class.
     ...         self.size = Decimal(16)
     ...         self.item = Pointer()
     ...         self.index_fields()
+
     >>> # Create an instance of the data object.
     >>> data_object = DataObject()
+
     >>> # List the field values of the data object.
     >>> data_object.to_list()
     [('DataObject.size', 0),
      ('DataObject.item', '0x0')]
+
     >>> # List the field values of the data object as a CSV list.
     >>> data_object.to_csv()
     [{'id': 'DataObject.size', 'value': 0},
      {'id': 'DataObject.item', 'value': '0x0'}]
+
     >>> # View the data object field values as a JSON string.
     >>> data_object.to_json()
     '{"size": 0, "item": "0x0"}'
+
     >>> # List the field values of the data object and nested pointers.
     >>> data_object.to_list(nested=True)
     [('DataObject.size', 0),
      ('DataObject.item', '0x0')]
+
     >>> # List the field values of the data object and nested pointers as a CSV list.
     >>> data_object.to_csv(nested=True)
     [{'id': 'DataObject.size', 'value': 0},
      {'id': 'DataObject.item', 'value': '0x0'}]
+
     >>> # View the data object and nested pointers field values as a JSON string.
     >>> data_object.to_json(nested=True)
     '{"size": 0,
       "item": {"value": "0x0",
                "data": null}}'
-
 
 .. _data object pointer:
 
@@ -124,40 +127,46 @@ Define a `data object pointer`_ class for the `data object`_ attached to the
     ...         super().__init__(template=DataObject(),
     ...                          address=address,
     ...                          data_order=byte_order)
+
     >>> # Create an instance of the pointer.
     >>> pointer = DataObjectPointer()
+
     >>> # List the field values of the pointer.
     >>> pointer.to_list()
     [('DataObjectPointer.field', '0x0'),
      ('DataObjectPointer.data.size', 0),
      ('DataObjectPointer.data.item', '0x0')]
+
     >>> # List the field values of the pointer as a CSV list.
     >>> pointer.to_csv()
     [{'id': 'DataObjectPointer.field', 'value': '0x0'},
      {'id': 'DataObjectPointer.data.size', 'value': 0},
      {'id': 'DataObjectPointer.data.item', 'value': '0x0'}]
+
     >>> # View the pointer field values as a JSON string.
     >>> pointer.to_json()
     '{"value": "0x0",
       "data": {"size": 0,
                "item": "0x0"}}'
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('DataObjectPointer.field', '0x0'),
      ('DataObjectPointer.data.size', 0),
      ('DataObjectPointer.data.item', '0x0')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'DataObjectPointer.field', 'value': '0x0'},
      {'id': 'DataObjectPointer.data.size', 'value': 0},
      {'id': 'DataObjectPointer.data.item', 'value': '0x0'}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"size": 0,
                "item": {"value": "0x0",
                         "data": null}}}'
-
 
 Nest Pointers
 -------------
@@ -166,26 +175,32 @@ You can *nest* `pointer`_.
 
     >>> # Create an nested pointer with no data object attached.
     >>> pointer = Pointer(Pointer())
+
     >>> # List the field values of the pointer.
     >>> pointer.to_list()
     [('Pointer.field', '0x0'),
      ('Pointer.data', '0x0')]
+
     >>> # List the field values of the pointer as a CSV list.
     >>> pointer.to_csv()
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data', 'value': '0x0'}]
+
     >>> # View the pointer field values as a JSON string.
     >>> pointer.to_json()
     '{"value": "0x0",
       "data": "0x0"}'
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data', '0x0')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data', 'value': '0x0'}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x0",
@@ -194,34 +209,39 @@ You can *nest* `pointer`_.
 
     >>> # Create an nested pointer with a data object attached.
     >>> pointer = Pointer(Pointer(Byte()))
+
     >>> # List the field values of the pointer.
     >>> pointer.to_list()
     [('Pointer.field', '0x0'),
      ('Pointer.data', '0x0')]
+
     >>> # List the field values of the pointer as a CSV list.
     >>> pointer.to_csv()
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data', 'value': '0x0'}]
+
     >>> # View the pointer field values as a JSON string.
     >>> pointer.to_json()
     '{"value": "0x0",
       "data": "0x0"}'
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data', '0x0'),
      ('Pointer.data.data', '0x0')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data', 'value': '0x0'},
      {'id': 'Pointer.data.data', 'value': '0x0'}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"value": "0x0",
                "data": "0x0"}}'
-
 
 .. _data object access:
 
@@ -233,15 +253,18 @@ You can **access** the `data object`_ attached to a `pointer`_ with the
 
     >>> # Create a nested pointer.
     >>> pointer = Pointer(Pointer(Byte()))
+
     >>> # Index the pointer field and the fields of the attached data object.
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # Access the data object referenced the pointer field.
     >>> pointer.data
     Pointer(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
             alignment=Alignment(byte_size=4, bit_offset=0),
             bit_size=32,
             value='0x0')
+
     >>> # Access the data object referenced a nested pointer field.
     >>> pointer.data.data
     Byte(index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -249,37 +272,40 @@ You can **access** the `data object`_ attached to a `pointer`_ with the
          bit_size=8,
          value='0x0')
 
-
 You can **check** if a `data object`_ is a :ref:`field <field>`.
 
     >>> is_field(pointer.data)
     True
-
 
 You can **check** what kind of :ref:`field <field>` it is.
 
     >>> # Field is a bit field.
     >>> pointer.data.is_bit()
     False
+
     >>> # Field is a boolean field.
     >>> pointer.data.is_bool()
     False
+
     >>> # Field is a decimal field.
     >>> pointer.data.is_decimal()
     True
+
     >>> # Field is a float field.
     >>> pointer.data.is_float()
     False
+
     >>> # Field is a pointer field.
     >>> pointer.data.is_pointer()
     True
+
     >>> # Field is a stream field.
     >>> pointer.data.is_stream()
     False
+
     >>> # Field is a string field.
     >>> pointer.data.is_string()
     False
-
 
 .. _data object address:
 
@@ -293,7 +319,6 @@ attribute of a `pointer`_ field.
     >>> # Data source address of the data object referenced by the pointer.
     >>> pointer.address
     0
-
 
 .. _data object byte order:
 
@@ -311,8 +336,8 @@ to deserialize or serialize its attached `data object`_ with the
     'little'
 
 .. note::
-    The default byte order for a `data object`_ is little endian.
 
+  The default byte order for a `data object`_ is little endian.
 
 You can set the :ref:`byte order <data object byte order>` used by the `pointer`_
 to deserialize or serialize its attached `data object`_ with the
@@ -320,11 +345,10 @@ to deserialize or serialize its attached `data object`_ with the
 
     >>> # Set byte order to de-/serialize the data objects referenced by the pointer.
     >>> pointer.data_byte_order = 'big'
+
     >>> # Byte order to de-/serialize the data objects referenced by the pointer.
     >>> pointer.data_byte_order
     Byteorder.big = 'big'
-
-
 
 .. _data object byte stream:
 
@@ -348,7 +372,6 @@ You can set the internal :ref:`byte stream <data object byte stream>` used by th
     >>> pointer.bytestream
     '000000000000'
 
-
 Declare on the fly
 ------------------
 
@@ -358,27 +381,33 @@ You can **declare** a `data object`_ on the fly.
     >>> data_object = Structure(
     ...     size = Decimal(16),
     ...     item = Pointer(String()))
+
     >>> # List the field values of the data object.
     >>> data_object.to_list()
     [('Structure.size', 0),
      ('Structure.item', '0x0')]
+
     >>> # List the field values of the data object as a CSV list.
     >>> data_object.to_csv()
     [{'id': 'Structure.size', 'value': 0},
      {'id': 'Structure.item', 'value': '0x0'}]
+
     >>> # View the data object field values as a JSON string.
     >>> data_object.to_json()
     '{"size": 0, "item": "0x0"}'
+
     >>> # List the field values of the data object and nested pointers.
     >>> data_object.to_list(nested=True)
     [('Structure.size', 0),
      ('Structure.item', '0x0'),
      ('Structure.item.data', '')]
+
     >>> # List the field values of the data object and nested pointers as a CSV list.
     >>> data_object.to_csv(nested=True)
     [{'id': 'Structure.size', 'value': 0},
      {'id': 'Structure.item', 'value': '0x0'},
      {'id': 'Structure.item.data', 'value': ''}]
+
     >>> # View the data object and nested pointers field values as a JSON string.
     >>> data_object.to_json(nested=True)
     '{"size": 0,
@@ -389,40 +418,45 @@ You can **declare** a `pointer`_ on the fly.
 
     >>> # Create a pointer for the data object.
     >>> pointer = Pointer(data_object)
+
     >>> # List the field values of the pointer.
     >>> pointer.to_list()
     [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0')]
+
     >>> # List the field values of the pointer as a CSV list.
     >>> pointer.to_csv()
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'}]
+
     >>> # View the pointer field values as a JSON string.
     >>> pointer.to_json()
     '{"value": "0x0",
       "data": {"size": 0,
                "item": "0x0"}}'
+
     >>> # List all field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"size": 0,
                "item": {"value": "0x0",
                         "data": ""}}}'
-
 
 Initialize a Pointer
 --------------------
@@ -435,18 +469,21 @@ You can **initialize** the fields in a `pointer`_ by calling the method
     ...     Structure(
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x0",
@@ -465,25 +502,27 @@ You can **initialize** the fields in a `pointer`_ by calling the method
     ...         }
     ...     }
     ... })
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
                         "data": "Konfoo is Fun"}}}'
-
 
 Display a Pointer
 -----------------
@@ -495,9 +534,11 @@ You can **display** a `pointer`_ field.
     ...     Structure(
     ...         size=Decimal(16),
     ...         item=Pointer(String())))
+
     >>> # Index the pointer field and its attached data object.
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # Display the pointer field.
     >>> pointer
     Pointer(index=Index(byte=0, bit=0,
@@ -507,13 +548,12 @@ You can **display** a `pointer`_ field.
             bit_size=32,
             value='0x0')
 
-
 Display the Data Object
 -----------------------
 
 You can **display** the `data object`_ of a `pointer`_ field.
 
-    >>> # Display the data object referenced by the pointer
+    >>> # Display the data object referenced by the pointer.
     >>> pointer.data  #doctest: +SKIP
     {'size': Decimal(
         index=Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -533,7 +573,9 @@ Metadata of a Pointer
 You can get the metadata of a `pointer`_ by calling the method
 :meth:`~Pointer.describe`.
 
-    >>> # Get the description of the pointer.
+A :class:`dict` with the metadata of the `pointer`_ is returned
+
+    >>> # Get the metadata of the pointer.
     >>> pointer.describe()  #doctest: +SKIP
     {'address': 0,
      'alignment': [4, 0],
@@ -587,6 +629,8 @@ You can get the metadata of a `pointer`_ by calling the method
                  'size': 0,
                  'type': 'Field',
                  'value': ''}]}]}]}
+
+    >>> # Dump the metadata of the pointer as a JSON string to the console.
     >>> json.dump(pointer.describe(), sys.stdout, indent=2)
     {
       "address": 0,
@@ -678,7 +722,6 @@ You can get the metadata of a `pointer`_ by calling the method
       ]
     }
 
-
 Size of the Data Object
 -----------------------
 
@@ -689,12 +732,13 @@ with the :attr:`~Pointer.data_size` attribute of a `pointer`_ field.
     >>> pointer.data_size
     6
 
-
 Indexing
 --------
 
-You can index the `pointer`_ field and each :ref:`field <field>` of the `data object`_
-attached to the `pointer`_ field by calling the method :meth:`~Pointer.index_fields`.
+You can index the `pointer`_ field and each :ref:`field <field>` of the
+`data object`_ attached to the `pointer`_ field by calling the method
+:meth:`~Pointer.index_fields`.
+
 The :class:`Index` after the `pointer`_ field is returned.
 
     >>> # Create a pointer with a nested pointer.
@@ -702,6 +746,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     ...     Structure(
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
+
     >>> # Initialize the fields values.
     >>> pointer.initialize_fields({
     ...     'value': 0x1,
@@ -710,6 +755,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     ...         'item': {
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
+
     >>> # List the field indexes of the pointer and nested pointers.
     >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
@@ -720,12 +766,14 @@ The :class:`Index` after the `pointer`_ field is returned.
      Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
+
     >>> # View the pointer and nested pointers field indexes as a JSON string.
     >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
@@ -733,13 +781,14 @@ The :class:`Index` after the `pointer`_ field is returned.
                "item": {"value": [0, 0, 0, 0, false],
                         "data": [0, 0, 0, 0, false]}}}'
 
-
     >>> # Index the pointer field and the data object fields.
     >>> pointer.index_fields()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # Index the pointer field and the data object fields with a start index.
     >>> pointer.index_fields(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # List the field indexes of the pointer and nested pointers.
     >>> pointer.to_list('index', nested=True)
      [('Pointer.field',
@@ -750,12 +799,14 @@ The :class:`Index` after the `pointer`_ field is returned.
       Index(byte=2, bit=0, address=3, base_address=1, update=False)),
       ('Pointer.data.item.data',
       Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 1},
      {'id': 'Pointer.data.item', 'index.byte': 2, 'index.address': 3},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
+
     >>> # View the pointer and nested pointers field indexes as a JSON string.
     >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
@@ -766,6 +817,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     >>> # Index the pointer field and the fields of the data object and nested pointers.
     >>> pointer.index_fields(nested=True)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # List the field indexes of the pointer and nested pointers.
     >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
@@ -776,12 +828,14 @@ The :class:`Index` after the `pointer`_ field is returned.
       Index(byte=2, bit=0, address=3, base_address=1, update=False)),
      ('Pointer.data.item.data',
       Index(byte=0, bit=0, address=16, base_address=16, update=False))]
+
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 1},
      {'id': 'Pointer.data.item', 'index.byte': 2, 'index.address': 3},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 16}]
+
     >>> # View the pointer and nested pointers field indexes as a JSON string.
     >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
@@ -789,11 +843,12 @@ The :class:`Index` after the `pointer`_ field is returned.
                "item": {"value": [2, 0, 3, 1, false],
                         "data": [0, 0, 16, 16, false]}}}'
 
-
 Index the Pointer Field
 -----------------------
 
-You can index the `pointer`_ field by calling the method :meth:`~Field.index_field`.
+You can index the `pointer`_ field by calling the method
+:meth:`~Field.index_field`.
+
 The :class:`Index` after the `pointer`_ field is returned.
 
     >>> # Create a pointer.
@@ -801,6 +856,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     ...     Structure(
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
+
     >>> # Initialize the fields values.
     >>> pointer.initialize_fields({
     ...     'value': 0x1,
@@ -809,6 +865,7 @@ The :class:`Index` after the `pointer`_ field is returned.
     ...         'item': {
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
+
     >>> # List the field indexes of the pointer and nested pointers.
     >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
@@ -819,12 +876,14 @@ The :class:`Index` after the `pointer`_ field is returned.
      Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
+
     >>> # View the pointer and nested pointers field indexes as a JSON string.
     >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
@@ -835,9 +894,11 @@ The :class:`Index` after the `pointer`_ field is returned.
     >>> # Index the pointer field.
     >>> pointer.index_field()
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # Index the pointer field with a start index.
     >>> pointer.index_field(index=Index())
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # List the field indexes of the pointer and nested pointers.
     >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
@@ -848,19 +909,20 @@ The :class:`Index` after the `pointer`_ field is returned.
      Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
+
     >>> # View the pointer and nested pointers field indexes as a JSON string.
     >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 0, 0, false],
                "item": {"value": [0, 0, 0, 0, false],
                         "data": [0, 0, 0, 0, false]}}}'
-
 
 Index the Data Object
 ---------------------
@@ -873,6 +935,7 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
     ...     Structure(
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
+
     >>> # Initialize the fields values.
     >>> pointer.initialize_fields({
     ...     'value': 0x1,
@@ -881,6 +944,7 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
     ...         'item': {
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
+
     >>> # List the field indexes of the pointer and nested pointers.
     >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
@@ -891,12 +955,14 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
       Index(byte=0, bit=0, address=0, base_address=0, update=False)),
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=0, base_address=0, update=False))]
+
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 0}]
+
     >>> # View the pointer and nested pointers field indexes as a JSON string.
     >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
@@ -906,6 +972,7 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
 
     >>> # Index the data object and nested pointers of the pointer.
     >>> pointer.index_data()
+
     >>> # List the field indexes of the pointer and nested pointers.
     >>> pointer.to_list('index', nested=True)
     [('Pointer.field',
@@ -916,19 +983,20 @@ You can index each :ref:`field <field>` of the `data object`_ attached to the
       Index(byte=2, bit=0, address=3, base_address=1, update=False)),
      ('Pointer.data.item.data',
      Index(byte=0, bit=0, address=16, base_address=16, update=False))]
+
     >>> # List the field indexes of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv('index.byte', 'index.address', nested=True)
     [{'id': 'Pointer.field', 'index.byte': 0, 'index.address': 0},
      {'id': 'Pointer.data.size', 'index.byte': 0, 'index.address': 1},
      {'id': 'Pointer.data.item', 'index.byte': 2, 'index.address': 3},
      {'id': 'Pointer.data.item.data', 'index.byte': 0, 'index.address': 16}]
+
     >>> # View the pointer and nested pointers field indexes as a JSON string.
     >>> pointer.to_json('index', nested=True)
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 1, 1, false],
                "item": {"value": [2, 0, 3, 1, false],
                         "data": [0, 0, 16, 16, false]}}}'
-
 
 Reading
 -------
@@ -939,8 +1007,8 @@ through a *byte stream* :ref:`provider <provider>` by calling the method
 :meth:`~Pointer.read_from` of a `pointer`_ field.
 
 .. note::
-    Further information is provided by the :ref:`reading <reading>` chapter.
 
+  Further information is provided by the :ref:`reading <reading>` chapter.
 
 De-Serializing
 --------------
@@ -954,27 +1022,32 @@ a `pointer`_ by calling the method :meth:`~Pointer.deserialize`.
     ...     Structure(
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
+
     >>> # List the field values of the pointer and nested pointers
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x0'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x0'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x0",
       "data": {"size": 0,
                "item": {"value": "0x0",
                         "data": ""}}}'
+
     >>> # Internal byte stream of the pointer
     >>> pointer.bytestream
     ''
+
     >>> # Internal byte stream of the nested pointer
     >>> pointer.data.item.bytestream
     ''
@@ -982,18 +1055,21 @@ a `pointer`_ by calling the method :meth:`~Pointer.deserialize`.
     >>> # Deserialize the pointer field from the byte stream.
     >>> pointer.deserialize(bytes.fromhex('01000000f00f00'))
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
@@ -1003,23 +1079,28 @@ a `pointer`_ by calling the method :meth:`~Pointer.deserialize`.
 
     >>> # Set the internal byte stream of the pointer
     >>> pointer.bytestream = '0e0010000000'
+
     >>> # Set the internal byte stream of the nested pointer
     >>> pointer.data.item.bytestream = '4b6f6e666f6f2069732046756e00f00f00'
+
     >>> # Deserialize the pointer and nested pointers from the internal byte streams.
     >>> pointer.deserialize(bytes.fromhex('01000000f00f00'), nested=True)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
@@ -1040,48 +1121,57 @@ the method :meth:`~Pointer.deserialize_data` of a `pointer`_ field.
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))),
     ...     address=1)
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 0),
      ('Pointer.data.item', '0x0'),
      ('Pointer.data.item.data', '')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 0},
      {'id': 'Pointer.data.item', 'value': '0x0'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 0,
                "item": {"value": "0x0",
                         "data": ""}}}'
+
     >>> # Internal byte stream of the pointer.
     >>> pointer.bytestream
     ''
+
     >>> # Set the internal byte stream of the nested pointer.
     >>> pointer.data.item.bytestream = '4b6f6e666f6f2069732046756e00'
 
     >>> # Deserialize the data object of the pointer from an external byte stream.
     >>> pointer.deserialize_data(bytes.fromhex('0e0010000000'))
     Index(byte=6, bit=0, address=7, base_address=1, update=False)
+
     >>> # Internal byte stream of the pointer.
     >>> pointer.bytestream
     ''
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', '')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': ''}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
@@ -1092,25 +1182,27 @@ the method :meth:`~Pointer.deserialize_data` of a `pointer`_ field.
     >>> # Deserialize the data object of the nested pointer from the internal byte stream.
     >>> pointer.data.item.deserialize_data()
     Index(byte=14, bit=0, address=30, base_address=16, update=False)
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
                         "data": "Konfoo is Fun"}}}'
-
 
 Serializing
 -----------
@@ -1124,6 +1216,7 @@ a `pointer`_ by calling the method :meth:`~Pointer.serialize`.
     ...     Structure(
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
+
     >>> # Initialize the fields values.
     >>> pointer.initialize_fields({
     ...     'value': 0x1,
@@ -1132,67 +1225,81 @@ a `pointer`_ by calling the method :meth:`~Pointer.serialize`.
     ...         'item': {
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
                         "data": "Konfoo is Fun"}}}'
+
     >>> # Internal byte stream of the pointer.
     >>> pointer.bytestream
     ''
+
     >>> # Internal byte stream of the nested pointer.
     >>> pointer.data.item.bytestream
     ''
 
     >>> # Byte stream for the serialized pointer field.
     >>> bytestream = bytearray()
+
     >>> # Serialize the pointer field to the byte stream
     >>> pointer.serialize(bytestream)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # Internal byte stream of the pointer.
     >>> pointer.bytestream
     ''
+
     >>> # Internal byte stream of the nested pointer.
     >>> pointer.data.item.bytestream
     ''
+
     >>> # Serialized pointer field
     >>> bytestream.hex()
     '01000000'
+
     >>> # Serialized pointer field
     >>> bytes(pointer).hex()
     '01000000'
 
     >>> # Byte stream for the serialized pointer field.
     >>> bytestream = bytearray()
+
     >>> # Serialize the pointer and nested pointers to the internal byte streams
     >>> pointer.serialize(bytestream, nested=True)
     Index(byte=4, bit=0, address=4, base_address=0, update=False)
+
     >>> # Internal byte stream of the pointer.
     >>> pointer.bytestream
     '0e0010000000'
+
     >>> # Internal byte stream of the nested pointer.
     >>> pointer.data.item.bytestream
     '4b6f6e666f6f2069732046756e00'
+
     >>> # Serialized pointer field
     >>> bytestream.hex()
     '01000000'
+
     >>> # Serialized pointer field
     >>> bytes(pointer).hex()
     '01000000'
-
 
 Serialize the Data Object
 -------------------------
@@ -1205,6 +1312,7 @@ the method :meth:`~Pointer.serialize_data` of a `pointer`_ field.
     ...     Structure(
     ...         size=Decimal(16),
     ...         item=Pointer(String(14))))
+
     >>> # Initialize the fields values.
     >>> pointer.initialize_fields({
     ...     'value': 0x1,
@@ -1213,27 +1321,32 @@ the method :meth:`~Pointer.serialize_data` of a `pointer`_ field.
     ...         'item': {
     ...             'value': 0x10,
     ...             'data': 'Konfoo is Fun'}}})
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
+
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
     [{'id': 'Pointer.field', 'value': '0x1'},
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
                         "data": "Konfoo is Fun"}}}'
+
     >>> # Internal byte stream of the pointer.
     >>> pointer.bytestream
     ''
+
     >>> # Internal byte stream of the nested pointer.
     >>> pointer.data.item.bytestream
     ''
@@ -1241,16 +1354,18 @@ the method :meth:`~Pointer.serialize_data` of a `pointer`_ field.
     >>> # Serialize the data object of the pointer.
     >>> pointer.serialize_data().hex()
     '0e0010000000'
+
     >>> # Internal byte stream of the pointer.
     >>> pointer.bytestream
     ''
+
     >>> # Serialize the data object of the nested pointer.
     >>> pointer.data.item.serialize_data().hex()
     '4b6f6e666f6f2069732046756e00'
+
     >>> # Internal byte stream of the nested pointer.
     >>> pointer.data.item.bytestream
     ''
-
 
 Writing
 -------
@@ -1262,7 +1377,8 @@ the :ref:`data object <data object>` attached to a :ref:`pointer <pointer>`
 calling method :meth:`~Pointer.write_to` of a `pointer`_ field.
 
 .. note::
-    Further information is provided by the :ref:`writing <writing>` chapter.
+
+  Further information is provided by the :ref:`writing <writing>` chapter.
 
 
 Attributes of a Pointer Field
@@ -1274,46 +1390,58 @@ with the following attribute names:
     >>> # Field name.
     >>> pointer.name
     'Pointer32'
+
     >>> # Field value.
     >>> pointer.value
     '0x1'
+
     >>> # Field bit size.
     >>> pointer.bit_size
     32
+
     >>> # Field alignment.
     >>> pointer.alignment
     Alignment(byte_size=4, bit_offset=0)
+
     >>> # Field alignment: byte size of the aligned field group.
     >>> pointer.alignment.byte_size
     4
+
     >>> # Field alignment: bit offset of the field in its field group.
     >>> pointer.alignment.bit_offset
     0
+
     >>> # Field byte order.
     >>> pointer.byte_order
     Byteorder.auto = 'auto'
+
     >>> # Field byte order value.
     >>> pointer.byte_order.value
     'auto'
+
     >>> # Field index.
     >>> pointer.index
     Index(byte=0, bit=0, address=0, base_address=0, update=False)
+
     >>> # Field index: byte offset of the field in the byte stream.
     >>> pointer.index.byte
     0
+
     >>> # Field index: bit offset of the field relative to its byte offset.
     >>> pointer.index.bit
     0
+
     >>> # Field index: memory address of the field in the data source.
     >>> pointer.index.address
     0
+
     >>> # Field index: start address of the byte stream in the data source.
     >>> pointer.index.base_address
     0
+
     >>> # Field index: update request for the byte stream.
     >>> pointer.index.update
     False
-
 
 You can **check** if a `pointer`_ is a ``Null``-pointer.
 
@@ -1321,18 +1449,19 @@ You can **check** if a `pointer`_ is a ``Null``-pointer.
     >>> pointer.is_null()
     False
 
-
 View Field Attributes
 ---------------------
 
-You can **view** the *attributes* of a `pointer`_ field and of each :ref:`field <field>`
-of the `data object`_ attached to the `pointer`_ field as an ordered dictionary
-by calling the method :meth:`~Pointer.view_fields`.
-Default attribute is the field :attr:`~Field.value`.
+You can **view** the *attributes* of a `pointer`_ field and of each
+:ref:`field <field>` of the `data object`_ attached to the `pointer`_ field as a
+dictionary by calling the method :meth:`~Pointer.view_fields`.
+
+The default attribute is the field :attr:`~Field.value`.
 
     >>> # View the pointer field values.
     >>> pointer.view_fields()
     {'value': '0x1', 'data': {'size': 14, 'item': '0x10'}}
+
     >>> # View the pointer and nested pointers field values.
     >>> pointer.view_fields(nested=True)  #doctest: +SKIP
     {'value': '0x1',
@@ -1341,6 +1470,7 @@ Default attribute is the field :attr:`~Field.value`.
         'item': {
             'value': '0x10',
             'data': 'Konfoo is Fun'}}}
+
     >>> # View the pointer field type names & field values.
     >>> pointer.view_fields('name', 'value')  #doctest: +SKIP
     {'name': 'Pointer32',
@@ -1348,6 +1478,7 @@ Default attribute is the field :attr:`~Field.value`.
      'data': {
         'size': {'name': 'Decimal16', 'value': 14},
         'item': {'name': 'Pointer32', 'value': '0x10'}}}
+
     >>> # View the pointer field indexes.
     >>> pointer.view_fields('index')  #doctest: +SKIP
     {'value': Index(byte=0, bit=0, address=0, base_address=0, update=False),
@@ -1377,12 +1508,14 @@ Default attribute is the field :attr:`~Field.value`.
         "item": "0x10"
       }
     }
+
     >>> # View the pointer and nested pointers field values as a JSON string.
     >>> pointer.to_json(nested=True)
     '{"value": "0x1",
       "data": {"size": 14,
                "item": {"value": "0x10",
                         "data": "Konfoo is Fun"}}}'
+
     >>> # View the pointer field type names & field values as a JSON string.
     >>> pointer.to_json('name', 'value')
     '{"name": "Pointer32",
@@ -1391,12 +1524,12 @@ Default attribute is the field :attr:`~Field.value`.
                         "value": 14},
                "item": {"name": "Pointer32",
                         "value": "0x10"}}}'
+
     >>> # View the pointer field indexes as a JSON string.
     >>> pointer.to_json('index')
     '{"value": [0, 0, 0, 0, false],
       "data": {"size": [0, 0, 1, 1, false],
                "item": [2, 0, 3, 1, false]}}'
-
 
 
 List Field Items
@@ -1446,30 +1579,33 @@ as a **flatten** list by calling the method :meth:`~Pointer.field_items`.
              bit_size=112,
              value='Konfoo is Fun'))]
 
-
 List Field Attributes
 ---------------------
 
 You can **list** the *attributes* of each :ref:`field <field>` of a `pointer`_
 as a **flatten** list by calling the method :meth:`~Container.to_list`.
-Default attribute is the field :attr:`~Field.value`.
+
+The default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and its attached data object.
     >>> pointer.to_list()
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10')]
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
+
     >>> # List the field type names & values of the pointer and its attached data object.
     >>> pointer.to_list('name', 'value')
     [('Pointer.field', ('Pointer32', '0x1')),
      ('Pointer.data.size', ('Decimal16', 14)),
      ('Pointer.data.item', ('Pointer32', '0x10'))]
+
     >>> # List the field indexes of the pointer and its attached data object.
     >>> pointer.to_list('index')
     [('Pointer.field',
@@ -1480,17 +1616,19 @@ Default attribute is the field :attr:`~Field.value`.
       Index(byte=2, bit=0, address=3, base_address=1, update=False))]
 
 .. note::
-    The class name of the instance is used for the root name as long as no
-    *name* is given.
 
+  The class name of the instance is used for the root name as long as no *name*
+  is given.
 
 You can **list** the *attributes* of each :ref:`field <field>` of a `pointer`_
-as a **flatten** ordered dictionary by calling the method :meth:`~Container.to_dict`.
-Default attribute is the field :attr:`~Field.value`.
+as a **flatten** dictionary by calling the method :meth:`~Container.to_dict`.
+
+The default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and its attached data object.
     >>> pointer.to_dict()
     {'Pointer': {'field': '0x1', 'data.size': 14, 'data.item': '0x10'}}
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_dict(nested=True)  #doctest: +SKIP
     {'Pointer': {
@@ -1499,6 +1637,7 @@ Default attribute is the field :attr:`~Field.value`.
      'data.item': '0x10',
      'data.item.data': 'Konfoo is Fun'}
     }
+
     >>> # List the field type names & values of the pointer and its attached data object.
     >>> pointer.to_dict('name', 'value')  #doctest: +SKIP
     {'Pointer': {
@@ -1506,6 +1645,7 @@ Default attribute is the field :attr:`~Field.value`.
      'data.size': ('Decimal16', 14),
      'data.item': ('Pointer32', '0x10')}
     }
+
     >>> # List the field indexes of the pointer and its attached data object.
     >>> pointer.to_dict('index')  #doctest: +SKIP
     {'Pointer': {
@@ -1514,16 +1654,16 @@ Default attribute is the field :attr:`~Field.value`.
      'data.item': Index(byte=2, bit=0, address=3, base_address=1, update=False)}
     }
 
-
 .. note::
-    The class name of the instance is used for the root name as long as no
-    *name* is given.
 
+  The class name of the instance is used for the root name as long as no *name*
+  is given.
 
 You can **list** the *attributes* of each :ref:`field <field>` of a `pointer`_
-as a **flatten** list of dictionaries containing the field *path* and the selected
-field *attributes* by calling the method :meth:`~Container.to_csv`.
-Default attribute is the field :attr:`~Field.value`.
+as a **flatten** list of dictionaries containing the field *path* and the
+selected field *attributes* by calling the method :meth:`~Container.to_csv`.
+
+The default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
@@ -1531,6 +1671,7 @@ Default attribute is the field :attr:`~Field.value`.
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
+
     >>> # List the field type names & values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv('name', 'value', nested=True)
     [{'id': 'Pointer.field', 'name': 'Pointer32', 'value': '0x1'},
@@ -1539,16 +1680,17 @@ Default attribute is the field :attr:`~Field.value`.
      {'id': 'Pointer.data.item.data', 'name': 'String14', 'value': 'Konfoo is Fun'}]
 
 .. note::
-    The class name of the instance is used for the root name as long as no
-    *name* is given.
 
+  The class name of the instance is used for the root name as long as no *name*
+  is given.
 
 Write Field Attributes
 ----------------------
 
 You can **write** the *attributes* of each :ref:`field <field>` of a `pointer`_
 to a ``.csv`` file by calling the method :meth:`~Container.write_csv`.
-Default attribute is the field :attr:`~Field.value`.
+
+The default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and nested pointers as a CSV list.
     >>> pointer.to_csv(nested=True)
@@ -1556,6 +1698,7 @@ Default attribute is the field :attr:`~Field.value`.
      {'id': 'Pointer.data.size', 'value': 14},
      {'id': 'Pointer.data.item', 'value': '0x10'},
      {'id': 'Pointer.data.item.data', 'value': 'Konfoo is Fun'}]
+
     >>> # Save the structure field values to a '.csv' file.
     >>> pointer.write_csv("./_static/pointer.csv", nested=True)
 
@@ -1564,16 +1707,17 @@ The generated ``.csv`` file for the structure looks like this:
 .. literalinclude:: ../_static/pointer.csv
 
 .. note::
-    The class name of the instance is used for the root name as long as no
-    *name* is given.
 
+  The class name of the instance is used for the root name as long as no *name*
+  is given.
 
 Save Field Attributes
 ---------------------
 
 You can **save** the *attributes* of each :ref:`field <field>` of a `pointer`_
 to an ``.ini`` file by calling the method :meth:`~Container.save`.
-Default attribute is the field :attr:`~Field.value`.
+
+The default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
@@ -1581,18 +1725,19 @@ Default attribute is the field :attr:`~Field.value`.
      ('Pointer.data.size', 14),
      ('Pointer.data.item', '0x10'),
      ('Pointer.data.item.data', 'Konfoo is Fun')]
+
     >>> # Save the pointer and nested pointers field values to an '.ini' file.
     >>> pointer.save("./_static/pointer.ini", nested=True)
 
 The generated ``.ini`` file for the pointer looks like this:
 
 .. literalinclude:: ../_static/pointer.ini
-    :language: ini
+   :language: ini
 
 .. note::
-    The class name of the instance is used for the section name as long as no
-    *section* is given.
 
+  The class name of the instance is used for the section name as long as no
+  *section* is given.
 
 Load Field Values
 -----------------
@@ -1607,6 +1752,7 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
     Pointer.data.size = 14
     Pointer.data.item = 0x10
     Pointer.data.item.data = Konfoo is Fun
+
     >>> # List the field values of the pointer and nested pointers.
     >>> pointer.to_list(nested=True)
     [('Pointer.field', '0x1'),
@@ -1615,5 +1761,6 @@ from an ``.ini`` file by calling the method :meth:`~Container.load`.
      ('Pointer.data.item.data', 'Konfoo is Fun')]
 
 .. note::
-    The class name of the instance is used for the section name as long as no
-    *section* is given.
+
+  The class name of the instance is used for the section name as long as no
+  *section* is given.
