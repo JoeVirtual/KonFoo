@@ -67,7 +67,7 @@ This [project] is stable and active. Feedback is always welcomed!
 The [project] is organized in sub-folders.
 
 - `assets/`: Project assets
-- `binder/`: [Binder] configuration
+- `binder/`: Binder configuration
 - `docs/`: [Sphinx] documentation
 - `notebooks/`: [Jupyter] notebooks
 - `src/konfoo/`: Package sources
@@ -191,6 +191,7 @@ See also the list of [contributors] who participated in this [project].
 [Sphinx]: https://pypi.org/project/sphinx
 [Furo]: https://pypi.org/project/furo
 [sphinx-copybutton]: https://pypi.org/project/sphinx-copybutton
+[Jupyter]: https://jupyter.org
 [github]: https://github.com
 [project]: https://github.com/JoeVirtual/KonFoo
 [repository tag list]: https://github.com/JoeVirtual/KonFoo/releases
