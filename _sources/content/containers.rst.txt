@@ -85,7 +85,7 @@ A `container`_ can **list** the *attributes* of each :ref:`field <field>` item
 ``('field path', attribute)`` or ``('field path', list(attributes))`` tuples by
 calling its method :meth:`~Container.to_list`.
 
-The listed default attribute is the field :attr:`~Field.value`.
+The default attribute is the field :attr:`~Field.value`.
 
     >>> # List the field values in the container.
     >>> container.to_list()
