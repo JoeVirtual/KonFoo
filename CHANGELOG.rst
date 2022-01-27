@@ -4,10 +4,12 @@ Change Log
 These are the enhancements, breaking changes and bug fixes of note between each
 release.
 
-`2.1.0`_ - Unreleased
+.. _v2.1.0:
+
+`2.1.0`_ - 2022-01-27
 =====================
 
-.. _2.1.0: https://github.com/JoeVirtual/KonFoo/compare/v2.0...master
+.. _2.1.0: https://github.com/JoeVirtual/KonFoo/compare/v2.0...v2.1.0
 
 Enhancements
 ------------
@@ -15,6 +17,7 @@ Enhancements
 * Refactor repository and documentation structure
 * Change documentation theme
 
+.. _v2.0.0:
 
 `2.0.0`_ - 2020-08-02
 =====================
@@ -33,6 +36,7 @@ Breaking Changes
 
 * Drop support for Python 3.5
 
+.. _v1.1.0:
 
 `1.1.0`_ - 2019-10-27
 =====================
@@ -59,6 +63,7 @@ Bug Fixes
 * Fix the :class:`Structure` class that the built-in :func:`help` function works
   correctly on an instance of :class:`Structure`.
 
+.. _v1.0.0:
 
 `1.0.0`_ - 2019-01-02
 =====================

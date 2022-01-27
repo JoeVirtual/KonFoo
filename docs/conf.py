@@ -24,7 +24,7 @@ project = 'KonFoo'
 author = 'Jochen Gerhaeusser'
 copyright = f"2015-{datetime.datetime.utcnow().year}, {author}"
 version = '2.1.0'
-release = '2.1.0a0'
+release = '2.1.0'
 
 # -- General configuration ---------------------------------------------------
 
