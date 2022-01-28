@@ -52,17 +52,24 @@ possible.
 * easy creatable nested metadata dictionaries of the members of a byte stream mapper
 * metadata converter to the ``flare.json`` format to visualise the mapper with `d3js`_.
 
-**KonFoo** runs on `Python 3.6 <https://www.python.org/>`_ or higher.
+Dependencies
+------------
 
-You can get the latest version of **KonFoo** directly from GitHub:
+The **KonFoo** package runs on `Python 3.6 <https://www.python.org/>`_ or
+higher.
+
+Installation
+------------
+
+You can get the latest *version* of the **KonFoo** package directly from GitHub:
 
     `KonFoo @ github <https://github.com/JoeVirtual/KonFoo/>`_
 
-You can get the library directly from PyPI:
+You can get the latest *release* of the **KonFoo** package directly from PyPI:
 
-.. code-block:: console
+.. code-block:: shell
 
-    > pip install konfoo
+  pip install konfoo
 
 .. toctree::
    :caption: Content
