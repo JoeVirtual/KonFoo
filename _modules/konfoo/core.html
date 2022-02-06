@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <meta name="generator" content="sphinx-4.4.0, furo 2022.01.02"/>
-        <title>konfoo.core - KonFoo 2.1.0</title>
+        <title>konfoo.core - KonFoo 2.2.0a0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=df49af52631e7917044a9c21a57f7b83170a6dd0" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
@@ -123,7 +123,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">KonFoo 2.1.0</div></a>
+      <a href="../../index.html"><div class="brand">KonFoo 2.2.0a0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -149,7 +149,7 @@
     <img class="sidebar-logo" src="../../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">KonFoo 2.1.0</span>
+  <span class="sidebar-brand-text">KonFoo 2.2.0a0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -231,7 +231,7 @@
 <span class="sd">~~~~~~~</span>
 <span class="sd">&lt;Add description of the module here&gt;.</span>
 
-<span class="sd">:copyright: (c) 2015-2020 by Jochen Gerhaeusser.</span>
+<span class="sd">:copyright: (c) 2015-2022 by Jochen Gerhaeusser.</span>
 <span class="sd">:license: BSD, see LICENSE for details</span>
 <span class="sd">"""</span>
 
@@ -242,6 +242,7 @@
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">ipaddress</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
@@ -249,11 +250,9 @@
 <span class="kn">from</span> <span class="nn">configparser</span> <span class="kn">import</span> <span class="n">ConfigParser</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
 
-<span class="kn">import</span> <span class="nn">math</span>
-
-<span class="kn">from</span> <span class="nn">konfoo.categories</span> <span class="kn">import</span> <span class="n">Category</span>
-<span class="kn">from</span> <span class="nn">konfoo.enums</span> <span class="kn">import</span> <span class="n">Enumeration</span>
-<span class="kn">from</span> <span class="nn">konfoo.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">.categories</span> <span class="kn">import</span> <span class="n">Category</span>
+<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">Enumeration</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ByteOrderTypeError</span><span class="p">,</span> <span class="n">ByteOrderValueError</span><span class="p">,</span>
     <span class="n">EnumTypeError</span><span class="p">,</span> <span class="n">FactoryTypeError</span><span class="p">,</span> <span class="n">MemberTypeError</span><span class="p">,</span>
     <span class="n">ProviderTypeError</span><span class="p">,</span> <span class="n">ContainerLengthError</span><span class="p">,</span>
@@ -358,12 +357,12 @@
 <span class="n">Alignment</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">'Alignment'</span><span class="p">,</span> <span class="p">[</span>
     <span class="s1">'byte_size'</span><span class="p">,</span>
     <span class="s1">'bit_offset'</span><span class="p">])</span>
-<span class="sd">""" The `Alignment` class contains the location of the :class:`Field` within an </span>
+<span class="sd">""" The `Alignment` class contains the location of the :class:`Field` within an</span>
 <span class="sd">aligned group of consecutive fields.</span>
 
-<span class="sd">:param int byte_size: size of the *field group* in bytes </span>
+<span class="sd">:param int byte_size: size of the *field group* in bytes</span>
 <span class="sd">    which the :class:`Field` is aligned to.</span>
-<span class="sd">:param int bit_offset: bit offset of the :class:`Field` </span>
+<span class="sd">:param int bit_offset: bit offset of the :class:`Field`</span>
 <span class="sd">    within its aligned *field group*.</span>
 <span class="sd">"""</span>
 <span class="n">Alignment</span><span class="o">.</span><span class="fm">__new__</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -1800,7 +1799,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span> 
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span>
                 <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="si">!s}</span><span class="s2">, "</span>
                 <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alignment</span><span class="si">!s}</span><span class="s2">, "</span>
                 <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bit_size</span><span class="si">!s}</span><span class="s2">, "</span>
