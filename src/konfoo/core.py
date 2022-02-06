@@ -4,7 +4,7 @@ core.py
 ~~~~~~~
 <Add description of the module here>.
 
-:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:copyright: (c) 2015-2022 by Jochen Gerhaeusser.
 :license: BSD, see LICENSE for details
 """
 
@@ -15,6 +15,7 @@ import csv
 import datetime
 import ipaddress
 import json
+import math
 import struct
 import time
 from collections import namedtuple
@@ -22,11 +23,9 @@ from collections.abc import Mapping, MutableSequence
 from configparser import ConfigParser
 from operator import attrgetter
 
-import math
-
-from konfoo.categories import Category
-from konfoo.enums import Enumeration
-from konfoo.exceptions import (
+from .categories import Category
+from .enums import Enumeration
+from .exceptions import (
     ByteOrderTypeError, ByteOrderValueError,
     EnumTypeError, FactoryTypeError, MemberTypeError,
     ProviderTypeError, ContainerLengthError,
@@ -131,12 +130,12 @@ Index.__new__.__defaults__ = (0, 0, 0, 0, False)
 Alignment = namedtuple('Alignment', [
     'byte_size',
     'bit_offset'])
-""" The `Alignment` class contains the location of the :class:`Field` within an 
+""" The `Alignment` class contains the location of the :class:`Field` within an
 aligned group of consecutive fields.
 
-:param int byte_size: size of the *field group* in bytes 
+:param int byte_size: size of the *field group* in bytes
     which the :class:`Field` is aligned to.
-:param int bit_offset: bit offset of the :class:`Field` 
+:param int bit_offset: bit offset of the :class:`Field`
     within its aligned *field group*.
 """
 Alignment.__new__.__defaults__ = (0, 0)
@@ -1573,7 +1572,7 @@ class Field:
         self._value = None
 
     def __str__(self):
-        return (f"{self.name}" 
+        return (f"{self.name}"
                 f"({self.index!s}, "
                 f"{self.alignment!s}, "
                 f"{self.bit_size!s}, "

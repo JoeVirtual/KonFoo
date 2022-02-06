@@ -4,13 +4,13 @@ utils.py
 ~~~~~~~~
 <Add description of the module here>.
 
-:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:copyright: (c) 2015-2022 by Jochen Gerhaeusser.
 :license: BSD, see LICENSE for details.
 """
 
 import json
 
-from konfoo.globals import ItemClass
+from .globals import ItemClass
 
 
 class HexViewer:
@@ -188,36 +188,36 @@ def d3flare_json(metadata, file=None, **options):
     :param file file: file-like object.
     """
 
-    def convert(root):
-        dct = dict()
-        item_type = root.get('type')
-        dct['class'] = root.get('class')
-        dct['name'] = root.get('name')
+    def convert(parent):
+        node = dict()
+        item_type = parent.get('type')
+        node['class'] = parent.get('class')
+        node['name'] = parent.get('name')
 
         if item_type is ItemClass.Field.name:
-            dct['size'] = root.get('size')
-            dct['value'] = root.get('value')
+            node['size'] = parent.get('size')
+            node['value'] = parent.get('value')
 
-        children = root.get('member')
+        children = parent.get('member')
         if children:
             # Any containable class with children
-            dct['children'] = list()
+            node['children'] = list()
             if item_type is ItemClass.Pointer.name:
                 # Create pointer address field as child
                 field = dict()
-                field['class'] = dct['class']
-                field['name'] = '*' + dct['name']
-                field['size'] = root.get('size')
-                field['value'] = root.get('value')
-                dct['children'].append(field)
+                field['class'] = node['class']
+                field['name'] = f"*{node['name']}"
+                field['size'] = parent.get('size')
+                field['value'] = parent.get('value')
+                node['children'].append(field)
             for child in map(convert, children):
                 # Recursive function call map(fnc, args).
-                dct['children'].append(child)
+                node['children'].append(child)
         elif item_type is ItemClass.Pointer.name:
             # Null pointer (None pointer)
-            dct['size'] = root.get('size')
-            dct['value'] = root.get('value')
-        return dct
+            node['size'] = parent.get('size')
+            node['value'] = parent.get('value')
+        return node
 
     options['indent'] = options.get('indent', 2)
 
