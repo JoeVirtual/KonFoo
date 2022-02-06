@@ -4,6 +4,13 @@ Change Log
 These are the enhancements, breaking changes and bug fixes of note between each
 release.
 
+.. _v2.2.0:
+
+`2.2.0`_ - Unreleased
+=====================
+
+.. _2.2.0: https://github.com/JoeVirtual/KonFoo/compare/v2.1.0...master
+
 .. _v2.1.0:
 
 `2.1.0`_ - 2022-01-27

@@ -23,8 +23,8 @@ sys.path.insert(0, os.path.abspath('../src'))
 project = 'KonFoo'
 author = 'Jochen Gerhaeusser'
 copyright = f"2015-{datetime.datetime.utcnow().year}, {author}"
-version = '2.1.0'
-release = '2.1.0'
+version = '2.2.0'
+release = '2.2.0a0'
 
 # -- General configuration ---------------------------------------------------
 
