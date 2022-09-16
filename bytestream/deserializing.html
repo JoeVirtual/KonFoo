@@ -1,16 +1,17 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API" href="../api/index.html" /><link rel="prev" title="Writing" href="writing.html" />
+        <link rel="canonical" href="https://konfoo.readthedocs.io/bytestream/deserializing.html" />
 
-    <meta name="generator" content="sphinx-4.4.0, furo 2022.01.02"/>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
         <title>De-Serializing - KonFoo 2.2.0a0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=df49af52631e7917044a9c21a57f7b83170a6dd0" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=fade93df149f7c5fedb3ff897f799dc7d283b420" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -21,38 +22,38 @@
   --color-code-foreground: black;
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #202020;
-  --color-code-foreground: #d0d0d0;
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #202020;
   --color-code-foreground: #d0d0d0;
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -61,14 +62,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -83,7 +84,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -91,7 +92,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -203,6 +204,7 @@
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -210,8 +212,23 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/JoeVirtual/KonFoo/edit/master/docs/bytestream/deserializing.rst" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
@@ -226,7 +243,7 @@
         </div>
         <article role="main">
           <section id="de-serializing">
-<span id="id1"></span><h1>De-Serializing<a class="headerlink" href="#de-serializing" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>De-Serializing<a class="headerlink" href="#de-serializing" title="Permalink to this heading">#</a></h1>
 <p>The de-serialization of a <em>byte stream</em> by a <em>byte stream</em> <a class="reference internal" href="../content/mapper.html#mapper"><span class="std std-ref">mapper</span></a>
 is not considered independent from the <a class="reference internal" href="reading.html#reading"><span class="std std-ref">reading</span></a> of the <em>bytestream</em>.</p>
 <p>Therefore the <code class="xref py py-meth docutils literal notranslate"><span class="pre">deserialize()</span></code> method of the <em>byte stream</em> <a class="reference internal" href="../content/mapper.html#mapper"><span class="std std-ref">mapper</span></a>
@@ -234,7 +251,7 @@ is not called directly during the de-serialization process. The <code class="xre
 method is called by the <a class="reference internal" href="../pointers/index.html#pointer"><span class="std std-ref">pointer</span></a> during the <a class="reference internal" href="reading.html#reading"><span class="std std-ref">reading</span></a>
 of the <em>byte stream</em> where the <em>byte stream</em> <a class="reference internal" href="../content/mapper.html#mapper"><span class="std std-ref">mapper</span></a> is attached to.</p>
 <section id="de-serializing-hook">
-<h2>De-Serializing Hook<a class="headerlink" href="#de-serializing-hook" title="Permalink to this headline">¶</a></h2>
+<h2>De-Serializing Hook<a class="headerlink" href="#de-serializing-hook" title="Permalink to this heading">#</a></h2>
 <p>The <a class="reference internal" href="../api/index.html#konfoo.Field.deserialize" title="konfoo.Field.deserialize"><code class="xref py py-meth docutils literal notranslate"><span class="pre">deserialize()</span></code></a> method which every <a class="reference internal" href="../content/fields.html#field"><span class="std std-ref">field</span></a> and
 <a class="reference internal" href="../content/containers.html#container"><span class="std std-ref">container</span></a> has allows to hook in the reading/de-serialization
 process at a certain point of the <em>byte stream</em> to adapt the <em>byte stream</em>
@@ -274,19 +291,19 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># List the field values of the OPC string.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
-<span class="go">[('OPCString.length', 0),</span>
-<span class="go"> ('OPCString.content', '')]</span>
+<span class="go">[(&#39;OPCString.length&#39;, 0),</span>
+<span class="go"> (&#39;OPCString.content&#39;, &#39;&#39;)]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># List the field values of the OPC string as a CSV list.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">to_csv</span><span class="p">()</span>
-<span class="go">[{'id': 'OPCString.length', 'value': 0},</span>
-<span class="go"> {'id': 'OPCString.content', 'value': ''}]</span>
+<span class="go">[{&#39;id&#39;: &#39;OPCString.length&#39;, &#39;value&#39;: 0},</span>
+<span class="go"> {&#39;id&#39;: &#39;OPCString.content&#39;, &#39;value&#39;: &#39;&#39;}]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># View the OPC string field values as a JSON string.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
-<span class="go">'{"length": 0, "content": ""}'</span>
+<span class="go">&#39;{&quot;length&quot;: 0, &quot;content&quot;: &quot;&quot;}&#39;</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Size of the OPC string.</span>
@@ -295,7 +312,7 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Deserialize the empty OPC string</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="s1">'0f004b6f6e466f6f206973202746756e27'</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="s1">&#39;0f004b6f6e466f6f206973202746756e27&#39;</span><span class="p">))</span>
 <span class="go">Index(byte=17, bit=0, address=17, base_address=0, update=True)</span>
 </pre></div>
 </div>
@@ -305,7 +322,7 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Deserialize the filled OPC string</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="s1">'0f004b6f6e466f6f206973202746756e27'</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="nb">bytes</span><span class="o">.</span><span class="n">fromhex</span><span class="p">(</span><span class="s1">&#39;0f004b6f6e466f6f206973202746756e27&#39;</span><span class="p">))</span>
 <span class="go">Index(byte=17, bit=0, address=17, base_address=0, update=False)</span>
 </pre></div>
 </div>
@@ -316,19 +333,19 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># List the field values of the OPC string.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
-<span class="go">[('OPCString.length', 15),</span>
-<span class="go"> ('OPCString.content', "KonFoo is 'Fun'")]</span>
+<span class="go">[(&#39;OPCString.length&#39;, 15),</span>
+<span class="go"> (&#39;OPCString.content&#39;, &quot;KonFoo is &#39;Fun&#39;&quot;)]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># List the field values of the OPC string as a CSV list.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">to_csv</span><span class="p">()</span>
-<span class="go">[{'id': 'OPCString.length', 'value': 15},</span>
-<span class="go"> {'id': 'OPCString.content', 'value': "KonFoo is 'Fun'"}]</span>
+<span class="go">[{&#39;id&#39;: &#39;OPCString.length&#39;, &#39;value&#39;: 15},</span>
+<span class="go"> {&#39;id&#39;: &#39;OPCString.content&#39;, &#39;value&#39;: &quot;KonFoo is &#39;Fun&#39;&quot;}]</span>
 </pre></div>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># View the OPC string field values as a JSON string.</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">string</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
-<span class="go">'{"length": 15, "content": "KonFoo is \'Fun\'"}'</span>
+<span class="go">&#39;{&quot;length&quot;: 15, &quot;content&quot;: &quot;KonFoo is \&#39;Fun\&#39;&quot;}&#39;</span>
 </pre></div>
 </div>
 </section>
@@ -346,10 +363,10 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
                 </div>
                 <div class="title">API</div>
               </div>
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
           <a class="prev-page" href="writing.html">
-              <svg><use href="#svg-arrow-right"></use></svg>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
@@ -360,15 +377,21 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
               </div>
             </a>
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2015-2022, Jochen Gerhaeusser |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
-            | <a class="muted-link" href="../_sources/bytestream/deserializing.rst.txt"
-               rel="nofollow">
-              Show Source
-            </a>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2015-2022, Jochen Gerhaeusser
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -379,7 +402,7 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
       <div class="toc-sticky toc-scroll">
         <div class="toc-title-container">
           <span class="toc-title">
-            Contents
+            On this page
           </span>
         </div>
         <div class="toc-tree-container">
@@ -401,6 +424,7 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
