@@ -1,5 +1,9 @@
 .. currentmodule:: konfoo
 
+.. _d3js: https://d3js.org/
+.. _GitHub: https://github.com/JoeVirtual/KonFoo/releases
+.. _PyPI: https://pypi.org/project/KonFoo
+
 .. |status| image:: https://img.shields.io/pypi/status/konfoo.svg
    :target: https://pypi.org/project/konfoo
 .. |docs| image:: https://readthedocs.org/projects/konfoo/badge/?version=latest
@@ -14,8 +18,6 @@
    :target: https://pypistats.org/packages/konfoo
 .. |binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/JoeVirtual/konfoo/master?labpath=notebooks
-
-.. _d3js: https://d3js.org/
 
 |status| |docs| |pypi| |python| |license| |downloads|
 
@@ -49,8 +51,10 @@ possible.
 * write the mapped binary data to a ``.csv`` file
 * save the mapped binary data to an ``.ini`` file
 * load the mapped binary data from an ``.ini`` file
-* easy creatable nested metadata dictionaries of the members of a byte stream mapper
-* metadata converter to the ``flare.json`` format to visualise the mapper with `d3js`_.
+* easy creatable nested metadata dictionaries of the members of a byte stream
+  mapper
+* metadata converter to the ``flare.json`` format to visualise the mapper with
+  `d3js`_.
 
 Dependencies
 ------------
@@ -61,11 +65,13 @@ higher.
 Installation
 ------------
 
-You can get the latest *version* of the **KonFoo** package directly from GitHub:
+You can get the latest *version* of the **KonFoo** package directly from
+`GitHub`_:
 
     `KonFoo @ github <https://github.com/JoeVirtual/KonFoo/>`_
 
-You can get the latest *release* of the **KonFoo** package directly from PyPI:
+You can get the latest *release* of the **KonFoo** package directly from
+`PyPI`_:
 
 .. code-block:: shell
 
