@@ -52,6 +52,11 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = 'furo'
 html_static_path = ['_static']
 html_theme_options = {
+    "source_repository": "https://github.com/JoeVirtual/KonFoo/",
+    "source_branch": "master",
+    "source_directory": "docs/",
+    "top_of_page_button": "edit",
+    "navigation_with_keys": True,
     "light_css_variables": {
     },
     "dark_css_variables": {
