@@ -6,7 +6,7 @@ release.
 
 .. _v3.0.0:
 
-`3.0.0`_ - Unreleased
+`3.0.0`_ - 2022-12-20
 =====================
 
 .. _3.0.0: https://github.com/JoeVirtual/KonFoo/compare/v2.1.0...v3.0.0
