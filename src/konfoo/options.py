@@ -2,33 +2,38 @@
 """
 options.py
 ~~~~~~~~~~
-<Add description of the module here>.
+Function decorators.
 
-:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:copyright: (c) 2015-2022 by Jochen Gerhaeusser.
 :license: BSD, see LICENSE for details
 """
+from __future__ import annotations
 
 from functools import wraps
+from typing import (Any, Callable)
 
 from .categories import Category
-from .globals import BYTEORDER, Byteorder
+from .globals import (
+    Byteorder, BYTEORDER)
 
 
 class Option(Category):
-    byte_order = 'byte_order'
-    nested = 'nested'
-    verbose = 'verbose'
+    byte_order: Option = 'byte_order'
+    nested: Option = 'nested'
+    verbose: Option = 'verbose'
 
 
-def byte_order_option(default=BYTEORDER):
+def byte_order_option(
+    default: Byteorder = BYTEORDER) -> Callable[[Callable[..., Any]],
+                                                Callable[..., Any]]:
     """ Attaches the option ``byte_order`` with its *default* value to the
     keyword arguments, when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
 
-    def decorator(method):
+    def decorator(method: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(method)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             option = Option.byte_order.value
             kwargs[option] = kwargs.get(option, default)
             return method(*args, **kwargs)
@@ -38,7 +43,7 @@ def byte_order_option(default=BYTEORDER):
     return decorator
 
 
-def get_byte_order(options):
+def get_byte_order(options: dict[str, Any]) -> Byteorder:
     option = Option.byte_order.value
     byte_order = options.get(option, BYTEORDER)
     if isinstance(byte_order, str):
@@ -46,15 +51,17 @@ def get_byte_order(options):
     return byte_order
 
 
-def nested_option(default=False):
+def nested_option(
+    default: bool = False) -> Callable[[Callable[..., Any]],
+                                       Callable[..., Any]]:
     """ Attaches the option ``nested`` with its *default* value to the
     keyword arguments when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
 
-    def decorator(method):
+    def decorator(method: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(method)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             option = Option.nested.value
             kwargs[option] = kwargs.get(option, bool(default))
             return method(*args, **kwargs)
@@ -64,20 +71,22 @@ def nested_option(default=False):
     return decorator
 
 
-def get_nested(options):
+def get_nested(options: dict[str, Any]) -> bool:
     option = Option.nested.value
     return options.get(option, False)
 
 
-def verbose_option(default=False):
+def verbose_option(
+    default: bool = False) -> Callable[[Callable[..., Any]],
+                                       Callable[..., Any]]:
     """ Attaches the option ``verbose`` with its *default* value to the
     keyword arguments when the option does not exist. All positional
     arguments and keyword arguments are forwarded unchanged.
     """
 
-    def decorator(method):
+    def decorator(method: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(method)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             option = Option.verbose.value
             kwargs[option] = kwargs.get(option, bool(default))
             return method(*args, **kwargs)
@@ -87,7 +96,8 @@ def verbose_option(default=False):
     return decorator
 
 
-def verbose(options, message=None):
+def verbose(options: dict[str, Any],
+            message: str | None = None) -> None:
     option = Option.verbose.value
     if options.get(option, False) and message:
         print(message)

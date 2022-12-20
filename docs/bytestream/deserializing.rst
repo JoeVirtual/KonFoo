@@ -10,7 +10,8 @@ De-Serializing
 ==============
 
 The de-serialization of a *byte stream* by a *byte stream* :ref:`mapper <mapper>`
-is not considered independent from the :ref:`reading <reading>` of the *bytestream*.
+is **not** considered independent from the :ref:`reading <reading>` of the
+*bytestream*.
 
 Therefore the :meth:`deserialize` method of the *byte stream* :ref:`mapper <mapper>`
 is not called directly during the de-serialization process. The :meth:`deserialize`

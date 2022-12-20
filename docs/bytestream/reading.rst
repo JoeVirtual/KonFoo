@@ -78,8 +78,8 @@ Third, create a *reader* for the *byte stream* :ref:`mapper <mapper>` to the
 
     >>> class FileReader(Pointer):
     ...
-    ...     def __init__(self, address=None, byte_order=BYTEORDER):
-    ...         super().__init__(FileMapper(), address, byte_order)
+    ...     def __init__(self, address=None, data_order='little'):
+    ...         super().__init__(FileMapper(), address, data_order)
 
 or
 

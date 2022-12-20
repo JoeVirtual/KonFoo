@@ -59,7 +59,7 @@ possible.
 Dependencies
 ------------
 
-The **KonFoo** package runs on `Python 3.6 <https://www.python.org/>`_ or
+The **KonFoo** package runs on `Python 3.9 <https://www.python.org/>`_ or
 higher.
 
 Installation

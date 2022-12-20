@@ -2,26 +2,28 @@
 """
 categories.py
 ~~~~~~~~~~~~~
-<Add description of the module here>.
+Extended Python enum type.
 
-:copyright: (c) 2015-2020 by Jochen Gerhaeusser.
+:copyright: (c) 2015-2022 by Jochen Gerhaeusser.
 :license: BSD, see LICENSE for details
 """
+from __future__ import annotations
 
 import enum
+from typing import Any
 
 
 class Category(enum.Enum):
-    """ The `Category` class is a is a subclass of the :class:`~enum.Enum` class
-    provided by the Python standard module :mod:`enum` and extends its base
-    class with methods
+    """ The :class:`Category` class is a is a subclass of the :class:`~enum.Enum`
+    class provided by the Python standard module :mod:`enum`, and extends its
+    base class with methods
 
-    * to `describe` a specific `Category` member by its `name`, `value` pair
-    * to list the `member names` of a `Category`
-    * to list the `member values` of a `Category`
-    * to `get` the `value` of the `Category` member with the matching `name`
-    * to `get` the `name` of the `Category` member with the matching `value`
-    * to `get` the `member` of the `Category` with the matching `value`
+    - to `describe` a specific `Category` member by its `name`, `value` tuple
+    - to list the `member names` of a `Category`
+    - to list the `member values` of a `Category`
+    - to `get` the `value` of the `Category` member by its name
+    - to `get` the `name` of the `Category` member by is value
+    - to `get` the `member` of the `Category` by its value
 
     Example:
 
@@ -57,11 +59,11 @@ class Category(enum.Enum):
     'hh'
     >>> Format.hour.describe()
     ('hour', 'hh')
-    >>> [format.name for format in Format]
+    >>> [member.name for member in Format]
     ['hour', 'minute', 'second']
     >>> Format.names()
     ['hour', 'minute', 'second']
-    >>> [format.value for format in Format]
+    >>> [member.value for member in Format]
     ['hh', 'mm', 'ss']
     >>> Format.values()
     ['hh', 'mm', 'ss']
@@ -81,7 +83,7 @@ class Category(enum.Enum):
     True
     """
 
-    def __str__(self):
+    def __str__(self) -> str:
         """ Return str(self).
 
         Example:
@@ -95,7 +97,7 @@ class Category(enum.Enum):
         """
         return f"({self.name!s}, {self.value!s})"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """ Return repr(self). See help(type(self)) for accurate signature.
 
         Example:
@@ -109,8 +111,8 @@ class Category(enum.Enum):
         """
         return f"{self.__class__.__name__}.{self.name!s} = {self.value!r}"
 
-    def describe(self):
-        """ Returns the `name`, `value` pair to describe a specific `Category`
+    def describe(self) -> tuple[str, Any]:
+        """ Returns the `name`, `value` tuple to describe a specific `Category`
         member.
 
         Example:
@@ -125,7 +127,7 @@ class Category(enum.Enum):
         return self.name, self.value
 
     @classmethod
-    def names(cls):
+    def names(cls) -> list[str]:
         """ Returns a list of the member `names` of a `Category`.
 
         Example:
@@ -140,7 +142,7 @@ class Category(enum.Enum):
         return [member.name for member in cls]
 
     @classmethod
-    def values(cls):
+    def values(cls) -> list[Any]:
         """ Returns a list of the member `values` of a `Category`.
 
         Example:
@@ -155,9 +157,9 @@ class Category(enum.Enum):
         return [member.value for member in cls]
 
     @classmethod
-    def get_name(cls, value):
-        """ Returns the `name` of the `Category` member with the matching
-        *value* or a empty string if no member match.
+    def get_name(cls, value: Any) -> str:
+        """ Returns the `name` of the `Category` member matches the *value*,
+        or an empty string if no member match.
 
         Example:
 
@@ -176,9 +178,9 @@ class Category(enum.Enum):
         return str()
 
     @classmethod
-    def get_value(cls, name):
-        """ Returns the `value` of the `Category` member with the matching
-        *name* or `None` if no member match.
+    def get_value(cls, name: str) -> Any | None:
+        """ Returns the `value` of the `Category` member matches the *name*,
+        or :data:`None` if no member match.
 
         Example:
 
@@ -197,9 +199,11 @@ class Category(enum.Enum):
         return None
 
     @classmethod
-    def get_member(cls, value, default=None):
-        """ Returns the first `Category` member with the matching *value*
-        or the specified *default* value if no  member match.
+    def get_member(cls,
+                   value: Any,
+                   default: Category | None = None) -> Category | None:
+        """ Returns the first `Category` member matches the *value*, or the
+        specified *default* member if no member match.
 
         Example:
 

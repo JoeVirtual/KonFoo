@@ -122,12 +122,25 @@ Write Field Attributes
 ----------------------
 
 A `container`_ can **write** the *attributes* of each :ref:`field <field>` item
+*nested* in the `container`_ to a ``.json`` file by calling its method
+:meth:`~Container.write_json`.
+
+The default attribute is the field :attr:`~Field.value`.
+
+    >>> # Save the field values to a '.json' file.
+    >>> container.write_json("./_static/container.json")
+
+The generated ``.json`` file for the container looks like this:
+
+.. literalinclude:: ../_static/container.json
+
+A `container`_ can **write** the *attributes* of each :ref:`field <field>` item
 *nested* in the `container`_ to a ``.csv`` file by calling its method
 :meth:`~Container.write_csv`.
 
 The default attribute is the field :attr:`~Field.value`.
 
-    >>> # Save the field values to an '.csv' file.
+    >>> # Save the field values to a '.csv' file.
     >>> container.write_csv("./_static/container.csv")
 
 The generated ``.csv`` file for the container looks like this:

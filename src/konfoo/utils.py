@@ -2,20 +2,22 @@
 """
 utils.py
 ~~~~~~~~
-<Add description of the module here>.
+Utilities.
 
 :copyright: (c) 2015-2022 by Jochen Gerhaeusser.
 :license: BSD, see LICENSE for details.
 """
+from __future__ import annotations
 
 import json
+from typing import (Any)
 
 from .globals import ItemClass
 
 
 class HexViewer:
-    """ A `HexViewer` writes or prints a source file or a byte stream
-    as a hexadecimal dump to a output file or the console.
+    """ The :class:`HexViewer` class writes or prints a source file or a
+    byte stream as a hexadecimal dump to a output file or the console.
 
     :param int columns: number of output columns.
         Allowed values are ``8``, ``16`` or ``32``.
@@ -29,28 +31,30 @@ class HexViewer:
     00000000 | 4B 6F 6E 46 60 30 30 60 20 69 73 20 46 75 6E 2E | KonF`00` is Fun.
     """
 
-    def __init__(self, columns=16):
+    def __init__(self, columns: int = 16) -> None:
         self._columns = 16
         if columns in (8, 16, 32):
             self._columns = columns
 
     @property
-    def columns(self):
+    def columns(self) -> int:
         """ Number of output columns."""
         return self._columns
 
     @columns.setter
-    def columns(self, value):
+    def columns(self, value: int) -> None:
         if value in (8, 16, 32):
             self._columns = int(value)
 
     @staticmethod
-    def _view_area(stream=bytes(), index=0, count=0):
+    def _view_area(stream: bytes = bytes(),
+                   index: int = 0,
+                   count: int = 0) -> tuple[int, int]:
         """ Returns the (start, stop) index for the viewing area of the
         byte stream.
 
         :param int index: start index of the viewing area.
-            Default is the begin of the stream.
+            Default is the beginning of the stream.
         :param int count: number of bytes to view.
             Default is to the end of the stream.
         """
@@ -72,7 +76,11 @@ class HexViewer:
 
         return start, stop
 
-    def file_dump(self, source, index=0, count=0, output=str()):
+    def file_dump(self,
+                  source: str,
+                  index: int = 0,
+                  count: int = 0,
+                  output: str = str()) -> None:
         """ Dumps the content of the *source* file to the console or to the
         optional given *output* file.
 
@@ -86,22 +94,28 @@ class HexViewer:
         stream = open(source, 'rb').read()
         self.dump(stream, index, count, output)
 
-    def dump(self, stream, index=0, count=0, output=str()):
+    def dump(self,
+             stream: bytes,
+             index: int = 0,
+             count: int = 0,
+             output: str = str()) -> None:
         """ Dumps the content of the byte *stream* to the console or to the
         optional given *output* file.
 
         :param bytes stream: byte stream to view.
         :param int index: optional start index of the viewing area in bytes.
-            Default is the begin of the stream.
+            Default is the beginning of the stream.
         :param int count: optional number of bytes to view.
             Default is to the end of the stream.
         :param str output: location and name for the optional output file.
         """
 
-        def numerate(pattern, _count):
-            return ''.join(pattern.format(x) for x in range(_count))
+        def numerate(template: str,
+                     _count: int) -> str:
+            return ''.join(template.format(x) for x in range(_count))
 
-        def write_to(file_handle, content):
+        def write_to(file_handle,
+                     content: str) -> None:
             if file_handle:
                 file_handle.write(content + "\n")
             else:
@@ -164,7 +178,9 @@ class HexViewer:
             write_to(dst, output_line)
 
 
-def d3flare_json(metadata, file=None, **options):
+def d3flare_json(metadata: dict[str, Any],
+                 file=None,
+                 **options: Any) -> str | None:
     """ Converts the *metadata* dictionary of a container or field into a
     ``flare.json`` formatted string or formatted stream written to the *file*
 
@@ -185,10 +201,10 @@ def d3flare_json(metadata, file=None, **options):
 
     :param dict metadata: metadata generated from a :class:`Structure`,
         :class:`Sequence`, :class:`Array` or any :class:`Field` instance.
-    :param file file: file-like object.
+    :param file: optional file-like object to write to
     """
 
-    def convert(parent):
+    def convert(parent: dict[str, Any]) -> dict[str, Any]:
         node = dict()
         item_type = parent.get('type')
         node['class'] = parent.get('class')

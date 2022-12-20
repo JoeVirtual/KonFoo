@@ -4,12 +4,30 @@ Change Log
 These are the enhancements, breaking changes and bug fixes of note between each
 release.
 
-.. _v2.2.0:
+.. _v3.0.0:
 
-`2.2.0`_ - Unreleased
+`3.0.0`_ - Unreleased
 =====================
 
-.. _2.2.0: https://github.com/JoeVirtual/KonFoo/compare/v2.1.0...master
+.. _3.0.0: https://github.com/JoeVirtual/KonFoo/compare/v2.1.0...v3.0.0
+
+Enhancements
+------------
+
+* Add type hints.
+
+Breaking Changes
+----------------
+
+* Rename ``size`` argument to ``capacity`` for
+  :class:`Array`, :class:`Stream`, :class:`String`,
+  :class:`ArrayPointer`,
+  :class:`StreamPointer`,
+  :class:`StringPointer`,
+  :class:`ArrayRelativePointer`,
+  :class:`StreamRelativePointer`,
+  and :class:`StringRelativePointer`
+* Drop support for Python 3.6, 3.7, 3.8
 
 .. _v2.1.0:
 
@@ -21,8 +39,8 @@ release.
 Enhancements
 ------------
 
-* Refactor repository and documentation structure
-* Change documentation theme
+* Refactor repository and documentation structure.
+* Change documentation theme.
 
 .. _v2.0.0:
 

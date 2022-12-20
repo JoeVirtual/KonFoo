@@ -23,8 +23,8 @@ sys.path.insert(0, os.path.abspath('../src'))
 project = 'KonFoo'
 author = 'Jochen Gerhaeusser'
 copyright = f"2015-{datetime.datetime.utcnow().year}, {author}"
-version = '2.2.0'
-release = '2.2.0a0'
+version = '3.0.0'
+release = '3.0.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -74,7 +74,11 @@ show_navbar_depth = 3
 # -- Options for AutoDoc ------------------------------------------------------
 
 autodoc_member_order = 'bysource'
-autodoc_inherit_docstrings = True
+autodoc_inherit_docstrings = False
+autodoc_typehints = 'signature'
+autodoc_type_aliases = {}
+autodoc_typehints_description_target = 'all'
+autodoc_typehints_format = 'short'
 
 # -- Options for ExtLinks -----------------------------------------------------
 
