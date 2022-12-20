@@ -6,10 +6,10 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="License" href="license.html" /><link rel="prev" title="API" href="../api/index.html" />
         <link rel="canonical" href="https://konfoo.readthedocs.io/annex/changelog.html" />
 
-    <meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
-        <title>Change Log - KonFoo 2.2.0a0</title>
+    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+        <title>Change Log - KonFoo 3.0.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -125,7 +125,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">KonFoo 2.2.0a0</div></a>
+      <a href="../index.html"><div class="brand">KonFoo 3.0.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -151,10 +151,10 @@
     <img class="sidebar-logo" src="../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">KonFoo 2.2.0a0</span>
+  <span class="sidebar-brand-text">KonFoo 3.0.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -199,7 +199,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Indexes</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Symbol Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
 </ul>
 
 </div>
@@ -247,39 +247,59 @@
 <p>These are the enhancements, breaking changes and bug fixes of note between each
 release.</p>
 <section id="unreleased">
-<span id="v2-2-0"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare/v2.1.0...master">2.2.0</a> - Unreleased<a class="headerlink" href="#unreleased" title="Permalink to this heading">#</a></h2>
-</section>
-<section id="v2-1-0">
-<span id="id2"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare/v2.0...v2.1.0">2.1.0</a> - 2022-01-27<a class="headerlink" href="#v2-1-0" title="Permalink to this heading">#</a></h2>
+<span id="v3-0-0"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare/v2.1.0...v3.0.0">3.0.0</a> - Unreleased<a class="headerlink" href="#unreleased" title="Permalink to this heading">#</a></h2>
 <section id="enhancements">
 <h3>Enhancements<a class="headerlink" href="#enhancements" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
-<li><p>Refactor repository and documentation structure</p></li>
-<li><p>Change documentation theme</p></li>
+<li><p>Add type hints.</p></li>
+</ul>
+</section>
+<section id="breaking-changes">
+<h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Rename <code class="docutils literal notranslate"><span class="pre">size</span></code> argument to <code class="docutils literal notranslate"><span class="pre">capacity</span></code> for
+<a class="reference internal" href="../api/index.html#konfoo.Array" title="konfoo.Array"><code class="xref py py-class docutils literal notranslate"><span class="pre">Array</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.Stream" title="konfoo.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>, <a class="reference internal" href="../api/index.html#konfoo.String" title="konfoo.String"><code class="xref py py-class docutils literal notranslate"><span class="pre">String</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.ArrayPointer" title="konfoo.ArrayPointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayPointer</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.StreamPointer" title="konfoo.StreamPointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamPointer</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.StringPointer" title="konfoo.StringPointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StringPointer</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.ArrayRelativePointer" title="konfoo.ArrayRelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayRelativePointer</span></code></a>,
+<a class="reference internal" href="../api/index.html#konfoo.StreamRelativePointer" title="konfoo.StreamRelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StreamRelativePointer</span></code></a>,
+and <a class="reference internal" href="../api/index.html#konfoo.StringRelativePointer" title="konfoo.StringRelativePointer"><code class="xref py py-class docutils literal notranslate"><span class="pre">StringRelativePointer</span></code></a></p></li>
+<li><p>Drop support for Python 3.6, 3.7, 3.8</p></li>
+</ul>
+</section>
+</section>
+<section id="v2-1-0">
+<span id="id2"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare/v2.0...v2.1.0">2.1.0</a> - 2022-01-27<a class="headerlink" href="#v2-1-0" title="Permalink to this heading">#</a></h2>
+<section id="id4">
+<h3>Enhancements<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Refactor repository and documentation structure.</p></li>
+<li><p>Change documentation theme.</p></li>
 </ul>
 </section>
 </section>
 <section id="v2-0-0">
-<span id="id4"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare/v1.1...v2.0">2.0.0</a> - 2020-08-02<a class="headerlink" href="#v2-0-0" title="Permalink to this heading">#</a></h2>
-<section id="id6">
-<h3>Enhancements<a class="headerlink" href="#id6" title="Permalink to this heading">#</a></h3>
+<span id="id5"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare/v1.1...v2.0">2.0.0</a> - 2020-08-02<a class="headerlink" href="#v2-0-0" title="Permalink to this heading">#</a></h2>
+<section id="id7">
+<h3>Enhancements<a class="headerlink" href="#id7" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Use <a class="reference external" href="https://docs.python.org/3.10/library/stdtypes.html#dict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> instead of <a class="reference external" href="https://docs.python.org/3.10/library/collections.html#collections.OrderedDict" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">OrderedDict</span></code></a> to improve
 readability.</p></li>
 <li><p>Add method <a class="reference internal" href="../api/index.html#konfoo.Container.write_json" title="konfoo.Container.write_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Container.write_json()</span></code></a> to write to a <code class="docutils literal notranslate"><span class="pre">.json</span></code> file.</p></li>
 </ul>
 </section>
-<section id="breaking-changes">
-<h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permalink to this heading">#</a></h3>
+<section id="id8">
+<h3>Breaking Changes<a class="headerlink" href="#id8" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Drop support for Python 3.5</p></li>
 </ul>
 </section>
 </section>
 <section id="v1-1-0">
-<span id="id7"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare/v1.0...v1.1">1.1.0</a> - 2019-10-27<a class="headerlink" href="#v1-1-0" title="Permalink to this heading">#</a></h2>
-<section id="id9">
-<h3>Enhancements<a class="headerlink" href="#id9" title="Permalink to this heading">#</a></h3>
+<span id="id9"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare/v1.0...v1.1">1.1.0</a> - 2019-10-27<a class="headerlink" href="#v1-1-0" title="Permalink to this heading">#</a></h2>
+<section id="id11">
+<h3>Enhancements<a class="headerlink" href="#id11" title="Permalink to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Add a <a class="reference internal" href="../api/index.html#konfoo.Double" title="konfoo.Double"><code class="xref py py-class docutils literal notranslate"><span class="pre">Double</span></code></a> field class to map a double precision float value
 within a byte stream.</p></li>
@@ -302,7 +322,7 @@ correctly on an instance of <a class="reference internal" href="../api/index.htm
 </section>
 </section>
 <section id="v1-0-0">
-<span id="id10"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare">1.0.0</a> - 2019-01-02<a class="headerlink" href="#v1-0-0" title="Permalink to this heading">#</a></h2>
+<span id="id12"></span><h2><a class="reference external" href="https://github.com/JoeVirtual/KonFoo/compare">1.0.0</a> - 2019-01-02<a class="headerlink" href="#v1-0-0" title="Permalink to this heading">#</a></h2>
 <ul class="simple">
 <li><p>First stable release.</p></li>
 </ul>
@@ -346,9 +366,7 @@ correctly on an instance of <a class="reference internal" href="../api/index.htm
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -367,18 +385,22 @@ correctly on an instance of <a class="reference internal" href="../api/index.htm
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Change Log</a><ul>
-<li><a class="reference internal" href="#unreleased">2.2.0 - Unreleased</a></li>
-<li><a class="reference internal" href="#v2-1-0">2.1.0 - 2022-01-27</a><ul>
+<li><a class="reference internal" href="#unreleased">3.0.0 - Unreleased</a><ul>
 <li><a class="reference internal" href="#enhancements">Enhancements</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#v2-0-0">2.0.0 - 2020-08-02</a><ul>
-<li><a class="reference internal" href="#id6">Enhancements</a></li>
 <li><a class="reference internal" href="#breaking-changes">Breaking Changes</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#v2-1-0">2.1.0 - 2022-01-27</a><ul>
+<li><a class="reference internal" href="#id4">Enhancements</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#v2-0-0">2.0.0 - 2020-08-02</a><ul>
+<li><a class="reference internal" href="#id7">Enhancements</a></li>
+<li><a class="reference internal" href="#id8">Breaking Changes</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#v1-1-0">1.1.0 - 2019-10-27</a><ul>
-<li><a class="reference internal" href="#id9">Enhancements</a></li>
+<li><a class="reference internal" href="#id11">Enhancements</a></li>
 <li><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
 </ul>
 </li>
@@ -399,6 +421,7 @@ correctly on an instance of <a class="reference internal" href="../api/index.htm
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

@@ -5,10 +5,10 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
         <link rel="canonical" href="https://konfoo.readthedocs.io/_modules/konfoo/categories.html" />
 
-    <meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
-        <title>konfoo.categories - KonFoo 2.2.0a0</title>
+    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+        <title>konfoo.categories - KonFoo 3.0.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">KonFoo 2.2.0a0</div></a>
+      <a href="../../index.html"><div class="brand">KonFoo 3.0.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -150,10 +150,10 @@
     <img class="sidebar-logo" src="../../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">KonFoo 2.2.0a0</span>
+  <span class="sidebar-brand-text">KonFoo 3.0.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -198,7 +198,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Indexes</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Symbol Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
 </ul>
 
 </div>
@@ -237,26 +237,28 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">categories.py</span>
 <span class="sd">~~~~~~~~~~~~~</span>
-<span class="sd">&lt;Add description of the module here&gt;.</span>
+<span class="sd">Extended Python enum type.</span>
 
-<span class="sd">:copyright: (c) 2015-2020 by Jochen Gerhaeusser.</span>
+<span class="sd">:copyright: (c) 2015-2022 by Jochen Gerhaeusser.</span>
 <span class="sd">:license: BSD, see LICENSE for details</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 
 
 <div class="viewcode-block" id="Category"><a class="viewcode-back" href="../../api/index.html#konfoo.Category">[docs]</a><span class="k">class</span> <span class="nc">Category</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The `Category` class is a is a subclass of the :class:`~enum.Enum` class</span>
-<span class="sd">    provided by the Python standard module :mod:`enum` and extends its base</span>
-<span class="sd">    class with methods</span>
+    <span class="sd">&quot;&quot;&quot; The :class:`Category` class is a is a subclass of the :class:`~enum.Enum`</span>
+<span class="sd">    class provided by the Python standard module :mod:`enum`, and extends its</span>
+<span class="sd">    base class with methods</span>
 
-<span class="sd">    * to `describe` a specific `Category` member by its `name`, `value` pair</span>
-<span class="sd">    * to list the `member names` of a `Category`</span>
-<span class="sd">    * to list the `member values` of a `Category`</span>
-<span class="sd">    * to `get` the `value` of the `Category` member with the matching `name`</span>
-<span class="sd">    * to `get` the `name` of the `Category` member with the matching `value`</span>
-<span class="sd">    * to `get` the `member` of the `Category` with the matching `value`</span>
+<span class="sd">    - to `describe` a specific `Category` member by its `name`, `value` tuple</span>
+<span class="sd">    - to list the `member names` of a `Category`</span>
+<span class="sd">    - to list the `member values` of a `Category`</span>
+<span class="sd">    - to `get` the `value` of the `Category` member by its name</span>
+<span class="sd">    - to `get` the `name` of the `Category` member by is value</span>
+<span class="sd">    - to `get` the `member` of the `Category` by its value</span>
 
 <span class="sd">    Example:</span>
 
@@ -292,11 +294,11 @@
 <span class="sd">    &#39;hh&#39;</span>
 <span class="sd">    &gt;&gt;&gt; Format.hour.describe()</span>
 <span class="sd">    (&#39;hour&#39;, &#39;hh&#39;)</span>
-<span class="sd">    &gt;&gt;&gt; [format.name for format in Format]</span>
+<span class="sd">    &gt;&gt;&gt; [member.name for member in Format]</span>
 <span class="sd">    [&#39;hour&#39;, &#39;minute&#39;, &#39;second&#39;]</span>
 <span class="sd">    &gt;&gt;&gt; Format.names()</span>
 <span class="sd">    [&#39;hour&#39;, &#39;minute&#39;, &#39;second&#39;]</span>
-<span class="sd">    &gt;&gt;&gt; [format.value for format in Format]</span>
+<span class="sd">    &gt;&gt;&gt; [member.value for member in Format]</span>
 <span class="sd">    [&#39;hh&#39;, &#39;mm&#39;, &#39;ss&#39;]</span>
 <span class="sd">    &gt;&gt;&gt; Format.values()</span>
 <span class="sd">    [&#39;hh&#39;, &#39;mm&#39;, &#39;ss&#39;]</span>
@@ -316,7 +318,7 @@
 <span class="sd">    True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Return str(self).</span>
 
 <span class="sd">        Example:</span>
@@ -330,7 +332,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">!s}</span><span class="s2">, </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">!s}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Return repr(self). See help(type(self)) for accurate signature.</span>
 
 <span class="sd">        Example:</span>
@@ -344,8 +346,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">!s}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">!r}</span><span class="s2">&quot;</span>
 
-<div class="viewcode-block" id="Category.describe"><a class="viewcode-back" href="../../api/index.html#konfoo.Category.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the `name`, `value` pair to describe a specific `Category`</span>
+<div class="viewcode-block" id="Category.describe"><a class="viewcode-back" href="../../api/index.html#konfoo.Category.describe">[docs]</a>    <span class="k">def</span> <span class="nf">describe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot; Returns the `name`, `value` tuple to describe a specific `Category`</span>
 <span class="sd">        member.</span>
 
 <span class="sd">        Example:</span>
@@ -360,7 +362,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div>
 
 <div class="viewcode-block" id="Category.names"><a class="viewcode-back" href="../../api/index.html#konfoo.Category.names">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">names</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">names</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot; Returns a list of the member `names` of a `Category`.</span>
 
 <span class="sd">        Example:</span>
@@ -375,7 +377,7 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">member</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Category.values"><a class="viewcode-back" href="../../api/index.html#konfoo.Category.values">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot; Returns a list of the member `values` of a `Category`.</span>
 
 <span class="sd">        Example:</span>
@@ -390,9 +392,9 @@
         <span class="k">return</span> <span class="p">[</span><span class="n">member</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Category.get_name"><a class="viewcode-back" href="../../api/index.html#konfoo.Category.get_name">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the `name` of the `Category` member with the matching</span>
-<span class="sd">        *value* or a empty string if no member match.</span>
+    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Returns the `name` of the `Category` member matches the *value*,</span>
+<span class="sd">        or an empty string if no member match.</span>
 
 <span class="sd">        Example:</span>
 
@@ -411,9 +413,9 @@
         <span class="k">return</span> <span class="nb">str</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Category.get_value"><a class="viewcode-back" href="../../api/index.html#konfoo.Category.get_value">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the `value` of the `Category` member with the matching</span>
-<span class="sd">        *name* or `None` if no member match.</span>
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Returns the `value` of the `Category` member matches the *name*,</span>
+<span class="sd">        or :data:`None` if no member match.</span>
 
 <span class="sd">        Example:</span>
 
@@ -432,9 +434,11 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="Category.get_member"><a class="viewcode-back" href="../../api/index.html#konfoo.Category.get_member">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_member</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the first `Category` member with the matching *value*</span>
-<span class="sd">        or the specified *default* value if no  member match.</span>
+    <span class="k">def</span> <span class="nf">get_member</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                   <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                   <span class="n">default</span><span class="p">:</span> <span class="n">Category</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Category</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; Returns the first `Category` member matches the *value*, or the</span>
+<span class="sd">        specified *default* member if no member match.</span>
 
 <span class="sd">        Example:</span>
 
@@ -471,9 +475,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -490,6 +492,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

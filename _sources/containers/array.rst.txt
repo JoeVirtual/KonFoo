@@ -101,7 +101,7 @@ Define an `array`_ of :ref:`pointers <pointer>` by using a concrete data object
 pointer **class** for the the attached :ref:`data object <data object>` as the
 `array element`_ *template*.
 
-    >>> # Define an data object pointer class.
+    >>> # Define a data object pointer class.
     >>> class BytePointer(Pointer):
     ...     def __init__(self):
     ...         super().__init__(Byte())
@@ -754,7 +754,7 @@ You can **access** an `array element`_ of an `array`_ by its index.
 Attributes of an Array Element Field
 ------------------------------------
 
-You can **access** the :class:`Field` attributes of an :ref:`field <field>`
+You can **access** the :class:`Field` attributes of a :ref:`field <field>`
 *array element* of an `array`_ with the attribute names:
 
     >>> # Field name.

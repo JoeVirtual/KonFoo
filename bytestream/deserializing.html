@@ -6,10 +6,10 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API" href="../api/index.html" /><link rel="prev" title="Writing" href="writing.html" />
         <link rel="canonical" href="https://konfoo.readthedocs.io/bytestream/deserializing.html" />
 
-    <meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
-        <title>De-Serializing - KonFoo 2.2.0a0</title>
+    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+        <title>De-Serializing - KonFoo 3.0.0</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -125,7 +125,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">KonFoo 2.2.0a0</div></a>
+      <a href="../index.html"><div class="brand">KonFoo 3.0.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -151,10 +151,10 @@
     <img class="sidebar-logo" src="../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">KonFoo 2.2.0a0</span>
+  <span class="sidebar-brand-text">KonFoo 3.0.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -199,7 +199,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Indexes</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Symbol Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
 </ul>
 
 </div>
@@ -245,7 +245,8 @@
           <section id="de-serializing">
 <span id="id1"></span><h1>De-Serializing<a class="headerlink" href="#de-serializing" title="Permalink to this heading">#</a></h1>
 <p>The de-serialization of a <em>byte stream</em> by a <em>byte stream</em> <a class="reference internal" href="../content/mapper.html#mapper"><span class="std std-ref">mapper</span></a>
-is not considered independent from the <a class="reference internal" href="reading.html#reading"><span class="std std-ref">reading</span></a> of the <em>bytestream</em>.</p>
+is <strong>not</strong> considered independent from the <a class="reference internal" href="reading.html#reading"><span class="std std-ref">reading</span></a> of the
+<em>bytestream</em>.</p>
 <p>Therefore the <code class="xref py py-meth docutils literal notranslate"><span class="pre">deserialize()</span></code> method of the <em>byte stream</em> <a class="reference internal" href="../content/mapper.html#mapper"><span class="std std-ref">mapper</span></a>
 is not called directly during the de-serialization process. The <code class="xref py py-meth docutils literal notranslate"><span class="pre">deserialize()</span></code>
 method is called by the <a class="reference internal" href="../pointers/index.html#pointer"><span class="std std-ref">pointer</span></a> during the <a class="reference internal" href="reading.html#reading"><span class="std std-ref">reading</span></a>
@@ -388,9 +389,7 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -426,6 +425,7 @@ process at a certain point of the <em>byte stream</em> to adapt the <em>byte str
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>

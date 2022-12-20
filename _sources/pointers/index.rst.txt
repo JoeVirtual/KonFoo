@@ -70,7 +70,7 @@ A `data object`_ of a `pointer`_ field can be any :ref:`field <field>` or
 Define a Data Object
 --------------------
 
-Define a `data object`_ by defining an *data object* class.
+Define a `data object`_ by defining a *data object* class.
 
     >>> class DataObject(Structure):
     ...
@@ -173,7 +173,7 @@ Nest Pointers
 
 You can *nest* `pointer`_.
 
-    >>> # Create an nested pointer with no data object attached.
+    >>> # Create a nested pointer with no data object attached.
     >>> pointer = Pointer(Pointer())
 
     >>> # List the field values of the pointer.
@@ -207,7 +207,7 @@ You can *nest* `pointer`_.
       "data": {"value": "0x0",
                "data": null}}'
 
-    >>> # Create an nested pointer with a data object attached.
+    >>> # Create a nested pointer with a data object attached.
     >>> pointer = Pointer(Pointer(Byte()))
 
     >>> # List the field values of the pointer.

@@ -5,10 +5,10 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
         <link rel="canonical" href="https://konfoo.readthedocs.io/_modules/konfoo/utils.html" />
 
-    <meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
-        <title>konfoo.utils - KonFoo 2.2.0a0</title>
+    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+        <title>konfoo.utils - KonFoo 3.0.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">KonFoo 2.2.0a0</div></a>
+      <a href="../../index.html"><div class="brand">KonFoo 3.0.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -150,10 +150,10 @@
     <img class="sidebar-logo" src="../../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">KonFoo 2.2.0a0</span>
+  <span class="sidebar-brand-text">KonFoo 3.0.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -198,7 +198,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Indexes</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Symbol Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
 </ul>
 
 </div>
@@ -237,20 +237,22 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">utils.py</span>
 <span class="sd">~~~~~~~~</span>
-<span class="sd">&lt;Add description of the module here&gt;.</span>
+<span class="sd">Utilities.</span>
 
 <span class="sd">:copyright: (c) 2015-2022 by Jochen Gerhaeusser.</span>
 <span class="sd">:license: BSD, see LICENSE for details.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Any</span><span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.globals</span> <span class="kn">import</span> <span class="n">ItemClass</span>
 
 
 <div class="viewcode-block" id="HexViewer"><a class="viewcode-back" href="../../api/index.html#konfoo.HexViewer">[docs]</a><span class="k">class</span> <span class="nc">HexViewer</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; A `HexViewer` writes or prints a source file or a byte stream</span>
-<span class="sd">    as a hexadecimal dump to a output file or the console.</span>
+    <span class="sd">&quot;&quot;&quot; The :class:`HexViewer` class writes or prints a source file or a</span>
+<span class="sd">    byte stream as a hexadecimal dump to a output file or the console.</span>
 
 <span class="sd">    :param int columns: number of output columns.</span>
 <span class="sd">        Allowed values are ``8``, ``16`` or ``32``.</span>
@@ -264,28 +266,30 @@
 <span class="sd">    00000000 | 4B 6F 6E 46 60 30 30 60 20 69 73 20 46 75 6E 2E | KonF`00` is Fun.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="mi">16</span>
         <span class="k">if</span> <span class="n">columns</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="n">columns</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Number of output columns.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span>
 
     <span class="nd">@columns</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_view_area</span><span class="p">(</span><span class="n">stream</span><span class="o">=</span><span class="nb">bytes</span><span class="p">(),</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_view_area</span><span class="p">(</span><span class="n">stream</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(),</span>
+                   <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                   <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot; Returns the (start, stop) index for the viewing area of the</span>
 <span class="sd">        byte stream.</span>
 
 <span class="sd">        :param int index: start index of the viewing area.</span>
-<span class="sd">            Default is the begin of the stream.</span>
+<span class="sd">            Default is the beginning of the stream.</span>
 <span class="sd">        :param int count: number of bytes to view.</span>
 <span class="sd">            Default is to the end of the stream.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -307,7 +311,11 @@
 
         <span class="k">return</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span>
 
-<div class="viewcode-block" id="HexViewer.file_dump"><a class="viewcode-back" href="../../api/index.html#konfoo.HexViewer.file_dump">[docs]</a>    <span class="k">def</span> <span class="nf">file_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="nb">str</span><span class="p">()):</span>
+<div class="viewcode-block" id="HexViewer.file_dump"><a class="viewcode-back" href="../../api/index.html#konfoo.HexViewer.file_dump">[docs]</a>    <span class="k">def</span> <span class="nf">file_dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                  <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                  <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                  <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                  <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Dumps the content of the *source* file to the console or to the</span>
 <span class="sd">        optional given *output* file.</span>
 
@@ -321,22 +329,28 @@
         <span class="n">stream</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="HexViewer.dump"><a class="viewcode-back" href="../../api/index.html#konfoo.HexViewer.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="nb">str</span><span class="p">()):</span>
+<div class="viewcode-block" id="HexViewer.dump"><a class="viewcode-back" href="../../api/index.html#konfoo.HexViewer.dump">[docs]</a>    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+             <span class="n">stream</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
+             <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="n">count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+             <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot; Dumps the content of the byte *stream* to the console or to the</span>
 <span class="sd">        optional given *output* file.</span>
 
 <span class="sd">        :param bytes stream: byte stream to view.</span>
 <span class="sd">        :param int index: optional start index of the viewing area in bytes.</span>
-<span class="sd">            Default is the begin of the stream.</span>
+<span class="sd">            Default is the beginning of the stream.</span>
 <span class="sd">        :param int count: optional number of bytes to view.</span>
 <span class="sd">            Default is to the end of the stream.</span>
 <span class="sd">        :param str output: location and name for the optional output file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">numerate</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">_count</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pattern</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_count</span><span class="p">))</span>
+        <span class="k">def</span> <span class="nf">numerate</span><span class="p">(</span><span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                     <span class="n">_count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_count</span><span class="p">))</span>
 
-        <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">write_to</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span>
+                     <span class="n">content</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">file_handle</span><span class="p">:</span>
                 <span class="n">file_handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -399,7 +413,9 @@
             <span class="n">write_to</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">output_line</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="d3flare_json"><a class="viewcode-back" href="../../api/index.html#konfoo.d3flare_json">[docs]</a><span class="k">def</span> <span class="nf">d3flare_json</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+<div class="viewcode-block" id="d3flare_json"><a class="viewcode-back" href="../../api/index.html#konfoo.d3flare_json">[docs]</a><span class="k">def</span> <span class="nf">d3flare_json</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+                 <span class="n">file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">options</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot; Converts the *metadata* dictionary of a container or field into a</span>
 <span class="sd">    ``flare.json`` formatted string or formatted stream written to the *file*</span>
 
@@ -420,10 +436,10 @@
 
 <span class="sd">    :param dict metadata: metadata generated from a :class:`Structure`,</span>
 <span class="sd">        :class:`Sequence`, :class:`Array` or any :class:`Field` instance.</span>
-<span class="sd">    :param file file: file-like object.</span>
+<span class="sd">    :param file: optional file-like object to write to</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">parent</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">node</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">item_type</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span>
         <span class="n">node</span><span class="p">[</span><span class="s1">&#39;class&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;class&#39;</span><span class="p">)</span>
@@ -480,9 +496,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -499,6 +513,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

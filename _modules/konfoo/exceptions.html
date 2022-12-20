@@ -5,10 +5,10 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
         <link rel="canonical" href="https://konfoo.readthedocs.io/_modules/konfoo/exceptions.html" />
 
-    <meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
-        <title>konfoo.exceptions - KonFoo 2.2.0a0</title>
+    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+        <title>konfoo.exceptions - KonFoo 3.0.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">KonFoo 2.2.0a0</div></a>
+      <a href="../../index.html"><div class="brand">KonFoo 3.0.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -150,10 +150,10 @@
     <img class="sidebar-logo" src="../../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">KonFoo 2.2.0a0</span>
+  <span class="sidebar-brand-text">KonFoo 3.0.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -198,7 +198,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Indexes</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Symbol Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
 </ul>
 
 </div>
@@ -237,21 +237,31 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">exceptions.py</span>
 <span class="sd">~~~~~~~~~~~~~</span>
-<span class="sd">&lt;Add description of the module here&gt;.</span>
+<span class="sd">Package exceptions.</span>
 
-<span class="sd">:copyright: (c) 2015-2020 by Jochen Gerhaeusser.</span>
+<span class="sd">:copyright: (c) 2015-2022 by Jochen Gerhaeusser.</span>
 <span class="sd">:license: BSD, see LICENSE for details</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Any</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">Alignment</span><span class="p">,</span> <span class="n">Byteorder</span><span class="p">,</span>
+        <span class="n">Field</span><span class="p">,</span> <span class="n">Index</span><span class="p">,</span> <span class="n">Pointer</span><span class="p">,</span> <span class="n">Structure</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ByteOrderTypeError"><a class="viewcode-back" href="../../api/index.html#konfoo.ByteOrderTypeError">[docs]</a><span class="k">class</span> <span class="nc">ByteOrderTypeError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate byte order type is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">byte_order</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate byte order type &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">byte_order</span><span class="p">)</span><span class="o">.</span><span class="n">__name__1</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">byte_order</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
@@ -259,7 +269,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate byte order value is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">byte_order</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: &quot;</span>
                    <span class="sa">f</span><span class="s2">&quot;Invalid field byte order value &#39;</span><span class="si">{</span><span class="n">byte_order</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
                    <span class="sa">f</span><span class="s2">&quot;at index (</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
@@ -270,7 +283,9 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate enum type is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">enumeration</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">enumeration</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">: Inappropriate enum type &#39;</span><span class="si">{1}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">enumeration</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
@@ -280,7 +295,12 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate member type is produced by a factory class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">factory</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">member</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span> <span class="o">|</span> <span class="n">Structure</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span>
+                 <span class="n">factory</span><span class="p">,</span>
+                 <span class="n">item</span><span class="p">:</span> <span class="n">Field</span> <span class="o">|</span> <span class="n">Structure</span> <span class="o">|</span> <span class="n">Sequence</span><span class="p">,</span>
+                 <span class="n">member</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate member type &quot;</span>
                    <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">member</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -292,18 +312,21 @@
 
 
 <div class="viewcode-block" id="MemberTypeError"><a class="viewcode-back" href="../../api/index.html#konfoo.MemberTypeError">[docs]</a><span class="k">class</span> <span class="nc">MemberTypeError</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Raised if an inappropriate member type is assigned to any container class.</span>
+    <span class="sd">&quot;&quot;&quot; Raised if an inappropriate member type is assigned to any container</span>
+<span class="sd">    class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">member</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Structure</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">Pointer</span><span class="p">,</span>
+                 <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                 <span class="n">member</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate member type &quot;</span>
         <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
             <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
         <span class="k">if</span> <span class="n">member</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; assigned to member [</span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s2">]&quot;</span>
-        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; at index (</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span> <span class="o">+</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span></div>
 
@@ -313,7 +336,9 @@
 <span class="sd">    class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">provider</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">provider</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate data provider type &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">provider</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
@@ -324,7 +349,9 @@
     <span class="sd">&quot;&quot;&quot; Raised if a container class has an inappropriate field length.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Structure</span> <span class="o">|</span> <span class="n">Sequence</span> <span class="o">|</span> <span class="n">Pointer</span><span class="p">,</span>
+                 <span class="n">length</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate field length &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">length</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
@@ -335,7 +362,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate address is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">address</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate field address value &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">address</span><span class="si">}</span><span class="s2">&#39; at index (</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
@@ -346,7 +376,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate alignment value is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">alignment</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">alignment</span><span class="p">:</span> <span class="n">Alignment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Invalid field alignment value &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;(</span><span class="si">{</span><span class="n">alignment</span><span class="o">.</span><span class="n">byte_size</span><span class="p">,</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">alignment</span><span class="o">.</span><span class="n">bit_offset</span><span class="si">}</span><span class="s2">)&#39; &quot;</span>
@@ -358,7 +391,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate byte order value is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">byte_order</span><span class="p">:</span> <span class="n">Byteorder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate field byte order value &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">byte_order</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; at index (</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
@@ -369,7 +405,9 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate index value is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate field index &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
@@ -380,7 +418,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate bit size value is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate field size value &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">&#39; at index (</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
@@ -391,7 +432,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate argument type is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate argument type &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; at index (</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
@@ -402,7 +446,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate argument value is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span><span class="si">}</span><span class="s2">: Inappropriate argument value &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; at index (</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
@@ -413,7 +460,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if an inappropriate value encoding is assigned to a field class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">encoding</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">encoding</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Inappropriate value encoding &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">encoding</span><span class="si">}</span><span class="s2">&#39; at index (</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">byte</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">bit</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
@@ -424,7 +474,10 @@
     <span class="sd">&quot;&quot;&quot; Raised if the byte order of a field contradicts its aligned field group.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">byte_order</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">byte_order</span><span class="p">:</span> <span class="n">Byteorder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Field byte order &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="n">byte_order</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; contradicts the field group byte order &quot;</span>
@@ -437,7 +490,10 @@
 <span class="sd">    group.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">alignment</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">alignment</span><span class="p">:</span> <span class="n">Alignment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Field alignment offset &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="n">alignment</span><span class="o">.</span><span class="n">bit_offset</span><span class="si">}</span><span class="s2">&#39; does not match field group offset &quot;</span>
@@ -450,7 +506,10 @@
 <span class="sd">    group.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">alignment</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">field</span><span class="p">:</span> <span class="n">Field</span><span class="p">,</span>
+                 <span class="n">index</span><span class="p">:</span> <span class="n">Index</span><span class="p">,</span>
+                 <span class="n">alignment</span><span class="p">:</span> <span class="n">Alignment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: Field alignment size &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">field</span><span class="o">.</span><span class="n">alignment</span><span class="o">.</span><span class="n">byte_size</span><span class="si">}</span><span class="s2">&#39; does not match field group size &quot;</span>
@@ -476,9 +535,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -495,6 +552,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>

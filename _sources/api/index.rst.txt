@@ -1,5 +1,5 @@
 API
-***
+****
 
 This part of the documentation lists the full API reference of all public
 classes and functions.
@@ -9,7 +9,6 @@ classes and functions.
 .. testsetup:: *
 
     from pprint import pprint
-    from binascii import hexlify, unhexlify
     from konfoo.globals import ItemClass
     from konfoo import *
 

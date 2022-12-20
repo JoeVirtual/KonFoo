@@ -5,10 +5,10 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
         <link rel="canonical" href="https://konfoo.readthedocs.io/_modules/konfoo/globals.html" />
 
-    <meta name="generator" content="sphinx-5.1.1, furo 2022.09.15"/>
-        <title>konfoo.globals - KonFoo 2.2.0a0</title>
+    <!-- Generated with Sphinx 5.3.0 and Furo 2022.12.07 -->
+        <title>konfoo.globals - KonFoo 3.0.0</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -124,7 +124,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">KonFoo 2.2.0a0</div></a>
+      <a href="../../index.html"><div class="brand">KonFoo 3.0.0</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -150,10 +150,10 @@
     <img class="sidebar-logo" src="../../_static/logo.png" alt="Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">KonFoo 2.2.0a0</span>
+  <span class="sidebar-brand-text">KonFoo 3.0.0</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -198,7 +198,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Indexes</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Symbol Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../genindex.html">Index</a></li>
 </ul>
 
 </div>
@@ -237,58 +237,64 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">globals.py</span>
 <span class="sd">~~~~~~~~~~</span>
-<span class="sd">&lt;Add description of the module here&gt;.</span>
+<span class="sd">Package global definitions.</span>
 
-<span class="sd">:copyright: (c) 2015-2020 by Jochen Gerhaeusser.</span>
+<span class="sd">:copyright: (c) 2015-2022 by Jochen Gerhaeusser.</span>
 <span class="sd">:license: BSD, see LICENSE for details</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">Enumeration</span>
 <span class="kn">from</span> <span class="nn">.categories</span> <span class="kn">import</span> <span class="n">Category</span>
+<span class="kn">from</span> <span class="nn">.enums</span> <span class="kn">import</span> <span class="n">Enumeration</span>
 
 
 <span class="k">class</span> <span class="nc">ItemClass</span><span class="p">(</span><span class="n">Enumeration</span><span class="p">):</span>
-    <span class="n">Field</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">Container</span> <span class="o">=</span> <span class="mi">2</span>
-    <span class="n">Pointer</span> <span class="o">=</span> <span class="mi">3</span>
-    <span class="n">Structure</span> <span class="o">=</span> <span class="mi">10</span>
-    <span class="n">Sequence</span> <span class="o">=</span> <span class="mi">11</span>
-    <span class="n">Array</span> <span class="o">=</span> <span class="mi">12</span>
-    <span class="n">Stream</span> <span class="o">=</span> <span class="mi">20</span>
-    <span class="n">String</span> <span class="o">=</span> <span class="mi">21</span>
-    <span class="n">Float</span> <span class="o">=</span> <span class="mi">30</span>
-    <span class="n">Double</span> <span class="o">=</span> <span class="mi">31</span>
-    <span class="n">Decimal</span> <span class="o">=</span> <span class="mi">40</span>
-    <span class="n">Bit</span> <span class="o">=</span> <span class="mi">41</span>
-    <span class="n">Byte</span> <span class="o">=</span> <span class="mi">42</span>
-    <span class="n">Char</span> <span class="o">=</span> <span class="mi">43</span>
-    <span class="n">Signed</span> <span class="o">=</span> <span class="mi">44</span>
-    <span class="n">Unsigned</span> <span class="o">=</span> <span class="mi">45</span>
-    <span class="n">Bitset</span> <span class="o">=</span> <span class="mi">46</span>
-    <span class="n">Bool</span> <span class="o">=</span> <span class="mi">47</span>
-    <span class="n">Enum</span> <span class="o">=</span> <span class="mi">48</span>
-    <span class="n">Scaled</span> <span class="o">=</span> <span class="mi">49</span>
-    <span class="n">Fraction</span> <span class="o">=</span> <span class="mi">50</span>
-    <span class="n">Bipolar</span> <span class="o">=</span> <span class="mi">51</span>
-    <span class="n">Unipolar</span> <span class="o">=</span> <span class="mi">52</span>
-    <span class="n">Datetime</span> <span class="o">=</span> <span class="mi">53</span>
-    <span class="n">IPAddress</span> <span class="o">=</span> <span class="mi">54</span>
+    <span class="n">Field</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">Container</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">Pointer</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">Structure</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">Sequence</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">Array</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">Stream</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">String</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">21</span>
+    <span class="n">Float</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">30</span>
+    <span class="n">Double</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">31</span>
+    <span class="n">Decimal</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">40</span>
+    <span class="n">Bit</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">41</span>
+    <span class="n">Byte</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">42</span>
+    <span class="n">Char</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">43</span>
+    <span class="n">Signed</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">44</span>
+    <span class="n">Unsigned</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">45</span>
+    <span class="n">Bitset</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">46</span>
+    <span class="n">Bool</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">47</span>
+    <span class="n">Enum</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">48</span>
+    <span class="n">Scaled</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">49</span>
+    <span class="n">Fraction</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">Bipolar</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">51</span>
+    <span class="n">Unipolar</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">52</span>
+    <span class="n">Datetime</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">53</span>
+    <span class="n">IPAddress</span><span class="p">:</span> <span class="n">ItemClass</span> <span class="o">=</span> <span class="mi">54</span>
 
 
 <div class="viewcode-block" id="Byteorder"><a class="viewcode-back" href="../../api/index.html#konfoo.Byteorder">[docs]</a><span class="k">class</span> <span class="nc">Byteorder</span><span class="p">(</span><span class="n">Category</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Byte order categories.&quot;&quot;&quot;</span>
-    <span class="n">auto</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
-    <span class="n">little</span> <span class="o">=</span> <span class="s1">&#39;little&#39;</span>
-    <span class="n">big</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span></div>
+    <span class="c1">#: Byte order is defined by the de-/serializer.</span>
+    <span class="n">auto</span><span class="p">:</span> <span class="n">Byteorder</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span>
+    <span class="c1">#: Byte order is big endian.</span>
+    <span class="n">big</span><span class="p">:</span> <span class="n">Byteorder</span> <span class="o">=</span> <span class="s1">&#39;big&#39;</span>
+    <span class="c1">#: Byte order is big little.</span>
+    <span class="n">little</span><span class="p">:</span> <span class="n">Byteorder</span> <span class="o">=</span> <span class="s1">&#39;little&#39;</span></div>
 
 
-<span class="c1">#: Default Byteorder</span>
-<span class="n">BYTEORDER</span> <span class="o">=</span> <span class="n">Byteorder</span><span class="o">.</span><span class="n">little</span>
+<span class="c1">#: Default byte order of the de-/serializer.</span>
+<span class="n">BYTEORDER</span><span class="p">:</span> <span class="n">Byteorder</span> <span class="o">=</span> <span class="n">Byteorder</span><span class="o">.</span><span class="n">little</span>
 
 
-<span class="k">def</span> <span class="nf">clamp</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Returns the *value* limited between *minimum* and *maximum*</span>
-<span class="sd">    whereby the *maximum* wins over the *minimum*.</span>
+<span class="k">def</span> <span class="nf">clamp</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+          <span class="n">minimum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">,</span>
+          <span class="n">maximum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; Returns the *value* limited between the *minimum* and *maximum* value,</span>
+<span class="sd">    whereby the *maximum* value wins over the *minimum* value.</span>
 
 <span class="sd">    Example:</span>
 
@@ -320,9 +326,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -339,6 +343,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
